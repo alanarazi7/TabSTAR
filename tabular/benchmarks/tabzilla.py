@@ -1,0 +1,41 @@
+from tabular.datasets.tabular_datasets import OpenMLDatasetID
+
+# When Do Neural Nets Outperform Boosted Trees on Tabular Data?
+# https://arxiv.org/abs/2305.02997
+
+# credit-approval (29) was dedup as it's the same as Australian (40981)
+TABZILLA = [OpenMLDatasetID.BIN_ANONYM_AUSTRALIAN_CREDIT_APPROVAL,
+            OpenMLDatasetID.BIN_ANONYM_ADA,
+            OpenMLDatasetID.BIN_ANONYM_BIORESPONSE,
+            OpenMLDatasetID.BIN_ANONYM_ALBERT,
+            OpenMLDatasetID.BIN_ANONYM_GUILLERMO,
+            OpenMLDatasetID.BIN_ANONYM_JASMINE,
+            OpenMLDatasetID.BIN_ANONYM_MONKS_PROBLEM_2,
+            OpenMLDatasetID.BIN_COMPUTERS_KC1_CODE_DEFECTIONS,
+            OpenMLDatasetID.BIN_CONSUMER_ELECTRICITY_PRICE_TREND,
+            OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN,
+            OpenMLDatasetID.BIN_GEOGRAPHY_NOMAO_SEARCH_ENGINE,
+            OpenMLDatasetID.BIN_HEALTHCARE_HEART_DISEASE,
+            OpenMLDatasetID.BIN_NATURE_COLIC_HORSES_SURGICAL_LESION,
+            OpenMLDatasetID.BIN_NATURE_PHONEME_SOUNDS,
+            OpenMLDatasetID.BIN_SPORTS_PRO_FOOTBALL_BETS_PROFB,
+            OpenMLDatasetID.BIN_SCIENCE_PARTICLE_HIGGS,
+            OpenMLDatasetID.BIN_SCIENCE_PARTICLE_MINIBOONE,
+            OpenMLDatasetID.BIN_SCIENCE_QSAR_BIODEG,
+            OpenMLDatasetID.BIN_SOCIAL_SPEED_DATING,
+            OpenMLDatasetID.BIN_TRANSPORTATION_AIRLINES_DEPARTURE_DELAY,
+            OpenMLDatasetID.MUL_ANONYM_CNAE,
+            OpenMLDatasetID.MUL_ANONYM_FOURIER_IMAGE_COEFFICIENT,
+            OpenMLDatasetID.MUL_ANONYM_PLANTS_TEXTURE,
+            OpenMLDatasetID.MUL_ANONYM_ZERNIKE_MFEAT,
+            OpenMLDatasetID.MUL_COMPUTERS_IMAGE_ARTIFICIAL_CHARACTERS,
+            OpenMLDatasetID.MUL_COMPUTERS_IMAGE_GESTURE_PHASE_SEGMENTATION,
+            OpenMLDatasetID.MUL_GENETICS_SPLICE_DNA,
+            OpenMLDatasetID.MUL_HEALTHCARE_AUDIOLOGY_DIAGNOSTIC,
+            OpenMLDatasetID.MUL_HEALTHCARE_LYMPH_YUGOSLAVIA,
+            OpenMLDatasetID.MUL_SCIENCE_BALANCE_SCALE,
+            OpenMLDatasetID.MUL_SPORTS_CHESS_JUNGLE,
+            OpenMLDatasetID.MUL_SPORTS_POKER_HAND,
+            OpenMLDatasetID.MUL_TRANSPORTATION_VEHICLE_SILHOUETTE,
+            OpenMLDatasetID.REG_SOCIAL_OCCUPATION_MOBILITY_SOCMOB,
+            OpenMLDatasetID.REG_TRANSPORTATION_FLIGHT_SIMULATION_ELEVATORS,]

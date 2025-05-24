@@ -1,0 +1,26 @@
+carte-ai
+catboost
+gpustat
+h5py
+huggingface_hub
+kagglehub >= 0.3.11
+numpy
+openml
+optuna
+pandas >= 2.2.2
+peft
+pytest
+python-dotenv
+scikit-learn
+sentence_transformers
+scipy
+skrub
+tabpfn >= 2.0.8
+tabpfn-client >= 0.1.7
+tabpfn_extensions
+torch >= 2.6.0
+torchvision
+tqdm
+transformers >= 4.49.0
+xgboost
+wandb

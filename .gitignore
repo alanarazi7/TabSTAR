@@ -1,0 +1,10 @@
+__pycache__/
+.DS_Store
+.env
+.idea
+.venv
+/cache/
+/files_tabular/
+/catboost_info/
+/wandb/
+/sweeps/wandb
