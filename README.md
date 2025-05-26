@@ -1,46 +1,75 @@
+# TabSTAR Research Repository
+
 <img src="tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
-**Welcome to the TabSTAR Research repo!**
+Welcome to the TabSTAR Research repo!
 
 🚧 This repository is still work in progress. 🚧
 
 ---
 
-📚 **Resources**
+## 📚 Resources
 
 * 📄 **Paper**: [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
-
 * 🌐 **Project Website**: [TabSTAR](https://eilamshapira.com/TabSTAR/)
 
-___
+---
 
-To install the repository, do:
+To install the repository, run:
 
-```commandline
+```bash
 source init.sh
 ```
 
 The main scripts provided are:
 
-* `do_pretrain` which pretrains a TabSTAR model.
-* `do_finetune` which finetunes a pretrained TabSTAR model on a downstream task.
-* `do_baseline` which runs a baseline model on a downstream task.
+* `do_pretrain` – pretrain a TabSTAR model.
+* `do_finetune` – finetune a pretrained TabSTAR model on a downstream task.
+* `do_baseline` – run a different baseline model on a downstream task.
 
 <img src="tabstar_arch.png" alt="TabSTAR Arch" width="100%">
 
+### Pretraining
 
-To pretrain TabSTAR, run the following command, controlling for the number of datasets:
-```commandline
+To pretrain TabSTAR with a specified number of datasets:
+
+```bash
 python do_pretrain.py --n_datasets=256
 ```
 
-For debugging purpose, you can decrease the number, but this will harm downstream task performance.
-At the end of the pretraining, you will get the name of the `pretrain_exp` which should be passed for finetuning for a given downstream task:
-```commandline
-python do_finetune.py --pretrain_exp=MY_PRETRAINED_EXP --dataset_id=46655
+For debugging, you can decrease this number (note it may impact downstream performance).
+
+### Finetuning
+
+After pretraining, take the printed `<pretrain_exp>` identifier and run:
+
+```bash
+python do_finetune.py --pretrain_exp=<PRETRAINED_EXP> --dataset_id=46655
 ```
 
-To compare the performance with a baseline, choose a model and a dataset and run:
-```commandline
+### Baseline Comparison
+
+To compare against a baseline model:
+
+```bash
 python do_baseline.py --model=rf --dataset_id=46655
+```
+
+---
+
+## License
+
+This work is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+
+## Citation
+
+If you use TabSTAR in your research, please cite:
+
+```bibtex
+@article{arazi2025tabstarf,
+  title   = {TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations},
+  author  = {Alan Arazi and Eilam Shapira and Roi Reichart},
+  journal = {arXiv preprint arXiv:2505.18125},
+  year    = {2025},
+}
 ```
