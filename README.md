@@ -4,6 +4,14 @@
 
 🚧 This repository is still work in progress. 🚧
 
+---
+
+📚 **Resources**
+
+* 📄 **Paper**: [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
+
+* 🌐 **Project Website**: [TabSTAR](https://eilamshapira.com/TabSTAR/)
+
 ___
 
 To install the repository, do:
@@ -13,9 +21,10 @@ source init.sh
 ```
 
 The main scripts provided are:
-- `do_pretrain` which pretrains a TabSTAR model.
-- `do_finetune` which finetunes a pretrained TabSTAR model on a downstream task.
-- `do_baseline` which runs a baseline model on a downstream task.
+
+* `do_pretrain` which pretrains a TabSTAR model.
+* `do_finetune` which finetunes a pretrained TabSTAR model on a downstream task.
+* `do_baseline` which runs a baseline model on a downstream task.
 
 <img src="tabstar_arch.png" alt="TabSTAR Arch" width="100%">
 
