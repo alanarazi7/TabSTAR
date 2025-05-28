@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ENV_DIR=".TabSTAR-env"
+
 # Ensure uv is installed
 if ! command -v uv &>/dev/null; then
     echo "📦 uv not found. Installing uv..."
@@ -9,20 +11,20 @@ else
 fi
 
 # Create uv venv with Python 3.11 if it doesn't already exist
-if [ ! -d ".venv" ]; then
-    echo "🌀 Creating uv venv with Python 3.11"
-    uv venv -p python3.11 || echo "⚠️ Failed to create uv venv; continuing..."
+if [ ! -d "$ENV_DIR" ]; then
+    echo "🌀 Creating uv venv ($ENV_DIR) with Python 3.11"
+    uv venv -p python3.11 "$ENV_DIR" || echo "⚠️ Failed to create uv venv; continuing..."
 else
-    echo "🌀 uv venv already exists. Skipping creation."
+    echo "🌀 uv venv ($ENV_DIR) already exists. Skipping creation."
 fi
 
 # Activate the environment
-if [ -f ".venv/bin/activate" ]; then
-    echo "🚀 Activating uv venv"
+if [ -f "$ENV_DIR/bin/activate" ]; then
+    echo "🚀 Activating uv venv ($ENV_DIR)"
     # shellcheck disable=SC1091
-    source ".venv/bin/activate" || echo "⚠️ Failed to activate venv; continuing..."
+    source "$ENV_DIR/bin/activate" || echo "⚠️ Failed to activate venv; continuing..."
 else
-    echo "⚠️ Activation script not found; did venv creation fail?"
+    echo "⚠️ Activation script not found in $ENV_DIR; did venv creation fail?"
 fi
 
 # Install dependencies using uv
@@ -33,4 +35,4 @@ else
     echo "⚠️ requirements.txt not found; skipping dependency install."
 fi
 
-echo "🎉 Setup completed! To activate in a new shell, run: source .venv/bin/activate"
+echo "🎉 Setup completed! To activate in a new shell, run: source $ENV_DIR/bin/activate"
