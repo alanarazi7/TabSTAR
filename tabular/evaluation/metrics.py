@@ -9,6 +9,8 @@ from torch import Tensor
 
 from tabular.preprocessing.objects import SupervisedTask
 
+from tabular.utils.utils import verbose_print
+
 
 @dataclass
 class PredictionsCache:
@@ -36,7 +38,8 @@ def calculate_metric(task_type: SupervisedTask, y_true: Series | np.ndarray, y_p
     elif task_type == SupervisedTask.MULTICLASS:
         try:
             score = safe_roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
-        except ValueError:
+        except ValueError as e:
+            verbose_print(f"⚠️ Error calculating AUC. {y_true=}, {y_pred=}, {e=}")
             score = per_class_auc(y_true=y_true, y_pred=y_pred)
     else:
         raise ValueError(f"Unsupported data properties: {task_type}")
@@ -51,7 +54,10 @@ def per_class_auc(y_true, y_pred) -> float:
         y_true_binary = (y_true == cls).astype(int)
         # Predicted probabilities for the current class
         y_pred_scores = y_pred[:, cls]
-        auc = roc_auc_score(y_true_binary, y_pred_scores)
-        aucs[cls] = auc
+        try:
+            auc = roc_auc_score(y_true_binary, y_pred_scores)
+            aucs[cls] = auc
+        except ValueError as e:
+            verbose_print(f"⚠️ Error calculating AUC for class {cls}. {e=}, {y_true_binary=}, {y_pred_scores=}")
     macro_avg = float(np.mean(list(aucs.values())))
     return macro_avg
