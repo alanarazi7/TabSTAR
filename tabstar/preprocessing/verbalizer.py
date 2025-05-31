@@ -5,6 +5,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 import pandas as pd
+
+from tabstar.preprocessing.feat_types import get_feature_types
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 
@@ -19,6 +21,7 @@ class TabSTARVerbalizer(BaseEstimator, TransformerMixin):
 
     def fit(self, X: DataFrame, y: Series):
         x, y = self.preprocess(x=X, y=y)
+        feat_types = get_feature_types(x=x)
         # self.num_cols = X.select_dtypes(include=["number"]).columns.tolist()
         # self.cat_cols = X.select_dtypes(exclude=["number"]).columns.tolist()
         #
