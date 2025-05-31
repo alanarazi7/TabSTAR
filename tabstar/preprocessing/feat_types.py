@@ -1,15 +1,10 @@
-from collections import Counter
 from dataclasses import dataclass, field
-from typing import Dict, Set, Any, List, Self, Optional
+from typing import Set, Any, List, Self
 
-from pandas import DataFrame, Series, set_option
+from pandas import DataFrame, Series
 
-from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedFeature
-from tabular.preprocessing.dates import series_to_dt
-from tabular.preprocessing.nulls import get_valid_values, MISSING_VALUE, convert_series_to_numeric
-from tabular.preprocessing.objects import FeatureType, FEAT2EMOJI
-from tabular.tabstar.preprocessing.numerical_utils import is_numerical
-from tabular.utils.utils import verbose_print
+from tabstar.preprocessing.nulls import get_valid_values
+
 
 # MIN_TEXT_UNIQUE_RATIO = 0.8
 # MIN_TEXT_UNIQUE_FREQUENCY = 100
@@ -44,22 +39,6 @@ from tabular.utils.utils import verbose_print
 #     def all_numerical_but_one(self):
 #         are_numerical = {v for v in self.values if is_numerical(v)}
 #         return len(set(are_numerical)) == self.n_unique - 1
-#
-#     @property
-#     def non_numerical(self) -> List[Any]:
-#         return [v for v in self.values if not is_numerical(v)]
-#
-#     @property
-#     def common(self) -> List[Any]:
-#         cnt = Counter(self.values)
-#         most_common = [v for v, _ in cnt.most_common(20)]
-#         return most_common
-#
-#     def __repr__(self) -> str:
-#         unique_str = f"Unique: {self.n_unique}"
-#         if self.n_unique > 2:
-#             unique_str += f" ({self.unique_ratio:.1%})"
-#         return f"{self.name} | {unique_str} | {self.common}"
 
 
 
@@ -94,3 +73,15 @@ def get_feature_types(x: DataFrame) -> FeatureTypes:
             feature_types.semantic.add(col_name)
         else:
             raise ValueError(f"Unsupported dtype {dtype} for column {col}. Convert to any of: {SUPPORTED_TYPES=}")
+
+
+def is_mostly_numerical(y: Series) -> bool:
+    raise NotImplementedError()
+
+
+def is_numerical(v: float | str | int) -> bool:
+    if isinstance(v, str):
+        return v.isdigit()
+    elif isinstance(v, (int, float)):
+        return True
+    raise ValueError(f"Unexpected type {type(v)}: {v}")

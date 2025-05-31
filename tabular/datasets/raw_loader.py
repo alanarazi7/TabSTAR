@@ -2,15 +2,15 @@ from typing import Optional, Dict, Set, Tuple
 
 from pandas import Series, DataFrame
 
+from tabstar.preprocessing.nulls import get_valid_values
+from tabstar.preprocessing.sparse import densify_objects
 from tabular.datasets.manual_curation_obj import CuratedDataset
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.preprocessing.curation import curate_features
 from tabular.preprocessing.feature_type import convert_dtypes
-from tabular.preprocessing.nulls import get_valid_values
 from tabular.preprocessing.objects import FeatureType, SupervisedTask
 from tabular.preprocessing.redundant_variables import drop_redundant_columns
 from tabular.preprocessing.sampling import subsample_big_datasets, downsample_multiple_features
-from tabular.preprocessing.sparse import densify_objects
 from tabular.preprocessing.target import handle_raw_target
 
 

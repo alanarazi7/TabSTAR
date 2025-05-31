@@ -2,7 +2,7 @@ import numpy as np
 from pandas import Series
 from sklearn.preprocessing import StandardScaler
 
-from tabular.preprocessing.nulls import get_invalid_indices
+from tabstar.preprocessing.nulls import get_invalid_indices
 from tabular.preprocessing.target import Z_MAX_ABS_VAL
 
 

@@ -4,11 +4,12 @@ from typing import Dict, Set, Any, List, Self, Optional
 
 from pandas import DataFrame, Series, set_option
 
+from tabstar.preprocessing.feat_types import is_numerical
+from tabstar.preprocessing.nulls import get_valid_values
 from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedFeature
 from tabular.preprocessing.dates import series_to_dt
-from tabular.preprocessing.nulls import get_valid_values, MISSING_VALUE, convert_series_to_numeric
+from tabular.preprocessing.nulls import MISSING_VALUE, convert_series_to_numeric
 from tabular.preprocessing.objects import FeatureType, FEAT2EMOJI
-from tabular.tabstar.preprocessing.numerical_utils import is_numerical
 from tabular.utils.utils import verbose_print
 
 MIN_TEXT_UNIQUE_RATIO = 0.8

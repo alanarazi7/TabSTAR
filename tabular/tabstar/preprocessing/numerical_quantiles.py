@@ -4,7 +4,8 @@ import numpy as np
 from pandas import Series
 from sklearn.preprocessing import QuantileTransformer
 
-from tabular.preprocessing.nulls import MISSING_VALUE, get_invalid_indices
+from tabstar.preprocessing.nulls import get_invalid_indices
+from tabular.preprocessing.nulls import MISSING_VALUE
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.tabstar.preprocessing.numerical_utils import get_quantile_levels
 
