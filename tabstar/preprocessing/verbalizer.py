@@ -49,5 +49,7 @@ class TabSTARVerbalizer(BaseEstimator, TransformerMixin):
 
     def preprocess(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
         raise_if_null_target(y)
+        if len(set(x.columns)) != len(x.columns):
+            raise ValueError("Duplicate column names found in DataFrame!")
         x, y = densify_objects(x=x, y=y)
         return x, y
