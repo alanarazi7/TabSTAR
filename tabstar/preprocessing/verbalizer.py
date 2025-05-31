@@ -1,10 +1,12 @@
+from typing import Tuple
+
 from pandas import Series, DataFrame
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 import pandas as pd
-
 from tabstar.preprocessing.nulls import raise_if_null_target
+from tabstar.preprocessing.sparse import densify_objects
 
 
 class TabSTARVerbalizer(BaseEstimator, TransformerMixin):
@@ -16,7 +18,7 @@ class TabSTARVerbalizer(BaseEstimator, TransformerMixin):
         raise NotImplementedError("Initialization is not implemented yet.")
 
     def fit(self, X: DataFrame, y: Series):
-        raise_if_null_target(y)
+        x, y = self.preprocess(x=X, y=y)
         # self.num_cols = X.select_dtypes(include=["number"]).columns.tolist()
         # self.cat_cols = X.select_dtypes(exclude=["number"]).columns.tolist()
         #
@@ -30,7 +32,7 @@ class TabSTARVerbalizer(BaseEstimator, TransformerMixin):
         raise NotImplementedError("fit is not implemented yet.")
 
     def transform(self, X: DataFrame, y: Series):
-        raise_if_null_target(y)
+
         # X_transformed = X.copy()
         #
         # # Process numerical columns
@@ -41,6 +43,11 @@ class TabSTARVerbalizer(BaseEstimator, TransformerMixin):
         # return X_transformed
         raise NotImplementedError("transform is not implemented yet.")
 
-    def fit_transform(self, X: pd.DataFrame, y=None):
+    def fit_transform(self, X: DataFrame, y=None):
         # return self.fit(X, y).transform(X)
         raise NotImplementedError("fit_transform is not implemented yet.")
+
+    def preprocess(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        raise_if_null_target(y)
+        x, y = densify_objects(x=x, y=y)
+        return x, y
