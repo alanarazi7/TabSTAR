@@ -3,8 +3,8 @@ __pycache__/
 .env
 .idea
 .venv
+.TabSTAR-env
 /cache/
-/files_tabular/
 /catboost_info/
 /wandb/
 /sweeps/wandb
