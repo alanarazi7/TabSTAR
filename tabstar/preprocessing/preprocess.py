@@ -1,6 +1,7 @@
 from typing import Tuple
 
 from pandas import DataFrame, Series
+from pandas.core.dtypes.common import is_numeric_dtype, is_object_dtype
 
 from tabstar.preprocessing.dates import preprocess_dates
 from tabstar.preprocessing.feat_types import detect_feature_types
@@ -26,5 +27,6 @@ def preprocess_raw(x: DataFrame, y: Series, is_cls: bool) -> Tuple[DataFrame, Se
 
 def _assert_final_dtypes(x: DataFrame):
     for col, dtype in x.dtypes.items():
-        if dtype not in {'float', 'str'}:
-            raise TypeError(f"Column {col} has unsupported dtype {dtype}. Expected float or str at this point.")
+        if is_numeric_dtype(dtype) or is_object_dtype(dtype):
+            continue
+        raise TypeError(f"Column {col} has unsupported dtype {dtype}")

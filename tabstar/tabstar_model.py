@@ -1,26 +1,29 @@
+from typing import Optional, Tuple
+
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 
 from tabstar.arch.arch import TabStarModel
 from tabstar.preprocessing.preprocess import preprocess_raw
-from tabstar.tabstar_verbalizer import TabSTARVerbalizer
+from tabstar.preprocessing.splits import split_to_val
+from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.trainer import TabStarTrainer
 
 
 class BaseTabSTAR:
-    def __init__(self, model_config=None, trainer_config=None, preprocessor=None):
-        # self.model_config = model_config or {}
-        # self.trainer_config = trainer_config or {}
-        # self.preprocessor = preprocessor
-        raise NotImplementedError
+    def __init__(self, preprocessor: Optional[TabSTARVerbalizer] = None):
+        self.preprocessor = preprocessor
 
-    def _prepare(self, X, y):
+    def _prepare(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
         x, y = preprocess_raw(x=X, y=y, is_cls=self.is_cls)
-        #     self.preprocessor_ = self.preprocessor
-        # else:
-        #     self.preprocessor_ = self._build_preprocessor()
-        #     self.preprocessor_.fit(X, y)
-        # return self.preprocessor_.transform(X), y
-        raise NotImplementedError
+        x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        if isinstance(self.preprocessor, TabSTARVerbalizer):
+            self.preprocessor_ = self.preprocessor
+        else:
+            self.preprocessor_ = self._build_preprocessor()
+            self.preprocessor_.fit(x_train, y_train)
+        train_data = self.preprocessor_.transform(x_train, y_train)
+        val_data = self.preprocessor_.transform(x_val, y_val)
+        return train_data, val_data
 
     def _build_preprocessor(self):
         return TabSTARVerbalizer(is_cls=self.is_cls)
@@ -29,7 +32,7 @@ class BaseTabSTAR:
         raise NotImplementedError
 
     def fit(self, X, y):
-        # X_proc, y_proc = self._prepare(X, y)
+        train_data, val_data = self._prepare(X, y)
         # self.model_ = self._build_model()
         # self.trainer_ = TabStarTrainer(self.model_, **self.trainer_config)
         # self.trainer_.train(X_proc, y_proc)

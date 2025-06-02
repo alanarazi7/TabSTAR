@@ -1,15 +1,14 @@
 import pandas as pd
 from pandas import DataFrame, Series
+from pandas.core.dtypes.common import is_numeric_dtype
 
 from tabstar.preprocessing.texts import sanitize_text
 
 
 def verbalize_textual_features(x: DataFrame) -> DataFrame:
-    for col, dtype in x.dtypes.items():
-        if dtype not in {'str', 'float'}:
-            raise TypeError(f"Column {col} has unsupported dtype {dtype}. Expected str or float for verbalization.")
-        if dtype == 'str':
-            x[col] = x[col].apply(lambda v: verbalize_feature(col=str(col), value=v))
+    semantic_cols = [col for col, dtype in x.dtypes.items() if not is_numeric_dtype(dtype)]
+    for col in semantic_cols:
+        x[col] = x[col].apply(lambda v: verbalize_feature(col=str(col), value=v))
     return x
 
 def verbalize_feature(col: str, value: str) -> str:

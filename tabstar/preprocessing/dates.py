@@ -2,14 +2,14 @@ from typing import Any
 
 import pandas as pd
 from pandas import Series, DataFrame
+from pandas.core.dtypes.common import is_datetime64_any_dtype
 from skrub import DatetimeEncoder
 
 from tabstar.preprocessing.detection import is_mostly_numerical
-from tabstar.preprocessing.feat_types import DATE_TYPES
 
 
 def preprocess_dates(x: DataFrame) -> DataFrame:
-    date_columns = [col for col, dtype in x.dtypes.items() if dtype in DATE_TYPES]
+    date_columns = [col for col, dtype in x.dtypes.items() if is_datetime64_any_dtype(dtype)]
     for col in date_columns:
         dt_df = date_feature_to_df(s=x[col])
         x = x.drop(columns=[col])

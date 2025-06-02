@@ -1,4 +1,3 @@
-import numpy as np
 from pandas import Series
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
@@ -16,7 +15,7 @@ def transform_preprocess_y(y: Series, scaler: LabelEncoder | StandardScaler) -> 
 
 def transform_cls_y(y: Series, encoder: LabelEncoder) -> Series:
     y_val = encoder.transform(y)
-    return Series(y_val.astype(np.int64), name=y_val.name, index=y_val.index)
+    return Series(y_val, name=y.name, index=y.index)
 
 
 def fit_preprocess_y(y: Series, is_cls: bool) -> LabelEncoder | StandardScaler:
