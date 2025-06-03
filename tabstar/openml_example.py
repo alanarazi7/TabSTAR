@@ -1,17 +1,14 @@
 import openml
 
-from tabstar.preprocessing.splits import split_to_test
-from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
+from tabstar.inference.inference import from_x_y
 
-openml_id = 46667
-# TODO: automatically detect regression vs classification?
-is_cls = True
+openml_id = None        # TODO: set your OpenML dataset ID here
+is_cls = None           # TODO: set True for classification or False for regression
+
+assert isinstance(openml_id, int), "openml_id should be an integer representing the OpenML dataset ID"
+assert isinstance(is_cls, bool), "is_cls should be a boolean indicating classification or regression"
 
 dataset = openml.datasets.get_dataset(openml_id, download_data=True, download_features_meta_data=True)
 x, y, _, _ = dataset.get_data(target=dataset.default_target_attribute)
 
-x_train, x_test, y_train, y_test = split_to_test(x, y, is_cls=is_cls)
-
-tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
-tabstar = tabstar_cls()
-tabstar.fit(x_train, y_train)
+from_x_y(x=x, y=y, is_cls=is_cls)

@@ -1,21 +1,45 @@
 from typing import Optional, Tuple
 
+import numpy as np
+import torch
+from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
+from torch import autocast
 
-from tabstar.arch.arch import TabStarModel
 from tabstar.preprocessing.preprocess import preprocess_raw
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
+from tabstar.training.dataloader import get_dataloader
+from tabstar.training.devices import get_device
+from tabstar.training.metrics import apply_loss_fn
 from tabstar.training.trainer import TabStarTrainer
+from tabstar.training.utils import concat_predictions
 
 
 class BaseTabSTAR:
     def __init__(self, preprocessor: Optional[TabSTARVerbalizer] = None):
         self.preprocessor_ = preprocessor
-        self.model_: Optional[TabStarModel] = None
+        self.model_: Optional[PeftModel] = None
+        self.device = get_device()
 
-    def _prepare(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
-        x, y = preprocess_raw(x=X, y=y, is_cls=self.is_cls)
+    def fit(self, X, y):
+        train_data, val_data = self._prepare_for_train(X, y)
+        trainer = TabStarTrainer()
+        trainer.train(train_data, val_data)
+        trainer.load_model()
+        self.model_ = trainer.model
+
+    def predict(self, X):
+        if not isinstance(self.model_, PeftModel):
+            raise ValueError("Model is not trained yet. Call fit() before predict().")
+        return self._infer(X)
+
+    @property
+    def is_cls(self) -> bool:
+        raise NotImplementedError("Must be implemented in subclass")
+
+    def _prepare_for_train(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
+        x, y = preprocess_raw(x=X, y=y)
         x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
         if self.preprocessor_ is None:
             self.preprocessor_ = TabSTARVerbalizer(is_cls=self.is_cls)
@@ -24,26 +48,24 @@ class BaseTabSTAR:
         val_data = self.preprocessor_.transform(x_val, y_val)
         return train_data, val_data
 
-    def fit(self, X, y):
-        train_data, val_data = self._prepare(X, y)
-        trainer = TabStarTrainer()
-        trainer.train(train_data, val_data)
-        raise NotImplementedError
-
-    def predict(self, X):
-        raise NotImplementedError
-
-    @property
-    def is_cls(self) -> bool:
-        raise NotImplementedError("Must be implemented in subclass")
+    def _infer(self, X) -> np.ndarray:
+        x, _ = preprocess_raw(x=X, y=None)
+        data = self.preprocessor_.transform(x, y=None)
+        dataloader = get_dataloader(data, is_train=False, batch_size=128)
+        predictions = []
+        for data in dataloader:
+            with torch.no_grad(), autocast(device_type=self.device.type):
+                batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
+                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
+                predictions.append(batch_predictions)
+        predictions = concat_predictions(predictions)
+        return predictions
 
 
 class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
 
     def predict_proba(self, X):
-        # X_proc = self.preprocessor_.transform(X)
-        # return self.model_.predict_proba(X_proc)
-        raise NotImplementedError
+        return self._infer(X)
 
     @property
     def is_cls(self) -> bool:

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 import numpy as np
 from pandas import DataFrame, Series
@@ -9,6 +9,8 @@ from sklearn.preprocessing import StandardScaler, QuantileTransformer, LabelEnco
 from tabstar.preprocessing.binning import fit_numerical_bins, transform_numerical_bins
 from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_z_scores
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
+from tabstar.preprocessing.verbalize import prepend_target_tokens
+
 
 @dataclass
 class TabSTARData:
@@ -24,6 +26,8 @@ class TabSTARVerbalizer:
         self.semantic_transformers: Dict[str, QuantileTransformer] = {}
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
         self.d_output: Optional[int] = None
+        self.y_name: Optional[str] = None
+        self.y_values: Optional[List[str]] = None
 
     def fit(self, X, y):
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
@@ -35,10 +39,14 @@ class TabSTARVerbalizer:
         for col in numeric_cols:
             self.numerical_transformers[col] = fit_standard_scaler(s=X[col])
             self.semantic_transformers[col] = fit_numerical_bins(s=X[col])
+        self.y_name = str(y.name)
+        if self.is_cls:
+            self.y_values = sorted(self.target_transformer.classes_)
 
     def transform(self, x: DataFrame, y: Optional[Series]) -> TabSTARData:
         if y is not None:
             y = transform_preprocess_y(y=y, scaler=self.target_transformer)
+        x = prepend_target_tokens(x=x, y_name=self.y_name, y_values=self.y_values)
         num_cols = list(set(self.numerical_transformers))
         text_cols = [col for col in x.columns if col not in num_cols]
         x_txt = x[text_cols + num_cols].copy()

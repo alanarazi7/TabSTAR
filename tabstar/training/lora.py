@@ -1,10 +1,12 @@
-from peft import LoraConfig, get_peft_model
+from os.path import exists
+
+from peft import LoraConfig, get_peft_model, PeftModel
 
 from tabstar.arch.arch import TabStarModel
 from tabstar.arch.config import LORA_R
 
 
-def load_model_with_lora():
+def load_pretrained() -> PeftModel:
     model = TabStarModel.from_pretrained("alana89/TabSTAR")
     # TODO: probably best if this is written more generic and not so hard-coded
     lora_modules = ["query", "key", "value", "out_proj", "linear1", "linear2",
@@ -21,4 +23,12 @@ def load_model_with_lora():
         bias="none",
     )
     model = get_peft_model(model, lora_config)
+    return model
+
+
+def load_finetuned(save_dir: str) -> PeftModel:
+    if not exists(save_dir):
+        raise FileNotFoundError(f"Checkpoint path {save_dir} does not exist.")
+    base_model = TabStarModel.from_pretrained(save_dir)
+    model = PeftModel.from_pretrained(base_model, save_dir)
     return model

@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 from pandas import DataFrame, Series
 from pandas.core.dtypes.common import is_numeric_dtype, is_object_dtype
@@ -8,11 +8,12 @@ from tabstar.preprocessing.feat_types import detect_feature_types
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.texts import replace_column_names
-from tabstar.preprocessing.verbalize import verbalize_textual_features, prepend_target_tokens
+from tabstar.preprocessing.verbalize import verbalize_textual_features
 
 
-def preprocess_raw(x: DataFrame, y: Series, is_cls: bool) -> Tuple[DataFrame, Series]:
-    raise_if_null_target(y)
+def preprocess_raw(x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
+    if y is not None:
+        raise_if_null_target(y)
     if len(set(x.columns)) != len(x.columns):
         raise ValueError("Duplicate column names found in DataFrame!")
     x, y = densify_objects(x=x, y=y)
@@ -20,7 +21,6 @@ def preprocess_raw(x: DataFrame, y: Series, is_cls: bool) -> Tuple[DataFrame, Se
     x = preprocess_dates(x=x)
     x, y = replace_column_names(x=x, y=y)
     x = verbalize_textual_features(x=x)
-    x = prepend_target_tokens(x=x, y=y, is_cls=is_cls)
     _assert_final_dtypes(x)
     return x, y
 

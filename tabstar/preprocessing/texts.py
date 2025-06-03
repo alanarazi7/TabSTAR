@@ -1,13 +1,14 @@
 import re
-from typing import Tuple
+from typing import Tuple, Optional
 
 from pandas import DataFrame, Series
 
 
-def replace_column_names(x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+def replace_column_names(x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
     old2new = {c: normalize_col_name(c) for c in x.columns}
     x.rename(columns=old2new, inplace=True)
-    y.name = normalize_col_name(str(y.name))
+    if y is not None:
+        y.name = normalize_col_name(str(y.name))
     return x, y
 
 def normalize_col_name(text: str) -> str:

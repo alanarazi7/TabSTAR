@@ -14,9 +14,11 @@ class TabSTARDataset(Dataset):
     def __init__(self, data: TabSTARData):
         self.x_txt = data.x_txt
         self.x_num = data.x_num
-        if data.y is None:
-            raise TypeError("We can't create a dataset without target values.")
-        self.y = data.y.reset_index(drop=True)
+        if data.y is not None:
+            self.y = data.y.reset_index(drop=True)
+        else:
+            # Dummy target for convenience
+            self.y = pd.Series(np.zeros(len(data.x_txt)), dtype=np.float32)
         self.d_output = data.d_output
 
     def __len__(self):
@@ -28,9 +30,9 @@ class TabSTARDataset(Dataset):
         y = self.y.iloc[idx]
         return x_txt, x_num, y, self.d_output
     
-def get_dataloader(data: TabSTARData, is_train: bool) -> DataLoader:
+def get_dataloader(data: TabSTARData, is_train: bool, batch_size: int = BATCH_SIZE) -> DataLoader:
     dataset = TabSTARDataset(data)
-    return DataLoader(dataset, shuffle=is_train, batch_size=BATCH_SIZE, num_workers=0, collate_fn=collate_fn)
+    return DataLoader(dataset, shuffle=is_train, batch_size=batch_size, num_workers=0, collate_fn=collate_fn)
 
 
 def collate_fn(batch) -> TabSTARData:

@@ -1,5 +1,7 @@
+from typing import List, Optional
+
 import pandas as pd
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from pandas.core.dtypes.common import is_numeric_dtype
 
 from tabstar.preprocessing.texts import sanitize_text
@@ -18,13 +20,12 @@ def verbalize_feature(col: str, value: str) -> str:
     v = sanitize_text(v)
     return v
 
-def prepend_target_tokens(x: DataFrame, y: Series, is_cls: bool) -> DataFrame:
-    if is_cls:
-        y_values = sorted(set(y))
-        tokens = [f"Target Feature: {y.name}\nFeature Value: {v}" for v in y_values]
+def prepend_target_tokens(x: DataFrame, y_name: str, y_values: Optional[List[str]]) -> DataFrame:
+    if y_values:
+        tokens = [f"Target Feature: {y_name}\nFeature Value: {v}" for v in y_values]
     else:
-        tokens = [f"Numerical Target Feature: {y.name}"]
+        tokens = [f"Numerical Target Feature: {y_name}"]
     tokens = [sanitize_text(token) for token in tokens]
-    target_df = DataFrame({f"TABSTAR_TARGET_TOKEN_{i}": [t] * len(y) for i, t in enumerate(tokens)}, index=x.index)
+    target_df = DataFrame({f"TABSTAR_TARGET_TOKEN_{i}": [t] * len(x) for i, t in enumerate(tokens)}, index=x.index)
     x = pd.concat([target_df, x], axis=1)
     return x
