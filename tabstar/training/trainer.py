@@ -1,19 +1,22 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 import torch
-import wandb
 from pandas import DataFrame, Series
+from torch import Tensor
 from torch.amp import autocast, GradScaler
+from torch.nn import MSELoss, CrossEntropyLoss
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from tabstar.arch.config import TabStarConfig
+from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
+from tabstar.training.devices import get_device
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.lora import load_model_with_lora
-from tabstar.training.loss import LossAccumulator
+from tabstar.training.metrics import calculate_metric, apply_loss_fn
 from tabstar.training.optimizer import get_optimizer, get_scheduler, MAX_EPOCHS
+from tabular.tabstar.params.config import TabStarConfig
 
 torch.set_num_threads(1)
 if hasattr(torch, 'set_float32_matmul_precision'):
@@ -24,115 +27,120 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 class TabStarTrainer:
 
     def __init__(self):
+        self.device = get_device()
         self.model = load_model_with_lora()
+        self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model)
         self.scheduler = get_scheduler(optimizer=self.optimizer)
-        self.scaler = GradScaler()
+        self.use_amp = bool(self.device.type == "cuda")
+        self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping()
-        # TODO the config should be initialized earlier
         self.steps: int = 0
+        # TODO the config should be initialized earlier, and allow hyperparameters control
         self.config = TabStarConfig()
 
-    def train(self, x: DataFrame, y: Series):
-        with tqdm(MAX_EPOCHS, desc="Epochs", leave=False) as pbar_epochs:
-            for epoch in range(1, MAX_EPOCHS + 1):
-                dataloader = get_dataloader(x=x, y=y)
-                train_loss = LossAccumulator()
-                with tqdm(total=len(dataloader), desc="Batches", leave=False) as pbar_batches:
-                    for x, y in dataloader:
-                        batch_loss = self.train_one_batch(x_cat=x_txt, x_num=x_num, y=y, properties=properties)
-                        train_loss.update_batch(loss=batch_loss, n=len(y))
-                        dataset2losses[properties.sid].update_batch(batch_loss=batch_loss, batch=x_txt)
-                        self.steps += 1
-                        if self.steps % self.config.accumulation_steps == 0:
-                            self.do_update()
-                        pbar_batches.update(1)
-                    # If the total number of batches isn't divisible by accumulation_steps, update one last time.
-                    if self.steps % self.config.accumulation_steps != 0:
-                        self.do_update()
-                dev_loss = LossAccumulator()
-                dev_metrics = []
-                with tqdm(total=len(self.data_dirs), desc="Eval", leave=False) as pbar_eval:
-                    for data_loader in self.data_loaders[DataSplit.DEV]:
-                        assert isinstance(data_loader, DataLoader) and isinstance(data_loader.dataset, HDF5Dataset)
-                        properties = data_loader.dataset.properties
-                        data_dev_loss, predictions = self.eval_dataset(data_loader=data_loader)
-                        dev_loss += data_dev_loss
-                        dev_metrics.append(predictions.score)
-                        pbar_eval.update(1)
-                metric_score = float(np.mean(dev_metrics))
-                summarize_epoch(epoch=epoch, train_loss=train_loss, dev_loss=dev_loss, metric_score=metric_score,
-                                early_stopper=self.early_stopper, is_pretrain=self.is_pretrain)
-                self.early_stopper.update(metric_score)
-                if self.early_stopper.is_best:
-                    self.model.save_pretrained(self.model_path)
-                elif self.early_stopper.should_stop:
-                    print(f"Early stopping at epoch {epoch}")
-                    break
-                self.scheduler.step()
-                pbar_epochs.update(1)
+    def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
+        train_loader = get_dataloader(train_data, is_train=True)
+        val_loader = get_dataloader(val_data, is_train=False)
+
+        for epoch in tqdm(range(1, MAX_EPOCHS + 1), desc="Epochs", leave=False):
+            train_loss = self._train_epoch(train_loader)
+            val_loss, val_metric = self._evaluate_epoch(val_loader)
+            emoji = "🥇" if val_metric > self.early_stopper.metric else "😓"
+            print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
+            self.early_stopper.update(val_metric)
+            if self.early_stopper.is_best:
+                # self.model.save_pretrained(self.model_path)
+                self._save_model()
+            elif self.early_stopper.should_stop:
+                print(f"🛑 Early stopping at epoch {epoch}")
+                break
+
+            self.scheduler.step()
+
         return self.early_stopper.metric
+
+    def _train_epoch(self, dataloader: DataLoader) -> float:
+        self.model.train()
+        total_loss = 0.0
+        total_samples = 0
+        for data in dataloader:
+            batch_loss = self._train_batch(data)
+            total_loss += batch_loss * len(data.y)
+            total_samples += len(data.y)
+            self.steps += 1
+            if self.steps % self.config.accumulation_steps == 0:
+                self._do_update()
+
+        if self.steps % self.config.accumulation_steps != 0:
+            self._do_update()
+
+        epoch_loss = total_loss / total_samples
+        return epoch_loss
+
+
+    def _train_batch(self, data: TabSTARData) -> float:
+        with autocast(device_type=self.device.type, enabled=self.use_amp):
+            loss, predictions = self._do_forward(data=data)
+            # Divide the loss to scale gradients
+            loss = loss / self.config.accumulation_steps
+        if self.use_amp:
+            # Scale the loss for mixed precision stability
+            scaled_loss = self.scaler.scale(loss)
+            scaled_loss.backward()
+        else:
+            loss.backward()
+        loss = loss.item()
+        return loss
+
+    def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
+        predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
+        if data.d_output == 1:
+            loss_fn = MSELoss()
+            dtype = torch.float32
+        else:
+            loss_fn = CrossEntropyLoss()
+            dtype = torch.long
+        y = torch.tensor(data.y, dtype=dtype).to(self.device)
+        loss = loss_fn(predictions, y)
+        return loss, predictions
+
+    def _do_update(self):
+        self.scaler.unscale_(self.optimizer)
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        self.optimizer.zero_grad()
+
+    def _evaluate_epoch(self, dataloader: DataLoader) -> Tuple[float, float]:
+        self.model.eval()
+        total_loss = 0.0
+        total_samples = 0
+
+        y_pred = []
+        y_true = []
+        d_output = None
+
+        for data in dataloader:
+            d_output = data.d_output
+            with torch.no_grad(), autocast(device_type=self.device.type):
+                batch_loss, batch_predictions = self._do_forward(data=data)
+                total_loss += batch_loss * len(data.y)
+                total_samples += len(data.y)
+                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=d_output)
+                y_pred.append(batch_predictions)
+                y_true.append(data.y)
+        y_pred = np.concatenate([p.cpu().detach().numpy() for p in y_pred])
+        y_true = np.concatenate(y_true)
+        metric_score = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
+        loss = total_loss / total_samples
+        loss = loss.item()
+        return loss, metric_score
+
 
     # @property
     # def model_path(self) -> str:
     #     return get_model_path(self.run_name, is_pretrain=self.is_pretrain)
-
-    # def infer(self, x_txt: np.ndarray, x_num: np.ndarray, properties: DatasetProperties) -> InferenceOutput:
-    #     y_pred = self.model(x_txt=x_txt, x_num=x_num, sid=properties.sid, d_output=properties.d_effective_output)
-    #     return InferenceOutput(y_pred=y_pred)
-    #
-    # def prepare_dev_test_dataloaders(self):
-    #     for split in [DataSplit.DEV, DataSplit.TEST]:
-    #         if self.is_pretrain and split == DataSplit.TEST:
-    #             continue
-    #         split_dirs = []
-    #         for d in self.data_dirs:
-    #             data = get_dataloader(data_dir=d, split=split, batch_size=self.config.batch_size)
-    #             split_dirs.append(data)
-    #         self.data_loaders[split] = split_dirs
-    #
-    # def do_forward(self, x_txt: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> InferenceOutput:
-    #     inference = self.infer(x_txt=x_txt, x_num=x_num, properties=properties)
-    #     loss_fn = get_loss_fn(properties.task_type)
-    #     dtype = get_torch_dtype(properties.task_type)
-    #     y = torch.tensor(y, dtype=dtype).to(self.device)
-    #     loss = loss_fn(inference.y_pred, y)
-    #     inference.loss = loss
-    #     return inference
-    #
-    # def train_one_batch(self, x_cat: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> Loss:
-    #     self.model.train()
-    #     with autocast(device_type=self.device.type):
-    #         inference = self.do_forward(x_txt=x_cat, x_num=x_num, y=y, properties=properties)
-    #         # Divide the loss to scale gradients appropriately.
-    #         loss = inference.loss / self.config.accumulation_steps
-    #     verbose_print(f"Scaling the loss {loss.item():.3f} for {properties.sid} for mixed precision stability")
-    #     scaled_loss = self.scaler.scale(loss)
-    #     verbose_print(f"Backwarding a scaled loss of {scaled_loss:.3f}")
-    #     scaled_loss.backward()
-    #     return inference.to_loss
-    #
-    # def eval_dataset(self, data_loader: DataLoader) -> Tuple[LossAccumulator, Predictions]:
-    #     self.model.eval()
-    #     dev_dataset_loss = LossAccumulator()
-    #     cache = PredictionsCache()
-    #     properties = None
-    #     for x_txt, x_num, y, properties in data_loader:
-    #         assert isinstance(properties, DatasetProperties)
-    #         verbose_print(f"Evaluating a batch of {properties.sid}, {len(x_txt)} examples")
-    #         batch_loss = self.eval_one_batch(x_txt=x_txt, x_num=x_num, y=y, properties=properties, cache=cache)
-    #         dev_dataset_loss.update_batch(batch_loss=batch_loss, batch=x_txt)
-    #     metric_score = calculate_metric(task_type=properties.task_type, y_true=cache.y_true, y_pred=cache.y_pred)
-    #     predictions = Predictions(score=float(metric_score), predictions=cache.y_pred, labels=cache.y_true)
-    #     return dev_dataset_loss, predictions
-    #
-    # def eval_one_batch(self, x_txt: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties, cache: PredictionsCache) -> Loss:
-    #     self.model.eval()
-    #     with torch.no_grad(), autocast(device_type=self.device.type):
-    #         inference = self.do_forward(x_txt=x_txt, x_num=x_num, y=y, properties=properties)
-    #     predictions = apply_loss_fn(inference.y_pred, properties.task_type)
-    #     cache.append(y=y, predictions=predictions)
-    #     return inference.to_loss
     #
     # def load_model(self, cp_path: str):
     #     # TODO: it doesn't seem like the Lora is being loaded here. Fix for "production" release, no need for research
@@ -155,11 +163,3 @@ class TabStarTrainer:
     #     if not self.args.keep_model:
     #         shutil.rmtree(self.model_path)
     #     return ret
-    #
-    # def do_update(self):
-    #     verbose_print(f"🔄 Updating loss!")
-    #     self.scaler.unscale_(self.optimizer)
-    #     torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
-    #     self.scaler.step(self.optimizer)
-    #     self.scaler.update()
-    #     self.optimizer.zero_grad()

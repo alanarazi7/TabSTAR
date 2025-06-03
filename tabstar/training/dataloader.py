@@ -1,26 +1,44 @@
-from pandas import DataFrame, Series
-from torch.utils.data import Dataset, DataLoader
+import numpy as np
+import pandas as pd
+from torch.utils.data import DataLoader
 
 from tabstar.arch.config import BATCH_SIZE
 
 
-class PandasDataset(Dataset):
-    def __init__(self, x: DataFrame, y: Series):
-        self.x = x
-        self.y = y
+from torch.utils.data import Dataset
+
+from tabstar.tabstar_verbalizer import TabSTARData
+
+
+class TabSTARDataset(Dataset):
+    def __init__(self, data: TabSTARData):
+        self.x_txt = data.x_txt
+        self.x_num = data.x_num
+        if data.y is None:
+            raise TypeError("We can't create a dataset without target values.")
+        self.y = data.y.reset_index(drop=True)
+        self.d_output = data.d_output
 
     def __len__(self):
         return len(self.y)
 
-    def __getitem__(self, idx):
-        return self.x.iloc[idx], self.y.iloc[idx]
+    def __getitem__(self, idx: int):
+        x_txt = self.x_txt[idx]
+        x_num = self.x_num[idx]
+        y = self.y.iloc[idx]
+        return x_txt, x_num, y, self.d_output
     
-def get_dataloader(x: DataFrame, y: Series) -> DataLoader:
-    dataset = PandasDataset(x=x, y=y)
-    return DataLoader(dataset, shuffle=True, batch_size=BATCH_SIZE, num_workers=0, collate_fn=collate_fn)
+def get_dataloader(data: TabSTARData, is_train: bool) -> DataLoader:
+    dataset = TabSTARDataset(data)
+    return DataLoader(dataset, shuffle=is_train, batch_size=BATCH_SIZE, num_workers=0, collate_fn=collate_fn)
 
 
-def collate_fn(batch):
-    x_batch = [item[0] for item in batch]
-    y_batch = [item[1] for item in batch]
-    return x_batch, y_batch
+def collate_fn(batch) -> TabSTARData:
+    x_txt_batch, x_num_batch, y_batch, d_output_batch = zip(*batch)
+    # Assuming all batches have the same d_output, which is correct for finetune
+    d_output = d_output_batch[0]
+    x_txt = np.stack(x_txt_batch)
+    x_num = np.stack(x_num_batch)
+    y = pd.Series(y_batch)
+    data = TabSTARData(d_output=d_output, x_txt=x_txt, x_num=x_num, y=y)
+    return data

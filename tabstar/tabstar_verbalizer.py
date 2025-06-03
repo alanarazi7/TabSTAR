@@ -12,7 +12,8 @@ from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_
 
 @dataclass
 class TabSTARData:
-    x_txt: DataFrame
+    d_output: int
+    x_txt: DataFrame | np.ndarray
     x_num: np.ndarray
     y: Optional[Series] = None
 
@@ -22,9 +23,14 @@ class TabSTARVerbalizer:
         self.numerical_transformers: Dict[str, StandardScaler] = {}
         self.semantic_transformers: Dict[str, QuantileTransformer] = {}
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
+        self.d_output: Optional[int] = None
 
     def fit(self, X, y):
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
+        if self.is_cls:
+            self.d_output = len(self.target_transformer.classes_)
+        else:
+            self.d_output = 1
         numeric_cols = [col for col, dtype in X.dtypes.items() if is_numeric_dtype(dtype)]
         for col in numeric_cols:
             self.numerical_transformers[col] = fit_standard_scaler(s=X[col])
@@ -43,7 +49,8 @@ class TabSTARVerbalizer:
             idx = x_txt.columns.get_loc(col)
             s_num = transform_clipped_z_scores(s=x[col], scaler=self.numerical_transformers[col])
             x_num[:, idx] = s_num.to_numpy()
-        data = TabSTARData(x_txt=x_txt, x_num=x_num, y=y)
+        x_txt = x_txt.to_numpy()
+        data = TabSTARData(d_output=self.d_output, x_txt=x_txt, x_num=x_num, y=y)
         return data
 
     def inverse_transform_target(self, y):
