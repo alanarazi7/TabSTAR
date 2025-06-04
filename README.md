@@ -6,6 +6,13 @@ Welcome to the TabSTAR repository! You can use it in two modes: production mode 
 
 ---
 
+### 📚 Resources
+
+* **Paper**: [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
+* **Project Website**: [TabSTAR](https://eilamshapira.com/TabSTAR/)
+
+---
+
 ## Production Mode
 
 Use this section when you want to fit a pretrained TabSTAR model to your own dataset.
@@ -52,24 +59,20 @@ y_pred = for_downstream(x=x, y=y, is_cls=is_cls, x_test=x_test, y_test=y_test)
 2. **Call `for_downstream(...)`.**
 
    * This function loads a pretrained TabSTAR model over 400 datasets from OpenML and Kaggle.
-   * It returns `y_pred`, a NumPy array (or pandas‐compatible structure) of predictions on `x_test`.
+   * It returns `y_pred`, a NumPy array of predictions on `x_test`.
 
-That’s it—your predictions are now in `y_pred`. From there, you can compute accuracy, MSE, or other metrics as desired.
+That's it! From there, you can compute accuracy, MSE, or other metrics as desired.
 
 🔜 We still need to support a few features:
 - Allowing storing your model for later use.
 - Reverting regression predictions to the original scale (currently, they are z‐scored).
+- Anything else you need? Please open an issue!
 
 ---
 
 ## Research Mode
 
 Use this section when you want to pretrain, finetune, or run baselines on TabSTAR. It assumes you are actively working on model development, experimenting with different datasets, or comparing against other methods.
-
-### 📚 Resources
-
-* **Paper**: [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
-* **Project Website**: [TabSTAR](https://eilamshapira.com/TabSTAR/)
 
 ### Prerequisites
 
@@ -89,8 +92,8 @@ To pretrain TabSTAR on a specified number of datasets:
 python do_pretrain.py --n_datasets=256
 ```
 
-* `--n_datasets`: How many OpenML datasets to sample for the multi‐dataset pretraining loop.
-* You can reduce this number for quick debugging, but note that fewer datasets may harm downstream performance.
+* `--n_datasets`: How many datasets to sample for the multi‐dataset pretraining loop.
+* You can reduce this number for quick debugging, but note that fewer datasets will harm downstream performance.
 
 ### Finetuning
 
