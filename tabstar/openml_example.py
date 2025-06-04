@@ -2,6 +2,8 @@ import openml
 
 from tabstar.inference.inference import from_x_y
 
+# openml_id = 46667
+# is_cls = True
 openml_id = None        # TODO: set your OpenML dataset ID here
 is_cls = None           # TODO: set True for classification or False for regression
 

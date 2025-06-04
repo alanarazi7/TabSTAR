@@ -8,3 +8,4 @@ __pycache__/
 /catboost_info/
 /wandb/
 /sweeps/wandb
+/.tabstar_checkpoint/

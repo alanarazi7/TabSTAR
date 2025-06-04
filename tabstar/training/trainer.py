@@ -51,7 +51,7 @@ class TabStarTrainer:
             if val_metric > self.early_stopper.metric:
                 emoji = "🥇"
             else:
-                emoji = f"😓 [{self.early_stopper.failed} / {self.early_stopper.patience}]"
+                emoji = f"😓 [{self.early_stopper.failed + 1} / {self.early_stopper.patience} without improvement]"
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
             self.early_stopper.update(val_metric)
             if self.early_stopper.is_best:
