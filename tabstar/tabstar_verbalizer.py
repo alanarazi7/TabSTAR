@@ -62,7 +62,5 @@ class TabSTARVerbalizer:
         return data
 
     def inverse_transform_target(self, y):
-        # if self.target_transformer_ is not None:
-        #     return self.target_transformer_.inverse_transform(y)
-        # return y
-        raise NotImplementedError
+        assert isinstance(self.target_transformer, StandardScaler)
+        return self.target_transformer.inverse_transform(y)

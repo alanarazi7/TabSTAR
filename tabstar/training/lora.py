@@ -29,6 +29,6 @@ def load_pretrained() -> PeftModel:
 def load_finetuned(save_dir: str) -> PeftModel:
     if not exists(save_dir):
         raise FileNotFoundError(f"Checkpoint path {save_dir} does not exist.")
-    base_model = TabStarModel.from_pretrained(save_dir)
+    base_model = TabStarModel.from_pretrained("alana89/TabSTAR")
     model = PeftModel.from_pretrained(base_model, save_dir)
     return model

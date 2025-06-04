@@ -30,9 +30,7 @@ class BaseTabSTAR:
         self.model_ = trainer.model
 
     def predict(self, X):
-        if not isinstance(self.model_, PeftModel):
-            raise ValueError("Model is not trained yet. Call fit() before predict().")
-        return self._infer(X)
+        raise NotImplementedError("Must be implemented in subclass")
 
     @property
     def is_cls(self) -> bool:
@@ -64,6 +62,14 @@ class BaseTabSTAR:
 
 class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
 
+    def predict(self, X):
+        if not isinstance(self.model_, PeftModel):
+            raise ValueError("Model is not trained yet. Call fit() before predict().")
+        predictions = self._infer(X)
+        if predictions.ndim == 1:
+            return np.round(predictions)
+        return np.argmax(predictions, axis=1)
+
     def predict_proba(self, X):
         return self._infer(X)
 
@@ -74,6 +80,14 @@ class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
 
 class TabSTARRegressor(BaseTabSTAR, BaseEstimator, RegressorMixin):
 
+    def predict(self, X):
+        if not isinstance(self.model_, PeftModel):
+            raise ValueError("Model is not trained yet. Call fit() before predict().")
+        z_scores = self._infer(X)
+        y_pred = self.preprocessor_.inverse_transform_target(z_scores)
+        return y_pred
+
+    @property
     def is_cls(self) -> bool:
         return False
 

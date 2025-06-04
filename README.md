@@ -1,6 +1,7 @@
 <img src="tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
-Welcome to the TabSTAR repository! You can use it in two modes: production mode for fitting TabSTAR on your own dataset, and research mode to pretrain TabSTAR and replicate our work in the paper. 
+**Welcome to the TabSTAR repository! 👋**   
+You can use it in two modes: production mode for fitting TabSTAR on your own dataset, and research mode to pretrain TabSTAR and replicate our work in the paper. 
 
 🚧 The repository is under construction: Any bugs or feature request? Please open an issue! 🚧
 
@@ -15,8 +16,8 @@ Welcome to the TabSTAR repository! You can use it in two modes: production mode 
 
 ## Production Mode
 
-Use this mode if you want to fit a pretrained TabSTAR model to your own dataset.
-Note that currently we still don't support reloading that model for later use, but this is coming soon! 🔜
+Use this mode if you want to fit a pretrained TabSTAR model to your own dataset.  
+(Note that currently we still don't support reloading that model for later use, but this is coming soon! 🔜)
 
 ### Installation
 
@@ -26,32 +27,56 @@ source init.sh
 
 ### Inference Example
 
-**Explanation of usage:**
-
-A template for using TabSTAR in production mode is provided in `do_tabstar.py`.
-
-1. **Import and prepare your data.**
-
-   * `x_train` must be a `pandas.DataFrame` containing all features.
-   * `y_train` must be a `pandas.Series` containing the corresponding labels (for regression or classification).
-   * Set `is_cls=True` if you are solving a classification problem; `is_cls=False` for regression.
-   * Provide your test split via `x_test` and `y_test`, or we'll automatically do it for you.
-2. **Call `for_downstream(...)`.**
-
-   * This function loads a pretrained TabSTAR model over 400 datasets from OpenML and Kaggle.
-   * It returns `y_pred`, a NumPy array of predictions on `x_test`.
-
-That's it!
-
-**Full Example** 
-
-Here we show a working example of TabSTAR over an OpenML public dataset, [`imdb_genre_prediction`](https://www.openml.org/search?type=data&id=46667).
-(Note that the pretrained model has already seen thi dataset, it's just an example of how to use the code.)
+TabSTAR uses the sklearn API, and it is as simple as this:
 
 ```python
-from do_tabstar_openml import do_tabstar_example
+import pandas as pd
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
-do_tabstar_example()
+from tabstar.tabstar_model import TabSTARClassifier
+
+x = pd.read_csv("tabstar/resources/imdb.csv")
+y = x.pop('Genre_is_Drama')
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
+tabstar = TabSTARClassifier()
+tabstar.fit(x_train, y_train)
+y_pred = tabstar.predict(x_test)
+print(classification_report(y_test, y_pred))
+```
+
+Below is a template you can use to quickly get started with TabSTAR in production mode.
+
+```python
+from pandas import DataFrame, Series
+from sklearn.model_selection import train_test_split
+
+from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
+
+# --- USER-PROVIDED INPUTS ---
+x_train = None  # TODO: load your feature DataFrame here
+y_train = None  # TODO: load your target Series here
+is_cls = None   # TODO: True for classification, False for regression
+x_test = None   # TODO Optional: load your test feature DataFrame (or leave as None)
+y_test = None   # TODO Optional: load your test target Series (or leave as None)
+# -----------------------------
+
+# Sanity checks
+assert isinstance(x_train, DataFrame), "x should be a pandas DataFrame"
+assert isinstance(y_train, Series), "y should be a pandas Series"
+assert isinstance(is_cls, bool), "is_cls should be a boolean indicating classification or regression"
+
+if x_test is None:
+    assert y_test is None, "If x_test is None, y_test must also be None"
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=0.1)
+
+assert isinstance(x_test, DataFrame), "x_test should be a pandas DataFrame"
+assert isinstance(y_test, Series), "y_test should be a pandas Series"
+
+tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
+tabstar = tabstar_cls()
+tabstar.fit(x_train, y_train)
+y_pred = tabstar.predict(x_test)
 ```
 
 ---
@@ -78,8 +103,7 @@ To pretrain TabSTAR on a specified number of datasets:
 python do_pretrain.py --n_datasets=256
 ```
 
-* `--n_datasets`: How many datasets to sample for the multi‐dataset pretraining loop.
-* You can reduce this number for quick debugging, but note that fewer datasets will harm downstream performance.
+`--n_datasets` determines how many datasets to use for pretraining. You can reduce this number for quick debugging, but note this will harm downstream performance.
 
 ### Finetuning
 
@@ -89,7 +113,7 @@ Once pretraining finishes, note the printed `<PRETRAINED_EXP>` identifier. Then 
 python do_finetune.py --pretrain_exp=<PRETRAINED_EXP> --dataset_id=46655
 ```
 
-* `--dataset_id`: An ID for the downstream task you want to finetune on. Currently, these datasets must come from a closed list of datasets. 
+`--dataset_id` is an ID for the downstream task you want to evaluate yourself on. Only the 400 datasets in the paper are supported.  
 
 ### Baseline Comparison
 
@@ -99,8 +123,7 @@ If you want to compare TabSTAR against a classic baseline (e.g., random forest):
 python do_baseline.py --model=rf --dataset_id=46655
 ```
 
-* `--model=rf` chooses a random forest from scikit‐learn; you can also try other names supported by `do_baseline.py` (check the script for details).
-* The script will load features from OpenML and fit the chosen baseline to the same train/val split used by TabSTAR.
+You can also try other names models supported by `do_baseline.py` (check the script for details).
 
 ### License
 

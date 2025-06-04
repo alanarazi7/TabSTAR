@@ -1,6 +1,6 @@
 from pandas import DataFrame, Series
+from sklearn.model_selection import train_test_split
 
-from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
 
 # --- USER-PROVIDED INPUTS ---
@@ -16,8 +16,9 @@ assert isinstance(x_train, DataFrame), "x should be a pandas DataFrame"
 assert isinstance(y_train, Series), "y should be a pandas Series"
 assert isinstance(is_cls, bool), "is_cls should be a boolean indicating classification or regression"
 
-if x_test is None and y_test is None:
-    x_train, x_test, y_train, y_test = split_to_test(x_train, y_train, is_cls=is_cls)
+if x_test is None:
+    assert y_test is None, "If x_test is None, y_test must also be None"
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=0.1)
 
 assert isinstance(x_test, DataFrame), "x_test should be a pandas DataFrame"
 assert isinstance(y_test, Series), "y_test should be a pandas Series"
