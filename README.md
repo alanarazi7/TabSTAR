@@ -2,7 +2,7 @@
 
 Welcome to the TabSTAR repository! You can use it in two modes: production mode for fitting TabSTAR on your own dataset, and research mode to pretrain TabSTAR and replicate our work in the paper. 
 
-🚧 The repository is under construction: We'll appreciate your feedback! 🚧
+🚧 The repository is under construction: Any bugs or feature request? Please open an issue! 🚧
 
 ---
 
@@ -15,7 +15,8 @@ Welcome to the TabSTAR repository! You can use it in two modes: production mode 
 
 ## Production Mode
 
-Use this section when you want to fit a pretrained TabSTAR model to your own dataset.
+Use this mode if you want to fit a pretrained TabSTAR model to your own dataset.
+Note that currently we still don't support reloading that model for later use, but this is coming soon! 🔜
 
 ### Installation
 
@@ -25,48 +26,33 @@ source init.sh
 
 ### Inference Example
 
-```python
-from pandas import DataFrame, Series
-from tabstar.inference.inference import for_downstream
-
-# --- USER-PROVIDED INPUTS ---
-x = None        # TODO: load your feature DataFrame here
-y = None        # TODO: load your target Series here
-is_cls = None   # TODO: True for classification, False for regression
-x_test = None   # TODO Optional: load your test feature DataFrame (or leave as None)
-y_test = None   # TODO Optional: load your test target Series (or leave as None)
-# -----------------------------
-
-# Sanity checks
-assert isinstance(x, DataFrame), "x should be a pandas DataFrame"
-assert isinstance(y, Series),  "y should be a pandas Series"
-assert isinstance(is_cls, bool), "is_cls should be a boolean indicating classification or regression"
-assert isinstance(x_test, (DataFrame, type(None))), "x_test should be a pandas DataFrame or None"
-assert isinstance(y_test, (Series, type(None))), "y_test should be a pandas Series or None"
-
-# Run inference (optionally, a train/val split will be created if x_test or y_test is None)
-y_pred = for_downstream(x=x, y=y, is_cls=is_cls, x_test=x_test, y_test=y_test)
-```
-
 **Explanation of usage:**
+
+A template for using TabSTAR in production mode is provided in `do_tabstar.py`.
 
 1. **Import and prepare your data.**
 
-   * `x` must be a `pandas.DataFrame` containing all features.
-   * `y` must be a `pandas.Series` containing the corresponding labels (for regression or classification).
+   * `x_train` must be a `pandas.DataFrame` containing all features.
+   * `y_train` must be a `pandas.Series` containing the corresponding labels (for regression or classification).
    * Set `is_cls=True` if you are solving a classification problem; `is_cls=False` for regression.
-   * If you already have a separate test split, provide it via `x_test` and `y_test`.  If you leave `x_test`/`y_test` as `None`, we'll automatically split off a portion of `(x, y)` for validation.
+   * Provide your test split via `x_test` and `y_test`, or we'll automatically do it for you.
 2. **Call `for_downstream(...)`.**
 
    * This function loads a pretrained TabSTAR model over 400 datasets from OpenML and Kaggle.
    * It returns `y_pred`, a NumPy array of predictions on `x_test`.
 
-That's it! From there, you can compute accuracy, MSE, or other metrics as desired.
+That's it!
 
-🔜 We still need to support a few features:
-- Allowing storing your model for later use.
-- Reverting regression predictions to the original scale (currently, they are z‐scored).
-- Anything else you need? Please open an issue!
+**Full Example** 
+
+Here we show a working example of TabSTAR over an OpenML public dataset, [`imdb_genre_prediction`](https://www.openml.org/search?type=data&id=46667).
+(Note that the pretrained model has already seen thi dataset, it's just an example of how to use the code.)
+
+```python
+from do_tabstar_openml import do_tabstar_example
+
+do_tabstar_example()
+```
 
 ---
 

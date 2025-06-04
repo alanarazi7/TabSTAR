@@ -16,7 +16,7 @@ def detect_feature_types(x: DataFrame) -> DataFrame:
             x[col_name] = series_to_dt(s=s)
         elif is_numeric_dtype(dtype) or is_mostly_numerical(s=s):
             x[col_name] = convert_series_to_numeric(s=s)
-        elif is_object_dtype(dtype) or is_bool_dtype(dtype):
+        elif is_object_dtype(dtype) or is_bool_dtype(dtype) or isinstance(dtype, pd.CategoricalDtype):
             x[col_name] = s.astype(object).fillna(MISSING_VALUE).astype(str)
         else:
             raise ValueError(f"Unsupported dtype {dtype} for column {col}")
