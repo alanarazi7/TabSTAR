@@ -7,7 +7,7 @@ from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
 from tabstar.training.metrics import calculate_metric
 
-def from_x_y(x: DataFrame, y: Series, is_cls: bool, x_test: Optional[DataFrame], y_test: Optional[Series]) -> np.ndarray:
+def for_downstream(x: DataFrame, y: Series, is_cls: bool, x_test: Optional[DataFrame], y_test: Optional[Series]) -> np.ndarray:
     if isinstance(x_test, DataFrame) and isinstance(y_test, Series):
         x_train = x
         y_train = y

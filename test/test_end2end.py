@@ -1,5 +1,5 @@
 import openml
-from tabstar.inference.inference import from_x_y
+from tabstar.inference.inference import for_downstream
 
 def test_openml_example():
     # This should take a few minutes
@@ -7,4 +7,4 @@ def test_openml_example():
     is_cls = True
     dataset = openml.datasets.get_dataset(openml_id, download_data=True, download_features_meta_data=True)
     x, y, _, _ = dataset.get_data(target=dataset.default_target_attribute)
-    from_x_y(x=x, y=y, is_cls=is_cls, x_test=None, y_test=None)
+    for_downstream(x=x, y=y, is_cls=is_cls, x_test=None, y_test=None)
