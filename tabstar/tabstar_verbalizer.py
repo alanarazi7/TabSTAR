@@ -36,6 +36,8 @@ class TabSTARVerbalizer:
         self.y_values: Optional[List[str]] = None
 
     def fit(self, X, y):
+        if len(X.columns) >= 200:
+            print("⚠️ Warning: More than 200 columns detected. This will probably lead to memory issues.")
         raise_if_null_target(y)
         self.assert_no_duplicate_columns(X)
         x, y = densify_objects(x=X, y=y)
