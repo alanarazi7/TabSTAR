@@ -73,6 +73,7 @@ class TabStarTrainer:
             self.steps += 1
             if self.steps % self.config.accumulation_steps == 0:
                 self._do_update()
+                break
         if self.steps % self.config.accumulation_steps != 0:
             self._do_update()
         epoch_loss = total_loss / total_samples
