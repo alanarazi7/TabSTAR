@@ -5,7 +5,7 @@ from torch.optim.lr_scheduler import OneCycleLR, LRScheduler
 from tabstar.arch.config import LORA_LR
 
 WARMUP_PROPORTION = 0.1
-MAX_EPOCHS = 50
+MAX_EPOCHS = 1
 
 
 def get_optimizer(model: nn.Module) -> AdamW:
