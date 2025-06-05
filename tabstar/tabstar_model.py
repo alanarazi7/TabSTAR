@@ -6,7 +6,6 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import autocast
 
-from tabstar.preprocessing.preprocess import preprocess_raw
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
@@ -37,8 +36,7 @@ class BaseTabSTAR:
         raise NotImplementedError("Must be implemented in subclass")
 
     def _prepare_for_train(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
-        x, y = preprocess_raw(x=X, y=y)
-        x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        x_train, x_val, y_train, y_val = split_to_val(x=X, y=y, is_cls=self.is_cls)
         if self.preprocessor_ is None:
             self.preprocessor_ = TabSTARVerbalizer(is_cls=self.is_cls)
             self.preprocessor_.fit(x_train, y_train)
@@ -47,8 +45,7 @@ class BaseTabSTAR:
         return train_data, val_data
 
     def _infer(self, X) -> np.ndarray:
-        x, _ = preprocess_raw(x=X, y=None)
-        data = self.preprocessor_.transform(x, y=None)
+        data = self.preprocessor_.transform(X, y=None)
         dataloader = get_dataloader(data, is_train=False, batch_size=128)
         predictions = []
         for data in dataloader:

@@ -1,31 +1,28 @@
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
 from pandas import Series, DataFrame
 from pandas.core.dtypes.common import is_datetime64_any_dtype
 from skrub import DatetimeEncoder
 
-from tabstar.preprocessing.detection import is_mostly_numerical
 
-
-def preprocess_dates(x: DataFrame) -> DataFrame:
-    date_columns = [col for col, dtype in x.dtypes.items() if is_datetime64_any_dtype(dtype)]
-    for col in date_columns:
-        dt_df = date_feature_to_df(s=x[col])
+def transform_date_features(x: DataFrame, date_transformers: Dict[str, DatetimeEncoder]) -> DataFrame:
+    for col, dt_encoder in date_transformers.items():
+        s = series_to_dt(s=x[col])
+        dt_df = dt_encoder.transform(s)
         x = x.drop(columns=[col])
         x = pd.concat([x, dt_df], axis=1)
     return x
 
-
-def date_feature_to_df(s: Series) -> DataFrame:
-    date_df = DatetimeEncoder(add_weekday=True, add_total_seconds=True).fit_transform(s)
-    date_columns = [c for c in date_df.columns if len(set(date_df[c])) >= 2]
+def fit_date_encoders(x: DataFrame) -> Dict[str, DatetimeEncoder]:
+    date_encoders = {}
+    date_columns = [str(col) for col, dtype in x.dtypes.items() if is_datetime64_any_dtype(dtype)]
     for col in date_columns:
-        dtype = float if is_mostly_numerical(s=date_df[col]) else str
-        date_df[col] = date_df[col].astype(dtype)
-    if not date_columns:
-        raise ValueError(f"No valid date features found in the series: {s}.")
-    return date_df[date_columns]
+        dt_s = series_to_dt(s=x[col])
+        encoder = DatetimeEncoder(add_weekday=True, add_total_seconds=True)
+        encoder.fit(dt_s)
+        date_encoders[col] = encoder
+    return date_encoders
 
 def series_to_dt(s: Series) -> Series:
     # TODO: do we want to handle missing values here?
