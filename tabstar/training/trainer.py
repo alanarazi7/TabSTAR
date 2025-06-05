@@ -102,7 +102,7 @@ class TabStarTrainer:
             loss_fn = CrossEntropyLoss()
             dtype = torch.long
         y = torch.tensor(data.y, dtype=dtype).to(self.device)
-        if y.ndim == 1:
+        if data.d_output == 1 and y.ndim == 1:
             y = y.unsqueeze(1)
         loss = loss_fn(predictions, y)
         return loss, predictions
