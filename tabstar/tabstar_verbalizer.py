@@ -3,13 +3,18 @@ from typing import Optional, Dict, List
 
 import numpy as np
 from pandas import DataFrame, Series
-from pandas.core.dtypes.common import is_numeric_dtype
 from sklearn.preprocessing import StandardScaler, QuantileTransformer, LabelEncoder
+from skrub import DatetimeEncoder
 
 from tabstar.preprocessing.binning import fit_numerical_bins, transform_numerical_bins
+from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
+from tabstar.preprocessing.feat_types import detect_numerical_features, transform_feature_types
+from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_z_scores
+from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
-from tabstar.preprocessing.verbalize import prepend_target_tokens
+from tabstar.preprocessing.texts import replace_column_names
+from tabstar.preprocessing.verbalize import prepend_target_tokens, verbalize_textual_features
 
 
 @dataclass
@@ -22,6 +27,7 @@ class TabSTARData:
 class TabSTARVerbalizer:
     def __init__(self, is_cls: bool):
         self.is_cls = is_cls
+        self.date_transformers: Dict[str, DatetimeEncoder] = {}
         self.numerical_transformers: Dict[str, StandardScaler] = {}
         self.semantic_transformers: Dict[str, QuantileTransformer] = {}
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
@@ -30,24 +36,38 @@ class TabSTARVerbalizer:
         self.y_values: Optional[List[str]] = None
 
     def fit(self, X, y):
+        raise_if_null_target(y)
+        self.assert_no_duplicate_columns(X)
+        x, y = densify_objects(x=X, y=y)
+        self.date_transformers = fit_date_encoders(x=x)
+        x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        x, y = replace_column_names(x=x, y=y)
+        numerical_features = detect_numerical_features(x)
+        x = transform_feature_types(x=x, numerical_features=numerical_features)
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
         if self.is_cls:
             self.d_output = len(self.target_transformer.classes_)
         else:
             self.d_output = 1
-        numeric_cols = [col for col, dtype in X.dtypes.items() if is_numeric_dtype(dtype)]
-        for col in numeric_cols:
-            self.numerical_transformers[col] = fit_standard_scaler(s=X[col])
-            self.semantic_transformers[col] = fit_numerical_bins(s=X[col])
+        for col in numerical_features:
+            self.numerical_transformers[col] = fit_standard_scaler(s=x[col])
+            self.semantic_transformers[col] = fit_numerical_bins(s=x[col])
         self.y_name = str(y.name)
         if self.is_cls:
             self.y_values = sorted(self.target_transformer.classes_)
 
     def transform(self, x: DataFrame, y: Optional[Series]) -> TabSTARData:
+        self.assert_no_duplicate_columns(x)
+        x, y = densify_objects(x=x, y=y)
+        x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        x, y = replace_column_names(x=x, y=y)
+        num_cols = sorted(self.numerical_transformers)
+        x = transform_feature_types(x=x, numerical_features=set(num_cols))
         if y is not None:
+            raise_if_null_target(y)
             y = transform_preprocess_y(y=y, scaler=self.target_transformer)
+        x = verbalize_textual_features(x=x)
         x = prepend_target_tokens(x=x, y_name=self.y_name, y_values=self.y_values)
-        num_cols = list(set(self.numerical_transformers))
         text_cols = [col for col in x.columns if col not in num_cols]
         x_txt = x[text_cols + num_cols].copy()
         # x_num will hold the numerical features transformed to z-scores, and zero otherwise
@@ -64,3 +84,8 @@ class TabSTARVerbalizer:
     def inverse_transform_target(self, y):
         assert isinstance(self.target_transformer, StandardScaler)
         return self.target_transformer.inverse_transform(y)
+
+    @staticmethod
+    def assert_no_duplicate_columns(x: DataFrame):
+        if len(set(x.columns)) != len(x.columns):
+            raise ValueError("Duplicate column names found in DataFrame!")

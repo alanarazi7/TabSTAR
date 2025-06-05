@@ -1,26 +1,36 @@
+from typing import Set
+
 import pandas as pd
 from pandas import DataFrame, Series
 from pandas.core.dtypes.common import is_datetime64_any_dtype, is_numeric_dtype, is_object_dtype, is_bool_dtype
 
-from tabstar.preprocessing.dates import series_to_dt
 from tabstar.preprocessing.detection import is_mostly_numerical, is_numeric
 from tabstar.preprocessing.nulls import convert_numeric_with_missing, MISSING_VALUE
 
 
-# TODO: for future versions, maybe best to rely on maintained packages, e.g. skrub's TableVectorizer
-def detect_feature_types(x: DataFrame) -> DataFrame:
-    for col, dtype in x.dtypes.items():
-        col_name = str(col)
-        s = x[col_name]
-        if is_datetime64_any_dtype(dtype):
-            x[col_name] = series_to_dt(s=s)
-        elif is_numeric_dtype(dtype) or is_mostly_numerical(s=s):
-            x[col_name] = convert_series_to_numeric(s=s)
-        elif is_object_dtype(dtype) or is_bool_dtype(dtype) or isinstance(dtype, pd.CategoricalDtype):
-            x[col_name] = s.astype(object).fillna(MISSING_VALUE).astype(str)
+def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataFrame:
+    for col in x.columns:
+        if col in numerical_features:
+            x[col] = convert_series_to_numeric(s=x[col])
         else:
-            raise ValueError(f"Unsupported dtype {dtype} for column {col}")
+            x[col] = x[col].astype(object).fillna(MISSING_VALUE).astype(str)
     return x
+
+
+def detect_numerical_features(x: DataFrame) -> Set[str]:
+    return {col for col in x.columns if is_numerical_feature(s=x[col])}
+
+# TODO: for future versions, maybe best to rely on maintained packages, e.g. skrub's TableVectorizer
+def is_numerical_feature(s: Series) -> bool:
+    if is_datetime64_any_dtype(s.dtype):
+        raise TypeError(f"At this point, dates should have already been transformed.")
+    elif is_numeric_dtype(s.dtype) or is_mostly_numerical(s=s):
+        return True
+    elif is_object_dtype(s.dtype) or is_bool_dtype(s.dtype) or isinstance(s.dtype, pd.CategoricalDtype):
+        return False
+    else:
+        raise ValueError(f"Unsupported dtype {s.dtype} for series {s.name}")
+
 
 def convert_series_to_numeric(s: Series) -> Series:
     if pd.api.types.is_numeric_dtype(s):
