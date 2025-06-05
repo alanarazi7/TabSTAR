@@ -66,7 +66,7 @@ class TabStarTrainer:
         self.model.train()
         total_loss = 0.0
         total_samples = 0
-        for data in dataloader:
+        for data in tqdm(dataloader, desc="Batches", leave=False):
             batch_loss = self._train_batch(data)
             total_loss += batch_loss * len(data.y)
             total_samples += len(data.y)
