@@ -7,6 +7,7 @@ from tabstar.arch.config import TabStarConfig, E5_SMALL
 from tabstar.arch.interaction import InteractionEncoder
 from tabstar.arch.fusion import NumericalFusion
 from tabstar.arch.prediction import PredictionHead
+from tabstar.training.devices import clear_cuda_cache
 from tabular.tabstar.params.constants import D_MODEL
 
 
@@ -44,10 +45,7 @@ class TabStarModel(PreTrainedModel):
                 return self.get_textual_embedding_in_batches(x_txt, text_batch_size=text_batch_size)
             except torch.cuda.OutOfMemoryError:
                 text_batch_size //= 2
-                try:
-                    torch.cuda.empty_cache()
-                except RuntimeError:
-                    pass
+                clear_cuda_cache()
                 print(f"🤯 Reducing batch size to {text_batch_size} due to OOM")
         raise RuntimeError(f"🤯 OOM even with batch size 1!")
 
