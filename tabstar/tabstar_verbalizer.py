@@ -47,6 +47,9 @@ class TabSTARVerbalizer:
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
         x, y = replace_column_names(x=x, y=y)
         numerical_features = detect_numerical_features(x)
+        self.vprint(f"🔢 Detected {len(numerical_features)} numerical features: {sorted(numerical_features)}")
+        text_features = [col for col in x.columns if col not in numerical_features]
+        self.vprint(f"📝 Detected {len(text_features)} textual features: {sorted(text_features)}")
         x = transform_feature_types(x=x, numerical_features=numerical_features)
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
         if self.is_cls:
