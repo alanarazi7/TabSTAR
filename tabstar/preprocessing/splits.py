@@ -25,4 +25,8 @@ def split_to_val(x: DataFrame, y: Series, is_cls: bool) -> Tuple[DataFrame, Data
 
 def do_split(x: DataFrame, y: Series, test_size: float, is_cls: bool) -> Tuple[DataFrame, DataFrame, Series, Series]:
     stratify = y if is_cls else None
-    return train_test_split(x, y, test_size=test_size, random_state=SEED, stratify=stratify)
+    try:
+        return train_test_split(x, y, test_size=test_size, random_state=SEED, stratify=stratify)
+    except ValueError:
+        # If stratification fails, fallback to random split
+        return train_test_split(x, y, test_size=test_size, random_state=SEED)
