@@ -18,4 +18,5 @@ def _get_device_type() -> str:
     elif torch.backends.mps.is_available():
         torch.mps.empty_cache()
         return "mps"
+    print(f"⚠️ No GPU available, using CPU. This may lead to slow performance.")
     return "cpu"
