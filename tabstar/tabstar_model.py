@@ -7,6 +7,7 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import autocast
 
+from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
@@ -42,6 +43,7 @@ class BaseTabSTAR:
             raise ValueError("X must be a pandas DataFrame.")
         if not isinstance(y, Series):
             raise ValueError("y must be a pandas Series.")
+        raise_if_null_target(y)
         self.vprint(f"Preparing data for training. X shape: {X.shape}, y shape: {y.shape}")
         x_train, x_val, y_train, y_val = split_to_val(x=X, y=y, is_cls=self.is_cls)
         self.vprint(f"Split to validation set. Train has {len(x_train)} samples, validation has {len(x_val)} samples.")
