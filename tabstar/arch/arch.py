@@ -44,7 +44,10 @@ class TabStarModel(PreTrainedModel):
                 return self.get_textual_embedding_in_batches(x_txt, text_batch_size=text_batch_size)
             except torch.cuda.OutOfMemoryError as oom:
                 text_batch_size //= 2
-                torch.cuda.empty_cache()
+                try:
+                    torch.cuda.empty_cache()
+                except RuntimeError:
+                    pass
                 print(f"Reducing batch size to {text_batch_size} due to OOM: {oom}")
         raise RuntimeError(f"OOM even with batch size 1!")
 

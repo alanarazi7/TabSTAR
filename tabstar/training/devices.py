@@ -6,7 +6,10 @@ def get_device() -> torch.device:
 
 def _get_device_type() -> str:
     if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+        try:
+            torch.cuda.empty_cache()
+        except RuntimeError:
+            pass
         return "cuda"
     elif torch.backends.mps.is_available():
         torch.mps.empty_cache()
