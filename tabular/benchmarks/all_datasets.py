@@ -1,11 +1,3 @@
-from tabular.benchmarks.amlb import AMLB
-from tabular.benchmarks.carte_benchmark import CARTE_BENCHMARK
-from tabular.benchmarks.ctr23 import CTR23_REG
-from tabular.benchmarks.grinsztajn import GRINSZTAJN
-from tabular.benchmarks.multimodal import MULTIMODAL
-from tabular.benchmarks.tabzilla import TABZILLA
-from tabular.benchmarks.vectorizing_strings import VECTORIZING
-from tabular.datasets.metadata import DATA2EXAMPLES
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID
 
 
@@ -36,38 +28,3 @@ TOO_MANY_FEATURES = [
     OpenMLDatasetID.REG_SCIENCE_QSAR_TID_10980,                      # 1024
     OpenMLDatasetID.REG_SCIENCE_QSAR_TID_11,                         # 1024
 ]
-
-
-TEXTUAL_DATASETS = list({d for ls in [MULTIMODAL, CARTE_BENCHMARK, VECTORIZING] for d in ls})
-
-ANALYSIS_TEXT_DOWNSTREAM = [OpenMLDatasetID.REG_SPORTS_FIFA22_WAGES,
-                            KaggleDatasetID.MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23,
-                            KaggleDatasetID.MUL_FOOD_MICHELIN_GUIDE_RESTAURANTS,
-                            KaggleDatasetID.REG_FOOD_RAMEN_RATINGS_2022,
-                            UrlDatasetID.REG_SOCIAL_BOOKS_GOODREADS,
-                            KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES,
-                            OpenMLDatasetID.MUL_CONSUMER_WOMEN_ECOMMERCE_CLOTHING_REVIEW,
-                            OpenMLDatasetID.MUL_SOCIAL_NEWS_CHANNEL_CATEGORY,
-                            OpenMLDatasetID.REG_CONSUMER_MERCARI_ONLINE_MARKETPLACE,
-                            KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY,
-                            KaggleDatasetID.REG_SOCIAL_VIDEO_GAMES_SALES,
-                            UrlDatasetID.REG_CONSUMER_BABIES_R_US_PRICES,
-                            OpenMLDatasetID.REG_CONSUMER_BOOK_PRICE_PREDICTION,
-                            KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_PAKISTAN,
-                            KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING,
-                            OpenMLDatasetID.MUL_FOOD_WINE_REVIEW,
-                            OpenMLDatasetID.MUL_CONSUMER_PRODUCT_SENTIMENT,
-                            OpenMLDatasetID.MUL_PROFESSIONAL_DATA_SCIENTIST_SALARY,
-                            KaggleDatasetID.REG_SOCIAL_MUSEUMS_US_REVENUES,
-                            OpenMLDatasetID.BIN_PROFESSIONAL_KICKSTARTER_FUNDING, ]
-
-
-TEXTUAL_BIG = [d for d, n in DATA2EXAMPLES.items() if n > 10_000 and d in TEXTUAL_DATASETS]
-
-BENCHMARKS2DATASETS = {'AMLB': AMLB,
-                       'CTR23': CTR23_REG,
-                       'GRINSZTAJN': GRINSZTAJN,
-                       'MULTIMODAL': MULTIMODAL,
-                       'VECTORIZING': VECTORIZING,
-                       'CARTE': CARTE_BENCHMARK,
-                       'TABZILLA': TABZILLA}
