@@ -2,9 +2,13 @@ import openml
 from sklearn.model_selection import train_test_split
 
 from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
+from tabular.benchmarks.all_datasets import TOO_MANY_FEATURES
 from tabular.datasets.tabular_datasets import OpenMLDatasetID
 
 for name in OpenMLDatasetID:
+    if name in TOO_MANY_FEATURES:
+        print(f"Skipping dataset {name.name} (ID: {name.value}) due to too many features.")
+        continue
     print(f"Processing dataset: {name.name} (ID: {name.value})")
     openml_id = name.value
     is_cls = not name.name.startswith("REG")
