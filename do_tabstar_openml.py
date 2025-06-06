@@ -10,6 +10,9 @@ for name in OpenMLDatasetID:
     is_cls = not name.name.startswith("REG")
     dataset = openml.datasets.get_dataset(openml_id, download_data=True, download_features_meta_data=True)
     x, y, _, _ = dataset.get_data(target=dataset.default_target_attribute)
+    if y is None:
+        print(f"⚠️ No target variable found for dataset {name.name}. Skipping.")
+        continue
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
     tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
     tabstar = tabstar_cls(verbose=True)
