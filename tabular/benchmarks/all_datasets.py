@@ -11,7 +11,6 @@ from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, 
 
 # Datasets with too many features
 TOO_MANY_FEATURES = [
-    OpenMLDatasetID.BIN_ANONYM_ARCENE,                               # 10000
     OpenMLDatasetID.BIN_ANONYM_BIORESPONSE,                          # 1776
     OpenMLDatasetID.BIN_ANONYM_CHRISTINE,                            # 1636
     OpenMLDatasetID.BIN_ANONYM_GINA,                                 # 970
