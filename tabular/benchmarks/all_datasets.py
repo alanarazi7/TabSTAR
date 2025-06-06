@@ -3,7 +3,6 @@ from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, 
 
 # Datasets with too many features
 TOO_MANY_FEATURES = [
-    OpenMLDatasetID.MUL_HEALTHCARE_HEART_ARRHYTMIA,                  # 279
     OpenMLDatasetID.REG_ANONYM_MERCEDES_BENZ_GREENER_MANUFACTURING,  # 376
     OpenMLDatasetID.REG_ANONYM_SANTANDER_TRANSACTION_VALUE,          # 4991
     OpenMLDatasetID.REG_ANONYM_TOPO,                                 # 266
