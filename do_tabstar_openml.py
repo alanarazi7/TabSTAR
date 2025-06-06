@@ -16,9 +16,5 @@ for name in OpenMLDatasetID:
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
     tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
     tabstar = tabstar_cls(verbose=True)
-    # try:
     tabstar.fit(x_train, y_train)
     y_pred = tabstar.predict(x_test)
-    # except RuntimeError:
-    #     print(f"⚠️ RuntimeError while processing dataset {name.name}. Skipping.")
-    #     continue
