@@ -25,8 +25,9 @@ class TabSTARData:
     y: Optional[Series] = None
 
 class TabSTARVerbalizer:
-    def __init__(self, is_cls: bool):
+    def __init__(self, is_cls: bool, verbose: bool = False):
         self.is_cls = is_cls
+        self.verbose = verbose
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
         self.numerical_transformers: Dict[str, StandardScaler] = {}
         self.semantic_transformers: Dict[str, QuantileTransformer] = {}
@@ -42,6 +43,7 @@ class TabSTARVerbalizer:
         self.assert_no_duplicate_columns(X)
         x, y = densify_objects(x=X, y=y)
         self.date_transformers = fit_date_encoders(x=x)
+        self.vprint(f"📅 Detected {len(self.date_transformers)} date features: {sorted(self.date_transformers)}")
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
         x, y = replace_column_names(x=x, y=y)
         numerical_features = detect_numerical_features(x)
@@ -91,3 +93,7 @@ class TabSTARVerbalizer:
     def assert_no_duplicate_columns(x: DataFrame):
         if len(set(x.columns)) != len(x.columns):
             raise ValueError("Duplicate column names found in DataFrame!")
+
+    def vprint(self, s: str):
+        if self.verbose:
+            print(s)

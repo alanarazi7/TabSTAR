@@ -46,7 +46,7 @@ class BaseTabSTAR:
         x_train, x_val, y_train, y_val = split_to_val(x=X, y=y, is_cls=self.is_cls)
         self.vprint(f"Split to validation set. Train has {len(x_train)} samples, validation has {len(x_val)} samples.")
         if self.preprocessor_ is None:
-            self.preprocessor_ = TabSTARVerbalizer(is_cls=self.is_cls)
+            self.preprocessor_ = TabSTARVerbalizer(is_cls=self.is_cls, verbose=self.verbose)
             self.preprocessor_.fit(x_train, y_train)
         train_data = self.preprocessor_.transform(x_train, y_train)
         self.vprint(f"Transformed training data: {train_data.x_txt.shape=}, x_num shape: {train_data.x_num.shape=}")
@@ -66,9 +66,8 @@ class BaseTabSTAR:
         return predictions
 
     def vprint(self, s: str):
-        if not self.verbose:
-            return
-        print(s)
+        if self.verbose:
+            print(s)
 
 
 class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
