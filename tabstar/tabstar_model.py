@@ -16,7 +16,8 @@ from tabstar.training.utils import concat_predictions
 
 
 class BaseTabSTAR:
-    def __init__(self, preprocessor: Optional[TabSTARVerbalizer] = None):
+    def __init__(self, verbose: bool = False, preprocessor: Optional[TabSTARVerbalizer] = None):
+        self.verbose = verbose
         self.preprocessor_ = preprocessor
         self.model_: Optional[PeftModel] = None
         self.device = get_device()
@@ -36,11 +37,14 @@ class BaseTabSTAR:
         raise NotImplementedError("Must be implemented in subclass")
 
     def _prepare_for_train(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
+        self.vprint(f"Preparing data for training. X shape: {X.shape}, y shape: {y.shape}")
         x_train, x_val, y_train, y_val = split_to_val(x=X, y=y, is_cls=self.is_cls)
+        self.vprint(f"Split to validation set. Train has {len(x_train)} samples, validation has {len(x_val)} samples.")
         if self.preprocessor_ is None:
             self.preprocessor_ = TabSTARVerbalizer(is_cls=self.is_cls)
             self.preprocessor_.fit(x_train, y_train)
         train_data = self.preprocessor_.transform(x_train, y_train)
+        self.vprint(f"Transformed training data: {train_data.x_txt.shape=}, x_num shape: {train_data.x_num.shape=}")
         val_data = self.preprocessor_.transform(x_val, y_val)
         return train_data, val_data
 
@@ -55,6 +59,11 @@ class BaseTabSTAR:
                 predictions.append(batch_predictions)
         predictions = concat_predictions(predictions)
         return predictions
+
+    def vprint(self, s: str):
+        if not self.verbose:
+            return
+        print(s)
 
 
 class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
