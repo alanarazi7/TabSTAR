@@ -35,14 +35,20 @@ else
     echo "⚠️ requirements.txt not found; skipping dependency install."
 fi
 
-# Install the tabstar package itself in editable mode
+# Install the tabstar package itself in editable mode (finds src/tabstar)
 echo "📦 Installing tabstar package (editable)"
 uv pip install -e . || echo "⚠️ Failed to install tabstar package; continuing..."
 
 # Make our loose 'tabular/' folder importable too
 REPO_ROOT="$(pwd)"
 ACTIVATE="$ENV_DIR/bin/activate"
-echo "🛠 Adding repo root ($REPO_ROOT) to PYTHONPATH in venv activate script"
-echo "export PYTHONPATH=\"\$PYTHONPATH:$REPO_ROOT\"" >> "$ACTIVATE"
+
+# Avoid duplicate PYTHONPATH lines if running setup repeatedly
+if ! grep -q "$REPO_ROOT" "$ACTIVATE"; then
+    echo "🛠 Adding repo root ($REPO_ROOT) to PYTHONPATH in venv activate script"
+    echo "export PYTHONPATH=\"\$PYTHONPATH:$REPO_ROOT\"" >> "$ACTIVATE"
+else
+    echo "🛠 Repo root already in PYTHONPATH for venv activate script"
+fi
 
 echo "🎉 Setup completed! To activate in a new shell, run: source $ENV_DIR/bin/activate"
