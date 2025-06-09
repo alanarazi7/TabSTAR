@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tabstar"
+version = "0.1.0"
+description = "TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations"
+readme = "README.md"
+authors = [
+  { name = "Alan Arazi", email = "alanarazi7@gmail.com" }
+]
+license = { text = "MIT" }
+
+# TODO: improve this (for now, only pick up the tabstar package (ignore tabular/))
+[tool.setuptools.packages.find]
+where   = ["."]
+include = ["tabstar*"]

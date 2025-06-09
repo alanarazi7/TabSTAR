@@ -35,4 +35,14 @@ else
     echo "⚠️ requirements.txt not found; skipping dependency install."
 fi
 
+# Install the tabstar package itself in editable mode
+echo "📦 Installing tabstar package (editable)"
+uv pip install -e . || echo "⚠️ Failed to install tabstar package; continuing..."
+
+# Make our loose 'tabular/' folder importable too
+REPO_ROOT="$(pwd)"
+ACTIVATE="$ENV_DIR/bin/activate"
+echo "🛠 Adding repo root ($REPO_ROOT) to PYTHONPATH in venv activate script"
+echo "export PYTHONPATH=\"\$PYTHONPATH:$REPO_ROOT\"" >> "$ACTIVATE"
+
 echo "🎉 Setup completed! To activate in a new shell, run: source $ENV_DIR/bin/activate"
