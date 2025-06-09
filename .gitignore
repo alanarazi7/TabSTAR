@@ -1,11 +1,23 @@
-__pycache__/
 .DS_Store
 .env
 .idea
 .venv
-.TabSTAR-env
 /cache/
 /catboost_info/
 /wandb/
 /sweeps/wandb
 /.tabstar_checkpoint/
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.TabSTAR-env/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
