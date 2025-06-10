@@ -32,13 +32,15 @@ source init.sh
 TabSTAR uses the sklearn API, and it is as simple as this:
 
 ```python
+from importlib.resources import files
 import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
 from tabstar.tabstar_model import TabSTARClassifier
 
-x = pd.read_csv("src/tabstar/resources/imdb.csv")
+csv_path = files("tabstar").joinpath("resources", "imdb.csv")
+x = pd.read_csv(csv_path)
 y = x.pop('Genre_is_Drama')
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
 tabstar = TabSTARClassifier()
