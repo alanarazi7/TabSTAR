@@ -3,8 +3,6 @@ import torch
 from sklearn.metrics import roc_auc_score, r2_score
 from torch import Tensor, softmax
 
-from tabular.utils.utils import verbose_print
-
 
 
 def calculate_metric(y_true: np.ndarray, y_pred: np.ndarray, d_output: int) -> float:
@@ -35,7 +33,7 @@ def per_class_auc(y_true, y_pred) -> float:
             auc = roc_auc_score(y_true_binary, y_pred_scores)
             aucs[cls] = auc
         except ValueError as e:
-            verbose_print(f"⚠️ Error calculating AUC for class {cls}. {e=}, {y_true_binary=}, {y_pred_scores=}")
+            print(f"⚠️ Error calculating AUC for class {cls}. {e=}, {y_true_binary=}, {y_pred_scores=}")
     macro_avg = float(np.mean(list(aucs.values())))
     return macro_avg
 

@@ -10,6 +10,7 @@ from torch.nn import MSELoss, CrossEntropyLoss
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar.arch.config import TabStarConfig
 from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
@@ -18,7 +19,6 @@ from tabstar.training.lora import load_pretrained, load_finetuned
 from tabstar.training.metrics import calculate_metric, apply_loss_fn
 from tabstar.training.optimizer import get_optimizer, get_scheduler, MAX_EPOCHS
 from tabstar.training.utils import concat_predictions
-from tabular.tabstar.params.config import TabStarConfig
 
 torch.set_num_threads(1)
 if hasattr(torch, 'set_float32_matmul_precision'):

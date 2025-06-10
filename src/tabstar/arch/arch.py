@@ -8,7 +8,6 @@ from tabstar.arch.interaction import InteractionEncoder
 from tabstar.arch.fusion import NumericalFusion
 from tabstar.arch.prediction import PredictionHead
 from tabstar.training.devices import clear_cuda_cache
-from tabular.tabstar.params.constants import D_MODEL
 
 
 class TabStarModel(PreTrainedModel):
@@ -18,7 +17,6 @@ class TabStarModel(PreTrainedModel):
         super().__init__(config)
         self.text_encoder = AutoModel.from_pretrained(E5_SMALL)
         self.tokenizer = AutoTokenizer.from_pretrained(E5_SMALL)
-        assert self.text_encoder.config.hidden_size == D_MODEL, "Block mismatch!"
         self.numerical_fusion = NumericalFusion()
         self.tabular_encoder = InteractionEncoder()
         self.cls_head = PredictionHead()
