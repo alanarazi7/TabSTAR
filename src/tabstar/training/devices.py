@@ -1,4 +1,4 @@
-from optuna.terminator.improvement.emmr import torch
+import torch
 
 
 def get_device() -> torch.device:
