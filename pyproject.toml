@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tabstar"
-version = "0.1.1"
+version = "0.1.2"
 description = "TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations"
-readme = "README.md"
+readme = "README-pypi.md"
 authors = [
   { name = "Alan Arazi", email = "alanarazi7@gmail.com" }
 ]

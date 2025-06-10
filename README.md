@@ -1,7 +1,12 @@
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
-**Welcome to the TabSTAR repository! 👋**   
-You can use it in two modes: production mode for fitting TabSTAR on your own dataset, and research mode to pretrain TabSTAR and replicate our work in the paper. 
+**Welcome to the TabSTAR repository! 👋**  
+You can either use TabSTAR as a package for your own tabular data tasks, or explore the full repository for research purposes, including customized pretraining and replication of paper results.
+
+🔜 Pending Features:
+- [ ] Reloading fitted model for later use
+- [ ] Fixed seed support for reproducibility
+- [ ] Automatic task type detection (classification/regression)
 
 🚧 The repository is under construction: Any bugs or feature request? Please open an issue! 🚧
 
@@ -16,20 +21,19 @@ You can use it in two modes: production mode for fitting TabSTAR on your own dat
 
 ---
 
-## Production Mode
+## Package Mode
 
-Use this mode if you want to fit a pretrained TabSTAR model to your own dataset.  
-(Note that currently we still don't support reloading that model for later use, but this is coming soon! 🔜)
+Use this mode if you want to fit a pretrained TabSTAR model to your own dataset.
 
 ### Installation
 
 ```bash
-source init.sh
+pip install tabstar
 ```
 
 ### Inference Example
 
-TabSTAR uses the sklearn API, and it is as simple as this:
+Using TabSTAR is as simple as this:
 
 ```python
 from importlib.resources import files
@@ -49,7 +53,7 @@ y_pred = tabstar.predict(x_test)
 print(classification_report(y_test, y_pred))
 ```
 
-Below is a template you can use to quickly get started with TabSTAR in production mode.
+Below is a template you can use to quickly get started with TabSTAR with your own data.
 
 ```python
 from pandas import DataFrame, Series
@@ -89,7 +93,7 @@ y_pred = tabstar.predict(x_test)
 
 Use this section when you want to pretrain, finetune, or run baselines on TabSTAR. It assumes you are actively working on model development, experimenting with different datasets, or comparing against other methods.
 
-### Prerequisites
+### Installation
 
 After cloning the repo, run:
 
@@ -129,10 +133,6 @@ python do_baseline.py --model=rf --dataset_id=46655
 
 You can also try other names models supported by `do_baseline.py` (check the script for details).
 
-### License
-
-This work is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
-
 ### Citation
 
 If you use TabSTAR in your research, please cite:
@@ -145,3 +145,7 @@ If you use TabSTAR in your research, please cite:
   year    = {2025},
 }
 ```
+
+### License
+
+MIT © Alan Arazi et al.
