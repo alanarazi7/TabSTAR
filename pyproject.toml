@@ -12,7 +12,5 @@ authors = [
 ]
 license = { text = "MIT" }
 
-# TODO: improve this (for now, only pick up the tabstar package (ignore tabular/))
 [tool.setuptools.packages.find]
-where   = ["."]
-include = ["tabstar*"]
+where = ["src"]

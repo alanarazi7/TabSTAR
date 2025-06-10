@@ -1,4 +1,4 @@
-<img src="tabstar/resources/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
+<img src="src/tabstar/resources/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
 **Welcome to the TabSTAR repository! 👋**   
 You can use it in two modes: production mode for fitting TabSTAR on your own dataset, and research mode to pretrain TabSTAR and replicate our work in the paper. 
@@ -12,7 +12,7 @@ You can use it in two modes: production mode for fitting TabSTAR on your own dat
 * **Paper**: [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
 * **Project Website**: [TabSTAR](https://eilamshapira.com/TabSTAR/)
 
-<img src="tabstar/resources/tabstar_arch.png" alt="TabSTAR Logo" width="200%">
+<img src="src/tabstar/resources/tabstar_arch.png" alt="TabSTAR Logo" width="200%">
 
 ---
 
