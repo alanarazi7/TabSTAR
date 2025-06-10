@@ -11,6 +11,17 @@ authors = [
   { name = "Alan Arazi", email = "alanarazi7@gmail.com" }
 ]
 license = { text = "MIT" }
+dependencies = [
+  "numpy",
+  "pandas>=2.2.2",
+  "peft",
+  "scikit-learn",
+  "skrub",
+  "tabpfn_extensions",
+  "torch>=2.6.0",
+  "tqdm",
+  "transformers>=4.49.0"
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
