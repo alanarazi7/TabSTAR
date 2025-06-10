@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tabstar"
-version = "0.1.0"
+version = "0.1.1"
 description = "TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations"
 readme = "README.md"
 authors = [
