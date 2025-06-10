@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 from sklearn.metrics import roc_auc_score, r2_score
-from tabpfn_extensions.scoring.scoring_utils import safe_roc_auc_score
 from torch import Tensor, softmax
 
 from tabular.utils.utils import verbose_print
@@ -15,7 +14,7 @@ def calculate_metric(y_true: np.ndarray, y_pred: np.ndarray, d_output: int) -> f
         score = roc_auc_score(y_true=y_true, y_score=y_pred)
     elif d_output > 2:
         try:
-            score = safe_roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
+            score = roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
         except ValueError as e:
             print(f"⚠️ Error calculating AUC. {y_true=}, {y_pred=}, {e=}")
             score = per_class_auc(y_true=y_true, y_pred=y_pred)
