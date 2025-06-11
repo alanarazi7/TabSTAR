@@ -18,12 +18,6 @@ def find_best_cuda_gpu() -> str:
     raise RuntimeError("No free GPU found")
 
 
-def get_max_gpu_memory(device: torch.device) -> int:
-    properties = torch.cuda.get_device_properties(device)
-    memory_gb = int(properties.total_memory / (1024 ** 3))
-    return memory_gb
-
-
 def get_device() -> str:
     try:
         if torch.cuda.is_available():

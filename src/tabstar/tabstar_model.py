@@ -19,15 +19,15 @@ from tabstar.training.utils import concat_predictions
 
 
 class BaseTabSTAR:
-    def __init__(self, verbose: bool = False, preprocessor: Optional[TabSTARVerbalizer] = None):
+    def __init__(self, verbose: bool = False, device: Optional[str] = None):
         self.verbose = verbose
-        self.preprocessor_ = preprocessor
+        self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
-        self.device = get_device()
+        self.device = get_device(device=device)
 
     def fit(self, X, y):
         train_data, val_data = self._prepare_for_train(X, y)
-        trainer = TabStarTrainer()
+        trainer = TabStarTrainer(device=self.device)
         trainer.train(train_data, val_data)
         trainer.load_model()
         self.model_ = trainer.model

@@ -13,7 +13,6 @@ from tqdm import tqdm
 from tabstar.arch.config import TabStarConfig
 from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
-from tabstar.training.devices import get_device
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.lora import load_pretrained, load_finetuned
 from tabstar.training.metrics import calculate_metric, apply_loss_fn
@@ -28,8 +27,8 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 # TODO: replace with HF built in Trainer, exclude custom logics
 class TabStarTrainer:
 
-    def __init__(self):
-        self.device = get_device()
+    def __init__(self, device: torch.device):
+        self.device = device
         self.model = load_pretrained()
         self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model)
@@ -51,7 +50,7 @@ class TabStarTrainer:
             if val_metric > self.early_stopper.metric:
                 emoji = "🥇"
             else:
-                emoji = f"😓 [{self.early_stopper.failed + 1} / {self.early_stopper.patience} without improvement]"
+                emoji = f"😓 [{self.early_stopper.failed + 1}/{self.early_stopper.patience} worse]"
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
             self.early_stopper.update(val_metric)
             if self.early_stopper.is_best:
