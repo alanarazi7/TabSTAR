@@ -49,6 +49,8 @@ y = x.pop('Genre_is_Drama')
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
 tabstar = TabSTARClassifier()
 tabstar.fit(x_train, y_train)
+# tabstar.save("my_model_path.pkl")
+# tabstar = TabSTARClassifier.load("my_model_path.pkl")
 y_pred = tabstar.predict(x_test)
 print(classification_report(y_test, y_pred))
 ```
@@ -84,6 +86,8 @@ assert isinstance(y_test, Series), "y_test should be a pandas Series"
 tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
 tabstar = tabstar_cls()
 tabstar.fit(x_train, y_train)
+# tabstar.save("my_model_path.pkl")
+# tabstar = TabSTARClassifier.load("my_model_path.pkl")
 y_pred = tabstar.predict(x_test)
 ```
 

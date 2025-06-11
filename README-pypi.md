@@ -32,12 +32,13 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
 # For regression tasks, replace `TabSTARClassifier` with `TabSTARRegressor`.
 tabstar = TabSTARClassifier()
 tabstar.fit(x_train, y_train)
+# tabstar.save("my_model_path.pkl")
+# tabstar = TabSTARClassifier.load("my_model_path.pkl")
 y_pred = tabstar.predict(x_test)
 print(classification_report(y_test, y_pred))
 ```
 
 🔜 Pending Features:
-- [ ] Reloading fitted model for later use
 - [ ] Fixed seed support for reproducibility
 - [ ] Automatic task type detection (classification/regression)
 - [ ] Hyperparameter tuning support

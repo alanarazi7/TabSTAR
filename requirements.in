@@ -3,6 +3,7 @@ catboost
 gpustat
 h5py
 huggingface_hub
+joblib
 kagglehub >= 0.3.11
 numpy
 openml

@@ -1,5 +1,6 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Self
 
+import joblib
 import numpy as np
 import torch
 from pandas import Series, DataFrame
@@ -37,6 +38,13 @@ class BaseTabSTAR:
     @property
     def is_cls(self) -> bool:
         raise NotImplementedError("Must be implemented in subclass")
+
+    def save(self, path: str):
+        joblib.dump(self, path, compress=3)
+
+    @classmethod
+    def load(cls, path: str) -> Self:
+        return joblib.load(path)
 
     def _prepare_for_train(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
         if not isinstance(X, DataFrame):
