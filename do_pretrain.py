@@ -28,7 +28,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.fold is not None:
-        downstream_data = get_downstream_fold(k=args.fold, folds=args.k_folds)
+        downstream_data = get_downstream_fold(k=args.fold)
     elif args.production:
         downstream_data = []
     else:
