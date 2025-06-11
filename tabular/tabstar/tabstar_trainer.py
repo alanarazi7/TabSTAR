@@ -142,7 +142,7 @@ class TabStarTrainer(TabularModel):
                     for data_loader in self.data_loaders[DataSplit.DEV]:
                         assert isinstance(data_loader, DataLoader) and isinstance(data_loader.dataset, HDF5Dataset)
                         properties = data_loader.dataset.properties
-                        data_dev_loss, predictions = self.eval_dataset(data_loader=data_loader)
+                        data_dev_loss, predictions = self.eval_dataset(data_loader=data_loader, is_test_time=False)
                         dev_loss += data_dev_loss
                         dev_metrics.append(predictions.score)
                         log_dev_performance(properties=properties, is_pretrain=self.is_pretrain, epoch=epoch,
