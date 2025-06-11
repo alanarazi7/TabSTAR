@@ -1,15 +1,12 @@
 from dataclasses import dataclass
-from typing import Dict, Set, List, Optional
+from typing import Dict, Set, List
 
 import pandas as pd
 
-from tabular.benchmarks.all_datasets import BENCHMARKS2DATASETS
 from tabular.datasets.manual_curation_obj import CuratedDataset
-from tabular.datasets.tabular_datasets import get_sid
 from tabular.preprocessing.objects import SupervisedTask, FeatureType
 from tabular.utils.utils import cprint
 
-MIN_EXAMPLES = 200
 MAX_DATASET_EXAMPLES = 300_000
 MAX_FEATURES = 200
 
@@ -22,8 +19,6 @@ class RawDataset:
     task_type: SupervisedTask
     feature_types: Dict[FeatureType, Set[str]]
     curation: CuratedDataset
-    desc: str
-    source_name: Optional[str] = None
 
     def __post_init__(self):
         assert len(self.x) == len(self.y)
@@ -43,10 +38,6 @@ class RawDataset:
         if self.task_type == SupervisedTask.MULTICLASS:
             summary += f" [{len(set(self.y.values))} classes]"
         cprint(summary)
-
-    @property
-    def context(self) -> str:
-        return self.curation.context
 
     @property
     def dates(self) -> List[str]:
@@ -72,22 +63,3 @@ class RawDataset:
 
     def __len__(self) -> int:
         return len(self.y)
-
-    def to_metadata_row(self) -> Dict:
-        d_output = 1 if self.task_type == SupervisedTask.REGRESSION else len(self.y.unique())
-        d = {
-            "name": self.source_name,
-            "sid": self.sid,
-            "examples": len(self.x),
-            "features": len(self.x.columns),
-            "task_type": self.task_type.value,
-            "d_output": d_output,
-            "context": self.context,
-        }
-        for ft, cols in self.feature_types.items():
-            d[f"feature_{ft.name}"] = len(cols)
-        for benchmark_name, datasets in BENCHMARKS2DATASETS.items():
-            benchmarks_sids = {get_sid(d) for d in datasets}
-            is_in = self.sid in benchmarks_sids
-            d[f"benchmark_{benchmark_name}"] = is_in
-        return d

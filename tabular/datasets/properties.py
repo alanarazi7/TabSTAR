@@ -15,7 +15,6 @@ class DatasetProperties:
     task_type: SupervisedTask
     target_name: str
     processing: PreprocessingMethod
-    context: str
     split_sizes: Dict[str, int]
     feat_cnt: Dict[str, int]
     target_summary: str
@@ -52,7 +51,6 @@ class DatasetProperties:
             cat_col_names=cat_col_names,
             cat_col_indices=cat_col_indices,
             targets=targets,
-            context=raw.context,
             feat_types=feat_types,
         )
 

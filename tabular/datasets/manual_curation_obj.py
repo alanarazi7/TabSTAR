@@ -50,8 +50,6 @@ class CuratedDataset:
     target: CuratedTarget
     features: List[CuratedFeature]
     cols_to_drop: List[str]
-    context: str
-    description: Optional[str] = None
 
     def __post_init__(self):
         assert_valid_new_names(self.features)
@@ -59,13 +57,10 @@ class CuratedDataset:
     @classmethod
     def from_module(cls, module):
         base_name = module.__name__.split('.')[-1]
-        description = getattr(module, "DESCRIPTION", None)
         return cls(name=base_name,
                    target=module.TARGET,
                    features=module.FEATURES,
-                   cols_to_drop=module.COLS_TO_DROP,
-                   context=module.CONTEXT,
-                   description=description)
+                   cols_to_drop=module.COLS_TO_DROP)
 
     @property
     def name_mapper(self) -> Dict[str, str]:
