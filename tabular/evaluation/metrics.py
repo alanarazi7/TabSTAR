@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 from pandas import Series
-from sklearn.metrics import roc_auc_score, r2_score
+from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error
 from tabpfn_extensions.scoring.scoring_utils import safe_roc_auc_score
 from torch import Tensor
 
@@ -30,9 +30,15 @@ class PredictionsCache:
         return np.concatenate(self.labels)
 
 
-def calculate_metric(task_type: SupervisedTask, y_true: Series | np.ndarray, y_pred: Series | np.ndarray) -> float:
+def calculate_metric(task_type: SupervisedTask, y_true: Series | np.ndarray, y_pred: Series | np.ndarray,
+                     is_test_time: bool = True) -> float:
     if task_type == SupervisedTask.REGRESSION:
-        score = r2_score(y_true=y_true, y_pred=y_pred)
+        # 1 - MSE is more stable than R^2 during training
+        if is_test_time:
+            score = r2_score(y_true=y_true, y_pred=y_pred)
+        else:
+            score  = 1 - mean_squared_error(y_true=y_true, y_pred=y_pred)
+        return score
     elif task_type == SupervisedTask.BINARY:
         score = roc_auc_score(y_true=y_true, y_score=y_pred)
     elif task_type == SupervisedTask.MULTICLASS:

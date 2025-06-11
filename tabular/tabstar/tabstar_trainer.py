@@ -194,7 +194,7 @@ class TabStarTrainer(TabularModel):
         scaled_loss.backward()
         return inference.to_loss
 
-    def eval_dataset(self, data_loader: DataLoader) -> Tuple[LossAccumulator, Predictions]:
+    def eval_dataset(self, data_loader: DataLoader, is_test_time: bool) -> Tuple[LossAccumulator, Predictions]:
         self.model.eval()
         dev_dataset_loss = LossAccumulator()
         cache = PredictionsCache()
@@ -204,7 +204,8 @@ class TabStarTrainer(TabularModel):
             verbose_print(f"Evaluating a batch of {properties.sid}, {len(x_txt)} examples")
             batch_loss = self.eval_one_batch(x_txt=x_txt, x_num=x_num, y=y, properties=properties, cache=cache)
             dev_dataset_loss.update_batch(batch_loss=batch_loss, batch=x_txt)
-        metric_score = calculate_metric(task_type=properties.task_type, y_true=cache.y_true, y_pred=cache.y_pred)
+        metric_score = calculate_metric(task_type=properties.task_type, y_true=cache.y_true, y_pred=cache.y_pred,
+                                        is_test_time=is_test_time)
         predictions = Predictions(score=float(metric_score), predictions=cache.y_pred, labels=cache.y_true)
         return dev_dataset_loss, predictions
 
@@ -229,9 +230,10 @@ class TabStarTrainer(TabularModel):
         self.load_model(cp_path=self.model_path)
         ret = {}
         for split in [DataSplit.DEV, DataSplit.TEST]:
+            is_test_time = (split == DataSplit.TEST)
             data_loaders = self.data_loaders[split]
             assert len(data_loaders) == 1, f"Testing is only for single dataset models, but got {len(data_loaders)}"
-            loss, predictions = self.eval_dataset(data_loader=data_loaders[0])
+            loss, predictions = self.eval_dataset(data_loader=data_loaders[0], is_test_time=is_test_time)
             ret[split] = predictions
         assert isinstance(self.args, FinetuneArgs)
         if not self.args.keep_model:
