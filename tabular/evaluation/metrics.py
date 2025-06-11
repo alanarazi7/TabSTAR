@@ -32,6 +32,11 @@ class PredictionsCache:
 
 def calculate_metric(task_type: SupervisedTask, y_true: Series | np.ndarray, y_pred: Series | np.ndarray,
                      is_test_time: bool = True) -> float:
+    if np.isnan(y_true).any():
+        raise ValueError(f"y_true contains NaN values. Please check your data: {y_true}")
+    if np.isnan(y_pred).any():
+        raise ValueError(f"y_pred contains NaN values. Please check your data: {y_pred}")
+
     if task_type == SupervisedTask.REGRESSION:
         # 1 - MSE is more stable than R^2 during training
         if is_test_time:
