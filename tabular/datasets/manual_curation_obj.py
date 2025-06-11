@@ -1,4 +1,3 @@
-from collections import Counter
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Callable
 
@@ -38,11 +37,6 @@ class CuratedFeature:
         if self.processing_func is not None:
             assert self.feat_type is not None, "Processing function requires feature type to be set"
 
-    def __str__(self):
-        if self.raw_name == self.new_name:
-            return f"{self.raw_name}"
-        return f"{self.raw_name} -> {self.new_name}"
-
 
 @dataclass
 class CuratedDataset:
@@ -50,9 +44,6 @@ class CuratedDataset:
     target: CuratedTarget
     features: List[CuratedFeature]
     cols_to_drop: List[str]
-
-    def __post_init__(self):
-        assert_valid_new_names(self.features)
 
     @classmethod
     def from_module(cls, module):
@@ -74,15 +65,3 @@ class CuratedDataset:
         assert len(feat_list) == 1
         feat = feat_list[0]
         return feat
-
-    def __repr__(self):
-        return f"CuratedDataset(name={self.name}, target={self.target.new_name})"
-
-
-
-def assert_valid_new_names(features: List[CuratedFeature]):
-    new_names = [f.new_name for f in features]
-    cnt_new_names = Counter(new_names)
-    for new_name, cnt in cnt_new_names.items():
-        if cnt > 1:
-            raise ValueError(f"Duplicate new name '{new_name}' found in features!")

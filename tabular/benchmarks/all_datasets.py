@@ -1,55 +1,7 @@
-from tabular.benchmarks.amlb import AMLB
 from tabular.benchmarks.carte_benchmark import CARTE_BENCHMARK
-from tabular.benchmarks.ctr23 import CTR23_REG
-from tabular.benchmarks.grinsztajn import GRINSZTAJN
 from tabular.benchmarks.multimodal import MULTIMODAL
-from tabular.benchmarks.tabzilla import TABZILLA
 from tabular.benchmarks.vectorizing_strings import VECTORIZING
-from tabular.datasets.metadata import DATA2EXAMPLES
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID
-
-
-# Datasets with too many features
-TOO_MANY_FEATURES = [
-    OpenMLDatasetID.BIN_ANONYM_ARCENE,                               # 10000
-    OpenMLDatasetID.BIN_ANONYM_BIORESPONSE,                          # 1776
-    OpenMLDatasetID.BIN_ANONYM_CHRISTINE,                            # 1636
-    OpenMLDatasetID.BIN_ANONYM_GINA,                                 # 970
-    OpenMLDatasetID.BIN_ANONYM_GUILLERMO,                            # 4296
-    OpenMLDatasetID.BIN_ANONYM_KDDCUP_98_DIRECT_MAIL,                # 478
-    OpenMLDatasetID.BIN_ANONYM_KDDCUP_09_APPETENCY,                  # 230
-    OpenMLDatasetID.BIN_ANONYM_KDDCUP_09_UPSELLING,                  # 14891
-    OpenMLDatasetID.BIN_ANONYM_MADELINE,                             # 259
-    OpenMLDatasetID.BIN_ANONYM_MADELONE,                             # 500
-    OpenMLDatasetID.BIN_ANONYM_PHILIPPINE,                           # 308
-    OpenMLDatasetID.BIN_ANONYM_RICARDO,                              # 4296
-    OpenMLDatasetID.BIN_CONSUMER_INTERNET_ADVERTISEMENTS,            # 1558
-    OpenMLDatasetID.BIN_GENETICS_OVA_BREAST,                         # 10935
-    OpenMLDatasetID.BIN_HEALTHCARE_ALZHEIMER_HANDWRITE_DARWIN,       # 450
-    OpenMLDatasetID.BIN_PROFESSIONAL_LICD_LABOR_RIGHTS,              # 580
-    OpenMLDatasetID.BIN_SCIENCE_HIV_QSAR,                            # 1617
-    OpenMLDatasetID.MUL_ANONYM_AMAZON_COMMERCE_REVIEWS,              # 10000
-    OpenMLDatasetID.MUL_ANONYM_CNAE,                                 # 856
-    OpenMLDatasetID.MUL_ANONYM_DILBERT,                              # 2000
-    OpenMLDatasetID.MUL_ANONYM_FABERT,                               # 800
-    OpenMLDatasetID.MUL_ANONYM_ISOLET_LETTER_SPEECH_RECOGNITION,     # 617
-    OpenMLDatasetID.MUL_ANONYM_MFEAT_FACTORS,                        # 216
-    OpenMLDatasetID.MUL_ANONYM_MICRO_MASS,                           # 1300
-    OpenMLDatasetID.MUL_ANONYM_ROBERT,                               # 7200
-    OpenMLDatasetID.MUL_COMPUTERS_IMAGE_CIFAR10,                     # 1000
-    OpenMLDatasetID.MUL_COMPUTERS_IMAGE_GTSRB_GERMAN_TRAFFIC_SIGN,   # 256
-    OpenMLDatasetID.MUL_COMPUTERS_IMAGE_INDIAN_PINES,                # 220
-    OpenMLDatasetID.MUL_COMPUTERS_IMAGE_MNIST_DIGITS,                # 784
-    OpenMLDatasetID.MUL_COMPUTERS_IMAGE_MNIST_FASHION,               # 784
-    OpenMLDatasetID.MUL_COMPUTERS_IMAGE_MNIST_JAPANESE_KUZUSHIJI_49, # 784
-    OpenMLDatasetID.MUL_HEALTHCARE_HEART_ARRHYTMIA,                  # 279
-    OpenMLDatasetID.REG_ANONYM_MERCEDES_BENZ_GREENER_MANUFACTURING,  # 376
-    OpenMLDatasetID.REG_ANONYM_SANTANDER_TRANSACTION_VALUE,          # 4991
-    OpenMLDatasetID.REG_ANONYM_TOPO,                                 # 266
-    OpenMLDatasetID.REG_ANONYM_YPROP,                                # 251
-    OpenMLDatasetID.REG_SCIENCE_QSAR_TID_10980,                      # 1024
-    OpenMLDatasetID.REG_SCIENCE_QSAR_TID_11,                         # 1024
-]
 
 
 TEXTUAL_DATASETS = list({d for ls in [MULTIMODAL, CARTE_BENCHMARK, VECTORIZING] for d in ls})
@@ -76,12 +28,36 @@ ANALYSIS_TEXT_DOWNSTREAM = [OpenMLDatasetID.REG_SPORTS_FIFA22_WAGES,
                             OpenMLDatasetID.BIN_PROFESSIONAL_KICKSTARTER_FUNDING, ]
 
 
-TEXTUAL_BIG = [d for d, n in DATA2EXAMPLES.items() if n > 10_000 and d in TEXTUAL_DATASETS]
-
-BENCHMARKS2DATASETS = {'AMLB': AMLB,
-                       'CTR23': CTR23_REG,
-                       'GRINSZTAJN': GRINSZTAJN,
-                       'MULTIMODAL': MULTIMODAL,
-                       'VECTORIZING': VECTORIZING,
-                       'CARTE': CARTE_BENCHMARK,
-                       'TABZILLA': TABZILLA}
+# More than 10,000 examples ('unlimited' datasets)
+TEXTUAL_BIG = [
+                OpenMLDatasetID.BIN_PROFESSIONAL_FAKE_JOB_POSTING,
+                OpenMLDatasetID.BIN_PROFESSIONAL_KICKSTARTER_FUNDING,
+                OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY,
+                OpenMLDatasetID.MUL_CONSUMER_WOMEN_ECOMMERCE_CLOTHING_REVIEW,
+                OpenMLDatasetID.MUL_FOOD_WINE_REVIEW,
+                OpenMLDatasetID.MUL_HOUSES_MELBOURNE_AIRBNB,
+                OpenMLDatasetID.MUL_PROFESSIONAL_DATA_SCIENTIST_SALARY,
+                OpenMLDatasetID.MUL_SOCIAL_NEWS_CHANNEL_CATEGORY,
+                OpenMLDatasetID.REG_CONSUMER_AMERICAN_EAGLE_PRICES,
+                OpenMLDatasetID.REG_CONSUMER_JC_PENNEY_PRODUCT_PRICE,
+                OpenMLDatasetID.REG_CONSUMER_MERCARI_ONLINE_MARKETPLACE,
+                OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
+                OpenMLDatasetID.REG_SPORTS_FIFA22_WAGES,
+                KaggleDatasetID.MUL_FOOD_MICHELIN_GUIDE_RESTAURANTS,
+                KaggleDatasetID.MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23,
+                KaggleDatasetID.REG_CONSUMER_CAR_PRICE_CARDEKHO,
+                KaggleDatasetID.REG_FOOD_ALCOHOL_WIKILIQ_PRICES,
+                KaggleDatasetID.REG_FOOD_ZOMATO_RESTAURANTS,
+                KaggleDatasetID.REG_PROFESSIONAL_COMPANY_EMPLOYEES_SIZE,
+                KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING,
+                KaggleDatasetID.REG_SOCIAL_FILMTV_MOVIE_RATING_ITALY,
+                KaggleDatasetID.REG_SOCIAL_MOVIES_DATASET_REVENUE,
+                KaggleDatasetID.REG_SOCIAL_MUSEUMS_US_REVENUES,
+                KaggleDatasetID.REG_SOCIAL_SPOTIFY_POPULARITY,
+                KaggleDatasetID.REG_SOCIAL_VIDEO_GAMES_SALES,
+                KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY,
+                KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_PAKISTAN,
+                UrlDatasetID.REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER,
+                UrlDatasetID.REG_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES,
+                UrlDatasetID.REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT,
+]

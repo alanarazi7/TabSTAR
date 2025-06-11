@@ -3,7 +3,6 @@ from typing import Tuple
 
 from pandas import DataFrame, Series
 
-from tabular.benchmarks.all_datasets import TOO_MANY_FEATURES
 from tabular.datasets.manual_curation_obj import CuratedDataset
 from tabular.datasets.raw_dataset import MAX_DATASET_EXAMPLES, MAX_FEATURES
 from tabular.utils.utils import cprint
@@ -20,8 +19,6 @@ def downsample_multiple_features(x: DataFrame, curation: CuratedDataset) -> Tupl
     if len(x.columns) <= MAX_FEATURES:
         return x, curation
     cprint(f"🎲 Downsampling features for {curation.name} from {len(x.columns)} to {MAX_FEATURES}")
-    if curation.name not in {d.name for d in TOO_MANY_FEATURES}:
-        cprint(f"⚠️⚠️⚠️ Dataset {curation.name} is not in the TOO_MANY_FEATURES list, must add there!")
     columns = list(x.columns)
     chosen_columns = sample(columns, k=MAX_FEATURES)
     x = x[chosen_columns]
