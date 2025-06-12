@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_datasets', type=int, default=None)
     parser.add_argument('--numbers_verbalization', default="full", choices=[v.value for v in NumberVerbalization])
     parser.add_argument('--fold', type=int, default=None)
+    parser.add_argument('--only_text_folds', action='store_true', default=False)
     # Optimizer
     parser.add_argument('--base_lr', type=float, default=BASE_LR)
     parser.add_argument('--weight_decay', type=float, default=WEIGHT_DECAY)
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.fold is not None:
-        downstream_data = get_downstream_fold(k=args.fold)
+        downstream_data = get_downstream_fold(k=args.fold, only_text_folds=args.only_text_folds)
     elif args.production:
         downstream_data = []
     else:

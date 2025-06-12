@@ -1,6 +1,8 @@
 from typing import List
 
+from tabular.benchmarks.all_datasets_shuffled import ALL_SHUFFLED_DATASETS
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, UrlDatasetID, KaggleDatasetID, TabularDatasetID
+
 ALL_TEXT_SHUFFLED = [
     KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING,
     KaggleDatasetID.REG_FOOD_RAMEN_RATINGS_2022,
@@ -56,12 +58,16 @@ ALL_TEXT_SHUFFLED = [
 
 NUM_FOLDS = 5
 
-def get_downstream_fold(k: int, folds: int = NUM_FOLDS) -> List[TabularDatasetID]:
-    dataset2fold = get_dataset2fold(folds=folds)
+def get_downstream_fold(k: int, only_text_folds: bool) -> List[TabularDatasetID]:
+    dataset2fold = get_dataset2fold(only_text_folds=only_text_folds)
     return [d for d, i in dataset2fold.items() if i == k]
 
-def get_dataset2fold(folds: int = NUM_FOLDS) -> dict:
-    dataset2fold = {d: i % folds for i, d in enumerate(ALL_TEXT_SHUFFLED)}
+def get_dataset2fold(only_text_folds: bool) -> dict:
+    if only_text_folds:
+        datasets = list(ALL_TEXT_SHUFFLED)
+    else:
+        datasets = list(ALL_SHUFFLED_DATASETS)
+    dataset2fold = {d: i % NUM_FOLDS for i, d in enumerate(datasets)}
     return dataset2fold
 
 

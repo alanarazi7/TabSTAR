@@ -29,7 +29,7 @@ FEAT2EMOJI = {FeatureType.BOOLEAN: "☑️",
               FeatureType.UNSUPPORTED: "❌"}
 
 class PreprocessingMethod(StrEnum):
-    TABSTAR = f"TabSTAR-{NUM_VERBALIZATION}"
+    TABSTAR = f"TabSTAR-Numerical-{NUM_VERBALIZATION}"
     CARTE = "Carte"
     TABPFNV2 = "TabPFN-v2"
     TREES = "Trees"
