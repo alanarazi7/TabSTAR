@@ -61,8 +61,9 @@ def get_tabstar_version(pretrain_dataset: Optional[TabularDatasetID] = None) -> 
     if pretrain_dataset is None:
         return "TabSTAR"
 
-    if pretrain_dataset in DATASET2FOLD:
-        fold = DATASET2FOLD[pretrain_dataset]
-        return f"TabSTAR-paper-version-fold-k{fold}"
+    text_data_folds = {d.name: k for d, k in DATASET2FOLD.items()}
+    text_fold = text_data_folds.get(pretrain_dataset.name)
+    if text_fold is not None:
+        return f"TabSTAR-paper-version-fold-k{text_fold}"
 
     raise ValueError(f"Unknown pretrain dataset: {pretrain_dataset}")
