@@ -8,6 +8,8 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import autocast
 
+from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar.datasets.benchmark_folds import get_tabstar_version
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
@@ -19,15 +21,18 @@ from tabstar.training.utils import concat_predictions
 
 
 class BaseTabSTAR:
-    def __init__(self, verbose: bool = False, device: Optional[str] = None):
+    def __init__(self, verbose: bool = False,
+                 device: Optional[str] = None,
+                 pretrain_dataset: Optional[TabularDatasetID] = None):
         self.verbose = verbose
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
         self.device = get_device(device=device)
+        self.model_version = get_tabstar_version(pretrain_dataset=pretrain_dataset)
 
     def fit(self, X, y):
         train_data, val_data = self._prepare_for_train(X, y)
-        trainer = TabStarTrainer(device=self.device)
+        trainer = TabStarTrainer(device=self.device, model_version=self.model_version)
         trainer.train(train_data, val_data)
         trainer.load_model()
         self.model_ = trainer.model
