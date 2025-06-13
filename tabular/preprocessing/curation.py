@@ -2,7 +2,7 @@ from typing import Dict, Set
 
 from pandas import DataFrame, Series
 
-from tabular.datasets.manual_curation_obj import CuratedDataset
+from tabular.datasets.manual_curation_obj import CuratedDataset, get_curated_feature
 from tabular.preprocessing.objects import FeatureType
 from tabular.preprocessing.textual import replace_unspaced_symbols, normalize_col_name
 
@@ -24,7 +24,7 @@ def _curate_column_values(x: DataFrame, curation: CuratedDataset, feature_types:
     unmappable_types = {FeatureType.NUMERIC, FeatureType.DATE, FeatureType.TEXT}
     unmappable_features = {f for feat_type in unmappable_types for f in feature_types[feat_type]}
     for col in x.columns:
-        feat = curation.get_feature(col)
+        feat = get_curated_feature(curation, feat_name=col)
         if feat is None:
             continue
         if feat.new_name in unmappable_features:

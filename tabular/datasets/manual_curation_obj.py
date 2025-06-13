@@ -57,11 +57,12 @@ class CuratedDataset:
     def name_mapper(self) -> Dict[str, str]:
         return {f.raw_name: f.new_name for f in self.features if f.raw_name != f.new_name}
 
-    def get_feature(self, feat_name: str) -> Optional[CuratedFeature]:
-        assert feat_name not in self.cols_to_drop
-        feat_list = [f for f in self.features if feat_name in {f.raw_name, f.new_name}]
-        if len(feat_list) == 0:
-            return None
-        assert len(feat_list) == 1
-        feat = feat_list[0]
-        return feat
+
+def get_curated_feature(curation: CuratedDataset, feat_name: str) -> Optional[CuratedFeature]:
+    assert feat_name not in curation.cols_to_drop
+    feat_list = [f for f in curation.features if feat_name in {f.raw_name, f.new_name}]
+    if len(feat_list) == 0:
+        return None
+    assert len(feat_list) == 1
+    feat = feat_list[0]
+    return feat
