@@ -4,11 +4,14 @@ from tabular.constants import NUM_VERBALIZATION
 
 
 class FeatureType(StrEnum):
-    CATEGORICAL = "🏷️ categorical"
-    NUMERIC = "🔢 numeric"
-    TEXT = "📝 text"
-    DATE = "📅 date"
-    BOOLEAN = "☑️ boolean"
+    # Native OpenML Features
+    CATEGORICAL = "nominal"
+    NUMERIC = "numeric"
+    TEXT = "string"
+    DATE = "date"
+    # Added by us
+    BOOLEAN = "binary"
+    UNSUPPORTED = "unsupported"
 
 
 class SupervisedTask(StrEnum):
@@ -17,6 +20,22 @@ class SupervisedTask(StrEnum):
     BINARY = "⚖️ binary"
     MULTICLASS = "🎨 multiclass"
 
+
+FEAT2EMOJI = {FeatureType.BOOLEAN: "☑️",
+              FeatureType.NUMERIC: "🔢",
+              FeatureType.CATEGORICAL: "🏷️",
+              FeatureType.DATE: "📅",
+              FeatureType.TEXT: "📝",
+              FeatureType.UNSUPPORTED: "❌"}
+
+class PreprocessingMethod(StrEnum):
+    TABSTAR = f"TabSTAR-Numerical-{NUM_VERBALIZATION}"
+    CARTE = "Carte"
+    TABPFNV2 = "TabPFN-v2"
+    TREES = "Trees"
+    TREES_OPT = "Trees-Optuna"
+    CATBOOST = "CatBoost"
+    CATBOOST_OPT = "CatBoost-Optuna"
 
 
 CV_METHODS = {PreprocessingMethod.CATBOOST_OPT, PreprocessingMethod.TREES_OPT}
