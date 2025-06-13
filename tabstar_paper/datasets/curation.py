@@ -3,13 +3,14 @@ from typing import Optional, Tuple
 
 from pandas import DataFrame, Series
 
-from tabular.datasets.manual_curation_mapping import CURATIONS
-from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedTarget
-from tabular.datasets.tabular_datasets import TabularDatasetID
-from tabular.preprocessing.dates import series_to_dt
-from tabular.preprocessing.nulls import convert_series_to_numeric, MISSING_VALUE
-from tabular.preprocessing.objects import FeatureType, SupervisedTask
-from tabular.preprocessing.textual import normalize_col_name
+from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar.preprocessing.dates import series_to_dt
+from tabstar.preprocessing.feat_types import convert_series_to_numeric
+from tabstar.preprocessing.nulls import MISSING_VALUE
+from tabstar.preprocessing.texts import normalize_col_name
+from tabstar_paper.datasets.curation_mapping import get_curated
+from tabstar_paper.datasets.curation_objects import CuratedDataset, CuratedTarget
+from tabstar_paper.datasets.objects import SupervisedTask, FeatureType
 
 
 @dataclass
@@ -21,7 +22,7 @@ class TabularDataset:
 
 
 def curate_dataset(x: DataFrame, y: Optional[Series], dataset_id: TabularDatasetID) -> TabularDataset:
-    curation = CURATIONS[dataset_id.name]
+    curation = get_curated(dataset_id)
     x = drop_columns(x, curation=curation)
     x, y = set_target_if_missing(x=x, y=y, curation=curation)
     task_type = curation.target.task_type

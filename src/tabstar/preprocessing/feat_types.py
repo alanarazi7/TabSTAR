@@ -1,4 +1,4 @@
-from typing import Set
+from typing import Set, Optional
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -32,14 +32,15 @@ def is_numerical_feature(s: Series) -> bool:
         raise ValueError(f"Unsupported dtype {s.dtype} for series {s.name}")
 
 
-def convert_series_to_numeric(s: Series) -> Series:
+def convert_series_to_numeric(s: Series, missing_value: Optional[str] = None) -> Series:
     if pd.api.types.is_numeric_dtype(s):
         return s.astype(float)
     non_numeric_indices = [not is_numeric(f) for f in s]
     if not any(non_numeric_indices):
         return s.astype(float)
-    unique_non_numeric = s[non_numeric_indices].unique()
-    if len(unique_non_numeric) != 1:
-        raise ValueError(f"Missing values detected are {unique_non_numeric}. Should be only one!")
-    missing_value = unique_non_numeric[0]
+    if missing_value is None:
+        unique_non_numeric = s[non_numeric_indices].unique()
+        if len(unique_non_numeric) != 1:
+            raise ValueError(f"Missing values detected are {unique_non_numeric}. Should be only one!")
+        missing_value = unique_non_numeric[0]
     return convert_numeric_with_missing(s=s, missing_value=missing_value)
