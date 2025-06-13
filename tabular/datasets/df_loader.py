@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas import DataFrame
 
-from tabular.datasets.manual_curation_mapping import get_curated
+from tabstar_paper.datasets.curation_mapping import get_curated
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.datasets.raw_loader import (create_raw_dataset, get_dataframe_types,
                                          set_target_drop_redundant_downsample_too_big)

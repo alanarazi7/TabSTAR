@@ -6,9 +6,9 @@ from openml import OpenMLDataset
 from openml.exceptions import OpenMLServerException
 from pandas import DataFrame, Series
 
+from tabstar_paper.datasets.curation_mapping import get_curated
 from tabular.datasets.raw_loader import create_raw_dataset, set_target_drop_redundant_downsample_too_big
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, get_sid
-from tabular.datasets.manual_curation_mapping import get_curated
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.preprocessing.feature_type import get_feature_types
 from tabular.preprocessing.objects import FeatureType
