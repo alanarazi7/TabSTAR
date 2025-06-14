@@ -51,7 +51,4 @@ else
     echo "🛠 Repo root already in PYTHONPATH for venv activate script"
 fi
 
-echo "🧪 Verifying imports..."
-python -c "import tabular, tabstar_paper; print('✅ Imports work!')" || echo "❌ Import check failed!"
-
 echo "🎉 Setup completed! To activate in a new shell, run: source $ENV_DIR/bin/activate"
