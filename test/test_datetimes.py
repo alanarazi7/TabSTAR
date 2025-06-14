@@ -1,6 +1,7 @@
 import pandas as pd
 from pandas import Timestamp
-from tabular.preprocessing.dates import series_to_dt
+
+from tabstar.preprocessing.dates import series_to_dt
 
 
 def test_unix_timestamps():

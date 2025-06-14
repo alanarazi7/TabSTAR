@@ -1,4 +1,4 @@
-from tabular.tabstar.preprocessing.numerical_quantiles import format_float
+from tabstar.preprocessing.binning import format_float
 
 
 def test_numerical_verbalizations():

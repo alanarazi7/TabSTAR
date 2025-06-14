@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas import Series
 
-from tabular.preprocessing.nulls import get_invalid_indices
+from tabstar.preprocessing.nulls import get_invalid_indices
 
 
 def test_get_valid_indices():
