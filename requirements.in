@@ -4,7 +4,7 @@ gpustat
 h5py
 huggingface_hub
 joblib
-kagglehub >= 0.3.11
+kagglehub >= 0.3.12
 numpy
 openml
 optuna

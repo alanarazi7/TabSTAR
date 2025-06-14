@@ -115,7 +115,7 @@ joblib==1.4.2
     # via
     #   -r requirements.in
     #   scikit-learn
-kagglehub==0.3.11
+kagglehub==0.3.12
     # via -r requirements.in
 kiwisolver==1.4.8
     # via matplotlib
