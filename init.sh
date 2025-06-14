@@ -39,7 +39,7 @@ fi
 echo "📦 Installing tabstar package (editable)"
 uv pip install -e . || echo "⚠️ Failed to install tabstar package; continuing..."
 
-# Make our loose 'tabular/' folder importable too
+# Make our loose research folders importable too
 REPO_ROOT="$(pwd)"
 ACTIVATE="$ENV_DIR/bin/activate"
 

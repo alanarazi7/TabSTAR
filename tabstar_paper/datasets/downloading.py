@@ -9,13 +9,17 @@ from pandas import read_csv, DataFrame
 from tabstar.datasets.all_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID, TabularDatasetID
 from tabstar_paper.datasets.curation import curate_dataset, TabularDataset
 
+OPENML_VALUES = {item.value for item in OpenMLDatasetID}
+KAGGLE_VALUES = {item.value for item in KaggleDatasetID}
+URL_VALUES = {item.value for item in UrlDatasetID}
+
 
 def download_dataset(dataset_id: TabularDatasetID) -> TabularDataset:
-    if isinstance(dataset_id, OpenMLDatasetID):
+    if dataset_id.value in OPENML_VALUES:
         return load_openml_dataset(dataset_id)
-    elif isinstance(dataset_id, KaggleDatasetID):
+    elif dataset_id.value in KAGGLE_VALUES:
         return load_kaggle_dataset(dataset_id)
-    elif isinstance(dataset_id, UrlDatasetID):
+    elif dataset_id.value in URL_VALUES:
         return load_url_dataset(dataset_id)
     else:
         raise ValueError(f"Unsupported dataset ID type: {type(dataset_id)}")
