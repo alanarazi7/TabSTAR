@@ -39,16 +39,18 @@ fi
 echo "📦 Installing tabstar package (editable)"
 uv pip install -e . || echo "⚠️ Failed to install tabstar package; continuing..."
 
-# Make our loose 'tabular/' folder importable too
-REPO_ROOT="$(pwd)"
+PROJECT_ROOT="$(pwd)"
 ACTIVATE="$ENV_DIR/bin/activate"
+PY_PATH_LINE="export PYTHONPATH=\"\$PYTHONPATH:$PROJECT_ROOT\""
 
-# Avoid duplicate PYTHONPATH lines if running setup repeatedly
-if ! grep -q "$REPO_ROOT" "$ACTIVATE"; then
-    echo "🛠 Adding repo root ($REPO_ROOT) to PYTHONPATH in venv activate script"
-    echo "export PYTHONPATH=\"\$PYTHONPATH:$REPO_ROOT\"" >> "$ACTIVATE"
+if ! grep -Fq "$PY_PATH_LINE" "$ACTIVATE"; then
+    echo "🛠 Adding repo root ($PROJECT_ROOT) to PYTHONPATH in venv activate script"
+    echo "$PY_PATH_LINE" >> "$ACTIVATE"
 else
     echo "🛠 Repo root already in PYTHONPATH for venv activate script"
 fi
+
+echo "🧪 Verifying imports..."
+python -c "import tabular, tabstar_paper; print('✅ Imports work!')" || echo "❌ Import check failed!"
 
 echo "🎉 Setup completed! To activate in a new shell, run: source $ENV_DIR/bin/activate"
