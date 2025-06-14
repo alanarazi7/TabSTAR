@@ -20,6 +20,10 @@ class TabularDataset:
     task_type: SupervisedTask
     dataset_id: TabularDatasetID
 
+    @property
+    def is_cls(self) -> bool:
+        return self.task_type != SupervisedTask.REGRESSION
+
 
 def curate_dataset(x: DataFrame, y: Optional[Series], dataset_id: TabularDatasetID) -> TabularDataset:
     curation = get_curated(dataset_id)

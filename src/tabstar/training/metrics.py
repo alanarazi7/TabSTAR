@@ -1,11 +1,12 @@
 import numpy as np
 import torch
+from pandas import Series
 from sklearn.metrics import roc_auc_score, r2_score
 from torch import Tensor, softmax
 
 
 
-def calculate_metric(y_true: np.ndarray, y_pred: np.ndarray, d_output: int) -> float:
+def calculate_metric(y_true: np.ndarray | Series, y_pred: np.ndarray, d_output: int) -> float:
     if d_output == 1:
         score = r2_score(y_true=y_true, y_pred=y_pred)
     elif d_output == 2:

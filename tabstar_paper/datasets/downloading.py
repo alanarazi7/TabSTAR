@@ -61,3 +61,15 @@ def _read_csv(path: str, dataset_id: TabularDatasetID) -> DataFrame:
                       UrlDatasetID.REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER}:
         sep = ";"
     return read_csv(path, sep=sep)
+
+
+def get_dataset_from_arg(arg: str | int) -> TabularDatasetID:
+    if isinstance(arg, str) and arg.isdigit():
+        arg = int(arg)
+    if arg is None:
+        raise ValueError("Dataset ID cannot be None.")
+    for dataset_type in [OpenMLDatasetID, KaggleDatasetID, UrlDatasetID]:
+        for dataset in dataset_type:
+            if dataset.value == arg or dataset.name == arg:
+                return dataset
+    raise ValueError(f"Dataset ID {arg} not found in any known datasets.")
