@@ -9,7 +9,7 @@ from tabstar_paper.datasets.downloading import download_dataset, get_dataset_fro
 DOWNSTREAM_EXAMPLES = 10_000
 
 
-def eval_tabstar_on_dataset(dataset_id: TabularDatasetID, run_num: int, train_examples: int):
+def eval_tabstar_on_dataset(dataset_id: TabularDatasetID, run_num: int, train_examples: int) -> float:
     dataset = download_dataset(dataset_id=dataset_id)
     # TODO: we'll need a 'train examples' split here, to run over a subset of the dataset.
     x_train, x_test, y_train, y_test = split_to_test(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, seed=run_num)
@@ -19,6 +19,7 @@ def eval_tabstar_on_dataset(dataset_id: TabularDatasetID, run_num: int, train_ex
     y_pred = tabstar.predict(x_test)
     metric = calculate_metric(y_test, y_pred, d_output=tabstar.preprocessor_.d_output)
     print(f"Scored {metric:.3f} on dataset {dataset}.")
+    return metric
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
