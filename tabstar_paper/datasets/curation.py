@@ -34,6 +34,7 @@ def curate_dataset(x: DataFrame, y: Optional[Series], dataset_id: TabularDataset
     y.name = curation.target.new_name
     x = curate_feature_values(x=x, curation=curation)
     x = curate_column_names(x=x, curation=curation)
+    x, y = remove_missing_target_rows(x=x, y=y)
     dataset = TabularDataset(x=x, y=y, task_type=task_type, dataset_id=dataset_id)
     return dataset
 
@@ -99,3 +100,9 @@ def curate_column_names(x: DataFrame, curation: CuratedDataset) -> DataFrame:
             old2new[col] = normalize_col_name(col)
     x = x.rename(columns=old2new)
     return x
+
+def remove_missing_target_rows(x: DataFrame, y: Series):
+    missing = y.isnull()
+    x = x[~missing]
+    y = y[~missing]
+    return x, y
