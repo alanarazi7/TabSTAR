@@ -39,14 +39,14 @@ fi
 echo "📦 Installing tabstar package (editable)"
 uv pip install -e . || echo "⚠️ Failed to install tabstar package; continuing..."
 
-PROJECT_ROOT="$(pwd)"
-SRC_PATH="$PROJECT_ROOT/src"
+# Make our loose research folders importable too
+REPO_ROOT="$(pwd)"
 ACTIVATE="$ENV_DIR/bin/activate"
-PY_PATH_LINE="export PYTHONPATH=\"\$PYTHONPATH:$SRC_PATH:$PROJECT_ROOT\""
 
-if ! grep -Fq "$PY_PATH_LINE" "$ACTIVATE"; then
-    echo "🛠 Adding src/ and root to PYTHONPATH in venv activate script"
-    echo "$PY_PATH_LINE" >> "$ACTIVATE"
+# Avoid duplicate PYTHONPATH lines if running setup repeatedly
+if ! grep -q "$REPO_ROOT" "$ACTIVATE"; then
+    echo "🛠 Adding repo root ($REPO_ROOT) to PYTHONPATH in venv activate script"
+    echo "export PYTHONPATH=\"\$PYTHONPATH:$REPO_ROOT\"" >> "$ACTIVATE"
 else
     echo "🛠 Repo root already in PYTHONPATH for venv activate script"
 fi
