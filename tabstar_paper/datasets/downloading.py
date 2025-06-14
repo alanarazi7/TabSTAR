@@ -68,8 +68,6 @@ def get_dataset_from_arg(arg: str | int) -> TabularDatasetID:
         arg = int(arg)
     if arg is None:
         raise ValueError("Dataset ID cannot be None.")
-    for dataset_type in [OpenMLDatasetID, KaggleDatasetID, UrlDatasetID]:
-        for dataset in dataset_type:
-            if dataset.value == arg or dataset.name == arg:
-                return dataset
-    raise ValueError(f"Dataset ID {arg} not found in any known datasets.")
+    all_datasets = list(OpenMLDatasetID) + list(KaggleDatasetID) + list(UrlDatasetID)
+    dataset = [d for d in all_datasets if d.value == arg or d.name == arg]
+    return dataset[0]
