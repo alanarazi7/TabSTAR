@@ -16,12 +16,6 @@ from tabular.utils.utils import verbose_print, cprint
 
 LOG_LEVEL = "Verbose" if VERBOSE else "Silent"
 
-@dataclass
-class CatBoostDefaultHyperparams:
-    early_stopping_rounds: int = 50
-    iterations: int = 2000
-    od_pval: float = 0.001
-    thread_count = 1
 
 @dataclass
 class CatBoostTunedHyperparams:
@@ -35,32 +29,15 @@ class CatBoostTunedHyperparams:
     thread_count = 1
 
 
-class CatBoost(TabularSklearnModel):
-
-    MODEL_NAME = "CatBoost 😸"
-    SHORT_NAME = "cat"
-    PROCESSING = PreprocessingMethod.CATBOOST
+# TODO: could be generalized to a 'TabularOptunaModel' wrapper
+class CatBoostOptuna(TabularSklearnModel):
+    MODEL_NAME = f"CatBoost-Opt{OPTUNA_BUDGET} 😼"
+    SHORT_NAME = "catopt"
+    PROCESSING = PreprocessingMethod.CATBOOST_OPT
 
     def initialize_model(self):
         self.model = init_model(config=self.config, is_reg=self.dataset.is_regression,
                                 classifier_cls=CatBoostClassifier, regressor_cls=CatBoostRegressor)
-
-    def train(self):
-        verbose_print(f"Training {self.MODEL_NAME} model for dataset {self.dataset.sid}")
-        x_train, y_train, x_dev, y_dev = self.load_all()
-        cprint(f"Training {self.MODEL_NAME} over {len(x_train)} examples. Dev set has {len(x_dev)} examples")
-        self.model.fit(x_train, y_train, eval_set=(x_dev, y_dev), logging_level=LOG_LEVEL, use_best_model=True,
-                       cat_features=self.dataset.cat_col_indices)
-
-    def set_config(self) -> CatBoostDefaultHyperparams:
-        # Using the "default" hyperparameters of the FT-Transformer paper: https://arxiv.org/pdf/2106.11959
-        return CatBoostDefaultHyperparams()
-
-# TODO: could be generalized to a 'TabularOptunaModel' wrapper
-class CatBoostOptuna(CatBoost):
-    MODEL_NAME = f"CatBoost-Opt{OPTUNA_BUDGET} 😼"
-    SHORT_NAME = "catopt"
-    PROCESSING = PreprocessingMethod.CATBOOST_OPT
 
     def train(self):
         self.config = None

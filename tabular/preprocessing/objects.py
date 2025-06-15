@@ -34,7 +34,6 @@ class PreprocessingMethod(StrEnum):
     TABPFNV2 = "TabPFN-v2"
     TREES = "Trees"
     TREES_OPT = "Trees-Optuna"
-    CATBOOST = "CatBoost"
     CATBOOST_OPT = "CatBoost-Optuna"
 
 

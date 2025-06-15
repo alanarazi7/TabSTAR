@@ -41,7 +41,7 @@ class TabularDataset:
                                    number_verbalization=number_verbalization)
         elif processing in {PreprocessingMethod.TABPFNV2, PreprocessingMethod.CARTE}:
             return cls.from_processed(raw=raw, processing=processing, splits=splits, feat_cnt=feat_cnt, targets=targets)
-        elif processing in {PreprocessingMethod.CATBOOST, PreprocessingMethod.CATBOOST_OPT}:
+        elif processing == PreprocessingMethod.CATBOOST_OPT:
             return cls.for_catboost(raw, splits=splits, feat_cnt=feat_cnt, device=device, processing=processing)
         elif processing == PreprocessingMethod.TREES:
             return cls.for_trees_mlp(raw, splits=splits, targets=targets, feat_cnt=feat_cnt, device=device)

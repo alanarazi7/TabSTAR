@@ -108,7 +108,6 @@ def _uses_dev(processing: PreprocessingMethod) -> bool:
     if processing in CV_METHODS:
         return False
     process2dev = {PreprocessingMethod.TABSTAR: True,
-                   PreprocessingMethod.CATBOOST: True,
                    PreprocessingMethod.TREES: True,
                    # TabPFN-v2 and CARTE don't use dev
                    PreprocessingMethod.TABPFNV2: False,
