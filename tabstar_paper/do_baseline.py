@@ -1,15 +1,13 @@
 import argparse
 from typing import Type
 
-from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar.datasets.all_datasets import TabularDatasetID, OpenMLDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
-from tabstar_paper.datasets.downloading import download_dataset
-from tabular.datasets.tabular_datasets import get_dataset_from_arg
-from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES
-from tabular.trainers.finetune import do_finetune_run
+from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
+from tabstar_paper.do_benchmark import DOWNSTREAM_EXAMPLES
 
 BASELINES = [CatBoost]
 
@@ -29,12 +27,14 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, choices=SHORT2MODELS.keys(), required=True)
-    parser.add_argument('--dataset_id', required=True)
+    parser.add_argument('--model', type=str, choices=SHORT2MODELS.keys(),
+                        default=CatBoost.SHORT_NAME)
+    parser.add_argument('--dataset_id', default=OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION.value)
     parser.add_argument('--run_num', type=int, default=0)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     args = parser.parse_args()
     tabular_dataset_id = get_dataset_from_arg(args.dataset_id)
     model = SHORT2MODELS[args.model]
 
-    do_finetune_run(model=model, dataset=tabular_dataset_id, run_num=args.run_num, train_examples=args.train_examples)
+    eval_baseline_on_dataset(model=model, dataset_id=tabular_dataset_id, run_num=args.run_num,
+                             train_examples=args.train_examples)
