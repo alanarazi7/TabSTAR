@@ -1,6 +1,7 @@
 import json
+import os
 from json import JSONDecodeError
-from typing import Dict, List
+from typing import Dict
 
 
 def load_json(path: str) -> Dict:
@@ -14,5 +15,6 @@ def load_json(path: str) -> Dict:
 
 
 def dump_json(data: Dict, path: str) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w') as file:
         json.dump(data, file, indent=4)

@@ -18,7 +18,7 @@ def eval_tabstar_on_dataset(dataset_id: TabularDatasetID, run_num: int, train_ex
     tabstar.fit(x_train, y_train)
     y_pred = tabstar.predict(x_test)
     metric = calculate_metric(y_test, y_pred, d_output=tabstar.preprocessor_.d_output)
-    print(f"Scored {metric:.3f} on dataset {dataset}.")
+    print(f"Scored {metric:.4f} on dataset {dataset}.")
     return metric
 
 if __name__ == "__main__":
