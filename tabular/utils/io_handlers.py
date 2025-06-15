@@ -1,7 +1,7 @@
 import json
 import os
 from json import JSONDecodeError
-from typing import Dict, List
+from typing import Dict
 
 
 def load_json(path: str) -> Dict:
