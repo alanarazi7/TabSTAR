@@ -32,9 +32,24 @@ class CatBoost(TabularModel):
         assert False, "Implement preprocessing"
         x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
         cat_features = None
+        # cat_features=self.dataset.cat_col_indices
         assert cat_features, "Implelement this"
         self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features)
 
+    @classmethod
+    def for_catboost(cls, raw: RawDataset, splits: List[DataSplit], feat_cnt: Dict,
+                     device: torch.device, processing: PreprocessingMethod) -> Self:
+        transform_texts_to_embeddings(raw=raw, device=device)
+        dataset = cls.from_processed(raw=raw, processing=processing, splits=splits, feat_cnt=feat_cnt)
+        return dataset
+
+    @classmethod
+    def from_processed(cls, raw: RawDataset, processing: PreprocessingMethod, splits: List[DataSplit], feat_cnt: Dict,
+                       targets: Optional[List[str]] = None) -> Self:
+        properties = DatasetProperties.create(raw, splits=splits, feat_cnt=feat_cnt, processing=processing,
+                                              targets=targets)
+        dataset = TabularDataset(properties=properties, x=raw.x, y=raw.y, splits=splits)
+        return dataset
 
 # class CatBoostOptuna(CatBoost):
 #     def train(self):

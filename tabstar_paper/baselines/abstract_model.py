@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from pandas import DataFrame, Series
 
 from tabstar.preprocessing.splits import split_to_val
@@ -29,7 +31,22 @@ class TabularModel:
         raise NotImplementedError("Initialize model method not implemented yet")
 
     def fit(self, x: DataFrame, y: Series):
-        raise NotImplementedError("Fit method not implemented yet")
+        # TODO: for methods which don't require internal split_to_val, skip this step
+        x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        self.fit_preprocessor(x_train=x_train, y_train=y_train)
+        x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
+        x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
+        self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
+
+    def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
+        raise NotImplementedError("Fit preprocessor method not implemented yet")
+
+    def transform_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        raise NotImplementedError("Transform preprocessor method not implemented yet")
+
+    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+        raise NotImplementedError("Fit model method not implemented yet")
+
 
 
     # def test(self) -> Dict[DataSplit, Predictions]:
