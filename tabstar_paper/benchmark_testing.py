@@ -5,7 +5,10 @@ from tabstar_paper.do_benchmark import eval_tabstar_on_dataset
 from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS, TEXTUAL_BIG
 from tabular.utils.io_handlers import dump_json
 
-for dataset in sorted(set(TEXTUAL_DATASETS).difference(TEXTUAL_BIG)):
+for dataset in TEXTUAL_DATASETS:
+    if dataset in TEXTUAL_BIG:
+        # Skip for now big datasets, we need to handle the num_examples
+        continue
     for run_num in range(10):
         key_file = f"benchmark_results/{dataset.name}_{run_num}.txt"
         if os.path.exists(key_file):
