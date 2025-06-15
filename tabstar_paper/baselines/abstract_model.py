@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Optional, Set
 
 from pandas import DataFrame, Series
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from skrub import DatetimeEncoder
+from skrub import DatetimeEncoder, TextEncoder
 
 from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
 from tabstar.preprocessing.feat_types import detect_numerical_features, transform_feature_types
@@ -10,6 +10,7 @@ from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y
+from tabstar.training.devices import get_device
 
 
 class TabularModel:
@@ -19,11 +20,13 @@ class TabularModel:
 
     def __init__(self, is_cls: bool):
         self.is_cls = is_cls
+        self.device = get_device()
         self.model_ = self.initialize_model()
-        self.date_transformers: Dict[str, DatetimeEncoder] = {}
-        self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
-        self.numerical_features: Set[str] = set()
         self.d_output: int = 0
+        self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
+        self.date_transformers: Dict[str, DatetimeEncoder] = {}
+        self.text_transformers: Dict[str, TextEncoder] = {}
+        self.numerical_features: Set[str] = set()
 
         # self.x_median: Optional[Dict[str, float]] = None
         # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
@@ -67,7 +70,6 @@ class TabularModel:
             self.d_output = 1
         return x, y
 
-    #
     # def predict(self, x: DataFrame) -> np.ndarray:
     #     return self.predict_from_model(x=x, model=self.model)
     #
