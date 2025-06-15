@@ -6,6 +6,9 @@ from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS, TEXTUAL_BIG
 from tabular.utils.io_handlers import dump_json
 
 for dataset in TEXTUAL_DATASETS:
+    if dataset.name.startswith('REG_'):
+        # Skip regression datasets for now, we only evaluate classification
+        continue
     if dataset in TEXTUAL_BIG:
         # Skip for now big datasets, we need to handle the num_examples
         continue
