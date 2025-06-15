@@ -1,10 +1,11 @@
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, Set
 
 from pandas import DataFrame, Series
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from skrub import DatetimeEncoder
 
 from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
+from tabstar.preprocessing.feat_types import detect_numerical_features, transform_feature_types
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
@@ -21,12 +22,12 @@ class TabularModel:
         self.model_ = self.initialize_model()
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
+        self.numerical_features: Set[str] = set()
+        self.d_output: int = 0
 
-        # self.y_scaler: Optional[StandardScaler] = None
         # self.x_median: Optional[Dict[str, float]] = None
         # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
         # self.numerical_transformers: Dict[str, StandardScaler] = {}
-        # self.semantic_transformers: Dict[str, QuantileTransformer] = {}
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -57,21 +58,15 @@ class TabularModel:
         x, y = densify_objects(x=x, y=y)
         self.date_transformers = fit_date_encoders(x=x)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        self.numerical_features = detect_numerical_features(x)
+        x = transform_feature_types(x=x, numerical_features=self.numerical_features)
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
+        if self.is_cls:
+            self.d_output = len(self.target_transformer.classes_)
+        else:
+            self.d_output = 1
         return x, y
 
-
-    # def test(self) -> Dict[DataSplit, Predictions]:
-    #     ret = {}
-    #     for split in [DataSplit.DEV, DataSplit.TEST]:
-    #         split_dir = join(self.data_dir, split)
-    #         dataset = PandasDataset(split_dir=split_dir)
-    #         if len(dataset) == 0:
-    #             # TabPFN doesn't have dev split
-    #             continue
-    #         predictions = self.predictions_for_dataset(x=dataset.x, y=dataset.y, task_type=dataset.properties.task_type)
-    #         ret[split] = predictions
-    #     return ret
     #
     # def predict(self, x: DataFrame) -> np.ndarray:
     #     return self.predict_from_model(x=x, model=self.model)
@@ -85,16 +80,6 @@ class TabularModel:
     #         probs = probs[:, 1]
     #     return probs
     #
-    # def load_all(self) -> List[DataFrame | Series]:
-    #     train = PandasDataset(split_dir=join(self.data_dir, DataSplit.TRAIN))
-    #     dev = PandasDataset(split_dir=join(self.data_dir, DataSplit.DEV))
-    #     return [train.x, train.y, dev.x, dev.y]
-    #
-    # def load_train(self) -> Tuple[DataFrame, Series]:
-    #     x_train, y_train, x_dev, y_dev = self.load_all()
-    #     assert len(x_dev) == len(y_dev) == 0
-    #     return x_train, y_train
-    #
     # def predictions_for_dataset(self, x: DataFrame, y: Series | np.ndarray, task_type: SupervisedTask) -> Predictions:
     #     verbose_print(f"🔮 Planning to predict over {len(x)} examples")
     #     x, y = self.preprocess_test(x=x, y=y)
@@ -105,9 +90,6 @@ class TabularModel:
     #
     #
     # def preprocess_test(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-    #     # TODO: this is a bit XGBoost specific, consider excluding some of these and delegating?
-    #     if self.y_scaler is not None:
-    #         y = transform_target(y, transformer=self.y_scaler)
     #     if self.x_median is not None:
     #         for col, median in self.x_median.items():
     #             x[col] = x[col].fillna(median)
