@@ -25,7 +25,7 @@ class CatBoost(TabularModel):
         params = CatBoostDefaultHyperparams()
         self.model_ = model_cls(**asdict(params))
 
-    def fit_internal_preprocessor(self, x_train: DataFrame, y_train: Series):
+    def fit_internal_preprocessor(self, x: DataFrame, y: Series):
         # numerical_features = detect_numerical_features(x)
         # text_features = [col for col in x.columns if col not in numerical_features]
         # x = transform_feature_types(x=x, numerical_features=numerical_features)
@@ -40,7 +40,7 @@ class CatBoost(TabularModel):
         # self.y_name = str(y.name)
         # if self.is_cls:
         #     self.y_values = sorted(self.target_transformer.classes_)
-        raise NotImplementedError
+        raise NotImplementedError("Still to implement CatBoost preprocessing")
 
     def fit__(self, x, y):
         assert False, "Implement preprocessing"

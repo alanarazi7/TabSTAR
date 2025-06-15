@@ -1,12 +1,14 @@
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
 
 from pandas import DataFrame, Series
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from skrub import DatetimeEncoder
 
 from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
+from tabstar.preprocessing.target import fit_preprocess_y
 
 
 class TabularModel:
@@ -18,13 +20,13 @@ class TabularModel:
         self.is_cls = is_cls
         self.model_ = self.initialize_model()
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
+        self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
 
         # self.y_scaler: Optional[StandardScaler] = None
         # self.x_median: Optional[Dict[str, float]] = None
         # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
         # self.numerical_transformers: Dict[str, StandardScaler] = {}
         # self.semantic_transformers: Dict[str, QuantileTransformer] = {}
-        # self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -55,6 +57,7 @@ class TabularModel:
         x, y = densify_objects(x=x, y=y)
         self.date_transformers = fit_date_encoders(x=x)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
         return x, y
 
 
