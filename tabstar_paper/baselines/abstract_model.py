@@ -1,20 +1,6 @@
-from dataclasses import dataclass
-from typing import Optional, Any, Dict, List
+from pandas import DataFrame, Series
 
-import torch
-from sklearn.preprocessing import StandardScaler
-from tqdm import tqdm
-
-# from tabular.datasets.tabular_datasets import OpenMLDatasetID
-# from tabular.datasets.properties import DatasetProperties
-# from tabular.datasets.torch_dataset import get_data_dir, get_properties
-# from tabular.evaluation.predictions import Predictions
-# from tabular.preprocessing.splits import DataSplit
-# from tabular.preprocessing.objects import SupervisedTask
-# from tabular.preprocessing.trees.categorical import ColumnLabelEncoder
-# from tabular.trainers.finetune_args import FinetuneArgs
-# from tabular.trainers.pretrain_args import PretrainArgs
-# from tabular.utils.utils import fix_seed
+from tabstar.preprocessing.splits import split_to_val
 
 
 class TabularModel:
@@ -42,9 +28,10 @@ class TabularModel:
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
 
-    # def train(self):
-    #     raise NotImplementedError("Train method not implemented yet")
-    #
+    def fit(self, x: DataFrame, y: Series):
+        raise NotImplementedError("Fit method not implemented yet")
+
+
     # def test(self) -> Dict[DataSplit, Predictions]:
     #     ret = {}
     #     for split in [DataSplit.DEV, DataSplit.TEST]:

@@ -3,6 +3,7 @@ from dataclasses import dataclass, asdict
 import numpy as np
 from catboost import CatBoostRegressor, CatBoostClassifier
 
+from tabstar.preprocessing.splits import split_to_val
 from tabstar_paper.baselines.abstract_model import TabularModel
 
 # from tabular.evaluation.metrics import calculate_metric
@@ -27,19 +28,16 @@ class CatBoost(TabularModel):
         params = CatBoostDefaultHyperparams()
         self.model_ = model_cls(**asdict(params))
 
-    # def train(self):
-    #     verbose_print(f"Training {self.MODEL_NAME} model for dataset {self.dataset.sid}")
-    #     x_train, y_train, x_dev, y_dev = self.load_all()
-    #     cprint(f"Training {self.MODEL_NAME} over {len(x_train)} examples. Dev set has {len(x_dev)} examples")
-    #     self.model.fit(x_train, y_train, eval_set=(x_dev, y_dev), use_best_model=True, cat_features=self.dataset.cat_col_indices)
+    def fit(self, x, y):
+        assert False, "Implement preprocessing"
+        x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        cat_features = None
+        assert cat_features, "Implelement this"
+        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features)
 
 
 # class CatBoostOptuna(CatBoost):
 #     def train(self):
-#         self.config = None
-#         self.model = None
-#         cprint(f"Starting Optuna study for {self.dataset.sid}")
-#         study = get_optuna_study()
 #         study.optimize(self.objective, n_jobs=OPTUNA_CPU, timeout=OPTUNA_BUDGET,
 #                        catch=(CatBoostError,))
 #         cprint(f"Done studying, did {len(study.trials)} runs 🤓")
