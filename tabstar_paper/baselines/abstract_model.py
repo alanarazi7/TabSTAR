@@ -1,7 +1,11 @@
-from typing import Tuple
+from typing import Tuple, Dict
 
 from pandas import DataFrame, Series
+from skrub import DatetimeEncoder
 
+from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
+from tabstar.preprocessing.nulls import raise_if_null_target
+from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 
 
@@ -13,19 +17,14 @@ class TabularModel:
     def __init__(self, is_cls: bool):
         self.is_cls = is_cls
         self.model_ = self.initialize_model()
-        # self.run_name = run_name
-        # self.dataset_ids = dataset_ids
-        # self.device = device
-        # self.run_num = run_num
-        # self.train_examples = train_examples
-        # self.data_dirs: List[str] = self.initialize_data_dirs()
-        # self.datasets: List[DatasetProperties] = [get_properties(d) for d in self.data_dirs]
-        # self.model: Optional[Any] = None
-        # self.config = self.set_config()
-        # # For processing
+        self.date_transformers: Dict[str, DatetimeEncoder] = {}
+
         # self.y_scaler: Optional[StandardScaler] = None
         # self.x_median: Optional[Dict[str, float]] = None
         # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
+        # self.numerical_transformers: Dict[str, StandardScaler] = {}
+        # self.semantic_transformers: Dict[str, QuantileTransformer] = {}
+        # self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -39,7 +38,11 @@ class TabularModel:
         self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
-        raise NotImplementedError("Fit preprocessor method not implemented yet")
+        x_train, y_train = self.do_model_agnostic_preprocessing(x=x_train, y=y_train)
+        return self.fit_internal_preprocessor(x=x_train, y=y_train)
+
+    def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        raise NotImplementedError("Fit internal preprocessor method not implemented yet")
 
     def transform_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
         raise NotImplementedError("Transform preprocessor method not implemented yet")
@@ -47,6 +50,12 @@ class TabularModel:
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         raise NotImplementedError("Fit model method not implemented yet")
 
+    def do_model_agnostic_preprocessing(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        raise_if_null_target(y)
+        x, y = densify_objects(x=x, y=y)
+        self.date_transformers = fit_date_encoders(x=x)
+        x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        return x, y
 
 
     # def test(self) -> Dict[DataSplit, Predictions]:

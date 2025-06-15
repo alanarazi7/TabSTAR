@@ -1,14 +1,11 @@
 from dataclasses import dataclass, asdict
 
-import numpy as np
 from catboost import CatBoostRegressor, CatBoostClassifier
+from pandas import DataFrame, Series
 
 from tabstar.preprocessing.splits import split_to_val
 from tabstar_paper.baselines.abstract_model import TabularModel
 
-# from tabular.evaluation.metrics import calculate_metric
-# from tabular.preprocessing.objects import SupervisedTask
-# from tabular.preprocessing.target import standardize_y_train_test, fit_standard_scaler, transform_target
 
 @dataclass
 class CatBoostDefaultHyperparams:
@@ -28,28 +25,37 @@ class CatBoost(TabularModel):
         params = CatBoostDefaultHyperparams()
         self.model_ = model_cls(**asdict(params))
 
-    def fit(self, x, y):
+    def fit_internal_preprocessor(self, x_train: DataFrame, y_train: Series):
+        # numerical_features = detect_numerical_features(x)
+        # text_features = [col for col in x.columns if col not in numerical_features]
+        # x = transform_feature_types(x=x, numerical_features=numerical_features)
+        # self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
+        # if self.is_cls:
+        #     self.d_output = len(self.target_transformer.classes_)
+        # else:
+        #     self.d_output = 1
+        # for col in numerical_features:
+        #     self.numerical_transformers[col] = fit_standard_scaler(s=x[col])
+        #     self.semantic_transformers[col] = fit_numerical_bins(s=x[col])
+        # self.y_name = str(y.name)
+        # if self.is_cls:
+        #     self.y_values = sorted(self.target_transformer.classes_)
+        raise NotImplementedError
+
+    def fit__(self, x, y):
         assert False, "Implement preprocessing"
         x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
         cat_features = None
         # cat_features=self.dataset.cat_col_indices
         assert cat_features, "Implelement this"
+        transform_texts_to_embeddings(raw=raw, device=device)
+        feat_types = {c: str(tp.value) for tp, ls in raw.feature_types.items() for c in ls}
+        # TODO: perhaps cat_col_names should become
+        cat_col_names = [c for tp, ls in raw.feature_types.items() for c in ls
+                         if tp in {FeatureType.BOOLEAN, FeatureType.CATEGORICAL}]
+        cat_col_indices = [i for i, c in enumerate(raw.x.columns) if c in cat_col_names]
         self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features)
 
-    @classmethod
-    def for_catboost(cls, raw: RawDataset, splits: List[DataSplit], feat_cnt: Dict,
-                     device: torch.device, processing: PreprocessingMethod) -> Self:
-        transform_texts_to_embeddings(raw=raw, device=device)
-        dataset = cls.from_processed(raw=raw, processing=processing, splits=splits, feat_cnt=feat_cnt)
-        return dataset
-
-    @classmethod
-    def from_processed(cls, raw: RawDataset, processing: PreprocessingMethod, splits: List[DataSplit], feat_cnt: Dict,
-                       targets: Optional[List[str]] = None) -> Self:
-        properties = DatasetProperties.create(raw, splits=splits, feat_cnt=feat_cnt, processing=processing,
-                                              targets=targets)
-        dataset = TabularDataset(properties=properties, x=raw.x, y=raw.y, splits=splits)
-        return dataset
 
 # class CatBoostOptuna(CatBoost):
 #     def train(self):
