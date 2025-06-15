@@ -5,17 +5,13 @@ from catboost import CatBoostRegressor, CatBoostClassifier
 
 from tabstar_paper.baselines.abstract_model import TabularModel
 
-# from tabular.constants import VERBOSE, OPTUNA_CPU, OPTUNA_BUDGET
-# from tabular.evaluation.cross_validation import get_kfold_splitter, get_optuna_study, make_train_dev_splits
 # from tabular.evaluation.metrics import calculate_metric
-# from tabular.evaluation.sklearn_model import init_model
-# from tabular.models.abstract_sklearn import TabularSklearnModel
-# from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
+# from tabular.preprocessing.objects import SupervisedTask
 # from tabular.preprocessing.target import standardize_y_train_test, fit_standard_scaler, transform_target
-# from tabular.utils.utils import verbose_print, cprint
 
 @dataclass
 class CatBoostDefaultHyperparams:
+    # Using the "default" hyperparameters of the FT-Transformer paper: https://arxiv.org/pdf/2106.11959
     early_stopping_rounds: int = 50
     iterations: int = 2000
     od_pval: float = 0.001
@@ -27,25 +23,18 @@ class CatBoost(TabularModel):
     SHORT_NAME = "cat"
 
     def initialize_model(self):
-        self.model = init_model(config=self.config, is_reg=self.dataset.is_regression,
-                                classifier_cls=CatBoostClassifier, regressor_cls=CatBoostRegressor)
+        model_cls = CatBoostClassifier if self.is_cls else CatBoostRegressor
+        params = CatBoostDefaultHyperparams()
+        self.model_ = model_cls(**asdict(params))
 
-    def train(self):
-        verbose_print(f"Training {self.MODEL_NAME} model for dataset {self.dataset.sid}")
-        x_train, y_train, x_dev, y_dev = self.load_all()
-        cprint(f"Training {self.MODEL_NAME} over {len(x_train)} examples. Dev set has {len(x_dev)} examples")
-        self.model.fit(x_train, y_train, eval_set=(x_dev, y_dev), use_best_model=True, cat_features=self.dataset.cat_col_indices)
+    # def train(self):
+    #     verbose_print(f"Training {self.MODEL_NAME} model for dataset {self.dataset.sid}")
+    #     x_train, y_train, x_dev, y_dev = self.load_all()
+    #     cprint(f"Training {self.MODEL_NAME} over {len(x_train)} examples. Dev set has {len(x_dev)} examples")
+    #     self.model.fit(x_train, y_train, eval_set=(x_dev, y_dev), use_best_model=True, cat_features=self.dataset.cat_col_indices)
 
-    def set_config(self) -> CatBoostDefaultHyperparams:
-        # Using the "default" hyperparameters of the FT-Transformer paper: https://arxiv.org/pdf/2106.11959
-        return CatBoostDefaultHyperparams()
 
-# # TODO: could be generalized to a 'TabularOptunaModel' wrapper
 # class CatBoostOptuna(CatBoost):
-#     MODEL_NAME = f"CatBoost-Opt{OPTUNA_BUDGET} 😼"
-#     SHORT_NAME = "catopt"
-#     PROCESSING = PreprocessingMethod.CATBOOST_OPT
-#
 #     def train(self):
 #         self.config = None
 #         self.model = None

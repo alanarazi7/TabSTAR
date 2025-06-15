@@ -3,6 +3,7 @@ from typing import Type
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
+from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.datasets.downloading import download_dataset
@@ -19,12 +20,9 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
     # TODO: we'll need a 'train examples' split here, to run over a subset of the dataset.
     x_train, x_test, y_train, y_test = split_to_test(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, seed=run_num)
     model = model(is_cls=dataset.is_cls)
-
-    tabstar_cls = TabSTARClassifier if dataset.is_cls else TabSTARRegressor
-    tabstar = tabstar_cls(pretrain_dataset=dataset_id)
-    tabstar.fit(x_train, y_train)
-    y_pred = tabstar.predict(x_test)
-    metric = calculate_metric(y_test, y_pred, d_output=tabstar.preprocessor_.d_output)
+    model.fit(x_train, y_train)
+    y_pred = model.predict(x_test)
+    metric = calculate_metric(y_test, y_pred, d_output=model.d_output)
     print(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
     return metric
 
