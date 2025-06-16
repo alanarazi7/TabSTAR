@@ -1,5 +1,6 @@
 from typing import Tuple, Dict, Optional, Set
 
+import numpy as np
 from pandas import DataFrame, Series
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from skrub import DatetimeEncoder, TextEncoder
@@ -86,23 +87,10 @@ class TabularModel:
             self.d_output = 1
         return x, y
 
-    # def predict(self, x: DataFrame) -> np.ndarray:
-    #     return self.predict_from_model(x=x, model=self.model)
-    #
-    # def predict_from_model(self, x: DataFrame, model: Any) -> np.ndarray:
-    #     verbose_print(f"🔮 Planning to predict over {len(x)} examples, type {type(x)} and shape {x.shape}")
-    #     if self.dataset.is_regression:
-    #         return model.predict(x)
-    #     probs = model.predict_proba(x)
-    #     if self.dataset.is_binary:
-    #         probs = probs[:, 1]
-    #     return probs
-    #
-    # def predictions_for_dataset(self, x: DataFrame, y: Series | np.ndarray, task_type: SupervisedTask) -> Predictions:
-    #     verbose_print(f"🔮 Planning to predict over {len(x)} examples")
-    #     x, y = self.preprocess_test(x=x, y=y)
-    #     predictions = self.predict(x)
-    #     verbose_print(f"🔮 Predicted {len(predictions)} examples, of type {type(predictions)}")
-    #     metric = calculate_metric(task_type=task_type, y_true=y, y_pred=predictions)
-    #     return Predictions(score=float(metric), predictions=predictions, labels=y)
-
+    def predict(self, x: DataFrame) -> np.ndarray:
+        if not self.is_cls:
+            return self.model_.predict(x)
+        probs = self.model_.predict_proba(x)
+        if self.d_output == 2:
+            probs = probs[:, 1]
+        return probs
