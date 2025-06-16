@@ -15,6 +15,7 @@ URL_VALUES = {item.value for item in UrlDatasetID}
 
 
 def download_dataset(dataset_id: TabularDatasetID) -> TabularDataset:
+    # TODO: allow the option to downsample the number of examples of the dataset
     if dataset_id.value in OPENML_VALUES:
         return load_openml_dataset(dataset_id)
     elif dataset_id.value in KAGGLE_VALUES:

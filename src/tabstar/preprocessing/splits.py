@@ -16,7 +16,8 @@ def split_to_test(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED) -> Tu
     x_train, x_test, y_train, y_test = do_split(x=x, y=y, test_size=test_size, is_cls=is_cls, seed=seed)
     return x_train, x_test, y_train, y_test
 
-def split_to_val(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def split_to_val(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED, val_ratio: float = VAL_RATIO) -> Tuple[DataFrame, DataFrame, Series, Series]:
+    # TODO: if 'is_pretrain', we should use a different validation ratio
     val_size = int(len(y) * VAL_RATIO)
     val_size = min(val_size, MAX_VAL_SIZE)
     x_train, x_val, y_train, y_val = do_split(x=x, y=y, test_size=val_size, is_cls=is_cls, seed=seed)
