@@ -32,7 +32,9 @@ class CatBoost(TabularModel):
         self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        self.vprint(f"Before internal preprocessing: {x.shape=}")
         x = transform_text_features(x=x, text_encoders=self.text_transformers)
+        self.vprint(f"After internal preprocessing: {x.shape=}")
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
