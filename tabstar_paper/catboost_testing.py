@@ -6,14 +6,13 @@ from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS, TEXTUAL_BIG
 from tabular.utils.io_handlers import dump_json
 
 datasets = sorted(TEXTUAL_DATASETS, key=lambda d: d.name)
+# Skip regression datasets for now, we only evaluate classification
+# Skip for now big datasets, we need to handle the num_examples
+datasets = [d for d in datasets if not d.name.startswith('REG_')]
+datasets = [d for d in datasets if d not in TEXTUAL_BIG]
+
 
 for dataset in datasets:
-    if dataset.name.startswith('REG_'):
-        # Skip regression datasets for now, we only evaluate classification
-        continue
-    if dataset in TEXTUAL_BIG:
-        # Skip for now big datasets, we need to handle the num_examples
-        continue
     for run_num in range(10):
         for model in [CatBoost]:
             key_file = f"benchmark_results/{model.SHORT_NAME}_{dataset.name}_{run_num}.txt"
