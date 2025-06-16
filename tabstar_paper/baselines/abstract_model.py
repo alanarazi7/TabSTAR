@@ -78,8 +78,10 @@ class TabularModel:
         raise_if_null_target(y)
         x, y = densify_objects(x=x, y=y)
         self.date_transformers = fit_date_encoders(x=x)
+        self.vprint(f"📅 Detected {len(self.date_transformers)} date features: {sorted(self.date_transformers)}")
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
         self.numerical_features = detect_numerical_features(x)
+        self.vprint(f"🔢 Detected {len(self.numerical_features)} numerical features: {sorted(self.numerical_features)}")
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
         if self.is_cls:
