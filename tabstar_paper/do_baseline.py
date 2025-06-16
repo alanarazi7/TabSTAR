@@ -17,7 +17,7 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
     dataset = download_dataset(dataset_id=dataset_id)
     # TODO: we'll need a 'train examples' split here, to run over a subset of the dataset.
     x_train, x_test, y_train, y_test = split_to_test(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, seed=run_num)
-    model = model(is_cls=dataset.is_cls)
+    model = model(is_cls=dataset.is_cls, verbose=True)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
     metric = calculate_metric(y_test, y_pred, d_output=model.d_output)
