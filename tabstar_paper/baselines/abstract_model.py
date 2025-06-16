@@ -59,13 +59,16 @@ class TabularModel:
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
-        self.vprint(f"Transforming preprocessor: {x.shape=}, {(y.shape if y is not None else None)=}")
-        x, y = self.do_model_agnostic_preprocessing(x=x, y=y)
+        self.vprint(f"Transforming preprocessor: {x.shape=}, {y.shape if y is not None else None}")
+        x, y = densify_objects(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        self.vprint(f"After date transformation: {x.shape=}")
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
+        self.vprint(f"After feature type transformation: {x.shape=}")
         if y is not None:
             raise_if_null_target(y)
             y = transform_preprocess_y(y=y, scaler=self.target_transformer)
+        self.vprint(f"After target transformation: {x.shape=}, {y.shape if y is not None else None}")
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
