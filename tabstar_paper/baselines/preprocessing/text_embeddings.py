@@ -16,7 +16,9 @@ def fit_text_encoders(x: DataFrame, numerical_features: Set[str], device: torch.
     text_encoders = {}
     for col, dtype in x.dtypes.items():
         if (col not in numerical_features) and _is_text_feature(s=x[col]):
-            text_encoders[str(col)] = TextEncoder(model_name=E5_SMALL, device=device)
+            encoder = TextEncoder(model_name=E5_SMALL, device=device)
+            encoder.fit(x[col])
+            text_encoders[str(col)] = encoder
     return text_encoders
 
 def transform_text_features(x: DataFrame, text_encoders: Dict[str, TextEncoder]) -> DataFrame:
