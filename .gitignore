@@ -2,11 +2,10 @@
 .env
 .idea
 .venv
-/cache/
-/catboost_info/
-/wandb/
-/sweeps/wandb
-/.tabstar_checkpoint/
+**/cache/
+**/catboost_info/
+**/wandb/
+**/.tabstar_checkpoint/
 
 
 # Byte-compiled / optimized / DLL files
