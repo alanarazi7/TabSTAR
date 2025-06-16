@@ -35,7 +35,10 @@ class CatBoost(TabularModel):
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        non_cat_features = set(self.numerical_features).union(set(self.text_transformers))
+        numerical_features = set(self.numerical_features)
+        text_features = {f"{c}_{str(n+1).zfill(2)}" for c, e in self.text_transformers.items() for n in range(e.n_components)}
+        assert all(c in x_train.columns for c in text_features)
+        non_cat_features = numerical_features.union(text_features)
         cat_features = [i for i, c in enumerate(x_train.columns) if c not in non_cat_features]
         self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features)
 
