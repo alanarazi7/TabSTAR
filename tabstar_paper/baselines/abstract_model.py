@@ -47,9 +47,11 @@ class TabularModel:
     def fit(self, x: DataFrame, y: Series):
         # TODO: for methods which don't require internal split_to_val, skip this step
         x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        self.vprint(f"Split sizes: {x_train.shape=}, {y_train.shape=}, {x_val.shape=}, {y_val.shape=}")
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
         x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
+        self.vprint(f"Fitting model: {x_train.shape=}, {y_train.shape=}, {x_val.shape=}, {y_val.shape=}")
         self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
@@ -57,6 +59,7 @@ class TabularModel:
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
+        self.vprint(f"Transforming preprocessor: {x.shape=}, {(y.shape if y is not None else None)=}")
         x, y = densify_objects(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
