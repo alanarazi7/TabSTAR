@@ -28,9 +28,16 @@ class TabularModel:
         self.text_transformers: Dict[str, TextEncoder] = {}
         self.numerical_features: Set[str] = set()
 
+        # TODO: for trees like XGBoost
         # self.x_median: Optional[Dict[str, float]] = None
         # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
         # self.numerical_transformers: Dict[str, StandardScaler] = {}
+        #     if self.x_median is not None:
+        #         for col, median in self.x_median.items():
+        #             x[col] = x[col].fillna(median)
+        #     if self.x_encoder is not None:
+        #         for col, encoder in self.x_encoder.items():
+        #             x[col] = transform_encoder_categorical(s=x[col], encoder=encoder)
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -47,11 +54,16 @@ class TabularModel:
         x_train, y_train = self.do_model_agnostic_preprocessing(x=x_train, y=y_train)
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
+    def transform_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        x, y = densify_objects(x=x, y=y)
+        x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        return self.transform_internal_preprocessor(x=x, y=y)
+
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
         raise NotImplementedError("Fit internal preprocessor method not implemented yet")
 
-    def transform_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        raise NotImplementedError("Transform preprocessor method not implemented yet")
+    def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        raise NotImplementedError("Transform internal preprocessor method not implemented yet")
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         raise NotImplementedError("Fit model method not implemented yet")
@@ -90,13 +102,4 @@ class TabularModel:
     #     metric = calculate_metric(task_type=task_type, y_true=y, y_pred=predictions)
     #     return Predictions(score=float(metric), predictions=predictions, labels=y)
     #
-    #
-    # def preprocess_test(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-    #     if self.x_median is not None:
-    #         for col, median in self.x_median.items():
-    #             x[col] = x[col].fillna(median)
-    #     if self.x_encoder is not None:
-    #         for col, encoder in self.x_encoder.items():
-    #             x[col] = transform_encoder_categorical(s=x[col], encoder=encoder)
-    #     return x, y
 
