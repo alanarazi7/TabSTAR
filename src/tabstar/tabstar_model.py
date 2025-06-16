@@ -28,6 +28,7 @@ class BaseTabSTAR:
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
         self.device = get_device(device=device)
+        print(f"🖥️ Using device: {self.device}")
         self.model_version = get_tabstar_version(pretrain_dataset=pretrain_dataset)
 
     def fit(self, X, y):

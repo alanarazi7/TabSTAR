@@ -6,7 +6,6 @@ import torch
 def get_device(device: Optional[str] = None) -> torch.device:
     if device is None:
         device = _get_device_type()
-    print(f"🖥️ Using device: {device}")
     return torch.device(device)
 
 def clear_cuda_cache():
