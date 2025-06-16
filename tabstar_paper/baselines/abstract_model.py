@@ -56,7 +56,7 @@ class TabularModel:
         x_train, y_train = self.do_model_agnostic_preprocessing(x=x_train, y=y_train)
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
-    def transform_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+    def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
         x, y = densify_objects(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
@@ -68,7 +68,7 @@ class TabularModel:
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
         raise NotImplementedError("Fit internal preprocessor method not implemented yet")
 
-    def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+    def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
         raise NotImplementedError("Transform internal preprocessor method not implemented yet")
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
@@ -91,6 +91,7 @@ class TabularModel:
         return x, y
 
     def predict(self, x: DataFrame) -> np.ndarray:
+        x, _ = self.transform_preprocessor(x=x, y=None)
         if not self.is_cls:
             return self.model_.predict(x)
         probs = self.model_.predict_proba(x)
