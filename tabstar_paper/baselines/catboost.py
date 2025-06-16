@@ -5,7 +5,7 @@ from catboost import CatBoostRegressor, CatBoostClassifier
 from pandas import DataFrame, Series
 
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders
+from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 
 
 @dataclass
@@ -30,7 +30,8 @@ class CatBoost(TabularModel):
         self.text_transformers = fit_text_encoders(x=x, numerical_features=self.numerical_features, device=self.device)
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        raise NotImplementedError("Transform text features!")
+        x = transform_text_features(x=x, text_encoders=self.text_transformers)
+        return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         non_cat_features = set(self.numerical_features).union(set(self.text_transformers))

@@ -1,5 +1,6 @@
 from typing import Dict, Set
 
+import pandas as pd
 import torch
 from pandas import DataFrame, Series
 from skrub import TextEncoder
@@ -18,6 +19,15 @@ def fit_text_encoders(x: DataFrame, numerical_features: Set[str], device: torch.
             text_encoders[str(col)] = TextEncoder(model_name=E5_SMALL, device=device)
     return text_encoders
 
+def transform_text_features(x: DataFrame, text_encoders: Dict[str, TextEncoder]) -> DataFrame:
+    for text_col, text_encoder in text_encoders.items():
+        embedding_df = text_encoder.transform(x[text_col])
+        cols_before = len(x.columns)
+        x = x.drop(columns=text_col)
+        embedding_df = embedding_df.set_index(x.index)
+        x = pd.concat([x, embedding_df], axis=1)
+        assert len(x.columns) == cols_before + text_encoder.n_components - 1
+    return x
 
 def _is_text_feature(s: Series) -> bool:
     values = get_valid_values(s)
