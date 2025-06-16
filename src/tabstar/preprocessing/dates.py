@@ -11,6 +11,7 @@ def transform_date_features(x: DataFrame, date_transformers: Dict[str, DatetimeE
     for col, dt_encoder in date_transformers.items():
         s = series_to_dt(s=x[col])
         dt_df = dt_encoder.transform(s)
+        dt_df.index = x.index
         print(f"Transforming date column {col} with {dt_encoder}")
         x = x.drop(columns=[col])
         print(f"Shape before: {x.shape}, after: {dt_df.shape}")
