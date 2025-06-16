@@ -60,7 +60,7 @@ class TabularModel:
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
         self.vprint(f"Transforming preprocessor: {x.shape=}, {(y.shape if y is not None else None)=}")
-        x, y = densify_objects(x=x, y=y)
+        x, y = self.do_model_agnostic_preprocessing(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
         if y is not None:
@@ -78,6 +78,7 @@ class TabularModel:
         raise NotImplementedError("Fit model method not implemented yet")
 
     def do_model_agnostic_preprocessing(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        self.vprint(f"Starting model-agnostic preprocessing: {x.shape=}, {y.shape=}")
         raise_if_null_target(y)
         x, y = densify_objects(x=x, y=y)
         self.date_transformers = fit_date_encoders(x=x)
@@ -91,6 +92,7 @@ class TabularModel:
             self.d_output = len(self.target_transformer.classes_)
         else:
             self.d_output = 1
+        self.vprint(f"After model-agnostic preprocessing: {x.shape=}, {y.shape=}")
         return x, y
 
     def predict(self, x: DataFrame) -> np.ndarray:
