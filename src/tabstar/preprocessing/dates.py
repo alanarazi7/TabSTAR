@@ -11,11 +11,12 @@ def transform_date_features(x: DataFrame, date_transformers: Dict[str, DatetimeE
     for col, dt_encoder in date_transformers.items():
         s = series_to_dt(s=x[col])
         dt_df = dt_encoder.transform(s)
-        x = x.drop(columns=[col])
         print(f"Transforming date column {col} with {dt_encoder}")
+        x = x.drop(columns=[col])
         print(f"Shape before: {x.shape}, after: {dt_df.shape}")
         x = pd.concat([x, dt_df], axis=1)
-        print(f'Shape after concatenation: {x.shape}')
+        if x.shape[0] != rows:
+            raise ValueError(f"Row mismatch after transforming date column {col}: expected {rows}, got {x.shape}")
     return x
 
 def fit_date_encoders(x: DataFrame) -> Dict[str, DatetimeEncoder]:
