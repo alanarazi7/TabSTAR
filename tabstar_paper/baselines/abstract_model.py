@@ -9,7 +9,7 @@ from tabstar.preprocessing.feat_types import detect_numerical_features, transfor
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
-from tabstar.preprocessing.target import fit_preprocess_y
+from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.devices import get_device
 
 
@@ -57,6 +57,10 @@ class TabularModel:
     def transform_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
         x, y = densify_objects(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
+        x = transform_feature_types(x=x, numerical_features=self.numerical_features)
+        if y is not None:
+            raise_if_null_target(y)
+            y = transform_preprocess_y(y=y, scaler=self.target_transformer)
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
@@ -101,5 +105,4 @@ class TabularModel:
     #     verbose_print(f"🔮 Predicted {len(predictions)} examples, of type {type(predictions)}")
     #     metric = calculate_metric(task_type=task_type, y_true=y, y_pred=predictions)
     #     return Predictions(score=float(metric), predictions=predictions, labels=y)
-    #
 
