@@ -7,11 +7,15 @@ from skrub import DatetimeEncoder
 
 
 def transform_date_features(x: DataFrame, date_transformers: Dict[str, DatetimeEncoder]) -> DataFrame:
+    rows = x.shape[0]
     for col, dt_encoder in date_transformers.items():
         s = series_to_dt(s=x[col])
         dt_df = dt_encoder.transform(s)
+        dt_df.index = x.index
         x = x.drop(columns=[col])
         x = pd.concat([x, dt_df], axis=1)
+        if x.shape[0] != rows:
+            raise ValueError(f"Row mismatch after transforming date column {col}: expected {rows}, got {x.shape}")
     return x
 
 def fit_date_encoders(x: DataFrame) -> Dict[str, DatetimeEncoder]:

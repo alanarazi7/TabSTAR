@@ -41,5 +41,7 @@ class CatBoost(TabularModel):
         assert all(c in x_train.columns for c in text_features)
         non_cat_features = numerical_features.union(text_features)
         cat_features = [i for i, c in enumerate(x_train.columns) if c not in non_cat_features]
-        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features)
+        logging_level = "Verbose" if self.verbose else "Silent"
+        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features,
+                        logging_level=logging_level)
 
