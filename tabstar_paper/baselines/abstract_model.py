@@ -19,9 +19,10 @@ class TabularModel:
     MODEL_NAME: str
     SHORT_NAME: str
 
-    def __init__(self, is_cls: bool):
+    def __init__(self, is_cls: bool, verbose: bool = False):
         self.is_cls = is_cls
         self.device = get_device()
+        self.verbose = verbose
         self.model_ = self.initialize_model()
         self.d_output: int = 0
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
@@ -94,3 +95,7 @@ class TabularModel:
         if self.d_output == 2:
             probs = probs[:, 1]
         return probs
+
+    def vprint(self, s: str):
+        if self.verbose:
+            print(s)
