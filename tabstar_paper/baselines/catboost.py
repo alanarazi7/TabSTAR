@@ -21,10 +21,11 @@ class CatBoost(TabularModel):
     MODEL_NAME = "CatBoost 😸"
     SHORT_NAME = "cat"
 
-    def initialize_model(self):
+    def initialize_model(self) -> CatBoostRegressor | CatBoostClassifier:
         model_cls = CatBoostClassifier if self.is_cls else CatBoostRegressor
         params = CatBoostDefaultHyperparams()
-        self.model_ = model_cls(**asdict(params))
+        model = model_cls(**asdict(params))
+        return model
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
         self.text_transformers = fit_text_encoders(x=x, numerical_features=self.numerical_features, device=self.device)
