@@ -5,7 +5,7 @@ from tabstar_paper.do_benchmark import eval_tabstar_on_dataset
 from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS, TEXTUAL_BIG
 from tabular.utils.io_handlers import dump_json
 
-for dataset in TEXTUAL_DATASETS:
+for dataset in sorted(TEXTUAL_DATASETS):
     if dataset.name.startswith('REG_'):
         # Skip regression datasets for now, we only evaluate classification
         continue
