@@ -6,6 +6,7 @@
 **/catboost_info/
 **/wandb/
 **/.tabstar_checkpoint/
+**/tabstar.egg-info/
 
 
 # Byte-compiled / optimized / DLL files

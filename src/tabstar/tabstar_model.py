@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Self
+from typing import Optional, Tuple
 
 import joblib
 import numpy as np
@@ -49,7 +49,7 @@ class BaseTabSTAR:
         joblib.dump(self, path, compress=3)
 
     @classmethod
-    def load(cls, path: str) -> Self:
+    def load(cls, path: str) -> 'BaseTabSTAR':
         return joblib.load(path)
 
     def _prepare_for_train(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
