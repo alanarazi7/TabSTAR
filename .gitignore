@@ -7,6 +7,7 @@
 **/wandb/
 **/.tabstar_checkpoint/
 **/tabstar.egg-info/
+**/.tabular_cache/
 
 
 # Byte-compiled / optimized / DLL files

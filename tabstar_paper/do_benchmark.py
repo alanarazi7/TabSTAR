@@ -1,9 +1,8 @@
 import argparse
 
-from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar.datasets.all_datasets import TabularDatasetID, OpenMLDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
-from tabstar.training.metrics import calculate_metric
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 
 DOWNSTREAM_EXAMPLES = 10_000
@@ -16,8 +15,7 @@ def eval_tabstar_on_dataset(dataset_id: TabularDatasetID, run_num: int, train_ex
     tabstar_cls = TabSTARClassifier if dataset.is_cls else TabSTARRegressor
     tabstar = tabstar_cls(pretrain_dataset=dataset_id)
     tabstar.fit(x_train, y_train)
-    y_pred = tabstar.predict(x_test)
-    metric = calculate_metric(y_test, y_pred, d_output=tabstar.preprocessor_.d_output)
+    metric = tabstar.score(X=x_test, y=y_test)
     print(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
     return metric
 

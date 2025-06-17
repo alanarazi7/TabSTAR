@@ -70,9 +70,7 @@ class TabSTARVerbalizer:
         x, y = replace_column_names(x=x, y=y)
         num_cols = sorted(self.numerical_transformers)
         x = transform_feature_types(x=x, numerical_features=set(num_cols))
-        if y is not None:
-            raise_if_null_target(y)
-            y = transform_preprocess_y(y=y, scaler=self.target_transformer)
+        y = self.transform_target(y=y)
         x = verbalize_textual_features(x=x)
         x = prepend_target_tokens(x=x, y_name=self.y_name, y_values=self.y_values)
         text_cols = [col for col in x.columns if col not in num_cols]
@@ -87,6 +85,17 @@ class TabSTARVerbalizer:
         x_txt = x_txt.to_numpy()
         data = TabSTARData(d_output=self.d_output, x_txt=x_txt, x_num=x_num, y=y)
         return data
+
+    def transform_target(self, y: Optional[Series]) -> Optional[np.ndarray]:
+        if y is None:
+            return None
+        raise_if_null_target(y)
+        if isinstance(self.target_transformer, LabelEncoder):
+            return self.target_transformer.transform(y)
+        elif isinstance(self.target_transformer, StandardScaler):
+            return self.target_transformer.transform(y.values.reshape(-1, 1)).flatten()
+        else:
+            raise TypeError("Unsupported target transformer type.")
 
     def inverse_transform_target(self, y):
         assert isinstance(self.target_transformer, StandardScaler)

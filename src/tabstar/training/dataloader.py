@@ -14,7 +14,7 @@ class TabSTARDataset(Dataset):
     def __init__(self, data: TabSTARData):
         self.x_txt = data.x_txt
         self.x_num = data.x_num
-        if data.y is not None:
+        if isinstance(data.y, pd.Series):
             self.y = data.y.reset_index(drop=True)
         else:
             # Dummy target for convenience

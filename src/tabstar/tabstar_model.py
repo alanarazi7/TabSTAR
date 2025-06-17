@@ -15,7 +15,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
-from tabstar.training.metrics import apply_loss_fn
+from tabstar.training.metrics import apply_loss_fn, calculate_metric
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions
 
@@ -84,6 +84,13 @@ class BaseTabSTAR:
     def vprint(self, s: str):
         if self.verbose:
             print(s)
+
+    def score(self, X, y) -> float:
+        y_pred = self.predict(X)
+        y_true = self.preprocessor_.transform_target(y)
+        metric = calculate_metric(y_true, y_pred, d_output=self.preprocessor_.d_output)
+        return metric
+
 
 
 class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
