@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union
 
 import numpy as np
 from pandas import DataFrame, Series
@@ -20,7 +20,7 @@ from tabstar.preprocessing.verbalize import prepend_target_tokens, verbalize_tex
 @dataclass
 class TabSTARData:
     d_output: int
-    x_txt: DataFrame | np.ndarray
+    x_txt: Union[DataFrame, np.ndarray]
     x_num: np.ndarray
     y: Optional[Series] = None
 
@@ -31,7 +31,7 @@ class TabSTARVerbalizer:
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
         self.numerical_transformers: Dict[str, StandardScaler] = {}
         self.semantic_transformers: Dict[str, QuantileTransformer] = {}
-        self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
+        self.target_transformer: Optional[Union[LabelEncoder, StandardScaler]] = None
         self.d_output: Optional[int] = None
         self.y_name: Optional[str] = None
         self.y_values: Optional[List[str]] = None

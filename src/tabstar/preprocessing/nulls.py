@@ -16,11 +16,11 @@ def raise_if_null_target(y: Series):
         raise ValueError(f"Target variable {y.name} has {y_missing} null values, please handle them before training.")
 
 
-def get_invalid_indices(ls: List | Series) -> Set[int]:
+def get_invalid_indices(ls: Series) -> Set[int]:
     return {i for i, x in enumerate(ls) if _get_non_null_value(x) is None}
 
 
-def get_valid_values(ls: List | Series) -> List:
+def get_valid_values(ls: Series) -> List:
     return [x for x in ls if _get_non_null_value(x) is not None]
 
 def _get_non_null_value(x: Any) -> Optional[Any]:

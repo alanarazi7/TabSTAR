@@ -1,4 +1,6 @@
 from enum import Enum, StrEnum
+from typing import Union
+
 
 class OpenMLDatasetID(Enum):
     BIN_ANONYM_ADA = 41156
