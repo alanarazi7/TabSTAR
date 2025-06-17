@@ -1,14 +1,14 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class SupervisedTask(StrEnum):
+class SupervisedTask(Enum):
     # openml.tasks.TaskType doesn't separate binary and multiclass classification, so we redefine it
     REGRESSION = "📈 regression"
     BINARY = "⚖️ binary"
     MULTICLASS = "🎨 multiclass"
 
 
-class FeatureType(StrEnum):
+class FeatureType(Enum):
     CATEGORICAL = "🏷️ categorical"
     NUMERIC = "🔢 numeric"
     TEXT = "📝 text"

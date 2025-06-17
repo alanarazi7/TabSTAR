@@ -1,4 +1,4 @@
-from enum import Enum, StrEnum
+from enum import Enum
 
 class OpenMLDatasetID(Enum):
     BIN_ANONYM_ADA = 41156
@@ -365,7 +365,7 @@ class OpenMLDatasetID(Enum):
     REG_TRANSPORTATION_US_BIKE_SHARING_DEMAND = 42712
     REG_TRANSPORTATION_ZURICH_PUBLIC_TRANSPORT_DELAY = 40753
 
-class KaggleDatasetID(StrEnum):
+class KaggleDatasetID(Enum):
     BIN_SOCIAL_HUMAN_CHOICE_PREDICTION_LM_GAMES = "eilamshapira/human-choice-prediction-in-language-based-games/OPE_train.csv"
     MUL_FOOD_MICHELIN_GUIDE_RESTAURANTS = "ngshiheng/michelin-guide-restaurants-2021/michelin_my_maps.csv"
     MUL_FOOD_YELP_REVIEWS = "omkarsabnis/yelp-reviews-dataset/yelp.csv"
@@ -397,7 +397,7 @@ class KaggleDatasetID(StrEnum):
     REG_TRANSPORTATION_USED_CAR_PAKISTAN = "mustafaimam/used-car-prices-in-pakistan-2021/Used_car_prices_in_Pakistan_cleaned.csv"
     REG_TRANSPORTATION_USED_CAR_SAUDI_ARABIA = "turkibintalib/saudi-arabia-used-cars-dataset/UsedCarsSA_Clean_EN.csv"
 
-class UrlDatasetID(StrEnum):
+class UrlDatasetID(Enum):
     REG_CONSUMER_BABIES_R_US_PRICES = "http://pages.cs.wisc.edu/~anhai/data/784_data/baby_products/csv_files/babies_r_us.csv"
     REG_CONSUMER_BIKE_PRICE_BIKEWALE = "http://pages.cs.wisc.edu/~anhai/data/784_data/bikes/csv_files/bikewale.csv"
     REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER = "https://opendata.vancouver.ca/api/records/1.0/download/?dataset=employee-remuneration-and-expenses-earning-over-75000&format=csv"
