@@ -13,7 +13,7 @@ datasets = [d for d in datasets if not d.name.startswith('REG_') and d not in TE
 for dataset in datasets:
     for run_num in range(10):
         for model in BASELINES:
-            key_file = f"benchmark_results_v2/tabstar_{dataset.name}_{run_num}.txt"
+            key_file = f"benchmark_results_v3/tabstar_{dataset.name}_{run_num}.txt"
             if not os.path.exists(key_file):
                 print(f"Evaluating {model.SHORT_NAME} on {dataset.name} run {run_num}...")
                 metric = eval_tabstar_on_dataset(dataset_id=dataset, run_num=run_num, train_examples=10_000)
