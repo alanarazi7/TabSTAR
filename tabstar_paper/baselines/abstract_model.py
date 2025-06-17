@@ -47,11 +47,9 @@ class TabularModel:
     def fit(self, x: DataFrame, y: Series):
         # TODO: for methods which don't require internal split_to_val, skip this step
         x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
-        self.vprint(f"Split sizes: {x_train.shape=}, {y_train.shape=}, {x_val.shape=}, {y_val.shape=}")
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
         x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
-        self.vprint(f"Fitting model: {x_train.shape=}, {y_train.shape=}, {x_val.shape=}, {y_val.shape=}")
         self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
@@ -59,16 +57,12 @@ class TabularModel:
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
-        self.vprint(f"Transforming preprocessor: {x.shape=}, {y.shape if y is not None else None}")
         x, y = densify_objects(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
-        self.vprint(f"After date transformation: {x.shape=}")
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
-        self.vprint(f"After feature type transformation: {x.shape=}")
         if y is not None:
             raise_if_null_target(y)
             y = transform_preprocess_y(y=y, scaler=self.target_transformer)
-        self.vprint(f"After target transformation: {x.shape=}, {y.shape if y is not None else None}")
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
@@ -81,7 +75,6 @@ class TabularModel:
         raise NotImplementedError("Fit model method not implemented yet")
 
     def do_model_agnostic_preprocessing(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        self.vprint(f"Starting model-agnostic preprocessing: {x.shape=}, {y.shape=}")
         raise_if_null_target(y)
         x, y = densify_objects(x=x, y=y)
         self.date_transformers = fit_date_encoders(x=x)
@@ -95,7 +88,6 @@ class TabularModel:
             self.d_output = len(self.target_transformer.classes_)
         else:
             self.d_output = 1
-        self.vprint(f"After model-agnostic preprocessing: {x.shape=}, {y.shape=}")
         return x, y
 
     def predict(self, x: DataFrame) -> np.ndarray:
