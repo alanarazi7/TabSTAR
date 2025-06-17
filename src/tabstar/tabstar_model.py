@@ -88,7 +88,7 @@ class BaseTabSTAR:
     def score(self, X, y) -> float:
         y_pred = self.predict(X)
         y_true = self.preprocessor_.transform_target(y)
-        metric = calculate_metric(y_true, y_pred, d_output=self.preprocessor_.d_output)
+        metric = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
         return metric
 
 
