@@ -20,7 +20,6 @@ You can quickly get started with TabSTAR using the following example.
 ```python
 from importlib.resources import files
 import pandas as pd
-from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
 from tabstar.tabstar_model import TabSTARClassifier
@@ -34,8 +33,9 @@ tabstar = TabSTARClassifier()
 tabstar.fit(x_train, y_train)
 # tabstar.save("my_model_path.pkl")
 # tabstar = TabSTARClassifier.load("my_model_path.pkl")
-y_pred = tabstar.predict(x_test)
-print(classification_report(y_test, y_pred))
+# y_pred = tabstar.predict(x_test)
+metric = tabstar.score(X=x_test, y=y_test)
+print(f"AUC: {metric:.4f}")
 ```
 
 🔜 Pending Features:
