@@ -16,6 +16,8 @@ class TabSTARDataset(Dataset):
         self.x_num = data.x_num
         if isinstance(data.y, pd.Series):
             self.y = data.y.reset_index(drop=True)
+        elif isinstance(data.y, np.ndarray):
+            self.y = pd.Series(data.y, dtype=np.float32)
         else:
             # Dummy target for convenience
             self.y = pd.Series(np.zeros(len(data.x_txt)), dtype=np.float32)
