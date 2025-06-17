@@ -1,10 +1,12 @@
+from typing import Union
+
 from pandas import Series
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_z_scores
 
 
-def transform_preprocess_y(y: Series, scaler: LabelEncoder | StandardScaler) -> Series:
+def transform_preprocess_y(y: Series, scaler: Union[LabelEncoder, StandardScaler]) -> Series:
     y = y.copy()
     if isinstance(scaler, StandardScaler):
         return transform_clipped_z_scores(s=y, scaler=scaler)
@@ -18,7 +20,7 @@ def transform_cls_y(y: Series, encoder: LabelEncoder) -> Series:
     return Series(y_val, name=y.name, index=y.index)
 
 
-def fit_preprocess_y(y: Series, is_cls: bool) -> LabelEncoder | StandardScaler:
+def fit_preprocess_y(y: Series, is_cls: bool) -> Union[LabelEncoder, StandardScaler]:
     if is_cls:
         return fit_cls_y(y)
     else:
