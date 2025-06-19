@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -29,6 +29,7 @@ where = ["src"]
 
 [tool.setuptools]
 include-package-data = true
+license-files = []
 
 [tool.setuptools.package-data]
 "tabstar" = ["resources/*.csv"]
