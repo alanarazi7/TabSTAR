@@ -43,7 +43,7 @@ echo "🛠 Ensuring repo root is on Python path via .pth"
 # compute site-packages directory for this venv
 SITE_PACKAGES=$("$ENV_DIR/bin/python" -c "import site; print(site.getsitepackages()[0])")
 # write the repo root path into a .pth file
-echo "$(pwd)" > "$SITE_PACKAGES/tabstar_paper.pth
+echo "$(pwd)" > "$SITE_PACKAGES/tabstar_paper.pth"
 
 
 PROJECT_ROOT="$(pwd)"
