@@ -11,9 +11,9 @@ runs = [(dataset, run_num) for dataset in datasets for run_num in range(10)]
 GPU = os.getenv("GPU", None)
 device = GPU
 if device is not None:
-    device = "cuda:{GPU}"
+    device = f"cuda:{GPU}"
     count_gpus_in_machine = torch.cuda.device_count()
-    runs = runs[GPU::count_gpus_in_machine]
+    runs = runs[int(GPU)::count_gpus_in_machine]
 
 
 for dataset, run_num in runs:
