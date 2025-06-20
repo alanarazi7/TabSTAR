@@ -21,6 +21,6 @@ for dataset, run_num in runs:
     if os.path.exists(key_file):
         continue
     print(f"Evaluating TabSTAR on {dataset.name} run {run_num}...")
-    metric = eval_tabstar_on_dataset(dataset_id=dataset, run_num=run_num, train_examples=10_000, device=gpu)
+    metric = eval_tabstar_on_dataset(dataset_id=dataset, run_num=run_num, train_examples=10_000, device=device)
     result = {"metric": metric, "dataset": dataset.name, "run_num": run_num}
     dump_json(result, key_file)
