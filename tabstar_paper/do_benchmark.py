@@ -4,15 +4,17 @@ from tabstar.datasets.all_datasets import TabularDatasetID, OpenMLDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
+from tabstar_paper.preprocessing.sampling import subsample_dataset
 
 DOWNSTREAM_EXAMPLES = 10_000
 
 
 def eval_tabstar_on_dataset(dataset_id: TabularDatasetID, run_num: int, train_examples: int) -> float:
     dataset = download_dataset(dataset_id=dataset_id)
-    # TODO: we'll need a 'train examples' split here, to run over a subset of the dataset.
-    x_train, x_test, y_train, y_test = split_to_test(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, seed=run_num)
-    tabstar_cls = TabSTARClassifier if dataset.is_cls else TabSTARRegressor
+    is_cls = dataset.is_cls
+    x, y = subsample_dataset(x=dataset.x, y=dataset.y, is_cls=is_cls, train_examples=train_examples, seed=run_num)
+    x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, seed=run_num)
+    tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
     tabstar = tabstar_cls(pretrain_dataset=dataset_id)
     tabstar.fit(x_train, y_train)
     metric = tabstar.score(X=x_test, y=y_test)
