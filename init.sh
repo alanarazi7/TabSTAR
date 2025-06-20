@@ -39,6 +39,13 @@ fi
 echo "📦 Installing tabstar package (editable)"
 uv pip install -e . || echo "⚠️ Failed to install tabstar package; continuing..."
 
+echo "🛠 Ensuring repo root is on Python path via .pth"
+# compute site-packages directory for this venv
+SITE_PACKAGES=$("$ENV_DIR/bin/python" -c "import site; print(site.getsitepackages()[0])")
+# write the repo root path into a .pth file
+echo "$(pwd)" > "$SITE_PACKAGES/tabstar_paper.pth
+
+
 PROJECT_ROOT="$(pwd)"
 SRC_PATH="$PROJECT_ROOT/src"
 ACTIVATE="$ENV_DIR/bin/activate"
