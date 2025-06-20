@@ -7,15 +7,13 @@ from tabular.utils.io_handlers import dump_json
 
 datasets = sorted(TEXTUAL_DATASETS, key=lambda d: d.name)
 # Skip regression datasets for now, we only evaluate classification
-# Skip for now big datasets, we need to handle the num_examples
 datasets = [d for d in datasets if not d.name.startswith('REG_')]
-datasets = [d for d in datasets if d not in TEXTUAL_BIG]
 
 
 for dataset in datasets:
     for run_num in range(10):
         for model in [CatBoost]:
-            key_file = f"benchmark_results_v2/{model.SHORT_NAME}_{dataset.name}_{run_num}.txt"
+            key_file = f"benchmark_results_v4/{model.SHORT_NAME}_{dataset.name}_{run_num}.txt"
             if not os.path.exists(key_file):
                 print(f"Evaluating {model.SHORT_NAME} on {dataset.name} run {run_num}...")
                 metric = eval_baseline_on_dataset(model=model, dataset_id=dataset, run_num=run_num, train_examples=10_000)
