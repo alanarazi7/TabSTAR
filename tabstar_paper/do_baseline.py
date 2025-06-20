@@ -22,7 +22,7 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
     model = model(is_cls=is_cls)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
-    metric = calculate_metric(y_test, y_pred, d_output=model.d_output)
+    metric = calculate_metric(y_true=y_test, y_pred=y_pred, d_output=model.d_output)
     print(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
     return metric
 
