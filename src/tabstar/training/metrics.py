@@ -32,12 +32,12 @@ def per_class_auc(y_true, y_pred) -> float:
         # Binary ground truth: 1 for the current class, 0 for others
         y_true_binary = (y_true == cls).astype(int)
         # Predicted probabilities for the current class
-        y_pred_scores = y_pred[:, cls]
+        y_pred_scores = y_pred[:, int(cls)]
         try:
             auc = roc_auc_score(y_true_binary, y_pred_scores)
             aucs[cls] = auc
-        except ValueError as e:
-            print(f"⚠️ Error calculating AUC for class {cls}. {e=}, {y_true_binary=}, {y_pred_scores=}")
+        except ValueError:
+            pass
     macro_avg = float(np.mean(list(aucs.values())))
     return macro_avg
 
