@@ -6,10 +6,11 @@ from tabstar.preprocessing.splits import split_to_test
 from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
+from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.do_benchmark import DOWNSTREAM_EXAMPLES
 
-BASELINES = [CatBoost]
+BASELINES = [CatBoost, XGBoost]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
