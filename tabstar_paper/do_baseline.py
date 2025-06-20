@@ -8,6 +8,7 @@ from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.do_benchmark import DOWNSTREAM_EXAMPLES
+from tabstar_paper.preprocessing.sampling import subsample_dataset
 
 BASELINES = [CatBoost]
 
@@ -15,9 +16,10 @@ SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
 def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatasetID, run_num: int, train_examples: int) -> float:
     dataset = download_dataset(dataset_id=dataset_id)
-    # TODO: we'll need a 'train examples' split here, to run over a subset of the dataset.
-    x_train, x_test, y_train, y_test = split_to_test(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, seed=run_num)
-    model = model(is_cls=dataset.is_cls)
+    is_cls = dataset.is_cls
+    x, y = subsample_dataset(x=dataset.x, y=dataset.y, is_cls=is_cls, train_examples=train_examples, seed=run_num)
+    x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, seed=run_num)
+    model = model(is_cls=is_cls)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
     metric = calculate_metric(y_test, y_pred, d_output=model.d_output)
