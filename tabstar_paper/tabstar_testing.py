@@ -18,7 +18,7 @@ if device is not None:
 
 
 for dataset, run_num in runs:
-    key_file = f"benchmark_results_v6/tabstar_{dataset.name}_{run_num}.txt"
+    key_file = f"benchmark_results_v7/tabstar_{dataset.name}_{run_num}.txt"
     if os.path.exists(key_file):
         continue
     print(f"Evaluating TabSTAR on {dataset.name} run {run_num}...")
