@@ -38,6 +38,7 @@ class TabSTARVerbalizer:
         self.d_output: Optional[int] = None
         self.y_name: Optional[str] = None
         self.y_values: Optional[List[str]] = None
+        self.constant_columns: List[str] = []
 
     def fit(self, X, y):
         if len(X.columns) >= 200:
@@ -65,6 +66,7 @@ class TabSTARVerbalizer:
         self.y_name = str(y.name)
         if self.is_cls:
             self.y_values = sorted(self.target_transformer.classes_)
+        self.constant_columns = [col for col in x.columns if x[col].nunique() == 1]
 
     def transform(self, x: DataFrame, y: Optional[Series]) -> TabSTARData:
         self.assert_no_duplicate_columns(x)
@@ -85,6 +87,7 @@ class TabSTARVerbalizer:
             idx = x_txt.columns.get_loc(col)
             s_num = transform_clipped_z_scores(s=x[col], scaler=self.numerical_transformers[col], allow_null=True)
             x_num[:, idx] = s_num.to_numpy()
+        x_txt = x_txt.drop(columns=self.constant_columns, errors='ignore')
         x_txt = x_txt.to_numpy()
         data = TabSTARData(d_output=self.d_output, x_txt=x_txt, x_num=x_num, y=y)
         return data
