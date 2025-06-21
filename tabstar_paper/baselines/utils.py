@@ -1,11 +1,18 @@
 import logging
 from functools import wraps
+import inspect
 
 def log_calls(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         logger = logging.getLogger(__name__)
-        logger.info(f"Calling {func.__qualname__}")
+        sig = inspect.signature(func)
+        bound = sig.bind(*args, **kwargs)
+        bound.apply_defaults()
+        log_lines = [f"Calling {func.__qualname__} with arguments:"]
+        for name, value in bound.arguments.items():
+            log_lines.append(f"    {name}: {value!r}")
+        logger.info("\n\n".join(log_lines))
         return func(*args, **kwargs)
     return wrapper
 

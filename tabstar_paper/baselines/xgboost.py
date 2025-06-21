@@ -41,6 +41,6 @@ class XGBoost(TabularModel):
         non_cat_features = numerical_features.union(text_features)
         # For XGBoost, categorical features are handled as numerics or via encoding
         eval_set = [(x_val, y_val)]
-        fit_args = dict(eval_set=eval_set, early_stopping_rounds=50, verbose=self.verbose)
+        fit_args = dict(eval_set=eval_set, verbose=self.verbose)
         self.model_.fit(x_train, y_train, **fit_args)
         self.model_.fit(x_train, y_train, **fit_args)
