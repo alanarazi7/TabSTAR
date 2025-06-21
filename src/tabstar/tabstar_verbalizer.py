@@ -27,6 +27,7 @@ class TabSTARData:
     def __len__(self) -> int:
         return len(self.x_txt)
 
+    @property
     def first_row(self) -> Dict:
         d = {'x_num': self.x_num[0].tolist(), 'x_txt': self.x_txt[0].tolist()}
         return d
