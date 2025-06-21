@@ -5,7 +5,7 @@ import torch
 from tabular.datasets.tabular_datasets import get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.models.competitors.carte import CARTE
-from tabular.models.competitors.catboost import CatBoost, CatBoostOptuna
+from tabular.models.competitors.catboost import CatBoostOptuna
 from tabular.models.competitors.random_forest import RandomForest
 from tabular.models.competitors.tabpfn2 import TabPFNv2
 from tabular.models.competitors.xg_boost import XGBoost, XGBoostOptuna
@@ -13,7 +13,8 @@ from tabular.trainers.finetune import do_finetune_run
 from tabular.utils.gpus import get_device
 from tabular.utils.utils import cprint
 
-BASELINES = [CatBoost, TabPFNv2, CARTE, RandomForest, XGBoost, CatBoostOptuna, XGBoostOptuna]
+# We are refactoring this code. CatBoost can be used with `tabstar_paper/do_baseline.py`
+BASELINES = [TabPFNv2, CARTE, RandomForest, XGBoost, CatBoostOptuna, XGBoostOptuna]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
@@ -21,7 +22,7 @@ SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp', type=str, default='default_baseline_experiment')
-    parser.add_argument('--model', type=str, default='cat', choices=SHORT2MODELS.keys())
+    parser.add_argument('--model', type=str, default='rf', choices=SHORT2MODELS.keys())
     parser.add_argument('--dataset_id', default=46667)
     parser.add_argument('--run_num', type=int, default=0)
     parser.add_argument('--n_examples', type=int, default=DOWNSTREAM_EXAMPLES)
