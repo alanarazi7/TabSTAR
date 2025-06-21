@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the training script with optional arguments.")
     # General
     parser.add_argument('--exp', type=str, default="default_pretrain_exp")
-    parser.add_argument('--production', action='store_true', default=False)
+    parser.add_argument('--analysis', action='store_true', default=False)
     # Arch
     parser.add_argument('--tabular_layers', type=int, default=TABULAR_LAYERS)
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
@@ -33,10 +33,10 @@ if __name__ == "__main__":
     if args.fold is not None:
         fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
         downstream_data = fold_dict[args.fold]
-    elif args.production:
-        downstream_data = []
-    else:
+    elif args.analysis:
         downstream_data = ANALYSIS_TEXT_DOWNSTREAM
+    else:
+        downstream_data = []
 
     pretrain_data = [d for d in ALL_SHUFFLED_DATASETS if d not in downstream_data]
 
