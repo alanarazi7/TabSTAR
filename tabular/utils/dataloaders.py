@@ -5,11 +5,9 @@ import numpy as np
 import torch
 from torch.utils.data import Subset, Dataset, DataLoader
 
-from tabular.datasets.raw_dataset import MAX_DATASET_EXAMPLES
+from tabstar_paper.pretraining.hyperparameters import MAX_EPOCH_EXAMPLES
 from tabular.datasets.torch_dataset import HDF5Dataset
 from tabular.preprocessing.splits import DataSplit
-from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.trainers.pretrain_args import PretrainArgs, MAX_EPOCH_EXAMPLES
 from tabular.utils.utils import verbose_print
 
 

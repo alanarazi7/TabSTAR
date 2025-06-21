@@ -60,13 +60,15 @@ class TabSTARVerbalizer:
             self.d_output = len(self.target_transformer.classes_)
         else:
             self.d_output = 1
+        self.constant_columns = [col for col in x.columns if x[col].nunique() == 1]
         for col in numerical_features:
+            if col in self.constant_columns:
+                continue
             self.numerical_transformers[col] = fit_standard_scaler(s=x[col])
             self.semantic_transformers[col] = fit_numerical_bins(s=x[col])
         self.y_name = str(y.name)
         if self.is_cls:
             self.y_values = sorted(self.target_transformer.classes_)
-        self.constant_columns = [col for col in x.columns if x[col].nunique() == 1]
 
     def transform(self, x: DataFrame, y: Optional[Series]) -> TabSTARData:
         self.assert_no_duplicate_columns(x)
