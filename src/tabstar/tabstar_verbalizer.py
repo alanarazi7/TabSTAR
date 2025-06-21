@@ -77,6 +77,7 @@ class TabSTARVerbalizer:
         x = transform_feature_types(x=x, numerical_features=set(num_cols))
         y = self.transform_target(y=y)
         x = verbalize_textual_features(x=x)
+        x = x.drop(columns=self.constant_columns, errors='ignore')
         x = prepend_target_tokens(x=x, y_name=self.y_name, y_values=self.y_values)
         text_cols = [col for col in x.columns if col not in num_cols]
         x_txt = x[text_cols + num_cols].copy()
@@ -87,7 +88,6 @@ class TabSTARVerbalizer:
             idx = x_txt.columns.get_loc(col)
             s_num = transform_clipped_z_scores(s=x[col], scaler=self.numerical_transformers[col], allow_null=True)
             x_num[:, idx] = s_num.to_numpy()
-        x_txt = x_txt.drop(columns=self.constant_columns, errors='ignore')
         x_txt = x_txt.to_numpy()
         data = TabSTARData(d_output=self.d_output, x_txt=x_txt, x_num=x_num, y=y)
         return data
