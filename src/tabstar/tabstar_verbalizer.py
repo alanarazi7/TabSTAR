@@ -24,6 +24,9 @@ class TabSTARData:
     x_num: np.ndarray
     y: Optional[Series] = None
 
+    def __len__(self) -> int:
+        return len(self.x_txt)
+
 class TabSTARVerbalizer:
     def __init__(self, is_cls: bool, verbose: bool = False):
         self.is_cls = is_cls
