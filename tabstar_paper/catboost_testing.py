@@ -6,6 +6,7 @@ from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS
 from tabular.utils.io_handlers import dump_json
 
 datasets = sorted(TEXTUAL_DATASETS, key=lambda d: d.name)
+datasets = [d for d in datasets if not d.name.startswith('REG_')]
 
 for dataset in datasets:
     for run_num in range(10):

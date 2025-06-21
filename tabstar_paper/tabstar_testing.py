@@ -7,6 +7,7 @@ from tabular.utils.io_handlers import dump_json
 import os
 
 datasets = sorted(TEXTUAL_DATASETS, key=lambda d: d.name)
+datasets = [d for d in datasets if not d.name.startswith('REG_')]
 runs = [(dataset, run_num) for dataset in datasets for run_num in range(10)]
 GPU = os.getenv("GPU", None)
 device = GPU
