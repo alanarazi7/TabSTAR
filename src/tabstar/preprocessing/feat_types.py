@@ -5,7 +5,7 @@ from pandas import DataFrame, Series
 from pandas.core.dtypes.common import is_datetime64_any_dtype, is_numeric_dtype, is_object_dtype, is_bool_dtype
 
 from tabstar.preprocessing.detection import is_mostly_numerical, is_numeric
-from tabstar.preprocessing.nulls import convert_numeric_with_missing, MISSING_VALUE
+from tabstar.preprocessing.nulls import convert_numeric_with_missing, MISSING_VALUE, get_valid_values
 
 
 def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataFrame:
@@ -24,6 +24,8 @@ def detect_numerical_features(x: DataFrame) -> Set[str]:
 def is_numerical_feature(s: Series) -> bool:
     if is_datetime64_any_dtype(s.dtype):
         raise TypeError(f"At this point, dates should have already been transformed.")
+    elif len(get_valid_values(s)) == 0:
+        return False
     elif is_numeric_dtype(s.dtype) or is_mostly_numerical(s=s):
         return True
     elif is_object_dtype(s.dtype) or is_bool_dtype(s.dtype) or isinstance(s.dtype, pd.CategoricalDtype):
