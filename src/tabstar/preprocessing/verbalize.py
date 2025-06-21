@@ -24,7 +24,7 @@ def verbalize_feature(col: str, value: str) -> str:
 def prepend_target_tokens(x: DataFrame, y_name: str, y_values: Optional[List[str]]) -> DataFrame:
     y_name = replace_whitespaces(y_name)
     if y_values:
-        values = [replace_whitespaces(v) for v in y_values]
+        values = [replace_whitespaces(text=str(v)) for v in y_values]
         tokens = [f"Target Feature: {y_name}\nFeature Value: {v}" for v in values]
     else:
         tokens = [f"Numerical Target Feature: {y_name}"]
