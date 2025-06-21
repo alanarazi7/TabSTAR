@@ -15,7 +15,7 @@ def normalize_col_name(text: str) -> str:
     text = text.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
     text = text.replace('\u00A0', ' ')
     text = replace_unspaced_symbols(text)
-    text = sanitize_text(text)
+    text = replace_whitespaces(text)
     return text
 
 def replace_unspaced_symbols(text: str) -> str:
@@ -25,6 +25,6 @@ def replace_unspaced_symbols(text: str) -> str:
         text = text.replace(c, ' ')
     return text
 
-def sanitize_text(text: str) -> str:
-    # Remove control characters except for standard whitespace (newline, tab, etc.)
+def replace_whitespaces(text: str) -> str:
+    # TODO: originally this was supposed to keep newlines and tabs
     return re.sub(r'[\x00-\x1F\x7F]', ' ', text)
