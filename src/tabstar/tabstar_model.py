@@ -32,7 +32,9 @@ class BaseTabSTAR:
         self.model_version = get_tabstar_version(pretrain_dataset=pretrain_dataset)
 
     def fit(self, X, y):
+        self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
         train_data, val_data = self._prepare_for_train(X, y)
+        self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
         trainer = TabStarTrainer(device=self.device, model_version=self.model_version)
         trainer.train(train_data, val_data)
         trainer.load_model()
