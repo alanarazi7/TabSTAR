@@ -35,6 +35,8 @@ class BaseTabSTAR:
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
         train_data, val_data = self._prepare_for_train(X, y)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
+        self.vprint(f"First train example: {train_data.first_row()}")
+        self.vprint(f"First validation example: {val_data.first_row()}")
         trainer = TabStarTrainer(device=self.device, model_version=self.model_version)
         trainer.train(train_data, val_data)
         trainer.load_model()
@@ -73,7 +75,6 @@ class BaseTabSTAR:
 
     def _infer(self, X) -> np.ndarray:
         data = self.preprocessor_.transform(X, y=None)
-        self.vprint(f"First row example: {data.first_row()}")
         dataloader = get_dataloader(data, is_train=False, batch_size=128)
         predictions = []
         for data in dataloader:
