@@ -73,6 +73,7 @@ class BaseTabSTAR:
 
     def _infer(self, X) -> np.ndarray:
         data = self.preprocessor_.transform(X, y=None)
+        self.vprint(f"First row example: {data.first_row()}")
         dataloader = get_dataloader(data, is_train=False, batch_size=128)
         predictions = []
         for data in dataloader:
