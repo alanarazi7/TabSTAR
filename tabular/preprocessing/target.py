@@ -6,11 +6,12 @@ import numpy as np
 from pandas import Series, DataFrame
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
+from tabstar_paper.datasets.objects import SupervisedTask
 from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedTarget
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.preprocessing.curation import assert_no_wrong_key
 from tabular.preprocessing.nulls import convert_series_to_numeric
-from tabular.preprocessing.objects import SupervisedTask, PreprocessingMethod, CV_METHODS
+from tabular.preprocessing.objects import PreprocessingMethod, CV_METHODS
 from tabular.preprocessing.splits import DataSplit, get_y_train
 from tabular.utils.processing import transform_encoded
 from tabular.utils.utils import cprint, verbose_print
@@ -33,7 +34,6 @@ def handle_raw_target(x: DataFrame, y: Optional[Series], curation: CuratedDatase
     y = _curate_target_values(y=y, target=curation.target, task_type=task_type)
     if task_type == SupervisedTask.MULTICLASS:
         x, y = _remove_rare_target_rows(x=x, y=y, sid=sid)
-    assert _get_sid_task_type(sid) == task_type
     return x, y, task_type
 
 
@@ -133,17 +133,9 @@ def _curate_target_values(y: Series, target: CuratedTarget, task_type: Supervise
     assert not y.isna().any(), "Missing values in target are not allowed!"
     if task_type == SupervisedTask.REGRESSION:
         return y.astype(float)
-    assert task_type in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
+    if task_type not in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS}:
+        raise ValueError(f"Unsupported task type for target curation: {task_type}")
     y = y.astype(str)
     assert_no_wrong_key(s=y, mapper=target.label_mapping)
     y = y.apply(lambda v: target.label_mapping.get(str(v), str(v)))
     return y
-
-
-def _get_sid_task_type(sid: str) -> SupervisedTask:
-    d = {'BIN': SupervisedTask.BINARY, 'MUL': SupervisedTask.MULTICLASS, 'REG': SupervisedTask.REGRESSION}
-    for prefix, task_type in d.items():
-        if sid.startswith(f"{prefix}_"):
-            return task_type
-    sid = sid.split('_')[1]
-    return d[sid]

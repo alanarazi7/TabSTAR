@@ -6,7 +6,7 @@ import torch
 
 import wandb
 
-from tabular.datasets.tabular_datasets import OpenMLDatasetID
+from tabstar.datasets.all_datasets import TabularDatasetID
 from tabular.tabstar.tabstar_trainer import TabStarTrainer
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.gpus import get_device
@@ -14,8 +14,8 @@ from tabular.utils.logging import wandb_run, RunType
 from tabular.utils.utils import cprint
 
 
-def do_pretrain(pretrain_datasets: List[OpenMLDatasetID],
-                downstream_datasets: List[OpenMLDatasetID],
+def do_pretrain(pretrain_datasets: List[TabularDatasetID],
+                downstream_datasets: List[TabularDatasetID],
                 pretrain_args: PretrainArgs):
     if exists(pretrain_args.path):
         print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")

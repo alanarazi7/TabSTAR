@@ -62,6 +62,7 @@ class DatasetProperties:
 
     def to_dict(self) -> Dict:
         d = asdict(self)
+        d['task_type'] = self.task_type.value
         return d
 
     @classmethod
