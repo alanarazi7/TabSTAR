@@ -10,9 +10,6 @@ from tabular.utils.logging import LOG_SEP
 from tabular.utils.paths import pretrain_args_path, create_dir
 from tabular.utils.utils import get_current_commit_hash, get_today, verbose_print
 
-MAX_EPOCH_EXAMPLES = 2048
-if MAX_EPOCH_EXAMPLES % BATCH_SIZE != 0:
-    raise ValueError(f"MAX_EPOCH_EXAMPLES must be divisible by {BATCH_SIZE}")
 
 # TODO: use HfArgumentParser
 @dataclass
