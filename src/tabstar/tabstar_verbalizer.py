@@ -28,8 +28,7 @@ class TabSTARData:
         return len(self.x_txt)
 
     def first_row(self) -> Dict:
-        d = self.x_txt.iloc[0].to_dict()
-        d['x_num'] = self.x_num[0].tolist()
+        d = {'x_num': self.x_num[0].tolist(), 'x_txt': self.x_txt[0].tolist()}
         return d
 
 class TabSTARVerbalizer:
