@@ -45,6 +45,7 @@ class TabularModel:
 
     def initialize_data_dirs(self) -> List[str]:
         data_dirs = []
+        is_pretrain = bool(len(self.dataset_ids) > 1)
         for d in tqdm(self.dataset_ids, desc="Initializing data dirs", leave=False):
             if isinstance(self.args, PretrainArgs):
                 number_verbalization = self.args.numbers_verbalization
@@ -54,7 +55,7 @@ class TabularModel:
                 number_verbalization = None
             data = get_data_dir(dataset=d, processing=self.PROCESSING, run_num=self.run_num,
                                 train_examples=self.train_examples, device=self.device,
-                                number_verbalization=number_verbalization)
+                                number_verbalization=number_verbalization, is_pretrain=is_pretrain)
             data_dirs.append(data)
         return data_dirs
 

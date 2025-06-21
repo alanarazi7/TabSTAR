@@ -12,3 +12,6 @@ OPTUNA_BUDGET = int(os.getenv("OPTUNA_BUDGET", 60 * 60 * 4))
 
 NUM_VERBALIZATION = os.getenv("NUM_VERBALIZATION", "full")
 assert NUM_VERBALIZATION in {'none', 'range', 'full'}
+
+
+NEW_PRETRAIN = get_env_bool("NEW_PRETRAIN")

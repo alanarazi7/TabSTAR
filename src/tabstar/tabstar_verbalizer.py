@@ -12,7 +12,7 @@ from tabstar.preprocessing.feat_types import detect_numerical_features, transfor
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_z_scores
 from tabstar.preprocessing.sparse import densify_objects
-from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
+from tabstar.preprocessing.target import fit_preprocess_y
 from tabstar.preprocessing.texts import replace_column_names
 from tabstar.preprocessing.verbalize import prepend_target_tokens, verbalize_textual_features
 
