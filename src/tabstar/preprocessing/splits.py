@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -11,9 +11,11 @@ MAX_TEST_SIZE = 2000
 VAL_RATIO = 0.1
 MAX_VAL_SIZE = 1000
 
-def split_to_test(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def split_to_test(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED, train_examples: Optional[int] = None) -> Tuple[DataFrame, DataFrame, Series, Series]:
     test_size = int(len(y) * TEST_RATIO)
     test_size = min(test_size, MAX_TEST_SIZE)
+    if (train_examples is not None) and len(x) > train_examples:
+        test_size = len(x) - train_examples
     x_train, x_test, y_train, y_test = do_split(x=x, y=y, test_size=test_size, is_cls=is_cls, seed=seed)
     return x_train, x_test, y_train, y_test
 
