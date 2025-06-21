@@ -80,7 +80,7 @@ class TabSTARVerbalizer:
         for col in num_cols:
             x_txt[col] = transform_numerical_bins(s=x[col], scaler=self.semantic_transformers[col])
             idx = x_txt.columns.get_loc(col)
-            s_num = transform_clipped_z_scores(s=x[col], scaler=self.numerical_transformers[col])
+            s_num = transform_clipped_z_scores(s=x[col], scaler=self.numerical_transformers[col], allow_null=True)
             x_num[:, idx] = s_num.to_numpy()
         x_txt = x_txt.to_numpy()
         data = TabSTARData(d_output=self.d_output, x_txt=x_txt, x_num=x_num, y=y)
