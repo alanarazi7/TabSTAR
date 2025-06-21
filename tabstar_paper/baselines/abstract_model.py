@@ -12,8 +12,10 @@ from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.devices import get_device
+from tabstar_paper.baselines.utils import log_all_methods
 
 
+@log_all_methods
 class TabularModel:
 
     MODEL_NAME: str

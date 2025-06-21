@@ -1,22 +1,27 @@
 import argparse
 from typing import Type
+import logging
 
 from tabstar.datasets.all_datasets import TabularDatasetID, OpenMLDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
-from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.do_benchmark import DOWNSTREAM_EXAMPLES
+from tabstar_paper.baselines.utils import log_calls
 
-BASELINES = [CatBoost, XGBoost]
+BASELINES = [CatBoost]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
+
+
+@log_calls
 def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatasetID, run_num: int, train_examples: int) -> float:
     dataset = download_dataset(dataset_id=dataset_id)
-    # TODO: we'll need a 'train examples' split here, to run over a subset of the dataset.
     x_train, x_test, y_train, y_test = split_to_test(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, seed=run_num)
     model = model(is_cls=dataset.is_cls)
     model.fit(x_train, y_train)
@@ -26,7 +31,8 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
     return metric
 
 
-if __name__ == "__main__":
+@log_calls
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, choices=SHORT2MODELS.keys(),
                         default=CatBoost.SHORT_NAME)
@@ -39,3 +45,7 @@ if __name__ == "__main__":
 
     eval_baseline_on_dataset(model=model, dataset_id=tabular_dataset_id, run_num=args.run_num,
                              train_examples=args.train_examples)
+
+
+if __name__ == "__main__":
+    main()
