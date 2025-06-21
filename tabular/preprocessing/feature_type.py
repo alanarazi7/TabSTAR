@@ -4,8 +4,8 @@ from typing import Dict, Set, Any, List, Self, Optional
 
 from pandas import DataFrame, Series, set_option
 
+from tabstar.preprocessing.dates import series_to_dt
 from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedFeature, get_curated_feature
-from tabular.preprocessing.dates import series_to_dt
 from tabular.preprocessing.nulls import get_valid_values, MISSING_VALUE, convert_series_to_numeric
 from tabular.preprocessing.objects import FeatureType
 from tabular.tabstar.preprocessing.numerical_utils import is_numerical

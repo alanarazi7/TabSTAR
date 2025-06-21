@@ -23,6 +23,7 @@ def fit_date_encoders(x: DataFrame) -> Dict[str, DatetimeEncoder]:
     date_columns = [str(col) for col, dtype in x.dtypes.items() if is_datetime64_any_dtype(dtype)]
     for col in date_columns:
         dt_s = series_to_dt(s=x[col])
+        # Adds: "year", "month", "day", "hour", "total_seconds", "weekday"
         encoder = DatetimeEncoder(add_weekday=True, add_total_seconds=True)
         encoder.fit(dt_s)
         date_encoders[col] = encoder
