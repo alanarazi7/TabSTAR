@@ -1,12 +1,14 @@
 import argparse
 
+from tabstar.datasets.benchmark_folds import TEXT2FOLD
+from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
 from tabular.benchmarks.all_datasets_shuffled import ALL_SHUFFLED_DATASETS
 from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
-from tabular.benchmarks.cross_validation import get_downstream_fold
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.pretraining import do_pretrain
+
 
 if __name__ == "__main__":
 
@@ -29,7 +31,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.fold is not None:
-        downstream_data = get_downstream_fold(k=args.fold, only_text_folds=args.only_text_folds)
+        fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
+        downstream_data = fold_dict[args.fold]
     elif args.production:
         downstream_data = []
     else:
