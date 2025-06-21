@@ -133,7 +133,8 @@ def _curate_target_values(y: Series, target: CuratedTarget, task_type: Supervise
     assert not y.isna().any(), "Missing values in target are not allowed!"
     if task_type == SupervisedTask.REGRESSION:
         return y.astype(float)
-    assert task_type in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
+    if task_type not in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS}:
+        raise ValueError(f"Unsupported task type for target curation: {task_type}")
     y = y.astype(str)
     assert_no_wrong_key(s=y, mapper=target.label_mapping)
     y = y.apply(lambda v: target.label_mapping.get(str(v), str(v)))

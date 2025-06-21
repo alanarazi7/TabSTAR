@@ -2,7 +2,6 @@ import argparse
 from dataclasses import dataclass, asdict
 from typing import List, Optional, Self
 
-from tabular.constants import BATCH_SIZE
 from tabular.datasets.tabular_datasets import OpenMLDatasetID
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.utils.io_handlers import load_json, dump_json
