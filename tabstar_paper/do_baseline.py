@@ -35,22 +35,17 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
 @log_calls
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()) + ['all'],
-                        default=XGBoost.SHORT_NAME)
+    parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()), default=None)
     parser.add_argument('--dataset_id', default=OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION.value)
     parser.add_argument('--run_num', type=int, default=0)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     args = parser.parse_args()
     tabular_dataset_id = get_dataset_from_arg(args.dataset_id)
 
-    if args.model == 'all':
-        for model in BASELINES:
-            eval_baseline_on_dataset(model=model, dataset_id=tabular_dataset_id, run_num=args.run_num,
-                                     train_examples=args.train_examples)
-    else:
-        model = SHORT2MODELS[args.model]
+    models_to_run = BASELINES if args.model is None else [SHORT2MODELS[args.model]]
+    for model in models_to_run:
         eval_baseline_on_dataset(model=model, dataset_id=tabular_dataset_id, run_num=args.run_num,
-                                 train_examples=args.train_examples)
+                                train_examples=args.train_examples)
 
 
 if __name__ == "__main__":
