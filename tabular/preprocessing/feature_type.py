@@ -7,7 +7,7 @@ from pandas import DataFrame, Series, set_option
 from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedFeature, get_curated_feature
 from tabular.preprocessing.dates import series_to_dt
 from tabular.preprocessing.nulls import get_valid_values, MISSING_VALUE, convert_series_to_numeric
-from tabular.preprocessing.objects import FeatureType, FEAT2EMOJI
+from tabular.preprocessing.objects import FeatureType
 from tabular.tabstar.preprocessing.numerical_utils import is_numerical
 from tabular.utils.utils import verbose_print
 
@@ -89,7 +89,7 @@ def get_feature_types(x: DataFrame, curation: CuratedDataset, feat_types: Dict[s
         curated = get_curated_feature(curation, feat_name=col)
         assumed_type = feat_types[col]
         feat_type = _deduce_feature_type(stats=stats, assumed_type=assumed_type, curated=curated)
-        verbose_print(f"{FEAT2EMOJI[feat_type]} Feature {feat_type} | {stats}")
+        verbose_print(f"Feature {feat_type} | {stats}")
         feature_types[feat_type].add(col)
     unsupported = list(feature_types.pop(FeatureType.UNSUPPORTED))
     x.drop(columns=unsupported, inplace=True)

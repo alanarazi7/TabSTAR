@@ -21,13 +21,6 @@ class SupervisedTask(StrEnum):
     MULTICLASS = "🎨 multiclass"
 
 
-FEAT2EMOJI = {FeatureType.BOOLEAN: "☑️",
-              FeatureType.NUMERIC: "🔢",
-              FeatureType.CATEGORICAL: "🏷️",
-              FeatureType.DATE: "📅",
-              FeatureType.TEXT: "📝",
-              FeatureType.UNSUPPORTED: "❌"}
-
 class PreprocessingMethod(StrEnum):
     TABSTAR = f"TabSTAR-20250622-{NUM_VERBALIZATION}"
     CARTE = "Carte"
