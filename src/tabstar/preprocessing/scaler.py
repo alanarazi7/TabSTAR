@@ -16,10 +16,7 @@ def transform_clipped_z_scores(s: Series, scaler: StandardScaler, allow_null: bo
     invalid = get_invalid_indices(s)
     s = s.copy()
     if allow_null:
-        try:
-            s = s.fillna(s.mean())
-        except:
-            raise ValueError(f"Cannot fill NaN values in the Series, col: {s.name}, dtype: {s.dtype}: {set(s)}")
+        s = s.fillna(s.mean())
     s_val = scaler.transform(s.values.reshape(-1, 1)).flatten()
     s_val = s_val.clip(-Z_MAX_ABS_VAL, Z_MAX_ABS_VAL)
     if invalid:
