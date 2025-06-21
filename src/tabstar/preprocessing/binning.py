@@ -5,6 +5,7 @@ from pandas import Series
 from sklearn.preprocessing import QuantileTransformer
 
 from tabstar.preprocessing.nulls import get_invalid_indices, MISSING_VALUE
+from tabular.tabstar.preprocessing.verbalization import verbalize_feature
 
 VERBALIZED_QUANTILE_BINS = 10
 
@@ -28,6 +29,7 @@ def transform_numerical_bins(s: Series, scaler: QuantileTransformer) -> Series:
     verbalized = [verbalized_bins[i] for i in bin_index]
     for idx in invalid_indices:
         verbalized[idx] = MISSING_VALUE
+    verbalized = [verbalize_feature(column_name=str(s.name), column_value=v) for v in verbalized]
     s = Series(verbalized, index=s.index, name=s.name)
     return s
 
