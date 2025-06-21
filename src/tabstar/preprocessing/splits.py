@@ -16,7 +16,6 @@ def split_to_test(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED, train
     test_size = min(test_size, MAX_TEST_SIZE)
     if (train_examples is not None) and len(x) > train_examples:
         test_size = len(x) - train_examples
-        print(f"Test size....")
     x_train, x_test, y_train, y_test = do_split(x=x, y=y, test_size=test_size, is_cls=is_cls, seed=seed)
     return x_train, x_test, y_train, y_test
 
