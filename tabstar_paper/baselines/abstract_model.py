@@ -90,6 +90,7 @@ class TabularModel:
             self.d_output = len(self.target_transformer.classes_)
         else:
             self.d_output = 1
+        # TODO: drop constant columns, where constants means all values are the same (and no nulls)
         return x, y
 
     def predict(self, x: DataFrame) -> np.ndarray:

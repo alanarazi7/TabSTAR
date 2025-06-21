@@ -2,6 +2,7 @@ from typing import Union
 
 import numpy as np
 import torch
+from numpy.exceptions import AxisError
 from pandas import Series
 from sklearn.metrics import roc_auc_score, r2_score
 from torch import Tensor, softmax
@@ -16,8 +17,8 @@ def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_ou
     elif d_output > 2:
         try:
             score = roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
-        except ValueError as e:
-            print(f"⚠️ Error calculating AUC. {y_true=}, {y_pred=}, {e=}")
+        except (ValueError, AxisError) as e:
+            # Error calculating AUC, likely due to class imbalance or insufficient samples
             score = per_class_auc(y_true=y_true, y_pred=y_pred)
     else:
         raise ValueError(f"Unsupported number of output classes: {d_output}")
@@ -31,12 +32,12 @@ def per_class_auc(y_true, y_pred) -> float:
         # Binary ground truth: 1 for the current class, 0 for others
         y_true_binary = (y_true == cls).astype(int)
         # Predicted probabilities for the current class
-        y_pred_scores = y_pred[:, cls]
+        y_pred_scores = y_pred[:, int(cls)]
         try:
             auc = roc_auc_score(y_true_binary, y_pred_scores)
             aucs[cls] = auc
-        except ValueError as e:
-            print(f"⚠️ Error calculating AUC for class {cls}. {e=}, {y_true_binary=}, {y_pred_scores=}")
+        except ValueError:
+            pass
     macro_avg = float(np.mean(list(aucs.values())))
     return macro_avg
 
