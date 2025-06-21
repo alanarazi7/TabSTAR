@@ -2,14 +2,16 @@ from typing import Self
 
 from transformers import PretrainedConfig
 
+from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY, \
+    PRETRAIN_GLOBAL_BATCH_SIZE
 from tabular.constants import BATCH_SIZE
-from tabular.tabstar.params.constants import (TABULAR_LAYERS, GLOBAL_BATCH_SIZE,
-                                              TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY, D_MODEL)
+from tabular.tabstar.params.constants import D_MODEL
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.utils import cprint, verbose_print
 
 
+# TODO: move this config to the paper section
 class TabStarConfig(PretrainedConfig):
     model_type = "tabstar"
 
@@ -20,7 +22,7 @@ class TabStarConfig(PretrainedConfig):
         unfreeze_layers: int = TEXTUAL_UNFREEZE_LAYERS,
         lr: float = BASE_LR,
         weight_decay: float = WEIGHT_DECAY,
-        macro_batch_size: int = GLOBAL_BATCH_SIZE,
+        macro_batch_size: int = PRETRAIN_GLOBAL_BATCH_SIZE,
         batch_size: int = BATCH_SIZE,
         **kwargs,
     ):
@@ -71,4 +73,4 @@ class TabStarConfig(PretrainedConfig):
     def adjust_for_finetune(self, args: FinetuneArgs):
         self.lr = args.lora_lr
         self.batch_size = args.lora_batch
-        self.macro_batch_size = max(args.lora_batch, GLOBAL_BATCH_SIZE)
+        self.macro_batch_size = max(args.lora_batch, PRETRAIN_GLOBAL_BATCH_SIZE)
