@@ -114,6 +114,12 @@ class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
     def is_cls(self) -> bool:
         return True
 
+    @property
+    def classes_(self) -> np.ndarray:
+        if self.preprocessor_ is None or self.preprocessor_.y_values is None:
+            raise ValueError("Model is not trained yet! Call fit() before accessing classes_.")
+        return np.array(self.preprocessor_.y_values)
+
 
 class TabSTARRegressor(BaseTabSTAR, BaseEstimator, RegressorMixin):
 
