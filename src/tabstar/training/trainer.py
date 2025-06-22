@@ -86,17 +86,14 @@ class TabStarTrainer:
     def _train_batch(self, data: TabSTARData) -> float:
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             loss, predictions = self._do_forward(data=data)
-            # Divide the loss to scale gradients
-            # TODO: make sure I'm reporting the correct loss, rather than the scaled on for accum step?
-            loss = loss / self.config.accumulation_steps
+            loss_for_backward = loss / self.config.accumulation_steps
         if self.use_amp:
-            # Scale the loss for mixed precision stability
-            scaled_loss = self.scaler.scale(loss)
+            scaled_loss = self.scaler.scale(loss_for_backward)
             scaled_loss.backward()
         else:
-            loss.backward()
-        loss = loss.item()
-        return loss
+            loss_for_backward.backward()
+        original_mean_batch_loss = loss.item()
+        return original_mean_batch_loss
 
     def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
         predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
@@ -130,7 +127,7 @@ class TabStarTrainer:
 
         for data in dataloader:
             d_output = data.d_output
-            with torch.no_grad(), autocast(device_type=self.device.type):
+            with torch.no_grad(), autocast(device_type=self.device.type, enabled=self.use_amp):
                 batch_loss, batch_predictions = self._do_forward(data=data)
                 total_loss += batch_loss * len(data.y)
                 total_samples += len(data.y)
