@@ -35,12 +35,6 @@ class XGBoost(TabularModel):
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        
-        # numerical_features = set(self.numerical_features)
-        # text_features = {f"{c}_{str(n+1).zfill(2)}" for c, e in self.text_transformers.items() for n in range(e.n_components)}
-        # assert all(c in x_train.columns for c in text_features)
-        # non_cat_features = numerical_features.union(text_features)
-
         # For XGBoost, categorical features are handled as numerics or via encoding
         fit_args = dict(eval_set=[(x_val, y_val)], verbose=self.verbose)
         self.model_.fit(x_train, y_train, **fit_args)
