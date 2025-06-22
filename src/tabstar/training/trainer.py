@@ -83,11 +83,11 @@ class TabStarTrainer:
         epoch_loss = total_loss / total_samples
         return epoch_loss
 
-
     def _train_batch(self, data: TabSTARData) -> float:
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             loss, predictions = self._do_forward(data=data)
             # Divide the loss to scale gradients
+            # TODO: make sure I'm reporting the correct loss, rather than the scaled on for accum step?
             loss = loss / self.config.accumulation_steps
         if self.use_amp:
             # Scale the loss for mixed precision stability

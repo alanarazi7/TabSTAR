@@ -6,7 +6,6 @@ import torch
 from pandas import Series, DataFrame
 from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
-from torch import autocast
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.datasets.benchmark_folds import get_tabstar_version
@@ -74,11 +73,13 @@ class BaseTabSTAR:
         return train_data, val_data
 
     def _infer(self, X) -> np.ndarray:
+        self.model_.eval()
         data = self.preprocessor_.transform(X, y=None)
         dataloader = get_dataloader(data, is_train=False, batch_size=128)
         predictions = []
         for data in dataloader:
-            with torch.no_grad(), autocast(device_type=self.device.type):
+            with torch.no_grad():
+                # TODO: should we infer with mixed precision as well?
                 batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
                 batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
                 predictions.append(batch_predictions)
