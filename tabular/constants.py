@@ -5,7 +5,6 @@ def get_env_bool(env_var: str) -> bool:
 
 VERBOSE = get_env_bool("VERBOSE")
 GPU = os.getenv("GPU", None)
-BATCH_SIZE = int(os.getenv("BATCH_SIZE", 32))
 LORA_BATCH_SIZE = int(os.getenv("LORA_BATCH_SIZE", 64))
 OPTUNA_CPU = int(os.getenv("OPTUNA_CPU", 8))
 OPTUNA_BUDGET = int(os.getenv("OPTUNA_BUDGET", 60 * 60 * 4))

@@ -2,9 +2,9 @@ from typing import Self
 
 from transformers import PretrainedConfig
 
+from tabstar_paper.constants import PRETRAIN_BATCH_SIZE
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY, \
     PRETRAIN_GLOBAL_BATCH_SIZE
-from tabular.constants import BATCH_SIZE
 from tabular.tabstar.params.constants import D_MODEL
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
@@ -23,7 +23,7 @@ class TabStarConfig(PretrainedConfig):
         lr: float = BASE_LR,
         weight_decay: float = WEIGHT_DECAY,
         macro_batch_size: int = PRETRAIN_GLOBAL_BATCH_SIZE,
-        batch_size: int = BATCH_SIZE,
+        batch_size: int = PRETRAIN_BATCH_SIZE,
         **kwargs,
     ):
         super().__init__(**kwargs)

@@ -1,4 +1,4 @@
-from tabular.constants import BATCH_SIZE
+from tabstar_paper.constants import PRETRAIN_BATCH_SIZE
 
 TABULAR_LAYERS = 6
 WEIGHT_DECAY = 0.001
@@ -9,5 +9,5 @@ MAX_EPOCH_EXAMPLES = 2048
 PRETRAIN_VAL_RATIO = 0.05
 
 
-if MAX_EPOCH_EXAMPLES % BATCH_SIZE != 0:
-    raise ValueError(f"MAX_EPOCH_EXAMPLES must be divisible by {BATCH_SIZE}")
+if MAX_EPOCH_EXAMPLES % PRETRAIN_BATCH_SIZE != 0:
+    raise ValueError(f"MAX_EPOCH_EXAMPLES must be divisible by {PRETRAIN_BATCH_SIZE=}")
