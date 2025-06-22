@@ -1,19 +1,28 @@
 import argparse
 from typing import Type
+import logging
 
 from tabstar.datasets.all_datasets import TabularDatasetID, OpenMLDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
+from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.do_benchmark import DOWNSTREAM_EXAMPLES
 from tabstar_paper.preprocessing.sampling import subsample_dataset
+from tabstar_paper.baselines.utils import log_calls
 
-BASELINES = [CatBoost]
+BASELINES = [CatBoost, XGBoost]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
+# locally, you can set it to DEBUG or INFO to see more details.
+
+
+@log_calls 
 def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatasetID, run_num: int, train_examples: int) -> float:
     dataset = download_dataset(dataset_id=dataset_id)
     is_cls = dataset.is_cls
@@ -27,16 +36,21 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
     return metric
 
 
-if __name__ == "__main__":
+@log_calls
+def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, choices=SHORT2MODELS.keys(),
-                        default=CatBoost.SHORT_NAME)
+    parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()), default=None)
     parser.add_argument('--dataset_id', default=OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION.value)
     parser.add_argument('--run_num', type=int, default=0)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     args = parser.parse_args()
     tabular_dataset_id = get_dataset_from_arg(args.dataset_id)
-    model = SHORT2MODELS[args.model]
 
-    eval_baseline_on_dataset(model=model, dataset_id=tabular_dataset_id, run_num=args.run_num,
-                             train_examples=args.train_examples)
+    models_to_run = BASELINES if args.model is None else [SHORT2MODELS[args.model]]
+    for model in models_to_run:
+        eval_baseline_on_dataset(model=model, dataset_id=tabular_dataset_id, run_num=args.run_num,
+                                train_examples=args.train_examples)
+
+
+if __name__ == "__main__":
+    main()
