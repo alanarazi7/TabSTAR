@@ -5,6 +5,7 @@
 **/cache/
 **/catboost_info/
 **/wandb/
+**/.benchmark_results/
 **/.tabstar_checkpoint/
 **/tabstar.egg-info/
 **/.tabular_cache/

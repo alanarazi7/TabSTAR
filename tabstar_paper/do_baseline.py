@@ -9,7 +9,7 @@ from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
-from tabstar_paper.do_benchmark import DOWNSTREAM_EXAMPLES
+from tabstar_paper.do_tabstar import DOWNSTREAM_EXAMPLES
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 from tabstar_paper.baselines.utils import log_calls
 
