@@ -2,6 +2,7 @@ import logging
 from functools import wraps
 import inspect
 
+# todo temporary solution, to be rewritten
 def log_calls(func):
     @wraps(func)
     def wrapper(*args, **kwargs):

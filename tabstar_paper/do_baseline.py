@@ -18,10 +18,11 @@ BASELINES = [CatBoost, XGBoost]
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
+logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
+# locally, you can set it to DEBUG or INFO to see more details.
 
 
-@log_calls
+@log_calls 
 def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatasetID, run_num: int, train_examples: int) -> float:
     dataset = download_dataset(dataset_id=dataset_id)
     is_cls = dataset.is_cls
@@ -31,7 +32,7 @@ def eval_baseline_on_dataset(model: Type[TabularModel], dataset_id: TabularDatas
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
     metric = calculate_metric(y_true=y_test, y_pred=y_pred, d_output=model.d_output)
-    logger.info(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
+    print(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
     return metric
 
 

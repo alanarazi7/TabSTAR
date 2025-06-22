@@ -35,6 +35,6 @@ class XGBoost(TabularModel):
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        # For XGBoost, categorical features are handled as numerics or via encoding
-        fit_args = dict(eval_set=[(x_val, y_val)], verbose=self.verbose)
-        self.model_.fit(x_train, y_train, **fit_args)
+        # fit_args = dict(eval_set=[(x_val, y_val)], verbose=self.verbose)
+        # self.model_.fit(x_train, y_train, **fit_args)
+        self.model.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=self.verbose)
