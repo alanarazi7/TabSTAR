@@ -27,8 +27,9 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 # TODO: replace with HF built in Trainer, exclude custom logics
 class TabStarTrainer:
 
-    def __init__(self, device: torch.device, model_version: str):
+    def __init__(self, device: torch.device, model_version: str, debug: bool = False):
         self.device = device
+        self.debug = debug
         self.model = load_pretrained(model_version=model_version)
         self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model)
@@ -60,6 +61,8 @@ class TabStarTrainer:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
+            if self.debug:
+                break
         return self.early_stopper.metric
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
@@ -73,6 +76,8 @@ class TabStarTrainer:
             self.steps += 1
             if self.steps % self.config.accumulation_steps == 0:
                 self._do_update()
+                if self.debug:
+                    break
         if self.steps % self.config.accumulation_steps != 0:
             self._do_update()
         epoch_loss = total_loss / total_samples

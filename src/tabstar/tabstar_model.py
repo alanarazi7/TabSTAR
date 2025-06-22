@@ -23,8 +23,10 @@ from tabstar.training.utils import concat_predictions
 class BaseTabSTAR:
     def __init__(self, verbose: bool = False,
                  device: Optional[str] = None,
-                 pretrain_dataset: Optional[TabularDatasetID] = None):
+                 pretrain_dataset: Optional[TabularDatasetID] = None,
+                 debug: bool = False):
         self.verbose = verbose
+        self.debug = debug
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
         self.device = get_device(device=device)
@@ -35,7 +37,7 @@ class BaseTabSTAR:
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
         train_data, val_data = self._prepare_for_train(X, y)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
-        trainer = TabStarTrainer(device=self.device, model_version=self.model_version)
+        trainer = TabStarTrainer(device=self.device, model_version=self.model_version, debug=self.debug)
         trainer.train(train_data, val_data)
         trainer.load_model()
         self.model_ = trainer.model
