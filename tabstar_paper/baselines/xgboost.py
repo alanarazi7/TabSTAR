@@ -27,14 +27,15 @@ class XGBoost(TabularModel):
         return model
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
+        # todo might need numerical and categorical features preprocessing from:
+        # https://github.com/alanarazi7/TabSTAR/blob/master/tabular/datasets/data_processing.py#L68
         self.text_transformers = fit_text_encoders(x=x, numerical_features=self.numerical_features, device=self.device)
         self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        # same preprocessing might be needed here as well
         x = transform_text_features(x=x, text_encoders=self.text_transformers)
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        # fit_args = dict(eval_set=[(x_val, y_val)], verbose=self.verbose)
-        # self.model_.fit(x_train, y_train, **fit_args)
-        self.model.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=self.verbose)
+        self.model_.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=self.verbose)
