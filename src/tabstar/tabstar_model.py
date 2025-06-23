@@ -20,7 +20,8 @@ from tabstar.training.utils import concat_predictions
 
 
 class BaseTabSTAR:
-    def __init__(self, verbose: bool = False,
+    def __init__(self,
+                 verbose: bool = False,
                  device: Optional[str] = None,
                  pretrain_dataset: Optional[TabularDatasetID] = None,
                  debug: bool = False):
@@ -30,6 +31,7 @@ class BaseTabSTAR:
         self.model_: Optional[PeftModel] = None
         self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
+        self.use_amp = bool(self.device.type == "cuda")
         self.model_version = get_tabstar_version(pretrain_dataset=pretrain_dataset)
 
     def fit(self, X, y):
@@ -79,8 +81,7 @@ class BaseTabSTAR:
         dataloader = get_dataloader(data, is_train=False, batch_size=128)
         predictions = []
         for data in dataloader:
-            with torch.no_grad():
-                # TODO: should we infer with mixed precision as well?
+            with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
                 batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
                 batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
                 predictions.append(batch_predictions)
