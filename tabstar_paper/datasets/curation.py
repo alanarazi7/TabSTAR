@@ -5,13 +5,11 @@ from pandas import DataFrame, Series
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.dates import series_to_dt
-from tabstar.preprocessing.feat_types import convert_series_to_numeric
-from tabstar.preprocessing.nulls import MISSING_VALUE
+from tabstar.preprocessing.feat_types import convert_series_to_numeric, convert_series_to_textual
 from tabstar.preprocessing.texts import normalize_col_name
 from tabstar_paper.datasets.curation_mapping import get_curated
 from tabstar_paper.datasets.curation_objects import CuratedDataset, CuratedTarget
 from tabstar_paper.datasets.objects import SupervisedTask, FeatureType
-
 
 @dataclass
 class TabularDataset:
@@ -86,7 +84,7 @@ def curate_feature_values(x: DataFrame, curation: CuratedDataset) -> DataFrame:
             missing_value = feat.numeric_missing if feat.numeric_missing else None
             x[col] = convert_series_to_numeric(s=x[col], missing_value=missing_value)
         elif feat_type in {FeatureType.CATEGORICAL, FeatureType.TEXT, FeatureType.BOOLEAN}:
-            x[col] = x[col].astype(object).fillna(MISSING_VALUE).astype(str)
+            x[col] = convert_series_to_textual(s=x[col])
         elif feat_type == FeatureType.DATE:
             x[col] = series_to_dt(x[col])
         else:

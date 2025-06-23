@@ -3,6 +3,8 @@ import torch
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.do_baseline import eval_baseline_on_dataset
 from tabstar_paper.do_tabstar import eval_tabstar_on_dataset
+
+# TODO: these imports shouldn't exist, they are from the tabular repo
 from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS
 from tabular.utils.io_handlers import dump_json
 

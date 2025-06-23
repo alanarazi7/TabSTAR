@@ -7,13 +7,14 @@ from pandas.core.dtypes.common import is_datetime64_any_dtype, is_numeric_dtype,
 from tabstar.preprocessing.detection import is_mostly_numerical, is_numeric
 from tabstar.preprocessing.nulls import convert_numeric_with_missing, MISSING_VALUE, get_valid_values
 
+pd.set_option('future.no_silent_downcasting', True)
 
 def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataFrame:
     for col in x.columns:
         if col in numerical_features:
             x[col] = convert_series_to_numeric(s=x[col])
         else:
-            x[col] = x[col].astype(object).fillna(MISSING_VALUE).astype(str)
+            x[col] = convert_series_to_textual(s=x[col])
     return x
 
 
@@ -46,3 +47,7 @@ def convert_series_to_numeric(s: Series, missing_value: Optional[str] = None) ->
             raise ValueError(f"Missing values detected are {unique_non_numeric}. Should be only one!")
         missing_value = unique_non_numeric[0]
     return convert_numeric_with_missing(s=s, missing_value=missing_value)
+
+
+def convert_series_to_textual(s: Series):
+    return s.astype(object).fillna(MISSING_VALUE).astype(str)
