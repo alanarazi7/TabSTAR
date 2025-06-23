@@ -34,7 +34,9 @@ class BaseTabSTAR:
 
     def fit(self, X, y):
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
-        train_data, val_data = self._prepare_for_train(X, y)
+        x = X.copy()
+        y = y.copy()
+        train_data, val_data = self._prepare_for_train(x, y)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
         trainer = TabStarTrainer(device=self.device, model_version=self.model_version, debug=self.debug)
         trainer.train(train_data, val_data)

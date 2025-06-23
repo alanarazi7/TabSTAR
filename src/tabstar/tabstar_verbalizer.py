@@ -43,9 +43,11 @@ class TabSTARVerbalizer:
     def fit(self, X, y):
         if len(X.columns) >= 200:
             print("⚠️ Warning: More than 200 columns detected. This will probably lead to memory issues.")
+        x = X.copy()
+        y = y.copy()
         raise_if_null_target(y)
-        self.assert_no_duplicate_columns(X)
-        x, y = densify_objects(x=X, y=y)
+        self.assert_no_duplicate_columns(x)
+        x, y = densify_objects(x=x, y=y)
         self.date_transformers = fit_date_encoders(x=x)
         self.vprint(f"📅 Detected {len(self.date_transformers)} date features: {sorted(self.date_transformers)}")
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
@@ -71,6 +73,9 @@ class TabSTARVerbalizer:
             self.y_values = sorted(self.target_transformer.classes_)
 
     def transform(self, x: DataFrame, y: Optional[Series]) -> TabSTARData:
+        x = x.copy()
+        if y is not None:
+            y = y.copy()
         self.assert_no_duplicate_columns(x)
         x, y = densify_objects(x=x, y=y)
         x = transform_date_features(x=x, date_transformers=self.date_transformers)
@@ -97,6 +102,7 @@ class TabSTARVerbalizer:
     def transform_target(self, y: Optional[Series]) -> Optional[np.ndarray]:
         if y is None:
             return None
+        y = y.copy()
         raise_if_null_target(y)
         if isinstance(self.target_transformer, LabelEncoder):
             return self.target_transformer.transform(y)
@@ -106,6 +112,7 @@ class TabSTARVerbalizer:
             raise TypeError("Unsupported target transformer type.")
 
     def inverse_transform_target(self, y):
+        y = y.copy()
         assert isinstance(self.target_transformer, StandardScaler)
         return self.target_transformer.inverse_transform(y)
 
