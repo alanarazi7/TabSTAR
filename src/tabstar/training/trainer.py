@@ -31,6 +31,7 @@ class TabStarTrainer:
     def __init__(self, device: torch.device, model_version: str, debug: bool = False):
         self.device = device
         self.debug = debug
+        self.model_version = model_version
         self.model = load_pretrained(model_version=model_version)
         self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model)
@@ -143,7 +144,7 @@ class TabStarTrainer:
         return loss, metric_score
 
     def load_model(self) -> PeftModel:
-        self.model = load_finetuned(self.save_dir)
+        self.model = load_finetuned(self.save_dir, tabstar_version=self.model_version)
         self.model.to(self.device)
         self.model.eval()
         return self.model
