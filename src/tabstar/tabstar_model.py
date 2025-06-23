@@ -40,8 +40,7 @@ class BaseTabSTAR:
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
         trainer = TabStarTrainer(device=self.device, model_version=self.model_version, debug=self.debug)
         trainer.train(train_data, val_data)
-        trainer.load_model()
-        self.model_ = trainer.model
+        self.model_ = trainer.load_model()
 
     def predict(self, X):
         raise NotImplementedError("Must be implemented in subclass")

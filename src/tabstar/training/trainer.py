@@ -4,6 +4,7 @@ from typing import Tuple
 
 import numpy as np
 import torch
+from peft import PeftModel
 from torch import Tensor
 from torch.amp import autocast, GradScaler
 from torch.nn import MSELoss, CrossEntropyLoss
@@ -141,7 +142,8 @@ class TabStarTrainer:
         loss = loss.item()
         return loss, metric_score
 
-    def load_model(self):
+    def load_model(self) -> PeftModel:
         self.model = load_finetuned(self.save_dir)
         self.model.to(self.device)
+        self.model.eval()
         return self.model
