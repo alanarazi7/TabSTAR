@@ -56,9 +56,11 @@ TEXT2FOLD = {KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING: 0,
 
 
 def get_tabstar_version(pretrain_dataset: Optional[TabularDatasetID] = None) -> str:
-    """
-    Returns the TabStar version based on the pretrain dataset.
-    """
+    tabstar_version = get_tabstar_version_from_dataset(pretrain_dataset=pretrain_dataset)
+    return f"alana89/{tabstar_version}"
+
+
+def get_tabstar_version_from_dataset(pretrain_dataset: Optional[TabularDatasetID] = None) -> str:
     if pretrain_dataset is None:
         return "TabSTAR"
 
