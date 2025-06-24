@@ -6,6 +6,7 @@ from pandas import DataFrame, Series
 
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
+from tabstar_paper.baselines.utils import log_all_methods
 
 @dataclass
 class XGBoostDefaultHyperparams:
@@ -14,7 +15,7 @@ class XGBoostDefaultHyperparams:
     early_stopping_rounds: int = 50
     booster: str = "gbtree"
 
-
+@log_all_methods
 class XGBoost(TabularModel):
 
     MODEL_NAME = "XGBoost 🌲"
