@@ -28,7 +28,8 @@ if __name__ == "__main__":
     parser.add_argument('--n_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--carte_lr_index', type=int, default=None)
     args = parser.parse_args()
-
+    # with warning print
+    print(f"⚠️ Running baseline in legacy flow. Move to `tabstar_paper/do_baseline.py` if possible. ⚠️")
     cprint(f"🧹 Running {args.exp} with {args.model} on dataset {args.dataset_id} for run {args.run_num}")
 
     model = SHORT2MODELS[args.model]
