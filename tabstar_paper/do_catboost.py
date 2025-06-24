@@ -14,6 +14,6 @@ for dataset, run_num in runs:
         key_file = f".benchmark_results/{model.SHORT_NAME}_{dataset.name}_{run_num}.txt"
         if not os.path.exists(key_file):
             print(f"Evaluating {model.SHORT_NAME} on {dataset.name} run {run_num}...")
-            metric = evaluate_on_dataset(model=model, dataset_id=dataset, run_num=run_num)
+            metric = evaluate_on_dataset(model_cls=model, dataset_id=dataset, run_num=run_num)
             result = {"metric": metric, "dataset": dataset.name, "run_num": run_num}
             dump_json(result, key_file)
