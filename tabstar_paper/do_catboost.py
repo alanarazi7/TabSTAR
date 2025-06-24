@@ -1,14 +1,13 @@
 from tabstar_paper.baselines.catboost import CatBoost
+from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.do_baseline import eval_baseline_on_dataset
 
 # TODO: these imports shouldn't exist, they are from the tabular repo
-from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS
 from tabular.utils.io_handlers import dump_json
 
 import os
 
-datasets = sorted(TEXTUAL_DATASETS, key=lambda d: d.name)
-runs = [(dataset, run_num) for dataset in datasets for run_num in range(10)]
+runs = [(dataset, run_num) for dataset in TEXTUAL_DATASETS for run_num in range(10)]
 
 for dataset, run_num in runs:
     for model in [CatBoost]:

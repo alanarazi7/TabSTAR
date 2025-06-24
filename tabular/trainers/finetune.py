@@ -3,7 +3,7 @@ from typing import Type, Optional
 import torch
 import wandb
 
-from tabular.benchmarks.all_datasets import TEXTUAL_DATASETS
+from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabular.datasets.tabular_datasets import TabularDatasetID
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES
 from tabular.models.abstract_model import TabularModel

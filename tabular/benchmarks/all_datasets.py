@@ -1,10 +1,5 @@
-from tabular.benchmarks.carte_benchmark import CARTE_BENCHMARK
-from tabular.benchmarks.multimodal import MULTIMODAL
-from tabular.benchmarks.vectorizing_strings import VECTORIZING
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID
 
-
-TEXTUAL_DATASETS = list({d for ls in [MULTIMODAL, CARTE_BENCHMARK, VECTORIZING] for d in ls})
 
 ANALYSIS_TEXT_DOWNSTREAM = [OpenMLDatasetID.REG_SPORTS_FIFA22_WAGES,
                             KaggleDatasetID.MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23,
