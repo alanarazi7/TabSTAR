@@ -33,12 +33,12 @@ if device is not None:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()), default=None)
-    parser.add_argument('--dataset_id', default=OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION.value)
+    parser.add_argument('--dataset_id')
     parser.add_argument('--run_num', type=int)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     args = parser.parse_args()
 
-    models = BASELINES
+    models = list(SHORT2MODELS.values())
     run_numbers = list(range(10))
     datasets = TEXTUAL_DATASETS
 
