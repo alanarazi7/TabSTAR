@@ -1,7 +1,8 @@
 import torch
 
+from tabstar.tabstar_model import BaseTabSTAR
+from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
-from tabstar_paper.do_tabstar import eval_tabstar_on_dataset
 
 # TODO: these imports shouldn't exist, they are from the tabular repo
 from tabular.utils.io_handlers import dump_json
@@ -22,6 +23,6 @@ for dataset, run_num in runs:
     if os.path.exists(key_file):
         continue
     print(f"Evaluating TabSTAR on {dataset.name} run {run_num}...")
-    metric = eval_tabstar_on_dataset(dataset_id=dataset, run_num=run_num, train_examples=10_000, device=device)
+    metric = evaluate_on_dataset(model_cls=BaseTabSTAR, dataset_id=dataset, run_num=run_num, device=device)
     result = {"metric": metric, "dataset": dataset.name, "run_num": run_num}
     dump_json(result, key_file)
