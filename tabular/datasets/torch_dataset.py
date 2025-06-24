@@ -10,6 +10,7 @@ from pandas import DataFrame, Series
 from torch.utils.data import Dataset
 
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
+from tabstar_paper.utils import dump_json
 from tabular.constants import NEW_PRETRAIN
 from tabular.datasets.data_processing import TabularDataset
 from tabular.datasets.df_loader import load_df_dataset
@@ -22,7 +23,6 @@ from tabular.datasets.openml_loader import load_openml_dataset
 from tabular.preprocessing.splits import DataSplit
 from tabular.preprocessing.objects import PreprocessingMethod
 from tabular.tabstar.params.constants import NumberVerbalization
-from tabular.utils.io_handlers import dump_json
 from tabular.utils.paths import create_dir, dataset_run_properties_dir, properties_path
 from tabular.utils.processing import pd_indices_to_array
 from tabular.utils.utils import fix_seed, verbose_print

@@ -2,9 +2,10 @@ import argparse
 from dataclasses import dataclass, asdict
 from typing import List, Optional, Self
 
+from tabstar_paper.utils import dump_json
 from tabular.datasets.tabular_datasets import OpenMLDatasetID
 from tabular.tabstar.params.constants import NumberVerbalization
-from tabular.utils.io_handlers import load_json, dump_json
+from tabular.utils.io_handlers import load_json
 from tabular.utils.logging import LOG_SEP
 from tabular.utils.paths import pretrain_args_path, create_dir
 from tabular.utils.utils import get_current_commit_hash, get_today, verbose_print
