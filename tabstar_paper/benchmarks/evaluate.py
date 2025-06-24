@@ -27,7 +27,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         model = tabstar_cls(pretrain_dataset=dataset_id, device=device, verbose=verbose)
     else:
         model = model_cls(is_cls=is_cls, verbose=verbose)
-    model_cls.fit(x_train, y_train)
+    model.fit(x_train, y_train)
     metric = model.score(X=x_test, y=y_test)
     print(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
     return metric
