@@ -17,7 +17,7 @@ def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_ou
     elif d_output > 2:
         try:
             score = roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
-        except (ValueError, AxisError) as e:
+        except (ValueError, AxisError):
             # Error calculating AUC, likely due to class imbalance or insufficient samples
             score = per_class_auc(y_true=y_true, y_pred=y_pred)
     else:

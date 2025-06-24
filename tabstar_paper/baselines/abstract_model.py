@@ -106,8 +106,9 @@ class TabularModel:
     def score(self, X, y) -> float:
         x = X.copy()
         y = y.copy()
+        y_true = transform_preprocess_y(y=y, scaler=self.target_transformer)
         y_pred = self.predict(x)
-        metric = calculate_metric(y_true=y, y_pred=y_pred, d_output=self.d_output)
+        metric = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
         return metric
 
     def vprint(self, s: str):

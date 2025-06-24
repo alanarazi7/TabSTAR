@@ -4,9 +4,8 @@ import logging
 from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.xgboost import XGBoost
-from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset
+from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
-from tabstar_paper.do_tabstar import DOWNSTREAM_EXAMPLES_
 from tabstar_paper.baselines.utils import log_calls
 
 BASELINES = [CatBoost, XGBoost]
@@ -24,7 +23,7 @@ def main():
     parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()), default=None)
     parser.add_argument('--dataset_id', default=OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION.value)
     parser.add_argument('--run_num', type=int, default=0)
-    parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES_)
+    parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     args = parser.parse_args()
     tabular_dataset_id = get_dataset_from_arg(args.dataset_id)
 
