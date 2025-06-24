@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Tuple, Dict
 
 import numpy as np
@@ -8,23 +7,18 @@ from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar_paper.datasets.downloading import download_dataset
+from tabstar_paper.pretraining.hdf5 import save_pretrain_dataset, DatasetProperties
 from tabstar_paper.pretraining.hyperparameters import PRETRAIN_VAL_RATIO
 
 
-@dataclass
-class PretrainDatasetProperties:
-    name: str
-    d_output: int
-    idx2text: Dict[int, str]
-
-
-def create_pretrain_dataset(dataset_id: TabularDatasetID):
+def create_pretrain_dataset(dataset_id: TabularDatasetID, data_dir: str):
     train_data, val_data = prepare_pretrain_dataset(dataset_id=dataset_id)
     idx2text = {}
     fill_idx2text(train_data, idx2text=idx2text)
     fill_idx2text(val_data, idx2text=idx2text)
-    properties = PretrainDatasetProperties(name=dataset_id.name, d_output=train_data.d_output, idx2text=idx2text)
-    raise NotImplementedError("Store the prepared datasets in the HDF5 format.")
+    properties = DatasetProperties(name=dataset_id.name, d_output=train_data.d_output, idx2text=idx2text,
+                                   train_size=len(train_data), val_size=len(val_data))
+    save_pretrain_dataset(data_dir=data_dir, train_data=train_data, val_data=val_data, properties=properties)
 
 
 def prepare_pretrain_dataset(dataset_id: TabularDatasetID, verbose: bool = False) -> Tuple[TabSTARData, TabSTARData]:

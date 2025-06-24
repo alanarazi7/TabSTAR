@@ -89,19 +89,18 @@ def get_data_dir(dataset: TabularDatasetID, processing: PreprocessingMethod, run
     if not os.path.exists(properties_path(data_dir)):
         create_dir(data_dir)
         try:
-            create_dataset(data_dir=data_dir, dataset=dataset, processing=processing, run_num=run_num,
-                           train_examples=train_examples, device=device, number_verbalization=number_verbalization,
-                           is_pretrain=is_pretrain)
+            if is_pretrain and NEW_PRETRAIN:
+                create_pretrain_dataset(dataset_id=dataset, data_dir=data_dir)
+            else:
+                create_dataset(data_dir=data_dir, dataset=dataset, processing=processing, run_num=run_num,
+                               train_examples=train_examples, device=device, number_verbalization=number_verbalization)
         except Exception as e:
             raise Exception(f"🚨🚨🚨 Error loading dataset {dataset} due to: {e}")
     return data_dir
 
 
 def create_dataset(data_dir: str, dataset: TabularDatasetID, processing: PreprocessingMethod, run_num: int,
-                   train_examples: int, device: torch.device, number_verbalization: Optional[NumberVerbalization] = None,
-                   is_pretrain: bool = False):
-    if is_pretrain and NEW_PRETRAIN:
-        return create_pretrain_dataset(dataset_id=dataset)
+                   train_examples: int, device: torch.device, number_verbalization: Optional[NumberVerbalization] = None):
     fix_seed()
     raw_dataset = get_raw_dataset(dataset)
     dataset = TabularDataset.from_raw(raw=raw_dataset, processing=processing, run_num=run_num,
