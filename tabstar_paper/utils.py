@@ -1,8 +1,12 @@
+import json
 import logging
+import os
 from functools import wraps
 import inspect
+from typing import Dict
 
-# todo temporary solution, to be rewritten
+
+# TODO: temporary solution, to be rewritten
 def log_calls(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -22,3 +26,9 @@ def log_all_methods(cls):
         if callable(attr_value) and not attr_name.startswith("__"):
             setattr(cls, attr_name, log_calls(attr_value))
     return cls
+
+
+def dump_json(data: Dict, path: str) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as file:
+        json.dump(data, file, indent=4)

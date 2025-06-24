@@ -4,9 +4,9 @@ from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegressor
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabstar_paper.baselines.utils import log_calls
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
+from tabstar_paper.utils import log_calls
 
 DOWNSTREAM_EXAMPLES = 10_000
 
