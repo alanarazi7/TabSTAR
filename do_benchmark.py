@@ -55,7 +55,7 @@ def main():
         combos = combos[int(GPU)::count_gpus_in_machine]
 
     for model, dataset_id, run_num in tqdm(combos):
-        model_name = model.__class__.__name__
+        model_name = model.__name__
         key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
         if os.path.exists(key_file):
             continue
