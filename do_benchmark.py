@@ -15,14 +15,10 @@ from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils import log_calls, dump_json
 
 # BASELINES = [CatBoost] #, XGBoost]
-
-# baseline_names = {model.SHORT_NAME: model for model in BASELINES}
-# SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
-
 SHORT2MODELS = {XGBoost.SHORT_NAME: XGBoost}
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
+logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
 # locally, you can set it to DEBUG or INFO to see more details.
 
 GPU = os.getenv("GPU", None)
@@ -76,7 +72,7 @@ def prepare_combinations(args):
         count_gpus_in_machine = torch.cuda.device_count()
         combos = combos[int(GPU)::count_gpus_in_machine]
 
-    return combos[0:2]
+    return combos
 
 
 @log_calls
@@ -89,8 +85,8 @@ def run_benchmarks(combinations, args):
         model_name = model.__name__
         key_file = f"{model_name}_{dataset_id.name}_{run_num}.txt"
         print('key_file', key_file)
-        # if os.path.exists(key_file):
-        #     continue
+        if os.path.exists(key_file):
+            continue
         metric = evaluate_on_dataset(
             model_cls=model,
             dataset_id=dataset_id,
