@@ -13,7 +13,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.devices import get_device
 from tabstar.training.metrics import calculate_metric
-from tabstar_paper.utils import log_all_methods
+from tabstar_paper.utils.logging import log_all_methods
 
 
 @log_all_methods

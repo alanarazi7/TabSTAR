@@ -8,7 +8,7 @@ from tabular.preprocessing.curation import curate_features
 from tabular.preprocessing.feature_type import convert_dtypes
 from tabular.preprocessing.objects import FeatureType, SupervisedTask
 from tabular.preprocessing.redundant_variables import drop_redundant_columns
-from tabular.preprocessing.sampling import subsample_big_datasets, downsample_multiple_features
+from tabular.preprocessing.sampling import deprecated__subsample_big_datasets, deprecated__downsample_multiple_features
 from tabular.preprocessing.sparse import densify_objects
 from tabular.preprocessing.target import handle_raw_target
 
@@ -18,8 +18,8 @@ def set_target_drop_redundant_downsample_too_big(x: DataFrame, y: Optional[Serie
     x = drop_redundant_columns(x, curation=curation)
     x, y, task_type = handle_raw_target(x=x, y=y, curation=curation, sid=sid)
     x, y = densify_objects(x, y)
-    x, y = subsample_big_datasets(x, y)
-    x, curation = downsample_multiple_features(x, curation)
+    x, y = deprecated__subsample_big_datasets(x, y)
+    x, curation = deprecated__downsample_multiple_features(x, curation)
     assert len(x) == len(y) and len(x.columns) == len(set(x.columns)) and y.name not in x.columns
     return x, y, task_type, curation
 

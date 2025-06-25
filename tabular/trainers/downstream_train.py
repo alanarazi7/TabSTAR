@@ -4,14 +4,13 @@ from typing import Type, Optional
 
 import torch
 
-from tabstar_paper.utils import dump_json
+from tabstar_paper.utils.io_handlers import load_json, dump_json
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_sid
 from tabular.models.abstract_model import TabularModel
 from tabular.tabstar.tabstar_trainer import TabStarTrainer
 from tabular.preprocessing.splits import DataSplit
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.io_handlers import load_json
 from tabular.utils.logging import LOG_SEP
 from tabular.utils.paths import create_dir, train_results_path
 from tabular.utils.utils import fix_seed, SEED

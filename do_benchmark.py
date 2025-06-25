@@ -12,7 +12,8 @@ from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
-from tabstar_paper.utils import log_calls, dump_json
+from tabstar_paper.utils.io_handlers import dump_json
+from tabstar_paper.utils.logging import log_calls
 
 BASELINES = [CatBoost] #, XGBoost]
 

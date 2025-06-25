@@ -46,6 +46,4 @@ if __name__ == "__main__":
     # TODO: use HfArgumentParser probably
     pretrain_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)
 
-    do_pretrain(pretrain_datasets=pretrain_data,
-                downstream_datasets=downstream_data,
-                pretrain_args=pretrain_args)
+    do_pretrain(pretrain_datasets=pretrain_data, pretrain_args=pretrain_args)

@@ -1,9 +1,6 @@
-import json
 import logging
-import os
 from functools import wraps
 import inspect
-from typing import Dict
 
 
 # TODO: temporary solution, to be rewritten
@@ -27,8 +24,3 @@ def log_all_methods(cls):
             setattr(cls, attr_name, log_calls(attr_value))
     return cls
 
-
-def dump_json(data: Dict, path: str) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w') as file:
-        json.dump(data, file, indent=4)

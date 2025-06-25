@@ -6,7 +6,7 @@ from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegress
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
-from tabstar_paper.utils import log_calls
+from tabstar_paper.utils.logging import log_calls
 
 DOWNSTREAM_EXAMPLES = 10_000
 

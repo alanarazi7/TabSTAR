@@ -7,6 +7,8 @@ import torch
 import wandb
 
 from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
+from tabular.constants import NEW_PRETRAIN
 from tabular.tabstar.tabstar_trainer import TabStarTrainer
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.gpus import get_device
@@ -14,9 +16,7 @@ from tabular.utils.logging import wandb_run, RunType
 from tabular.utils.utils import cprint
 
 
-def do_pretrain(pretrain_datasets: List[TabularDatasetID],
-                downstream_datasets: List[TabularDatasetID],
-                pretrain_args: PretrainArgs):
+def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: PretrainArgs):
     if exists(pretrain_args.path):
         print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")
         return
@@ -24,10 +24,14 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
     device = torch.device(get_device())
     wandb_run(exp_name=pretrain_args.raw_exp_name, run_type=RunType.PRETRAIN)
     wandb.config.update(asdict(pretrain_args), allow_val_change=True)
-    cprint(f"Pretraining over {len(pretrain_datasets)} datasets for: {len(downstream_datasets)} downstream datasets")
-    model = TabStarTrainer(run_name=pretrain_args.full_exp_name, dataset_ids=pretrain_datasets, device=device,
-                           args=pretrain_args, train_examples=-1, run_num=-1)
-    model.initialize_model()
+    cprint(f"Pretraining over {len(pretrain_datasets)} datasets")
+    if NEW_PRETRAIN:
+        model = TabSTARPretrainer(run_name=pretrain_args.full_exp_name, dataset_ids=pretrain_datasets, device=device,
+                                  pretrain_args=pretrain_args)
+    else:
+        model = TabStarTrainer(run_name=pretrain_args.full_exp_name, dataset_ids=pretrain_datasets, device=device,
+                               args=pretrain_args, train_examples=-1, run_num=-1)
+        model.initialize_model()
     model.train()
     pretrain_args.to_json()
     wandb.finish()

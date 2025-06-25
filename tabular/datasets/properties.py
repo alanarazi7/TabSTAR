@@ -2,11 +2,11 @@ from collections import Counter
 from dataclasses import dataclass, asdict, field
 from typing import List, Self, Dict, Optional
 
+from tabstar_paper.utils.io_handlers import load_json
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.preprocessing.splits import DataSplit
 from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask, FeatureType
 from tabular.preprocessing.target import get_label_repr
-from tabular.utils.io_handlers import load_json
 
 
 @dataclass

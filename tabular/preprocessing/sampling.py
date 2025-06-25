@@ -8,13 +8,14 @@ from tabular.datasets.raw_dataset import MAX_DATASET_EXAMPLES, MAX_FEATURES
 from tabular.utils.utils import cprint
 
 
-def subsample_big_datasets(x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+def deprecated__subsample_big_datasets(x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
     if len(y) < MAX_DATASET_EXAMPLES:
         return x, y
     indices = y.sample(n=MAX_DATASET_EXAMPLES).index
     return x.loc[indices], y.loc[indices]
 
-def downsample_multiple_features(x: DataFrame, curation: CuratedDataset) -> Tuple[DataFrame, CuratedDataset]:
+def deprecated__downsample_multiple_features(x: DataFrame, curation: CuratedDataset) -> Tuple[DataFrame, CuratedDataset]:
+    # PRETRAIN REFACTOR: remove this function after new flow works, only relevant for pretraining.
     # TODO: This is EXTREMELY naive, we could use a more sophisticated way to avoid losing important features
     if len(x.columns) <= MAX_FEATURES:
         return x, curation

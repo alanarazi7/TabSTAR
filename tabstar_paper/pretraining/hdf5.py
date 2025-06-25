@@ -1,5 +1,5 @@
 import os.path
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from os.path import join
 from typing import Optional, Dict
 
@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import Dataset
 
 from tabstar.tabstar_verbalizer import TabSTARData
-from tabstar_paper.utils import dump_json
+from tabstar_paper.utils.io_handlers import dump_json
 
 
 @dataclass
@@ -23,10 +23,13 @@ class DatasetProperties:
 
 class HDF5Dataset(Dataset):
 
+    TRAIN = "train"
+    VAL = "val"
     X_TXT_KEY = "X_txt"
     X_NUM_KEY = "X_num"
     Y_KEY = "y"
     H5_FILE = "data.h5"
+    PROPERTIES = "properties.json"
 
     def __init__(self, split_dir: str):
         self.file_path = join(split_dir, self.H5_FILE)
@@ -56,51 +59,18 @@ class HDF5Dataset(Dataset):
 
 
 def save_pretrain_dataset(data_dir: str, train_data: TabSTARData, val_data: TabSTARData, properties: DatasetProperties):
-    raise NotImplementedError('save_data_splits, save_properties')
-
-
-# def create_dataset(data_dir: str, dataset: TabularDatasetID, processing: PreprocessingMethod, run_num: int,
-#                    train_examples: int, device: torch.device, number_verbalization: Optional[NumberVerbalization] = None):
-#     fix_seed()
-#     raw_dataset = get_raw_dataset(dataset)
-#     dataset = TabularDataset.from_raw(raw=raw_dataset, processing=processing, run_num=run_num,
-#                                       train_examples=train_examples, device=device,
-#                                       number_verbalization=number_verbalization)
-#     verbose_print(f"Saving dataset {dataset.properties.sid} to {data_dir}")
-#     save_data_splits(dataset=dataset, data_dir=data_dir, processing=processing)
-#     save_properties(data_dir=data_dir, dataset=dataset)
-#     verbose_print(f"🎉 Saved!")
-#
-#
-# def save_properties(data_dir: str, dataset: TabularDataset):
-#     create_dir(data_dir)
-#     dump_json(dataset.properties.to_dict(), path=properties_path(data_dir))
-#
-# def get_split_dir(data_dir: str, split: DataSplit) -> str:
-#     split_dir = join(data_dir, split)
-#     create_dir(split_dir)
-#     return split_dir
-#
-# def get_properties(data_dir: str) -> DatasetProperties:
-#     return DatasetProperties.from_json(properties_path(data_dir))
-#
-#
-# def save_data_splits(dataset: TabularDataset, data_dir: str, processing: PreprocessingMethod):
-#     for split in DataSplit:
-#         split_dir = get_split_dir(data_dir, split)
-#         indices = [i for i, s in enumerate(dataset.splits) if s == split]
-#         x = pd_indices_to_array(dataset.x, indices)
-#         y = pd_indices_to_array(dataset.y, indices)
-#         x = x.to_numpy()
-#         y = y.to_numpy()
-#         x_num = dataset.x_num[indices]
-#         save_for_tabstar(split_dir, x=x, y=y, x_num=x_num)
-#
-#
-# def save_for_tabstar(split_dir: str, x: np.ndarray, y: np.ndarray, x_num: np.ndarray):
-#     h5_file_path = join(split_dir, HDF5Dataset.H5_FILE)
-#     key2data = {HDF5Dataset.X_TXT_KEY: x, HDF5Dataset.X_NUM_KEY: x_num, HDF5Dataset.Y_KEY: y}
-#     with h5py.File(h5_file_path, 'w') as h5f:
-#         for key, data in key2data.items():
-#             h5f.create_dataset(name=key, data=data)
+    property_path = join(data_dir, HDF5Dataset.PROPERTIES)
+    dump_json(asdict(properties), path=property_path)
+    for data, split in [(train_data, HDF5Dataset.TRAIN), (val_data, HDF5Dataset.VAL)]:
+        split_dir = join(data_dir, split)
+        os.makedirs(split_dir, exist_ok=True)
+        h5_file_path = join(split_dir, HDF5Dataset.H5_FILE)
+        key2data = {
+            HDF5Dataset.X_TXT_KEY: data.x_txt,
+            HDF5Dataset.X_NUM_KEY: data.x_num,
+            HDF5Dataset.Y_KEY: data.y
+        }
+        with h5py.File(h5_file_path, 'w') as h5f:
+            for key, value in key2data.items():
+                h5f.create_dataset(name=key, data=value)
 

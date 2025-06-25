@@ -10,7 +10,7 @@ from pandas import DataFrame, Series
 from torch.utils.data import Dataset
 
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
-from tabstar_paper.utils import dump_json
+from tabstar_paper.utils.io_handlers import dump_json
 from tabular.constants import NEW_PRETRAIN
 from tabular.datasets.data_processing import TabularDataset
 from tabular.datasets.df_loader import load_df_dataset
@@ -79,8 +79,7 @@ class HDF5Dataset(Dataset):
 
 
 def get_data_dir(dataset: TabularDatasetID, processing: PreprocessingMethod, run_num: int,
-                 train_examples: int, device: torch.device, number_verbalization: Optional[NumberVerbalization] = None,
-                 is_pretrain: bool = False) -> str:
+                 train_examples: int, device: torch.device, number_verbalization: Optional[NumberVerbalization] = None) -> str:
     sid = get_sid(dataset)
     data_dir = join(dataset_run_properties_dir(run_num=run_num, train_examples=train_examples), processing, sid)
     if number_verbalization is not None and number_verbalization != NumberVerbalization.FULL:
@@ -89,11 +88,8 @@ def get_data_dir(dataset: TabularDatasetID, processing: PreprocessingMethod, run
     if not os.path.exists(properties_path(data_dir)):
         create_dir(data_dir)
         try:
-            if is_pretrain and NEW_PRETRAIN:
-                create_pretrain_dataset(dataset_id=dataset, data_dir=data_dir)
-            else:
-                create_dataset(data_dir=data_dir, dataset=dataset, processing=processing, run_num=run_num,
-                               train_examples=train_examples, device=device, number_verbalization=number_verbalization)
+            create_dataset(data_dir=data_dir, dataset=dataset, processing=processing, run_num=run_num,
+                           train_examples=train_examples, device=device, number_verbalization=number_verbalization)
         except Exception as e:
             raise Exception(f"🚨🚨🚨 Error loading dataset {dataset} due to: {e}")
     return data_dir
