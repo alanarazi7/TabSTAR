@@ -1,7 +1,6 @@
 import hashlib
 import os
 import random
-import subprocess
 from datetime import datetime
 
 import numpy as np
@@ -45,11 +44,3 @@ def hash_now() -> str:
 
 def hash_str(s: str) -> str:
     return hashlib.sha256(s.encode()).hexdigest()[:12]
-
-def get_current_commit_hash() -> str:
-    try:
-        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
-        return commit_hash[:7]
-    except subprocess.CalledProcessError:
-        print(f"🆔 Could not get the current commit hash.")
-        return ""

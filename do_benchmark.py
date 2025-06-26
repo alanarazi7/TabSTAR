@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import time
 
 import torch
 from tqdm import tqdm
@@ -13,8 +14,7 @@ from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EX
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json
-from tabstar_paper.utils.logging import log_calls
-
+from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
 
 BASELINES = [CatBoost] #, XGBoost]
 
@@ -91,7 +91,8 @@ def run_benchmarks(combinations, args):
         print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
         if os.path.exists(key_file):
             continue
-        metric = evaluate_on_dataset(
+        start_time = time.time()
+        metrics = evaluate_on_dataset(
             model_cls=model,
             dataset_id=dataset_id,
             run_num=run_num,
@@ -99,12 +100,17 @@ def run_benchmarks(combinations, args):
             device=device
         )
         result = {
-            "metric": metric,
+            "score": metrics.score,
             "dataset": dataset_id.name,
             "run_num": run_num,
-            "model": model_name
+            "model": model_name,
+            "metrics": dict(metrics.metrics),
+            "runtime": time.time() - start_time,
+            "device": device,
+            "train_examples": args.train_examples,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+            "git":  get_current_commit_hash(),
         }
-        # Ensure the directory for key_file exists before saving
         key_file_dir = os.path.dirname(key_file)
         os.makedirs(key_file_dir, exist_ok=True)
         dump_json(result, key_file)

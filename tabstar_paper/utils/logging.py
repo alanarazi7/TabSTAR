@@ -1,4 +1,5 @@
 import logging
+import subprocess
 from functools import wraps
 import inspect
 
@@ -24,3 +25,11 @@ def log_all_methods(cls):
             setattr(cls, attr_name, log_calls(attr_value))
     return cls
 
+
+def get_current_commit_hash() -> str:
+    try:
+        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
+        return commit_hash[:7]
+    except subprocess.CalledProcessError:
+        print(f"🆔 Could not get the current commit hash.")
+        return ""

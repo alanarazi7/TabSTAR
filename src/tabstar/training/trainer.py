@@ -138,10 +138,10 @@ class TabStarTrainer:
                 y_true.append(data.y)
         y_pred = concat_predictions(y_pred)
         y_true = np.concatenate(y_true)
-        metric_score = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
         loss = total_loss / total_samples
         loss = loss.item()
-        return loss, metric_score
+        return loss, metrics.score
 
     def load_model(self) -> PeftModel:
         self.model = load_finetuned(self.save_dir, tabstar_version=self.model_version)

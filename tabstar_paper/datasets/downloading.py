@@ -9,7 +9,7 @@ from pandas import read_csv, DataFrame
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID, TabularDatasetID
 from tabstar_paper.datasets.curation import curate_dataset, TabularDataset
-from tabstar_paper.utils import log_calls
+from tabstar_paper.utils.logging import log_calls
 
 OPENML_VALUES = {item.value for item in OpenMLDatasetID}
 KAGGLE_VALUES = {item.value for item in KaggleDatasetID}

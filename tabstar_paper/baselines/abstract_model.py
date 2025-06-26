@@ -12,7 +12,7 @@ from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.devices import get_device
-from tabstar.training.metrics import calculate_metric
+from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.utils.logging import log_all_methods
 
 
@@ -104,12 +104,15 @@ class TabularModel:
         return probs
 
     def score(self, X, y) -> float:
+        metrics = self.score_all_metrics(X=X, y=y)
+        return metrics.score
+
+    def score_all_metrics(self, X, y) -> Metrics:
         x = X.copy()
         y = y.copy()
         y_true = transform_preprocess_y(y=y, scaler=self.target_transformer)
         y_pred = self.predict(x)
-        metric = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
-        return metric
+        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
 
     def vprint(self, s: str):
         if self.verbose:

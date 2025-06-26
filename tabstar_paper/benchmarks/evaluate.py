@@ -3,6 +3,7 @@ from typing import Type, Optional
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegressor
+from tabstar.training.metrics import Metrics
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
@@ -17,7 +18,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
                         run_num: int,
                         train_examples: int = DOWNSTREAM_EXAMPLES,
                         device: Optional[str] = None,
-                        verbose: bool = False) -> float:
+                        verbose: bool = False) -> Metrics:
     is_tabstar = issubclass(model_cls, BaseTabSTAR)
     name = "TabSTAR ⭐" if is_tabstar else model_cls.MODEL_NAME
     print(f"Running model {name} over dataset {dataset_id} with run number {run_num}")
@@ -31,6 +32,6 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     else:
         model = model_cls(is_cls=is_cls, verbose=verbose)
     model.fit(x_train, y_train)
-    metric = model.score(X=x_test, y=y_test)
-    print(f"Scored {metric:.4f} on dataset {dataset.dataset_id}.")
-    return metric
+    metrics = model.score_all_metrics(X=x_test, y=y_test)
+    print(f"Scored {metrics.score:.4f} on dataset {dataset.dataset_id}.")
+    return metrics

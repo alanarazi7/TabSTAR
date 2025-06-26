@@ -1,18 +1,34 @@
-from typing import Union
+from dataclasses import dataclass
+from typing import Union, Dict
 
 import numpy as np
 import torch
 from numpy.exceptions import AxisError
 from pandas import Series
-from sklearn.metrics import roc_auc_score, r2_score
+from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error
 from torch import Tensor, softmax
 
 
+@dataclass
+class Metrics:
+    score: float
+    metrics: Dict[str, float]
 
-def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int) -> float:
+    def __post_init__(self):
+        self.score = float(self.score)
+        self.metrics = {k: float(v) for k, v in self.metrics.items()}
+
+
+def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int) -> Metrics:
+    metrics = {}
     if d_output == 1:
-        score = r2_score(y_true=y_true, y_pred=y_pred)
+        rsq = r2_score(y_true=y_true, y_pred=y_pred)
+        mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
+        one_minus_mse = 1 - mse
+        metrics = {'r2': rsq, 'mse': mse, '1-mse': one_minus_mse}
+        return Metrics(score=rsq, metrics=metrics)
     elif d_output == 2:
+        # TODO: add more metrics pehraps
         score = roc_auc_score(y_true=y_true, y_score=y_pred)
     elif d_output > 2:
         try:
@@ -22,7 +38,8 @@ def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_ou
             score = per_class_auc(y_true=y_true, y_pred=y_pred)
     else:
         raise ValueError(f"Unsupported number of output classes: {d_output}")
-    return float(score)
+    # TODO: add more metrics for classification
+    return Metrics(score=score, metrics={'auc': score})
 
 
 def per_class_auc(y_true, y_pred) -> float:
