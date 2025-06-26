@@ -23,9 +23,7 @@ def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataF
 
 @log_calls
 def detect_numerical_features(x: DataFrame) -> Set[str]:
-    numerical_features = {col for col in x.columns if is_numerical_feature(s=x[col])}
-    print('numerical features: ', numerical_features)
-    return numerical_features
+    return {col for col in x.columns if is_numerical_feature(s=x[col])}
 
 
 # TODO: for future versions, maybe best to rely on maintained packages, e.g. skrub's TableVectorizer
