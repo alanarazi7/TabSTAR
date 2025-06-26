@@ -1,5 +1,6 @@
 import os
 from time import sleep
+from urllib.error import HTTPError
 
 import kagglehub
 import openml
@@ -52,10 +53,16 @@ def load_kaggle_dataset(dataset_id: KaggleDatasetID) -> TabularDataset:
 
 
 def load_url_dataset(dataset_id: UrlDatasetID) -> TabularDataset:
-    print(f"💾 Downloading URL dataset {dataset_id.name}")
-    df = _read_csv(path=str(dataset_id.value), dataset_id=dataset_id)
-    dataset = curate_dataset(x=df, y=None, dataset_id=dataset_id)
-    return dataset
+    for i in range(10):
+        try:
+            print(f"💾 Downloading URL dataset {dataset_id.name}")
+            df = _read_csv(path=str(dataset_id.value), dataset_id=dataset_id)
+            dataset = curate_dataset(x=df, y=None, dataset_id=dataset_id)
+            return dataset
+        except HTTPError as e:
+            print(f"⚠️⚠️⚠️ URL Download exception: {e}")
+            sleep(120)
+    raise ValueError("Failed to load URL dataset")
 
 
 
