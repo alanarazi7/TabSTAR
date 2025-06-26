@@ -41,7 +41,7 @@ class TabSTARVerbalizer:
         self.constant_columns: List[str] = []
 
     def fit(self, X, y):
-        if len(X.columns) >= 200:
+        if len(X.columns) > 200:
             print("⚠️ Warning: More than 200 columns detected. This will probably lead to memory issues.")
         x = X.copy()
         y = y.copy()
