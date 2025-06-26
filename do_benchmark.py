@@ -14,8 +14,11 @@ from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils import log_calls, dump_json
 
-# BASELINES = [CatBoost] #, XGBoost]
-SHORT2MODELS = {XGBoost.SHORT_NAME: XGBoost}
+
+BASELINES = [CatBoost] #, XGBoost]
+
+baseline_names = {model.SHORT_NAME: model for model in BASELINES}
+SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
