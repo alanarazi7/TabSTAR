@@ -105,8 +105,7 @@ def run_benchmarks(combinations, args):
         }
         # Ensure the directory for key_file exists before saving
         key_file_dir = os.path.dirname(key_file)
-        if key_file_dir and not os.path.exists(key_file_dir):
-            os.makedirs(key_file_dir, exist_ok=True)
+        os.makedirs(key_file_dir, exist_ok=True)
         dump_json(result, key_file)
 
 
