@@ -86,8 +86,8 @@ def run_benchmarks(combinations, args):
     """
     for model, dataset_id, run_num in tqdm(combinations):
         model_name = model.__name__
-        key_file = f"{model_name}_{dataset_id.name}_{run_num}.txt"
-        print('key_file', key_file)
+        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
+        print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
         if os.path.exists(key_file):
             continue
         metric = evaluate_on_dataset(
