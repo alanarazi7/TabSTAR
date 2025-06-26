@@ -6,12 +6,10 @@ from pandas.core.dtypes.common import is_datetime64_any_dtype, is_numeric_dtype,
 
 from tabstar.preprocessing.detection import is_mostly_numerical, is_numeric
 from tabstar.preprocessing.nulls import convert_numeric_with_missing, MISSING_VALUE, get_valid_values
-from tabstar_paper.utils import log_calls
 
 pd.set_option('future.no_silent_downcasting', True)
 
 
-@log_calls
 def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataFrame:
     for col in x.columns:
         if col in numerical_features:
@@ -21,13 +19,11 @@ def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataF
     return x
 
 
-@log_calls
 def detect_numerical_features(x: DataFrame) -> Set[str]:
     return {col for col in x.columns if is_numerical_feature(s=x[col])}
 
 
 # TODO: for future versions, maybe best to rely on maintained packages, e.g. skrub's TableVectorizer
-@log_calls
 def is_numerical_feature(s: Series) -> bool:
     if is_datetime64_any_dtype(s.dtype):
         raise TypeError(f"At this point, dates should have already been transformed.")
@@ -41,7 +37,6 @@ def is_numerical_feature(s: Series) -> bool:
         raise ValueError(f"Unsupported dtype {s.dtype} for series {s.name}")
 
 
-@log_calls
 def convert_series_to_numeric(s: Series, missing_value: Optional[str] = None) -> Series:
     if pd.api.types.is_numeric_dtype(s):
         return s.astype(float)
@@ -56,6 +51,5 @@ def convert_series_to_numeric(s: Series, missing_value: Optional[str] = None) ->
     return convert_numeric_with_missing(s=s, missing_value=missing_value)
 
 
-@log_calls
 def convert_series_to_textual(s: Series):
     return s.astype(object).fillna(MISSING_VALUE).astype(str)
