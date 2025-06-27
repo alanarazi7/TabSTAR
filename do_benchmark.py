@@ -50,6 +50,7 @@ def parse_args():
     parser.add_argument('--dataset_id')
     parser.add_argument('--run_num', type=int)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
+    parser.add_argument('--cls', action='store_true', default=False)
     return parser.parse_args()
 
 
@@ -86,6 +87,8 @@ def run_benchmarks(combinations, args):
     Saves results to local files.
     """
     for model, dataset_id, run_num in tqdm(combinations):
+        if args.cls and dataset_id.name.startswith("REG_"):
+            continue
         model_name = model.__name__
         key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
         print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
