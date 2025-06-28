@@ -100,7 +100,7 @@ class BaseTabSTAR:
         x = X.copy()
         y = y.copy()
         y_pred = self._infer(x)
-        y_true = self.preprocessor_.transform_target(y)
+        y_true = self.preprocessor_.transform_target____(y)
         return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
 
 
