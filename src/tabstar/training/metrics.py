@@ -20,13 +20,12 @@ class Metrics:
 
 
 def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int) -> Metrics:
-    metrics = {}
     if d_output == 1:
         rsq = r2_score(y_true=y_true, y_pred=y_pred)
         mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
         one_minus_mse = 1 - mse
         metrics = {'r2': rsq, 'mse': mse, '1-mse': one_minus_mse}
-        return Metrics(score=rsq, metrics=metrics)
+        return Metrics(score=one_minus_mse, metrics=metrics)
     elif d_output == 2:
         # TODO: add more metrics pehraps
         score = roc_auc_score(y_true=y_true, y_score=y_pred)
