@@ -9,6 +9,7 @@ Z_MAX_ABS_VAL = 3
 def fit_standard_scaler(s: Series) -> StandardScaler:
     s = s.copy().dropna()
     scaler = StandardScaler()
+    s = s.values.reshape(-1, 1)
     clipped = s.clip(-Z_MAX_ABS_VAL, Z_MAX_ABS_VAL)
     scaler.fit(clipped)
     return scaler
