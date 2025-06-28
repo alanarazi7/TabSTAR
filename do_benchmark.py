@@ -4,6 +4,7 @@ import os
 import time
 
 import torch
+from pandas import DataFrame
 from tqdm import tqdm
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID
@@ -13,7 +14,7 @@ from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
-from tabstar_paper.utils.io_handlers import dump_json
+from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
 from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
 
 BASELINES = [CatBoost] #, XGBoost]
@@ -72,7 +73,6 @@ def prepare_combinations(args):
         run_numbers = [args.run_num]
 
     combos = [(m, d, r) for m in models for d in datasets for r in run_numbers]
-
     if device is not None:
         count_gpus_in_machine = torch.cuda.device_count()
         combos = combos[int(GPU)::count_gpus_in_machine]
@@ -86,14 +86,18 @@ def run_benchmarks(combinations, args):
     Run evaluation for each (model, dataset, run_num) combination.
     Saves results to local files.
     """
+    existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
+    existing_combos = {(d['model'], d['dataset'], d['run_num']) for _, d in existing.iterrows()}
     for model, dataset_id, run_num in tqdm(combinations):
         if args.cls and dataset_id.name.startswith("REG_"):
             continue
         model_name = model.__name__
+        if (model_name, dataset_id.name, run_num) in existing_combos:
+            continue
         key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
-        print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
         if os.path.exists(key_file):
             continue
+        print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
         start_time = time.time()
         metrics = evaluate_on_dataset(
             model_cls=model,
