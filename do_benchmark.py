@@ -20,7 +20,7 @@ from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
 BASELINES = [CatBoost] #, XGBoost]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
-SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
+SHORT2MODELS = {'tabstar': BaseTabSTAR}
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
