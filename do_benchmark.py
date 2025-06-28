@@ -61,7 +61,7 @@ def prepare_combinations(args):
     Prepare all (model, dataset, run_num) combinations to evaluate.
     Returns a list of tuples.
     """
-    models = [CatBoost]
+    models = list(SHORT2MODELS.values())
     run_numbers = list(range(10))
     datasets = [
         #KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN,
