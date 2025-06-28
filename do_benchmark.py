@@ -91,14 +91,14 @@ def run_benchmarks(combinations, args):
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d['run_num']) for _, d in existing.iterrows()}
     for model, dataset_id, run_num in tqdm(combinations):
-        if args.cls and dataset_id.name.startswith("REG_"):
-            continue
+        # if args.cls and dataset_id.name.startswith("REG_"):
+        #     continue
         model_name = model.__name__
-        if (model_name, dataset_id.name, run_num) in existing_combos:
-            continue
+        # if (model_name, dataset_id.name, run_num) in existing_combos:
+        #     continue
         key_file = f"temp_benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
-        if os.path.exists(key_file):
-            continue
+        # if os.path.exists(key_file):
+        #     continue
         print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
         start_time = time.time()
         metrics = evaluate_on_dataset(
