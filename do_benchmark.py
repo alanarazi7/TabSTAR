@@ -4,6 +4,7 @@ import os
 import time
 
 import torch
+from pandas import DataFrame
 from tqdm import tqdm
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID
@@ -13,7 +14,7 @@ from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
-from tabstar_paper.utils.io_handlers import dump_json
+from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
 from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
 
 BASELINES = [CatBoost] #, XGBoost]
@@ -72,7 +73,8 @@ def prepare_combinations(args):
         run_numbers = [args.run_num]
 
     combos = [(m, d, r) for m in models for d in datasets for r in run_numbers]
-
+    existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
+    # TODO: skip already evaluated runs
     if device is not None:
         count_gpus_in_machine = torch.cuda.device_count()
         combos = combos[int(GPU)::count_gpus_in_machine]

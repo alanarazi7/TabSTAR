@@ -1,7 +1,7 @@
 import json
 import os
 from json import JSONDecodeError
-from typing import Dict
+from typing import Dict, List
 
 
 def load_json(path: str) -> Dict:
@@ -13,6 +13,10 @@ def load_json(path: str) -> Dict:
             raise e
     return data
 
+def load_json_lines(path: str) -> List[Dict]:
+    with open(path, 'r') as file:
+        data = [json.loads(line) for line in file]
+    return data
 
 def dump_json(data: Dict, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
