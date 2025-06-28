@@ -31,6 +31,7 @@ class TabStarModel(PreTrainedModel):
         if d_output == 1:
             target_scores = self.reg_head(target_tokens)
         else:
+            assert False
             target_scores = self.cls_head(target_tokens)
         target_scores = target_scores.squeeze(dim=-1)
         assert tuple(target_scores.shape) == (x_txt.shape[0], d_output)

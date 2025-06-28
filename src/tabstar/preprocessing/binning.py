@@ -20,6 +20,7 @@ def fit_numerical_bins(s: Series) -> QuantileTransformer:
 
 
 def transform_numerical_bins(s: Series, scaler: QuantileTransformer) -> Series:
+    s = s.copy()
     invalid_indices = get_invalid_indices(s)
     quantile_levels = np.linspace(0, 1, VERBALIZED_QUANTILE_BINS + 1)
     boundaries = scaler.inverse_transform(quantile_levels.reshape(-1, 1)).flatten()
