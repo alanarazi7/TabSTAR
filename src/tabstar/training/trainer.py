@@ -47,6 +47,7 @@ class TabStarTrainer:
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True)
         val_loader = get_dataloader(val_data, is_train=False)
+        print(f"Running inference on {len(train_loader)} samples.")
         for epoch in tqdm(range(1, MAX_EPOCHS + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             print(f"Epoch {epoch} || Train Loss: {train_loss:.4f}")
@@ -108,7 +109,9 @@ class TabStarTrainer:
             print(f"BADDDDDDDDDDDDDD")
             loss_fn = CrossEntropyLoss()
             dtype = torch.long
+        print(f"Before, y distribution: {data.y.mean():.4f} ± {data.y.std():.4f}, {data.y.max()=:.4f}, {data.y.min():.4f}")
         y = torch.tensor(data.y, dtype=dtype).to(self.device)
+        print(f"After, y distribution: {y.mean().item():.4f} ± {y.std().item():.4f}, {y.max()=:.4f}, {y.min()=:.4f}")
         # print(f"Target distribution: {y.mean().item():.4f} ± {y.std().item():.4f}")
         if data.d_output == 1 and y.ndim == 1:
             # print(f"Reshaping target for regression: {y.shape} -> (batch_size, 1)")
