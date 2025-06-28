@@ -95,7 +95,7 @@ def run_benchmarks(combinations, args):
         model_name = model.__name__
         if (model_name, dataset_id.name, run_num) in existing_combos:
             continue
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
+        key_file = f"temp_stam/{model_name}_{dataset_id.name}_{run_num}.txt"
         if os.path.exists(key_file):
             continue
         print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
