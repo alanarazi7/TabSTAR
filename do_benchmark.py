@@ -65,7 +65,8 @@ def prepare_combinations(args):
     run_numbers = list(range(10))
     datasets = [
         #KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN,
-    KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES]
+    #KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES]
+    OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION]
 
     if args.model:
         models = [SHORT2MODELS[args.model]]
