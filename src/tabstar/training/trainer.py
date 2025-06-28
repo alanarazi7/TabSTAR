@@ -99,16 +99,21 @@ class TabStarTrainer:
 
     def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
         predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
+        print(f"Predictions distribution: {predictions.mean().item():.4f} ± {predictions.std().item():.4f}")
         if data.d_output == 1:
             loss_fn = MSELoss()
             dtype = torch.float32
         else:
+            print(f"BADDDDDDDDDDDDDD")
             loss_fn = CrossEntropyLoss()
             dtype = torch.long
         y = torch.tensor(data.y, dtype=dtype).to(self.device)
+        print(f"Target distribution: {y.mean().item():.4f} ± {y.std().item():.4f}")
         if data.d_output == 1 and y.ndim == 1:
+            print(f"Reshaping target for regression: {y.shape} -> (batch_size, 1)")
             y = y.unsqueeze(1)
         loss = loss_fn(predictions, y)
+        print(f"Loss: {loss.item():.4f} | Predictions shape: {predictions.shape} | Target shape: {y.shape}")
         return loss, predictions
 
     def _do_update(self):
