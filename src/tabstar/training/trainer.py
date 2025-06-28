@@ -51,6 +51,7 @@ class TabStarTrainer:
         for epoch in tqdm(range(1, MAX_EPOCHS + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             print(f"Epoch {epoch} || Train Loss: {train_loss:.4f}")
+            return -9
             val_loss, val_metric = self._evaluate_epoch(val_loader)
             if val_metric > self.early_stopper.metric:
                 emoji = "🥇"
@@ -88,6 +89,7 @@ class TabStarTrainer:
         return epoch_loss
 
     def _train_batch(self, data: TabSTARData) -> float:
+        print(f"Training batch with {len(data.y)} samples, d_output={data.d_output}")
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             loss, predictions = self._do_forward(data=data)
             loss_for_backward = loss / self.config.accumulation_steps
@@ -126,32 +128,6 @@ class TabStarTrainer:
         self.scaler.step(self.optimizer)
         self.scaler.update()
         self.optimizer.zero_grad()
-
-    def _evaluate_epoch(self, dataloader: DataLoader) -> Tuple[float, float]:
-        assert False
-        self.model.eval()
-        total_loss = 0.0
-        total_samples = 0
-
-        y_pred = []
-        y_true = []
-        d_output = None
-
-        for data in dataloader:
-            d_output = data.d_output
-            with torch.no_grad(), autocast(device_type=self.device.type, enabled=self.use_amp):
-                batch_loss, batch_predictions = self._do_forward(data=data)
-                total_loss += batch_loss * len(data.y)
-                total_samples += len(data.y)
-                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=d_output)
-                y_pred.append(batch_predictions)
-                y_true.append(data.y)
-        y_pred = concat_predictions(y_pred)
-        y_true = np.concatenate(y_true)
-        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
-        loss = total_loss / total_samples
-        loss = loss.item()
-        return loss, metrics.score
 
     def load_model(self) -> PeftModel:
         self.model = load_finetuned(self.save_dir, tabstar_version=self.model_version)
