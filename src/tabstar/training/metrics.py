@@ -27,7 +27,7 @@ def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_ou
         metrics = {'r2': rsq, 'mse': mse, '1-mse': one_minus_mse}
         return Metrics(score=one_minus_mse, metrics=metrics)
     elif d_output == 2:
-        # TODO: add more metrics pehraps
+        # TODO: add more metrics perhaps
         score = roc_auc_score(y_true=y_true, y_score=y_pred)
     elif d_output > 2:
         try:
