@@ -12,7 +12,7 @@ from tabstar.preprocessing.feat_types import detect_numerical_features, transfor
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_z_scores
 from tabstar.preprocessing.sparse import densify_objects
-from tabstar.preprocessing.target import fit_preprocess_y
+from tabstar.preprocessing.target import fit_preprocess_y, transform_cls_y, transform_preprocess_y
 from tabstar.preprocessing.texts import replace_column_names
 from tabstar.preprocessing.verbalize import prepend_target_tokens, verbalize_textual_features
 
@@ -83,6 +83,8 @@ class TabSTARVerbalizer:
         num_cols = sorted(self.numerical_transformers)
         x = transform_feature_types(x=x, numerical_features=set(num_cols))
         y = self.transform_target(y=y)
+        if y is not None:
+            y = transform_preprocess_y(y=y, scaler=self.target_transformer)
         x = verbalize_textual_features(x=x)
         x = x.drop(columns=self.constant_columns, errors='ignore')
         x = prepend_target_tokens(x=x, y_name=self.y_name, y_values=self.y_values)
@@ -107,6 +109,7 @@ class TabSTARVerbalizer:
         if isinstance(self.target_transformer, LabelEncoder):
             return self.target_transformer.transform(y)
         elif isinstance(self.target_transformer, StandardScaler):
+            return transform_cls_y
             return self.target_transformer.transform(y.values.reshape(-1, 1)).flatten()
         else:
             raise TypeError("Unsupported target transformer type.")
