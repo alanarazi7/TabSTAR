@@ -7,7 +7,7 @@ import torch
 from pandas import DataFrame
 from tqdm import tqdm
 
-from tabstar.datasets.all_datasets import OpenMLDatasetID
+from tabstar.datasets.all_datasets import OpenMLDatasetID, KaggleDatasetID
 from tabstar.tabstar_model import BaseTabSTAR
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.xgboost import XGBoost
@@ -61,9 +61,9 @@ def prepare_combinations(args):
     Prepare all (model, dataset, run_num) combinations to evaluate.
     Returns a list of tuples.
     """
-    models = list(SHORT2MODELS.values())
+    models = [CatBoost]
     run_numbers = list(range(10))
-    datasets = TEXTUAL_DATASETS
+    datasets = [KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN, KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES]
 
     if args.model:
         models = [SHORT2MODELS[args.model]]
