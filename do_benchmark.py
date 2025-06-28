@@ -16,11 +16,12 @@ from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
 from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
+from tabular.datasets.tabular_datasets import KaggleDatasetID
 
 BASELINES = [CatBoost] #, XGBoost]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
-SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
+SHORT2MODELS = {'tabstar': BaseTabSTAR}
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
@@ -63,7 +64,7 @@ def prepare_combinations(args):
     """
     models = list(SHORT2MODELS.values())
     run_numbers = list(range(10))
-    datasets = TEXTUAL_DATASETS
+    datasets = [KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES]
 
     if args.model:
         models = [SHORT2MODELS[args.model]]
