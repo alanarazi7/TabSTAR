@@ -79,6 +79,8 @@ class BaseTabSTAR:
         self.model_.eval()
         data = self.preprocessor_.transform(X, y=None)
         dataloader = get_dataloader(data, is_train=False, batch_size=128)
+        # print amount of data
+        self.vprint(f"Running inference on {len(dataloader.dataset)} samples.")
         predictions = []
         for data in dataloader:
             with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
