@@ -49,6 +49,7 @@ class TabStarTrainer:
         val_loader = get_dataloader(val_data, is_train=False)
         for epoch in tqdm(range(1, MAX_EPOCHS + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
+            print(f"Epoch {epoch} || Train Loss: {train_loss:.4f}")
             val_loss, val_metric = self._evaluate_epoch(val_loader)
             if val_metric > self.early_stopper.metric:
                 emoji = "🥇"
@@ -124,6 +125,7 @@ class TabStarTrainer:
         self.optimizer.zero_grad()
 
     def _evaluate_epoch(self, dataloader: DataLoader) -> Tuple[float, float]:
+        assert False
         self.model.eval()
         total_loss = 0.0
         total_samples = 0
