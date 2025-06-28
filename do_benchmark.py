@@ -63,7 +63,9 @@ def prepare_combinations(args):
     """
     models = [CatBoost]
     run_numbers = list(range(10))
-    datasets = [KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN, KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES]
+    datasets = [
+        #KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN,
+    KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES]
 
     if args.model:
         models = [SHORT2MODELS[args.model]]
@@ -94,7 +96,7 @@ def run_benchmarks(combinations, args):
         model_name = model.__name__
         if (model_name, dataset_id.name, run_num) in existing_combos:
             continue
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
+        key_file = f"temp_benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
         if os.path.exists(key_file):
             continue
         print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
