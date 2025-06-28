@@ -13,7 +13,6 @@ from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EX
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json
-from tabstar_paper.utils.logging import log_calls
 
 
 BASELINES = [CatBoost] #, XGBoost]
@@ -31,7 +30,6 @@ if device is not None:
     device = f"cuda:{GPU}"
 
 
-@log_calls
 def main():
     """
     Entry point for running benchmarks on tabular models.
@@ -39,10 +37,10 @@ def main():
     """
     args = parse_args()
     combinations = prepare_combinations(args)
-    run_benchmarks(combinations, args)
+    for model, dataset_id, run_num in tqdm(combinations):
+        run_benchmark(model, dataset_id, run_num, args)
 
 
-@log_calls
 def parse_args():
     """Parse command-line arguments for the benchmark script."""
     parser = argparse.ArgumentParser()
@@ -53,7 +51,6 @@ def parse_args():
     return parser.parse_args()
 
 
-@log_calls
 def prepare_combinations(args):
     """
     Prepare all (model, dataset, run_num) combinations to evaluate.
@@ -76,38 +73,38 @@ def prepare_combinations(args):
         count_gpus_in_machine = torch.cuda.device_count()
         combos = combos[int(GPU)::count_gpus_in_machine]
 
-    return combos
+    return combos  # For testing purposes, limit to 2 combinations
 
 
-@log_calls
-def run_benchmarks(combinations, args):
+def run_benchmark(model, dataset_id, run_num, args):
     """
-    Run evaluation for each (model, dataset, run_num) combination.
+    Run evaluation for a single (model, dataset, run_num) combination.
     Saves results to local files.
     """
-    for model, dataset_id, run_num in tqdm(combinations):
-        model_name = model.__name__
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
-        print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
-        if os.path.exists(key_file):
-            continue
-        metric = evaluate_on_dataset(
-            model_cls=model,
-            dataset_id=dataset_id,
-            run_num=run_num,
-            train_examples=args.train_examples,
-            device=device
-        )
-        result = {
-            "metric": metric,
-            "dataset": dataset_id.name,
-            "run_num": run_num,
-            "model": model_name
-        }
-        # Ensure the directory for key_file exists before saving
-        key_file_dir = os.path.dirname(key_file)
-        os.makedirs(key_file_dir, exist_ok=True)
-        dump_json(result, key_file)
+    model_name = model.__name__
+    key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
+    print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
+    if os.path.exists(key_file):
+        return
+    metric = evaluate_on_dataset(
+        model_cls=model,
+        dataset_id=dataset_id,
+        run_num=run_num,
+        train_examples=args.train_examples,
+        device=device
+    )
+    result = {
+        "metric": metric,
+        "dataset": dataset_id.name,
+        "run_num": run_num,
+        "model": model_name
+    }
+    # Ensure the directory for key_file exists before saving
+    key_file_dir = os.path.dirname(key_file)
+    os.makedirs(key_file_dir, exist_ok=True)
+    dump_json(result, key_file)
+
+
 
 
 if __name__ == "__main__":
