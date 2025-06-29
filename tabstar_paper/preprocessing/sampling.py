@@ -4,6 +4,7 @@ from pandas import DataFrame, Series
 
 from tabstar.constants import SEED
 from tabstar.preprocessing.splits import TEST_RATIO, MAX_TEST_SIZE, do_split
+from tabstar_paper.utils.logging import log_calls
 
 
 def subsample_dataset(x: DataFrame, y: Series, is_cls: bool, train_examples: int,

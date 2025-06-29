@@ -11,12 +11,15 @@ pd.set_option('future.no_silent_downcasting', True)
 
 
 def transform_feature_types(x: DataFrame, numerical_features: Set[str]) -> DataFrame:
+    new_x = {}
     for col in x.columns:
         if col in numerical_features:
-            x[col] = convert_series_to_numeric(s=x[col])
+            new_x[col] = convert_series_to_numeric(s=x[col])
         else:
-            x[col] = convert_series_to_textual(s=x[col])
-    return x
+            new_x[col] = convert_series_to_textual(s=x[col])
+    new_x = pd.DataFrame(new_x, index=x.index)
+    ordered_x = new_x[x.columns]
+    return ordered_x
 
 
 def detect_numerical_features(x: DataFrame) -> Set[str]:

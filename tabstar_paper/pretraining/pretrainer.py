@@ -10,6 +10,7 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar_paper.pretraining.dataloaders import get_dev_dataloader
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset
 from tabular.datasets.tabular_datasets import TabularDatasetID
@@ -22,7 +23,7 @@ from tabular.tabstar.arch.arch import TabStarModel
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.nn_logger import log_general, log_dev_loss, log_dev_performance, log_train_loss, summarize_epoch
-from tabular.utils.dataloaders import get_pretrain_epoch_dataloader, get_dataloader, round_robin_batches
+from tabular.utils.dataloaders import get_pretrain_epoch_dataloader, round_robin_batches
 from tabular.utils.deep import print_model_summary
 from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
@@ -43,7 +44,8 @@ class TabSTARPretrainer:
         self.dataset_ids = dataset_ids
         self.device = device
         self.args = pretrain_args
-        self.data_dirs: List[str] = self.initialize_data_dirs()
+        self.data_dirs: List[str] = []
+        self.dev_dataloaders: List[DataLoader] = []
         self.model: Optional[Any] = None
         self.config = self.set_config()
         self.model: Optional[Module] = None
@@ -51,24 +53,23 @@ class TabSTARPretrainer:
         self.scheduler: Optional[LRScheduler] = None
         self.scaler = GradScaler()
         self.max_epochs = MAX_EPOCHS
-        self.data_loaders: Dict[DataSplit, List[DataLoader]] = {}
         fix_seed()
         self.initialize_model()
+        self.initialize_data_dirs()
 
     @property
     def model_path(self) -> str:
         return get_model_path(self.run_name, is_pretrain=True)
 
 
-    def initialize_data_dirs(self) -> List[str]:
-        data_dirs = []
+    def initialize_data_dirs(self):
         for d in tqdm(self.dataset_ids, desc="Initializing data dirs", leave=False):
             data_dir = create_pretrain_dataset(dataset_id=d)
-            data_dirs.append(data_dir)
-        return data_dirs
+            self.data_dirs.append(data_dir)
+            dev_dataloader = get_dev_dataloader(data_dir=data_dir, batch_size=self.config.batch_size)
+            self.dev_dataloaders.append(dev_dataloader)
 
     def initialize_model(self):
-        # For pretraining, create a new model and unfreeze textual encoder layers.
         self.model = TabStarModel(config=self.config)
         self.model.unfreeze_textual_encoder_layers()
         cprint("Loaded pre-trained model and unfreezing all downstream layers for finetuning.")
@@ -88,7 +89,6 @@ class TabSTARPretrainer:
 
     def train(self):
         print_model_summary(self.model)
-        self.prepare_dev_test_dataloaders()
         early_stopper = EarlyStopping(args=self.args)
         steps = 0
         with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
@@ -124,7 +124,7 @@ class TabSTARPretrainer:
                 dev_loss = LossAccumulator()
                 dev_metrics = []
                 with tqdm(total=len(self.data_dirs), desc="Eval", leave=False) as pbar_eval:
-                    for data_loader in self.data_loaders[DataSplit.DEV]:
+                    for data_loader in self.dev_dataloaders:
                         assert isinstance(data_loader, DataLoader) and isinstance(data_loader.dataset, HDF5Dataset)
                         properties = data_loader.dataset.properties
                         data_dev_loss, predictions = self.eval_dataset(data_loader=data_loader, is_test_time=False)
@@ -147,14 +147,6 @@ class TabSTARPretrainer:
                 pbar_epochs.update(1)
         wandb.log({'train_epochs': epoch})
         return early_stopper.metric
-
-    def prepare_dev_test_dataloaders(self):
-        for split in [DataSplit.DEV]:
-            split_dirs = []
-            for d in self.data_dirs:
-                data = get_dataloader(data_dir=d, split=split, batch_size=self.config.batch_size)
-                split_dirs.append(data)
-            self.data_loaders[split] = split_dirs
 
     def do_forward(self, x_txt: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> InferenceOutput:
         inference = self.infer(x_txt=x_txt, x_num=x_num, properties=properties)

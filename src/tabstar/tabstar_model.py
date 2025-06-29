@@ -14,7 +14,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
-from tabstar.training.metrics import apply_loss_fn, calculate_metric
+from tabstar.training.metrics import apply_loss_fn, calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions
 
@@ -93,12 +93,15 @@ class BaseTabSTAR:
             print(s)
 
     def score(self, X, y) -> float:
+        metrics = self.score_all_metrics(X=X, y=y)
+        return metrics.score
+
+    def score_all_metrics(self, X, y) -> Metrics:
         x = X.copy()
         y = y.copy()
         y_pred = self._infer(x)
         y_true = self.preprocessor_.transform_target(y)
-        metric = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
-        return metric
+        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
 
 
 

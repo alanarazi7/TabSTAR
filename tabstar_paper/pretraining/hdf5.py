@@ -5,11 +5,10 @@ from typing import Optional, Dict
 
 import h5py
 import numpy as np
-import torch
 from torch.utils.data import Dataset
 
 from tabstar.tabstar_verbalizer import TabSTARData
-from tabstar_paper.utils.io_handlers import dump_json
+from tabstar_paper.utils.io_handlers import dump_json, load_json
 
 
 @dataclass
@@ -19,6 +18,12 @@ class DatasetProperties:
     idx2text: Dict[int, str]
     train_size: int
     val_size: int
+
+    @classmethod
+    def from_json(cls, data_dir: str) -> 'DatasetProperties':
+        properties_path = join(data_dir, HDF5Dataset.PROPERTIES)
+        d = load_json(properties_path)
+        return cls(**d)
 
 
 class HDF5Dataset(Dataset):
@@ -31,10 +36,11 @@ class HDF5Dataset(Dataset):
     H5_FILE = "data.h5"
     PROPERTIES = "properties.json"
 
-    def __init__(self, split_dir: str):
-        self.file_path = join(split_dir, self.H5_FILE)
-        # self.properties: PretrainDatasetProperties = get_properties(data_dir=os.path.dirname(split_dir))
-        # self.size: int = self.properties.split_sizes[os.path.basename(split_dir)]
+    def __init__(self, data_dir: str, is_train: bool):
+        split_key = self.TRAIN if is_train else self.VAL
+        self.file_path = join(data_dir, split_key, self.H5_FILE)
+        self.properties: DatasetProperties = DatasetProperties.from_json(data_dir)
+        self.size: int = self.properties.train_size if is_train else self.properties.val_size
         self.h5_file: Optional[h5py.File] = None
 
     def __len__(self):
