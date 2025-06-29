@@ -35,14 +35,6 @@ class XGBoost(TabularModel):
         return model
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
-        # Detect categorical features
-        # TODO: we should use string detector function, not hardcoded "object"
-        self.categorical_features = [
-            col for col in x.columns
-            if col not in self.numerical_features
-            and x[col].dtype == "object"
-        ]
-        # Numerical
         # TODO: we should initialize these objects in the constructor
         self.numerical_fillers = {col: fill_median(x[col]) for col in self.numerical_features}
         # Categorical
@@ -53,7 +45,7 @@ class XGBoost(TabularModel):
             enc.fit(filler.src)
             self.categorical_encoders[col] = enc
         # Text
-        self.text_transformers = fit_text_encoders(x=x, numerical_features=self.numerical_features, device=self.device)
+        self.text_transformers = fit_text_encoders(x=x, text_features=self.text_features, device=self.device)
         self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:

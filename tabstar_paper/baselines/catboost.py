@@ -28,7 +28,7 @@ class CatBoost(TabularModel):
         return model
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
-        self.text_transformers = fit_text_encoders(x=x, numerical_features=self.numerical_features, device=self.device)
+        self.text_transformers = fit_text_encoders(x=x, text_features=self.text_features, device=self.device)
         self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
@@ -36,12 +36,8 @@ class CatBoost(TabularModel):
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        numerical_features = set(self.numerical_features)
-        text_features = {f"{c}_{str(n+1).zfill(2)}" for c, e in self.text_transformers.items() for n in range(e.n_components)}
-        assert all(c in x_train.columns for c in text_features)
-        non_cat_features = numerical_features.union(text_features)
-        cat_features = [i for i, c in enumerate(x_train.columns) if c not in non_cat_features]
+        cat_feature = [i for i, c in enumerate(x_train.columns) if c in self.categorical_features]
         logging_level = "Verbose" if self.verbose else "Silent"
-        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features,
+        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_feature,
                         logging_level=logging_level)
 
