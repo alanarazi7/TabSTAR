@@ -22,3 +22,9 @@ def dump_json(data: Dict, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w') as file:
         json.dump(data, file, indent=4)
+
+def dump_json_lines(data, path: str) -> None:
+    with open(path, 'w') as file:
+        for d in data:
+            json.dump(d, file)
+            file.write('\n')
