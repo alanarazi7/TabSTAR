@@ -92,7 +92,7 @@ def run_xgboost_benchmark(model, dataset_id, run_num, args):
     print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
     if os.path.exists(key_file):
         return
-    metric = evaluate_on_dataset(
+    metrics = evaluate_on_dataset(
         model_cls=model,
         dataset_id=dataset_id,
         run_num=run_num,
@@ -100,7 +100,7 @@ def run_xgboost_benchmark(model, dataset_id, run_num, args):
         device=device
     )
     result = {
-        "metric": metric,
+        "metric": metrics.score,
         "dataset": dataset_id.name,
         "run_num": run_num,
         "model": model_name
