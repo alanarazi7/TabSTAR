@@ -37,32 +37,24 @@ class XGBoost(TabularModel):
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
         # TODO: we should initialize these objects in the constructor
         self.numerical_fillers = {col: fill_median(x[col]) for col in self.numerical_features}
-        # Categorical
         self.categorical_fillers = {col: fill_mode(x[col]) for col in self.categorical_features}
         self.categorical_encoders = {}
         for col, filler in self.categorical_fillers.items():
             enc = CategoricalEncoder()
             enc.fit(filler.src)
             self.categorical_encoders[col] = enc
-        # Text
         self.text_transformers = fit_text_encoders(x=x, text_features=self.text_features, device=self.device)
         self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        # TODO: (1) don't use `getattr` here, super ugly and not relevant
-        # TODO: (2) The comments are not needed, it's clear from the code what is being done
-        # Numerical
-        for col, filler in getattr(self, "numerical_fillers", {}).items():
+        for col, filler in self.numerical_fillers.items():
             if col in x:
                 x[col] = x[col].fillna(filler.median)
-        # Categorical
-        for col, filler in getattr(self, "categorical_fillers", {}).items():
+        for col, filler in self.categorical_fillers.items():
             if col in x:
                 x[col] = x[col].fillna(filler.mode)
                 x[col] = self.categorical_encoders[col].transform(x[col])
-        # Text
-        # TODO: You must put this back, it is essential for the model to work with text features
-        # x = transform_text_features(x=x, text_encoders=getattr(self, "text_transformers", {})) i removed this line and it worked
+        x = transform_text_features(x=x, text_encoders=self.text_transformers)
         return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
