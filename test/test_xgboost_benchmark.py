@@ -2,7 +2,7 @@ import json
 import pytest
 from collections import namedtuple
 
-from do_benchmark import run_benchmark
+from do_xgboost import run_xgboost_benchmark
 from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar_paper.baselines.xgboost import XGBoost
 
@@ -30,14 +30,14 @@ def setup_benchmark_env(tmp_path, monkeypatch):
 @pytest.mark.parametrize("params", PARAMS)
 def test_run_benchmarks_function(monkeypatch, tmp_path, params):
     """
-    tests run_benchmark with parameters from PARAMS. It sets up the environment,
+    tests run_xgboost_benchmark with parameters from PARAMS. It sets up the environment,
     runs the benchmark, checks that it creates a valid result file in .benchmark_results and verifies the metric is consistent.
     """
     results_dir = setup_benchmark_env(tmp_path, monkeypatch)
     class Args:  # TODO I think this should be removed, will discuss in PR
         train_examples = 10000  # or any default you want
 
-    run_benchmark(params.model_cls, params.dataset_id, params.run_num, Args)
+    run_xgboost_benchmark(params.model_cls, params.dataset_id, params.run_num, Args)
     result_files = list(results_dir.glob("*.txt"))
 
     with open(result_files[0], "r") as f:
