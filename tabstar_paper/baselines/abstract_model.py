@@ -31,21 +31,12 @@ class TabularModel:
         self.d_output: int = 0
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
-        self.text_transformers: Dict[str, TextEncoder] = {}
         self.numerical_features: Set[str] = set()
+        self.numerical_medians: Dict[str, float] = {}
         self.categorical_features: Set[str] = set()
+        self.categorical_encoders: Dict[str, LabelEncoder] = {}
         self.text_features: Set[str] = set()
-
-        # TODO: for trees like XGBoost
-        # self.x_median: Optional[Dict[str, float]] = None
-        # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
-        # self.numerical_transformers: Dict[str, StandardScaler] = {}
-        #     if self.x_median is not None:
-        #         for col, median in self.x_median.items():
-        #             x[col] = x[col].fillna(median)
-        #     if self.x_encoder is not None:
-        #         for col, encoder in self.x_encoder.items():
-        #             x[col] = transform_encoder_categorical(s=x[col], encoder=encoder)
+        self.text_transformers: Dict[str, TextEncoder] = {}
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
