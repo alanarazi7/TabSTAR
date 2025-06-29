@@ -1,17 +1,24 @@
-from pandas import Series
-from sklearn.preprocessing import OrdinalEncoder
+from typing import Set, Dict
+
+from pandas import Series, DataFrame
+from sklearn.preprocessing import LabelEncoder
+
+from tabstar.preprocessing.nulls import MISSING_VALUE
 
 
-class CategoricalEncoder:
-    def __init__(self):
-        self.encoder = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
-        self.fitted = False
+def fit_categorical_encoders(x: DataFrame, categorical_features: Set[str]) -> Dict[str, LabelEncoder]:
+    return {col: fit_encode_categorical(s=x[col]) for col in categorical_features}
 
-    def fit(self, x: Series):
-        self.encoder.fit(x.values.reshape(-1, 1))
-        self.fitted = True
+def fit_encode_categorical(s: Series) -> LabelEncoder:
+    encoder = LabelEncoder()
+    train_values = set(s).union({MISSING_VALUE})
+    encoder.fit(list(train_values))
+    return encoder
 
-    def transform(self, x: Series) -> Series:
-        if not self.fitted:
-            raise RuntimeError("Encoder not fitted yet.")
-        return Series(self.encoder.transform(x.values.reshape(-1, 1)).astype(int).flatten(), index=x.index)
+def transform_categorical_features(x: DataFrame, categorical_encoders: Dict[str, LabelEncoder]) -> DataFrame:
+    x = x.copy()
+    for col, encoder in categorical_encoders.items():
+        s = x[col].apply(lambda v: v if v in encoder.classes_ else MISSING_VALUE)
+        s = encoder.transform(s).astype(int)
+        x[col] = s
+    return x
