@@ -34,14 +34,11 @@ def test_run_benchmarks_function(monkeypatch, tmp_path, params):
     runs the benchmark, checks that it creates a valid result file in .benchmark_results and verifies the metric is consistent.
     """
     results_dir = setup_benchmark_env(tmp_path, monkeypatch)
-
     class Args:  # TODO I think this should be removed, will discuss in PR
         train_examples = 10000  # or any default you want
 
     run_benchmark(params.model_cls, params.dataset_id, params.run_num, Args)
-
     result_files = list(results_dir.glob("*.txt"))
-    assert result_files, f"No benchmark result file was created for run_num={params.run_num}"
 
     with open(result_files[0], "r") as f:
         data = json.load(f)
