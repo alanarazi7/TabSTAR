@@ -7,12 +7,10 @@ from tabstar.training.metrics import Metrics
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
-from tabstar_paper.utils.logging import log_calls
 
 DOWNSTREAM_EXAMPLES = 10_000
 
 
-@log_calls
 def evaluate_on_dataset(model_cls: Type[TabularModel],
                         dataset_id: TabularDatasetID,
                         run_num: int,

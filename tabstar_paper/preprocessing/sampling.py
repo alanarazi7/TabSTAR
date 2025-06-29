@@ -7,7 +7,6 @@ from tabstar.preprocessing.splits import TEST_RATIO, MAX_TEST_SIZE, do_split
 from tabstar_paper.utils.logging import log_calls
 
 
-@log_calls
 def subsample_dataset(x: DataFrame, y: Series, is_cls: bool, train_examples: int,
                       seed: int = SEED) -> Tuple[DataFrame, Series]:
     test_examples = int(len(y) * TEST_RATIO)

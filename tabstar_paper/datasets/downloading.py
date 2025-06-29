@@ -16,7 +16,6 @@ KAGGLE_VALUES = {item.value for item in KaggleDatasetID}
 URL_VALUES = {item.value for item in UrlDatasetID}
 
 
-@log_calls
 def download_dataset(dataset_id: TabularDatasetID) -> TabularDataset:
     # TODO: allow the option to downsample the number of examples of the dataset
     if dataset_id.value in OPENML_VALUES:
@@ -29,7 +28,6 @@ def download_dataset(dataset_id: TabularDatasetID) -> TabularDataset:
         raise ValueError(f"Unsupported dataset ID type: {type(dataset_id)}")
 
 
-@log_calls
 def load_openml_dataset(dataset_id: OpenMLDatasetID) -> TabularDataset:
     for i in range(10):
         try:
@@ -44,7 +42,6 @@ def load_openml_dataset(dataset_id: OpenMLDatasetID) -> TabularDataset:
     raise ValueError("Failed to load OpenML dataset")
 
 
-@log_calls
 def load_kaggle_dataset(dataset_id: KaggleDatasetID) -> TabularDataset:
     assert dataset_id.value.count('/') == 2
     dataset_name, file = dataset_id.value.rsplit('/', 1)
@@ -56,7 +53,6 @@ def load_kaggle_dataset(dataset_id: KaggleDatasetID) -> TabularDataset:
     return dataset
 
 
-@log_calls
 def load_url_dataset(dataset_id: UrlDatasetID) -> TabularDataset:
     for i in range(10):
         try:
@@ -70,7 +66,6 @@ def load_url_dataset(dataset_id: UrlDatasetID) -> TabularDataset:
     raise ValueError("Failed to load URL dataset")
 
 
-@log_calls
 def _read_csv(path: str, dataset_id: TabularDatasetID) -> DataFrame:
     sep = ","
     if dataset_id in {KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY,
@@ -80,7 +75,6 @@ def _read_csv(path: str, dataset_id: TabularDatasetID) -> DataFrame:
     return read_csv(path, sep=sep)
 
 
-@log_calls
 def get_dataset_from_arg(arg: str | int) -> TabularDatasetID:
     if isinstance(arg, str) and arg.isdigit():
         arg = int(arg)
