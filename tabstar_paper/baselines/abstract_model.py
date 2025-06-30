@@ -13,6 +13,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.devices import get_device
 from tabstar.training.metrics import calculate_metric, Metrics
+from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
 from tabstar_paper.utils.logging import log_all_methods
 
 
@@ -30,19 +31,12 @@ class TabularModel:
         self.d_output: int = 0
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
-        self.text_transformers: Dict[str, TextEncoder] = {}
         self.numerical_features: Set[str] = set()
-
-        # TODO: for trees like XGBoost
-        # self.x_median: Optional[Dict[str, float]] = None
-        # self.x_encoder: Optional[Dict[str, ColumnLabelEncoder]] = None
-        # self.numerical_transformers: Dict[str, StandardScaler] = {}
-        #     if self.x_median is not None:
-        #         for col, median in self.x_median.items():
-        #             x[col] = x[col].fillna(median)
-        #     if self.x_encoder is not None:
-        #         for col, encoder in self.x_encoder.items():
-        #             x[col] = transform_encoder_categorical(s=x[col], encoder=encoder)
+        self.numerical_medians: Dict[str, float] = {}
+        self.categorical_features: Set[str] = set()
+        self.categorical_encoders: Dict[str, LabelEncoder] = {}
+        self.text_features: Set[str] = set()
+        self.text_transformers: Dict[str, TextEncoder] = {}
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -86,6 +80,9 @@ class TabularModel:
         self.numerical_features = detect_numerical_features(x)
         self.vprint(f"🔢 Detected {len(self.numerical_features)} numerical features: {sorted(self.numerical_features)}")
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
+        semantic_types = classify_semantic_features(x=x, numerical_features=self.numerical_features)
+        self.categorical_features = semantic_types.categorical_features
+        self.text_features = semantic_types.text_features
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
         if self.is_cls:
             self.d_output = len(self.target_transformer.classes_)
