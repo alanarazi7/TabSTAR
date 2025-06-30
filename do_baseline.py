@@ -8,13 +8,13 @@ from tabular.models.competitors.carte import CARTE
 from tabular.models.competitors.catboost import CatBoostOptuna
 from tabular.models.competitors.random_forest import RandomForest
 from tabular.models.competitors.tabpfn2 import TabPFNv2
-from tabular.models.competitors.xg_boost import XGBoost, XGBoostOptuna
+from tabular.models.competitors.xg_boost import XGBoostOptuna
 from tabular.trainers.finetune import do_finetune_run
 from tabular.utils.gpus import get_device
 from tabular.utils.utils import cprint
 
-# We are refactoring this code. CatBoost can be used with `tabstar_paper/do_baseline.py`
-BASELINES = [TabPFNv2, CARTE, RandomForest, XGBoost, CatBoostOptuna, XGBoostOptuna]
+# We are refactoring this code. CatBoost and XGBoost can be used with `do_benchmark.py`
+BASELINES = [TabPFNv2, CARTE, RandomForest, CatBoostOptuna, XGBoostOptuna]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 

@@ -18,12 +18,6 @@ from tabular.preprocessing.trees.numerical import fill_median
 from tabular.utils.utils import cprint, verbose_print
 
 
-@dataclass
-class XGBoostHyperparams:
-    booster: str = "gbtree"
-    early_stopping_rounds: int = 50
-    n_estimators: int = 2000
-
 
 @dataclass
 class XGBoostTunedHyperparams:
@@ -41,30 +35,15 @@ class XGBoostTunedHyperparams:
     nthread: int = 1
 
 
-class XGBoost(TabularSklearnModel):
-
-    MODEL_NAME = "XGBoost 🌲"
-    PROCESSING = PreprocessingMethod.TREES
-    SHORT_NAME = "xgb"
+class XGBoostOptuna(TabularSklearnModel):
+    MODEL_NAME = f"XGBoost-Opt{OPTUNA_BUDGET} 🍃"
+    SHORT_NAME = "xgbopt"
+    PROCESSING = PreprocessingMethod.TREES_OPT
 
     def initialize_model(self):
         self.model = init_model(config=self.config, is_reg=self.dataset.is_regression,
                                 classifier_cls=XGBClassifier, regressor_cls=XGBRegressor)
 
-    def train(self):
-        x_train, y_train, x_dev, y_dev = self.load_all()
-        cprint(f"Training {self.MODEL_NAME} over {len(x_train)} examples. Dev set has {len(x_dev)} examples")
-        self.model.fit(x_train, y_train, eval_set=[(x_dev, y_dev)], verbose=VERBOSE)
-
-    def set_config(self) -> XGBoostHyperparams:
-        # Using the "default" hyperparameters of the FT-Transformer paper: https://arxiv.org/pdf/2106.11959
-        return XGBoostHyperparams()
-
-
-class XGBoostOptuna(XGBoost):
-    MODEL_NAME = f"XGBoost-Opt{OPTUNA_BUDGET} 🍃"
-    SHORT_NAME = "xgbopt"
-    PROCESSING = PreprocessingMethod.TREES_OPT
 
     def train(self):
         self.model = None
