@@ -103,7 +103,7 @@ y_pred = tabstar.predict(x_test)
 
 ## Research Mode
 
-Use this section when you want to pretrain, finetune, or run baselines on TabSTAR. It assumes you are actively working on model development, experimenting with different datasets, or comparing against other methods.
+Use this section when you want to pretrain, finetune, or evaluate TabSTAR on benchmarks. It assumes you are actively working on model development, experimenting with different datasets, or comparing against other methods.
 
 ### Installation
 
@@ -114,6 +114,17 @@ source init.sh
 ```
 
 This will install all necessary dependencies, set up your environment, and download any example data needed to get started.
+
+### Benchmark Evaluation
+
+If you want to evaluate TabSTAR on public datasets belonging to the paper's benchmark:
+
+```bash
+python do_baseline.py --model=tabstar
+```
+
+This script automatically runs over the 50 datasets in the benchmark, for TabSTAR as well as the baselines.
+If you want to evaluate TabSTAR on a public dataset which isn't part of the benchmark, you can specify the dataset ID using the `--dataset_id` argument, by choosing the relevant dataset from `tabstar/datasets/all_datasets.py`.
 
 ### Pretraining
 
@@ -134,16 +145,6 @@ python do_finetune.py --pretrain_exp=<PRETRAINED_EXP> --dataset_id=46655
 ```
 
 `--dataset_id` is an ID for the downstream task you want to evaluate yourself on. Only the 400 datasets in the paper are supported.  
-
-### Baseline Comparison
-
-If you want to compare TabSTAR against a classic baseline (e.g., random forest):
-
-```bash
-python do_baseline.py --model=rf --dataset_id=46655
-```
-
-You can also try other names models supported by `do_baseline.py` (check the script for details).
 
 ### Citation
 

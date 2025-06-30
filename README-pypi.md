@@ -44,7 +44,7 @@ print(f"AUC: {metric:.4f}")
 - [ ] Hyperparameter tuning support
 
 
-For paper replication, custom pretraining or research purposes, see:
+For paper replication, TabSTAR evaluation on benchmarks, custom pretraining or research purposes, see:
 
 🔗 [TabSTAR Research Repository](https://github.com/alanarazi7/TabSTAR)
 ---
