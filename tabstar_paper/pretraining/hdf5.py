@@ -8,6 +8,7 @@ import numpy as np
 from torch.utils.data import Dataset
 
 from tabstar.tabstar_verbalizer import TabSTARData
+from tabstar_paper.datasets.objects import SupervisedTask
 from tabstar_paper.utils.io_handlers import dump_json, load_json
 
 
@@ -24,6 +25,21 @@ class DatasetProperties:
         properties_path = join(data_dir, HDF5Dataset.PROPERTIES)
         d = load_json(properties_path)
         return cls(**d)
+
+    @property
+    def is_cls(self) -> bool:
+        return self.d_output > 1
+
+    @property
+    def task_type(self) -> SupervisedTask:
+        if self.d_output == 1:
+            return SupervisedTask.REGRESSION
+        elif self.d_output == 2:
+            return SupervisedTask.BINARY
+        elif self.d_output > 2:
+            return SupervisedTask.MULTICLASS
+        else:
+            raise ValueError(f"Invalid d_output: {self.d_output}. Must be > 0.")
 
 
 class HDF5Dataset(Dataset):

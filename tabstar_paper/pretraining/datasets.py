@@ -17,7 +17,7 @@ MAX_PRETRAIN_EXAMPLES = 300_000
 MAX_PRETRAIN_FEATURES = 200
 
 
-def create_pretrain_dataset(dataset_id: TabularDatasetID):
+def create_pretrain_dataset(dataset_id: TabularDatasetID) -> str:
     data_dir = f".tabstar_datasets/{dataset_id.name.replace('/', '_')}"
     if exists(join(data_dir, HDF5Dataset.PROPERTIES)):
         print(f"Dataset {dataset_id.name} already exists in {data_dir}. Skipping creation.")
@@ -29,6 +29,7 @@ def create_pretrain_dataset(dataset_id: TabularDatasetID):
     properties = DatasetProperties(name=dataset_id.name, d_output=train_data.d_output, idx2text=idx2text,
                                    train_size=len(train_data), val_size=len(val_data))
     save_pretrain_dataset(data_dir=data_dir, train_data=train_data, val_data=val_data, properties=properties)
+    return data_dir
 
 
 def prepare_pretrain_dataset(dataset_id: TabularDatasetID, verbose: bool = False) -> Tuple[TabSTARData, TabSTARData]:

@@ -3,12 +3,10 @@ import argparse
 from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
-from tabular.benchmarks.all_datasets_shuffled import ALL_SHUFFLED_DATASETS
 from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.pretraining import do_pretrain
-
 
 if __name__ == "__main__":
 
@@ -21,7 +19,8 @@ if __name__ == "__main__":
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
     # Data
     parser.add_argument('--n_datasets', type=int, default=None)
-    parser.add_argument('--numbers_verbalization', default="full", choices=[v.value for v in NumberVerbalization])
+    parser.add_argument('--numbers_verbalization', default="full",
+                        choices=[v.value for v in NumberVerbalization])
     parser.add_argument('--fold', type=int, default=None)
     parser.add_argument('--only_text_folds', action='store_true', default=False)
     # Optimizer
@@ -38,7 +37,7 @@ if __name__ == "__main__":
     else:
         downstream_data = []
 
-    pretrain_data = [d for d in ALL_SHUFFLED_DATASETS if d not in downstream_data]
+    pretrain_data = [d for d in PRETRAIN2FOLD if d not in downstream_data]
 
     if args.n_datasets is not None:
         pretrain_data = pretrain_data[:args.n_datasets]
