@@ -8,7 +8,7 @@ from tabstar.preprocessing.dates import series_to_dt
 from tabstar.preprocessing.feat_types import convert_series_to_numeric, convert_series_to_textual
 from tabstar.preprocessing.texts import normalize_col_name
 from tabstar_paper.datasets.curation_mapping import get_curated
-from tabstar_paper.datasets.curation_objects import CuratedDataset, CuratedTarget
+from tabstar_paper.datasets.curation_objects import CuratedDataset, CuratedTarget, CuratedFeature
 from tabstar_paper.datasets.objects import SupervisedTask, FeatureType
 
 @dataclass
@@ -76,10 +76,9 @@ def curate_feature_values(x: DataFrame, curation: CuratedDataset) -> DataFrame:
             x[col] = x[col].apply(feat.processing_func)
         if feat.value_mapping:
             x[col] = x[col].apply(lambda v: feat.value_mapping.get(str(v), str(v)))
-        feat_type = feat.feat_type
-        if not feat_type and feat.value_mapping:
-            # # The user can be minimalist and provide a mapping, this automatically turns into a non-numeric feature
-            feat_type = FeatureType.CATEGORICAL
+        feat_type = get_curated_feat_type(feat)
+        if feat_type is None:
+            continue
         if feat_type == FeatureType.NUMERIC:
             missing_value = feat.numeric_missing if feat.numeric_missing else None
             x[col] = convert_series_to_numeric(s=x[col], missing_value=missing_value)
@@ -90,6 +89,16 @@ def curate_feature_values(x: DataFrame, curation: CuratedDataset) -> DataFrame:
         else:
             raise ValueError(f"Unsupported feature type: {feat_type}")
     return x
+
+def get_curated_feat_type(feat: CuratedFeature) -> Optional[FeatureType]:
+    if feat.feat_type is not None:
+        return feat.feat_type
+    if feat.value_mapping:
+        # # The user can be minimalist and provide a mapping, this automatically turns into a non-numeric feature
+        return FeatureType.CATEGORICAL
+    if feat.numeric_missing is not None:
+        return FeatureType.NUMERIC
+    return None
 
 def curate_column_names(x: DataFrame, curation: CuratedDataset) -> DataFrame:
     old2new = curation.name_mapper.copy()
