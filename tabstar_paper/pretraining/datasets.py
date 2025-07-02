@@ -20,7 +20,6 @@ MAX_PRETRAIN_FEATURES = 200
 def create_pretrain_dataset(dataset_id: TabularDatasetID) -> str:
     data_dir = f".tabstar_datasets/{dataset_id.name.replace('/', '_')}"
     if exists(join(data_dir, HDF5Dataset.PROPERTIES)):
-        print(f"Dataset {dataset_id.name} already exists in {data_dir}. Skipping creation.")
         return data_dir
     train_data, val_data = prepare_pretrain_dataset(dataset_id=dataset_id)
     idx2text = {}

@@ -29,7 +29,7 @@ def split_to_val(x: DataFrame, y: Series, is_cls: bool, seed: int = SEED, val_ra
 def do_split(x: DataFrame, y: Series, test_size: int, is_cls: bool, seed: int) -> Tuple[DataFrame, DataFrame, Series, Series]:
     if not is_cls:
         return train_test_split(x, y, test_size=test_size, random_state=seed)
-    has_rare_class = y.value_counts().min() == 1
+    has_rare_class = y.value_counts().min() <= 1
     if has_rare_class:
         return _split_with_rare_classes(x, y, test_size=test_size, seed=seed)
     return train_test_split(x, y, test_size=test_size, random_state=seed, stratify=y)
