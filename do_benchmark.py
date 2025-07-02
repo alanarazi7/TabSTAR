@@ -65,25 +65,23 @@ def prepare_combinations(args):
     datasets = [
                 313, # spectrometer
                 # 372, # internet_usage
-                390, # new3s.wc
+                # 390, # new3s.wc
                 # 1457, # amazon-commerce-reviews
                 1472, # energy-efficiency
                 1482, # leaf
                 # 1491, # one-hundred-plants-margin
                 # 1492, 1493,
                 4552, # BachChoralHarmony
-                40923, # Devnagari-Script
+                # 40923, # Devnagari-Script
                 # 40971, # collins
-                41039, # EMNIST_Balanced
-                41083, # Olivetti_Faces
+                # 41039, # EMNIST_Balanced
+                # 41083, # Olivetti_Faces
                 # 41167, # dionis
                 # 41169, # helena
                 41960, # seattlecrime6
                 # 41983,
                 # 41986, 41988, 41989, 41990, 41991, 42078, 42087, 42088,
                 # 42089, 42123, 42133, 42166, 42223, 42396,
-                42819, # OxfordPets
-                # 42820,
                 43723, # Toronto-Apartment-Rental-Price
                 # 44281, 44282, 44283, 44284, 44285, 44286, 44288,
                 # 44289, 44290, 44291, 44292, 44294, 44298, 44300, 44304,
