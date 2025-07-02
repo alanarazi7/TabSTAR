@@ -35,7 +35,7 @@ def do_split(x: DataFrame, y: Series, test_size: int, is_cls: bool, seed: int) -
     return train_test_split(x, y, test_size=test_size, random_state=seed, stratify=y)
 
 
-def _split_with_rare_classes(x: DataFrame, y: Series, test_size: float, seed: int) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def _split_with_rare_classes(x: DataFrame, y: Series, test_size: int, seed: int) -> Tuple[DataFrame, DataFrame, Series, Series]:
     # TODO: add tests here, seems like a complex function
     singleton_classes = y.value_counts()[y.value_counts() == 1].index
     is_singleton = y.isin(singleton_classes)
@@ -44,8 +44,9 @@ def _split_with_rare_classes(x: DataFrame, y: Series, test_size: float, seed: in
     x_rest = x[~is_singleton]
     y_rest = y[~is_singleton]
 
-    x_train, x_test, y_train, y_test = train_test_split(x_rest, y_rest, test_size=test_size, random_state=seed,
-                                                        stratify=y_rest)
+    rest_classes = len(set(y_rest))
+    test_size = max(test_size, rest_classes)
+    x_train, x_test, y_train, y_test = train_test_split(x_rest, y_rest, test_size=test_size, random_state=seed, stratify=y_rest)
 
     # Add singletons to train, shuffle
     x_train = pd.concat([x_train, x_single])
