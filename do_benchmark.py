@@ -62,12 +62,50 @@ def prepare_combinations(args):
     """
     models = list(SHORT2MODELS.values())
     run_numbers = list(range(10))
-    datasets = TEXTUAL_DATASETS
+    datasets = [
+                313, # spectrometer
+                # 372, # internet_usage
+                390, # new3s.wc
+                # 1457, # amazon-commerce-reviews
+                1472, # energy-efficiency
+                1482, # leaf
+                # 1491, # one-hundred-plants-margin
+                # 1492, 1493,
+                4552, # BachChoralHarmony
+                40923, # Devnagari-Script
+                # 40971, # collins
+                41039, # EMNIST_Balanced
+                41083, # Olivetti_Faces
+                # 41167, # dionis
+                # 41169, # helena
+                41960, # seattlecrime6
+                # 41983,
+                # 41986, 41988, 41989, 41990, 41991, 42078, 42087, 42088,
+                # 42089, 42123, 42133, 42166, 42223, 42396,
+                42819, # OxfordPets
+                # 42820,
+                43723, # Toronto-Apartment-Rental-Price
+                # 44281, 44282, 44283, 44284, 44285, 44286, 44288,
+                # 44289, 44290, 44291, 44292, 44294, 44298, 44300, 44304,
+                # 44305, 44306, 44307, 44316, 44317, 44318, 44319, 44320,
+                # 44321, 44322, 44323, 44324, 44325, 44326, 44328, 44331,
+                # 44333, 44337, 44338, 44340, 44341, 44478, 44479, 44480,
+                # 44481, 44482, 44533, 44534, 44535, 44536, 44537, 44728,
+                # 44729, 44730, 44731, 44732, 45049, 45102, 45103, 45104,
+                # 45274, 45569,
+                45923, # IndoorScenes
+                # 45936, 46577, 46578,
+                46608, # drug_reviews_druglib_com
+                # 46649,
+                # 46653, 46678, 46686, 46702, 46770, 46782, 46804, 46813,
+                # 46816, 46852, 46887
+                ]
+
 
     if args.model:
         models = [SHORT2MODELS[args.model]]
-    if args.dataset_id:
-        datasets = [get_dataset_from_arg(args.dataset_id)]
+    # if args.dataset_id:
+    #     datasets = [get_dataset_from_arg(args.dataset_id)]
     if isinstance(args.run_num, int):
         run_numbers = [args.run_num]
 
@@ -88,15 +126,15 @@ def run_benchmarks(combinations, args):
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d['run_num']) for _, d in existing.iterrows()}
     for model, dataset_id, run_num in tqdm(combinations):
-        if args.cls and dataset_id.name.startswith("REG_"):
-            continue
+        # if args.cls and dataset_id.name.startswith("REG_"):
+        #     continue
         model_name = model.__name__
-        if (model_name, dataset_id.name, run_num) in existing_combos:
+        if (model_name, dataset_id, run_num) in existing_combos:
             continue
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
+        key_file = f".benchmark_results/{model_name}_{dataset_id}_{run_num}.txt"
         if os.path.exists(key_file):
             continue
-        print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
+        print(f"Evaluating {model_name} on {dataset_id} with run num {run_num}")
         start_time = time.time()
         metrics = evaluate_on_dataset(
             model_cls=model,
@@ -107,7 +145,7 @@ def run_benchmarks(combinations, args):
         )
         result = {
             "score": metrics.score,
-            "dataset": dataset_id.name,
+            "dataset": dataset_id,
             "run_num": run_num,
             "model": model_name,
             "metrics": dict(metrics.metrics),

@@ -16,24 +16,25 @@ class TabularDataset:
     x: DataFrame
     y: Series
     task_type: SupervisedTask
-    dataset_id: TabularDatasetID
+    dataset_id: int
 
     @property
     def is_cls(self) -> bool:
         return self.task_type != SupervisedTask.REGRESSION
 
 
-def curate_dataset(x: DataFrame, y: Optional[Series], dataset_id: TabularDatasetID) -> TabularDataset:
-    curation = get_curated(dataset_id)
-    x = drop_columns(x, curation=curation)
-    x, y = set_target_if_missing(x=x, y=y, curation=curation)
-    task_type = curation.target.task_type
-    y = curate_target_values(y=y, target=curation.target, task_type=task_type)
-    y.name = curation.target.new_name
-    x = curate_feature_values(x=x, curation=curation)
-    x = curate_column_names(x=x, curation=curation)
-    x, y = remove_missing_target_rows(x=x, y=y)
-    dataset = TabularDataset(x=x, y=y, task_type=task_type, dataset_id=dataset_id)
+def curate_dataset(x: DataFrame, y: Optional[Series], dataset_id: int) -> TabularDataset:
+    # curation = get_curated(dataset_id)
+    # x = drop_columns(x, curation=curation)
+    # x, y = set_target_if_missing(x=x, y=y, curation=curation)
+    # task_type = curation.target.task_type
+    # y = curate_target_values(y=y, target=curation.target, task_type=task_type)
+    # y.name = curation.target.new_name
+    # x = curate_feature_values(x=x, curation=curation)
+    # x = curate_column_names(x=x, curation=curation)
+    # x, y = remove_missing_target_rows(x=x, y=y)
+    dataset = TabularDataset(x=x, y=y, task_type=SupervisedTask.MULTICLASS,
+                             dataset_id=dataset_id)
     return dataset
 
 

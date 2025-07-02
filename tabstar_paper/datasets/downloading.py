@@ -17,25 +17,26 @@ URL_VALUES = {item.value for item in UrlDatasetID}
 
 
 @log_calls
-def download_dataset(dataset_id: TabularDatasetID) -> TabularDataset:
-    # TODO: allow the option to downsample the number of examples of the dataset
-    if dataset_id.value in OPENML_VALUES:
-        return load_openml_dataset(dataset_id)
-    elif dataset_id.value in KAGGLE_VALUES:
-        return load_kaggle_dataset(dataset_id)
-    elif dataset_id.value in URL_VALUES:
-        return load_url_dataset(dataset_id)
-    else:
-        raise ValueError(f"Unsupported dataset ID type: {type(dataset_id)}")
+def download_dataset(dataset_id: int) -> TabularDataset:
+    # # TODO: allow the option to downsample the number of examples of the dataset
+    # if dataset_id.value in OPENML_VALUES:
+    return load_openml_dataset(dataset_id)
+    # elif dataset_id.value in KAGGLE_VALUES:
+    #     return load_kaggle_dataset(dataset_id)
+    # elif dataset_id.value in URL_VALUES:
+    #     return load_url_dataset(dataset_id)
+    # else:
+    #     raise ValueError(f"Unsupported dataset ID type: {type(dataset_id)}")
 
 
 @log_calls
-def load_openml_dataset(dataset_id: OpenMLDatasetID) -> TabularDataset:
+def load_openml_dataset(dataset_id: int) -> TabularDataset:
     for i in range(10):
         try:
-            print(f"💾 Downloading OpenML dataset {dataset_id.name}")
-            openml_dataset = openml.datasets.get_dataset(dataset_id.value, download_data=True, download_features_meta_data=True)
+            print(f"💾 Downloading OpenML dataset {dataset_id}")
+            openml_dataset = openml.datasets.get_dataset(dataset_id, download_data=True, download_features_meta_data=True)
             x, y, _, _ = openml_dataset.get_data(target=openml_dataset.default_target_attribute)
+            assert len(set(y)) >= 25
             dataset = curate_dataset(x=x, y=y, dataset_id=dataset_id)
             return dataset
         except (OpenMLServerException, ConnectionError, FileNotFoundError) as e:
