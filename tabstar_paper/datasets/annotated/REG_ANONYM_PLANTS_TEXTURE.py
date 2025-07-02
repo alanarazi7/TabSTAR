@@ -1,4 +1,4 @@
-from tabstar_paper.datasets.curation_objects import CuratedFeature, CuratedTarget
+from tabstar_paper.datasets.curation_objects import CuratedTarget
 from tabstar_paper.datasets.objects import SupervisedTask
 
 '''
@@ -134,6 +134,6 @@ V64 (numeric, 108 distinct): ['0.0', '0.001', '0.0029', '0.002', '0.0049', '0.00
 '''
 
 CONTEXT = "Anonymized: Image data of plant leaves with texture features"
-TARGET = CuratedTarget(raw_name="Class", new_name="Texture", task_type=SupervisedTask.MULTICLASS)
+TARGET = CuratedTarget(raw_name="Class", new_name="Texture", task_type=SupervisedTask.REGRESSION)
 COLS_TO_DROP = []
 FEATURES = []
