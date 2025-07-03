@@ -118,6 +118,7 @@ class TabSTARPretrainer:
                         data_dev_loss, predictions = self.eval_dataset(data_loader=data_loader)
                         dev_loss += data_dev_loss
                         dev_metrics.append(predictions.score)
+                        wandb.log({f'dataset/{data_loader.dataset.properties.name}_val_loss': data_dev_loss.avg}, step=epoch)
                         pbar_eval.update(1)
                 metric = float(np.mean(dev_metrics))
                 wandb.log({'train_loss': train_loss.avg, 'val_loss': dev_loss.avg, 'val_metric': metric}, step=epoch)
