@@ -78,15 +78,20 @@ class BaseTabSTAR:
     def _infer(self, X) -> np.ndarray:
         self.model_.eval()
         data = self.preprocessor_.transform(X, y=None)
-        dataloader = get_dataloader(data, is_train=False, batch_size=128)
-        predictions = []
-        for data in dataloader:
-            with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
-                batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
-                predictions.append(batch_predictions)
-        predictions = concat_predictions(predictions)
-        return predictions
+        batch_size = 128
+        try:
+            dataloader = get_dataloader(data, is_train=False, batch_size=128)
+            predictions = []
+            for data in dataloader:
+                with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
+                    batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
+                    batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
+                    predictions.append(batch_predictions)
+            predictions = concat_predictions(predictions)
+            return predictions
+        except RuntimeError:
+            print(f"⚠️ RuntimeError during inference with batch size: {batch_size}, halving batch size.")
+            batch_size /= 2
 
     def vprint(self, s: str):
         if self.verbose:
