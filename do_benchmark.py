@@ -93,7 +93,7 @@ def prepare_combinations(args):
                 # 45274, 45569,
                 45923, # IndoorScenes
                 # 45936, 46577, 46578,
-                46608, # drug_reviews_druglib_com
+                # 46608, # drug_reviews_druglib_com
                 # 46649,
                 # 46653, 46678, 46686, 46702, 46770, 46782, 46804, 46813,
                 # 46816, 46852, 46887
