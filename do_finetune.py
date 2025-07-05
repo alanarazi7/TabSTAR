@@ -3,6 +3,7 @@ from typing import Optional
 
 import torch
 
+from tabstar.training.devices import get_device
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.tabstar.tabstar_trainer import TabStarTrainer
@@ -11,7 +12,6 @@ from tabular.trainers.finetune import do_finetune_run
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.early_stopping import FINETUNE_PATIENCE
-from tabular.utils.gpus import get_device
 
 
 def finetune_tabstar(finetune_args: FinetuneArgs,
@@ -20,7 +20,7 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                      train_examples: int = DOWNSTREAM_EXAMPLES,
                      device: Optional[torch.device] = None):
     if device is None:
-        device = torch.device(get_device())
+        device = get_device()
     if dataset.value in finetune_args.pretrain_args.datasets:
         raise NotImplementedError(f"😱😱😱 Dataset {dataset} is already in pretrain datasets, beware!")
     do_finetune_run(dataset=dataset, model=TabStarTrainer, run_num=run_num, device=device,

@@ -2,14 +2,13 @@ from dataclasses import asdict
 from os.path import exists
 from typing import List
 
-import torch
-
 import wandb
 
 from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar.training.devices import get_device
+from tabstar_paper.constants import GPU
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.gpus import get_device
 from tabular.utils.logging import wandb_run, RunType
 from tabular.utils.utils import cprint
 
@@ -19,7 +18,7 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: Pretra
         print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")
         return
     cprint(f"🧪 Initializing experiment {pretrain_args.full_exp_name}")
-    device = torch.device(get_device())
+    device = get_device(device=GPU)
     wandb_run(exp_name=pretrain_args.raw_exp_name, run_type=RunType.PRETRAIN)
     wandb.config.update(asdict(pretrain_args), allow_val_change=True)
     cprint(f"Pretraining over {len(pretrain_datasets)} datasets")

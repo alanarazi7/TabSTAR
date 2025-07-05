@@ -3,13 +3,13 @@ from typing import Type, Optional
 import torch
 import wandb
 
+from tabstar.training.devices import get_device
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabular.datasets.tabular_datasets import TabularDatasetID
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES
 from tabular.models.abstract_model import TabularModel
 from tabular.trainers.downstream_train import ModelTrainer, RunMetadata
 from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.utils.gpus import get_device
 from tabular.utils.logging import wandb_run, RunType
 from tabular.utils.utils import cprint
 
@@ -22,7 +22,7 @@ def do_finetune_run(exp_name: str,
                     finetune_args: Optional[FinetuneArgs] = None,
                     carte_lr_idx: Optional[int] = None) -> RunMetadata:
     if device is None:
-        device = torch.device(get_device())
+        device = get_device()
     if isinstance(finetune_args, FinetuneArgs):
         if finetune_args.pretrain_args.datasets:
             if dataset.value in finetune_args.pretrain_args.datasets:
