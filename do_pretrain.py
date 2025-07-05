@@ -48,6 +48,9 @@ if __name__ == "__main__":
                          OpenMLDatasetID.REG_SPORTS_MONEYBALL,
                          OpenMLDatasetID.BIN_FINANCIAL_ADULT_INCOME,
                          OpenMLDatasetID.MUL_FINANCIAL_CREDIT_RISK_CHINA,
+                         OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY,
+                         OpenMLDatasetID.BIN_SOCIAL_TWITTER_DISASTER,
+                         OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
                          OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN]
 
     # TODO: use HfArgumentParser probably
