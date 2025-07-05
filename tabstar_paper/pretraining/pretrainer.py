@@ -87,6 +87,7 @@ class TabSTARPretrainer:
         print_model_summary(self.model)
         early_stopper = EarlyStopping(args=self.args)
         steps = 0
+        examples = 0
         with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
             for epoch in range(1, self.max_epochs + 1):
                 log_general(scheduler=self.scheduler, steps=steps, epoch=epoch)
@@ -99,6 +100,7 @@ class TabSTARPretrainer:
                         batch_loss = self.train_one_batch(x_cat=x_txt, x_num=x_num, y=y, properties=properties)
                         train_loss.update_batch(batch_loss=batch_loss, batch=x_txt)
                         steps += 1
+                        examples += len(x_txt)
 
                         # Update optimizer every 'accumulation_steps' batches.
                         if (batch_idx + 1) % self.config.accumulation_steps == 0:
@@ -123,6 +125,7 @@ class TabSTARPretrainer:
                         pbar_eval.update(1)
                 metric = float(np.mean(dev_metrics))
                 wandb.log({'train_loss': train_loss.avg, 'val_loss': dev_loss.avg, 'val_metric': metric}, step=epoch)
+                print(f"Steps: {steps} || Examples: {examples} || Epoch: {epoch}")
                 log_str = f"Epoch {epoch} || Train {train_loss.avg} || Val {dev_loss.avg} || Metric {metric:.4f}"
                 if metric > early_stopper.metric:
                     log_str += " 🥇"
