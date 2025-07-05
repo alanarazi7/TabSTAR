@@ -1,5 +1,6 @@
 import argparse
 
+from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
@@ -14,6 +15,7 @@ if __name__ == "__main__":
     # General
     parser.add_argument('--exp', type=str, default="default_pretrain_exp")
     parser.add_argument('--analysis', action='store_true', default=False)
+    parser.add_argument('--debug', action='store_true', default=False)
     # Arch
     parser.add_argument('--tabular_layers', type=int, default=TABULAR_LAYERS)
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
@@ -41,6 +43,9 @@ if __name__ == "__main__":
 
     if args.n_datasets is not None:
         pretrain_data = pretrain_data[:args.n_datasets]
+    if args.debug:
+        pretrain_data = [OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
+                         OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN]
 
     # TODO: use HfArgumentParser probably
     pretrain_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)
