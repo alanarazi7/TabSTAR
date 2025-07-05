@@ -2,6 +2,8 @@ import argparse
 
 import torch
 
+from tabstar.training.devices import get_device
+from tabstar_paper.constants import GPU
 from tabular.datasets.tabular_datasets import get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.models.competitors.carte import CARTE
@@ -10,7 +12,6 @@ from tabular.models.competitors.random_forest import RandomForest
 from tabular.models.competitors.tabpfn2 import TabPFNv2
 from tabular.models.competitors.xg_boost import XGBoostOptuna
 from tabular.trainers.finetune import do_finetune_run
-from tabular.utils.gpus import get_device
 from tabular.utils.utils import cprint
 
 # We are refactoring this code. CatBoost and XGBoost can be used with `do_benchmark.py`
@@ -37,10 +38,10 @@ if __name__ == "__main__":
         raise ValueError(f"Invalid CARTE lr index: {args.carte_lr_index}. Should be between 0 and 5.")
 
     dataset = get_dataset_from_arg(args.dataset_id)
-    device = torch.device(get_device())
 
     assert 0 <= args.run_num < N_RUNS, f"Invalid run number: {args.run_num}. Should be between 0 and {N_RUNS - 1}"
     n_examples = args.n_examples
 
+    device = get_device(device=GPU)
     do_finetune_run(exp_name=args.exp, dataset=dataset, model=model, run_num=args.run_num, train_examples=n_examples,
-                    device=device)
+                    device=torch.device(device))

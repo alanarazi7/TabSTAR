@@ -8,10 +8,12 @@ from pandas import DataFrame
 from tqdm import tqdm
 
 from tabstar.tabstar_model import BaseTabSTAR
+from tabstar.training.devices import get_device
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
+from tabstar_paper.constants import GPU
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
 from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
@@ -25,10 +27,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
 # locally, you can set it to DEBUG or INFO to see more details.
 
-GPU = os.getenv("GPU", None)
-device = GPU
-if device is not None:
-    device = f"cuda:{GPU}"
+device = get_device(device=GPU)
 
 
 @log_calls
