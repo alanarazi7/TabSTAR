@@ -8,7 +8,7 @@ from tabstar.arch.config import LORA_R
 
 def load_pretrained(model_version: str) -> PeftModel:
     print(f"🤩 Loading pretrained model version: {model_version}")
-    model = TabStarModel.from_pretrained(model_version)
+    model = TabStarModel.from_pretrained(model_version, device_map='cpu')
     # TODO: probably best if this is written more generic and not so hard-coded
     lora_modules = ["query", "key", "value", "out_proj", "linear1", "linear2",
                     "cls_head.layers.0", "reg_head.layers.0"]
