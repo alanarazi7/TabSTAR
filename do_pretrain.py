@@ -45,12 +45,12 @@ if __name__ == "__main__":
         pretrain_data = pretrain_data[:args.n_datasets]
     if args.debug:
         pretrain_data = [OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
-                         # OpenMLDatasetID.REG_SPORTS_MONEYBALL,
-                         # OpenMLDatasetID.BIN_FINANCIAL_ADULT_INCOME,
-                         # OpenMLDatasetID.MUL_FINANCIAL_CREDIT_RISK_CHINA,
-                         # OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY,
-                         # OpenMLDatasetID.BIN_SOCIAL_TWITTER_DISASTER,
-                         # OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
+                         OpenMLDatasetID.REG_SPORTS_MONEYBALL,
+                         OpenMLDatasetID.BIN_FINANCIAL_ADULT_INCOME,
+                         OpenMLDatasetID.MUL_FINANCIAL_CREDIT_RISK_CHINA,
+                         OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY,
+                         OpenMLDatasetID.BIN_SOCIAL_TWITTER_DISASTER,
+                         OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
                          OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN]
 
     # TODO: use HfArgumentParser probably
