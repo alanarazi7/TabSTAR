@@ -35,6 +35,8 @@ class BaseTabSTAR:
         self.model_version = get_tabstar_version(pretrain_dataset=pretrain_dataset)
 
     def fit(self, X, y):
+        if self.model_ is not None:
+            raise ValueError("Model is already trained. Call fit() only once.")
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
         x = X.copy()
         y = y.copy()
