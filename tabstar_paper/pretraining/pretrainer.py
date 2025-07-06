@@ -159,10 +159,12 @@ class TabSTARPretrainer:
 
     def train_one_batch(self, x_cat: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> Loss:
         self.model.train()
+        log_input_stats(x_cat=x_cat, x_num=x_num, y=y)
         with autocast(device_type=self.device.type):
             inference = self.do_forward(x_txt=x_cat, x_num=x_num, y=y, properties=properties)
             # Divide the loss to scale gradients appropriately.
             loss = inference.loss / self.config.accumulation_steps
+            log_if_bad_loss(loss, step=None, properties=properties)
         scaled_loss = self.scaler.scale(loss)
         scaled_loss.backward()
         return inference.to_loss
@@ -190,7 +192,47 @@ class TabSTARPretrainer:
 
     def do_update(self):
         self.scaler.unscale_(self.optimizer)
+        log_grad_stats(self.model, step="before_clip")
         torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+        log_grad_stats(self.model, step="after_clip")
         self.scaler.step(self.optimizer)
         self.scaler.update()
+        log_param_stats(self.model, step="after_update")
         self.optimizer.zero_grad()
+
+
+import math
+
+def is_bad_tensor(tensor):
+    return torch.isnan(tensor).any() or torch.isinf(tensor).any()
+
+def log_if_bad_loss(loss, step, properties):
+    if is_bad_tensor(loss):
+        print(f"[BAD LOSS] Step {step} | Dataset {properties.name if hasattr(properties,'name') else properties.sid}")
+        print(f"Loss value: {loss}")
+        assert False
+
+def log_input_stats(x_cat, x_num, y):
+    for arr, name in zip([x_cat, x_num, y], ['x_cat', 'x_num', 'y']):
+        arr_t = torch.tensor(arr)
+        print(f"[Batch] {name}: min={arr_t.min().item()}, max={arr_t.max().item()}, mean={arr_t.mean().item()}")
+        if is_bad_tensor(arr_t):
+            print(f"[BAD INPUT] {name} at batch : NaN or Inf detected.")
+
+
+def log_grad_stats(model, step):
+    for name, param in model.named_parameters():
+        if param.grad is not None:
+            grad = param.grad
+            if is_bad_tensor(grad):
+                print(f"[BAD GRADIENT] {name} at step {step}: NaN or Inf detected.")
+            if grad.abs().max() > 1e5:
+                print(f"[LARGE GRADIENT] {name} at step {step}: max {grad.abs().max()}")
+
+def log_param_stats(model, step):
+    for name, param in model.named_parameters():
+        data = param.data
+        if is_bad_tensor(data):
+            print(f"[BAD PARAM] {name} at step {step}: NaN or Inf detected.")
+        if data.abs().max() > 1e5:
+            print(f"[LARGE PARAM] {name} at step {step}: max {data.abs().max()}")
