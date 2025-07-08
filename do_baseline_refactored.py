@@ -1,6 +1,6 @@
 """
-based on benchmarks.py, this script runs benchmarks for xgboost.
-created a separate file to avoid merge conflicts with benchmarks.py, and to remove tabstar functionality that is not needed for xgboost.
+based on benchmarks.py, this script runs benchmarks for baseline models.
+created a separate file to avoid merge conflicts with benchmarks.py, and to remove tabstar functionality that is not needed for baseline models.
 """
 
 
@@ -15,13 +15,14 @@ from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar.tabstar_model import BaseTabSTAR
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.xgboost import XGBoost
+from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json
 
 
-BASELINES = [XGBoost] #, CatBoost]
+BASELINES = [RandomForest] #, XGBoost, CatBoost]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
 SHORT2MODELS = {**baseline_names}
@@ -44,7 +45,7 @@ def main():
     args = parse_args()
     combinations = prepare_combinations(args)
     for model, dataset_id, run_num in tqdm(combinations):
-        run_xgboost_benchmark(model, dataset_id, run_num, args)
+        run_baseline_benchmark(model, dataset_id, run_num, args)
 
 
 def parse_args():
@@ -79,10 +80,10 @@ def prepare_combinations(args):
         count_gpus_in_machine = torch.cuda.device_count()
         combos = combos[int(GPU)::count_gpus_in_machine]
 
-    return combos  # For testing purposes, limit to 2 combinations
+    return combos[:2]  # For testing purposes, limit to 2 combinations
 
 
-def run_xgboost_benchmark(model, dataset_id, run_num, args):
+def run_baseline_benchmark(model, dataset_id, run_num, args):
     """
     Run evaluation for a single (model, dataset, run_num) combination.
     Saves results to local files.
