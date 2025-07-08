@@ -7,52 +7,61 @@ from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.baselines.random_forest import RandomForest
 
-BenchmarkParams = namedtuple("BenchmarkParams", ["model", "run_num", "expected_metric", "dataset_id", "model_cls"])
+SCORE_TOLERANCE = 0.15
+MIN_FACTOR = 1 - SCORE_TOLERANCE
+MAX_FACTOR = 1 + SCORE_TOLERANCE
 
-PARAMS = [
+BenchmarkParams = namedtuple("BenchmarkParams", ["model", "run_num", "min_score", "max_score", "dataset_id", "model_cls"])
+
+PARAMS = [ # the min and max scores are based on the results of the paper
     BenchmarkParams(
         model="rf",
         run_num=0,
-        expected_metric=0.56,
+        min_score=0.8738,
+        max_score=0.9441,
         dataset_id=OpenMLDatasetID.BIN_PROFESSIONAL_FAKE_JOB_POSTING,
         model_cls=RandomForest,
     ),
     BenchmarkParams(
         model="xgb",
         run_num=0,
-        expected_metric=0.56,
+        min_score=0.8902,
+        max_score=0.9447,
         dataset_id=OpenMLDatasetID.BIN_PROFESSIONAL_FAKE_JOB_POSTING,
         model_cls=XGBoost,
     ),
     BenchmarkParams(
         model="xgb",
         run_num=0,
-        expected_metric=0.56,
+        min_score=0.6766,
+        max_score=0.7207,
         dataset_id=OpenMLDatasetID.BIN_PROFESSIONAL_KICKSTARTER_FUNDING,
         model_cls=XGBoost,
     ),
     BenchmarkParams(
             model="xgb",
             run_num=0,
-            expected_metric=0.56,
+            min_score=0.7330,
+            max_score=0.8730,
             dataset_id=OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
             model_cls=XGBoost,
     ),
     BenchmarkParams(
             model="xgb",
             run_num=0,
-            expected_metric=0.56,
+            min_score=0.8543,
+            max_score=0.9153,
             dataset_id=OpenMLDatasetID.MUL_CONSUMER_PRODUCT_SENTIMENT,
             model_cls=XGBoost,
     ),
     BenchmarkParams(
             model="xgb",
             run_num=0,
-            expected_metric=0.56,
+            min_score=0.8771,
+            max_score=0.9013,
             dataset_id=OpenMLDatasetID.MUL_CONSUMER_WOMEN_ECOMMERCE_CLOTHING_REVIEW,
             model_cls=XGBoost,
     )
-    # Add more BenchmarkParams(...) as needed
 ]
 
 
@@ -62,6 +71,13 @@ def setup_benchmark_env(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     return results_dir
 
+def get_score_thresholds(params, calculated_score):
+    """
+    Returns the minimum and maximum score thresholds based on the provided parameters.
+    """
+    min_threshold = params.min_score * MIN_FACTOR
+    max_threshold = min(params.max_score * MAX_FACTOR, 1.0)
+    return min_threshold, max_threshold
 
 @pytest.mark.parametrize("params", PARAMS)
 def test_run_benchmarks_function(monkeypatch, tmp_path, params):
@@ -79,5 +95,7 @@ def test_run_benchmarks_function(monkeypatch, tmp_path, params):
     with open(result_files[0], "r") as f:
         data = json.load(f)
     print(f"Result data: {data}")
-    assert round(data["metric"], 2) == params.expected_metric
-    
+    calculated_score = data["metric"]
+    min_threshold, max_threshold = get_score_thresholds(params, calculated_score)
+
+    assert min_threshold < calculated_score < max_threshold, f"Score {calculated_score} not within range [{min_threshold}, {max_threshold}]"
