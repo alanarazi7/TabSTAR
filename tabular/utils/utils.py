@@ -35,8 +35,5 @@ def verbose_print(s: str):
     if VERBOSE:
         print(s)
 
-def hash_now() -> str:
-    return hash_str(get_ts())
-
 def hash_str(s: str) -> str:
     return hashlib.sha256(s.encode()).hexdigest()[:12]

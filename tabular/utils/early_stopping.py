@@ -1,7 +1,6 @@
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
 
-FINETUNE_PATIENCE = 5
 PRETRAIN_PATIENCE = 3
 
 class EarlyStopping:

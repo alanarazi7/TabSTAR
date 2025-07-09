@@ -3,15 +3,16 @@ from typing import Optional
 
 import torch
 
+from tabstar.arch.config import LORA_LR, LORA_R
 from tabstar.training.devices import get_device
+from tabstar.training.early_stopping import FINETUNE_PATIENCE
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.tabstar.tabstar_trainer import TabStarTrainer
-from tabular.tabstar.params.constants import LORA_LR, LORA_BATCH, LORA_R
+from tabular.tabstar.params.constants import LORA_BATCH
 from tabular.trainers.finetune import do_finetune_run
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.early_stopping import FINETUNE_PATIENCE
 
 
 def finetune_tabstar(finetune_args: FinetuneArgs,

@@ -6,11 +6,9 @@ from torch.nn.parameter import Parameter
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import OneCycleLR, LRScheduler
 
+from tabstar.training.optimizer import WARMUP_PROPORTION, MAX_EPOCHS
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.tabstar.params.optimizer import get_tabstar_parameters_by_group
-
-WARMUP_PROPORTION = 0.1
-MAX_EPOCHS = 50
 
 
 def get_optimizer(model: nn.Module, config: TabStarConfig) -> Tuple[AdamW, LRScheduler]:
