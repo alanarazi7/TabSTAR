@@ -120,10 +120,10 @@ This will install all necessary dependencies, set up your environment, and downl
 If you want to evaluate TabSTAR on public datasets belonging to the paper's benchmark:
 
 ```bash
-python do_baseline.py --model=tabstar
+python do_benchmark.py --model=tabstar
 ```
 
-This script automatically runs over the 50 datasets in the benchmark, for TabSTAR as well as the baselines.
+This script automatically runs over the 50 datasets in the benchmark, for TabSTAR as well as other baselines.
 If you want to evaluate TabSTAR on a public dataset which isn't part of the benchmark, you can specify the dataset ID using the `--dataset_id` argument, by choosing the relevant dataset from `tabstar/datasets/all_datasets.py`.
 
 ### Pretraining

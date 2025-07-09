@@ -12,8 +12,6 @@ from tabular.preprocessing.dates import process_dates
 from tabular.preprocessing.trees.embeddings import transform_texts_to_embeddings
 from tabular.preprocessing.objects import PreprocessingMethod, FeatureType
 from tabular.preprocessing.target import process_y
-from tabular.preprocessing.trees.categorical import process_x_cat_to_indices
-from tabular.preprocessing.trees.numerical import fill_median_for_numerical_nulls
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.tabstar.preprocessing.textual import verbalize_x_txt
 from tabular.tabstar.preprocessing.numerical import scale_x_num_and_add_categorical_bins
@@ -43,8 +41,6 @@ class TabularDataset:
             return cls.from_processed(raw=raw, processing=processing, splits=splits, feat_cnt=feat_cnt, targets=targets)
         elif processing == PreprocessingMethod.CATBOOST_OPT:
             return cls.for_catboost(raw, splits=splits, feat_cnt=feat_cnt, device=device, processing=processing)
-        elif processing == PreprocessingMethod.TREES:
-            return cls.for_trees_mlp(raw, splits=splits, targets=targets, feat_cnt=feat_cnt, device=device)
         elif processing == PreprocessingMethod.TREES_OPT:
             return cls.for_trees_opt(raw, splits=splits, targets=targets, feat_cnt=feat_cnt, device=device)
         else:
@@ -61,17 +57,6 @@ class TabularDataset:
                                               processing=PreprocessingMethod.TABSTAR)
         x_txt, x_num = add_target_tokens(x_txt=x_txt, x_num=x_num, data=properties)
         dataset = TabularDataset(properties=properties, x=x_txt, y=raw.y, splits=splits, x_num=x_num)
-        return dataset
-
-
-    @classmethod
-    def for_trees_mlp(cls, raw: RawDataset, splits: List[DataSplit], targets: List[str], feat_cnt: Dict,
-                      device: torch.device) -> Self:
-        fill_median_for_numerical_nulls(raw=raw, splits=splits)
-        transform_texts_to_embeddings(raw=raw, device=device)
-        process_x_cat_to_indices(raw=raw, splits=splits)
-        dataset = cls.from_processed(raw=raw, processing=PreprocessingMethod.TREES, splits=splits, feat_cnt=feat_cnt,
-                                     targets=targets)
         return dataset
 
     @classmethod

@@ -8,14 +8,12 @@ from tabular.datasets.tabular_datasets import get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.models.competitors.carte import CARTE
 from tabular.models.competitors.catboost import CatBoostOptuna
-from tabular.models.competitors.random_forest import RandomForest
 from tabular.models.competitors.tabpfn2 import TabPFNv2
 from tabular.models.competitors.xg_boost import XGBoostOptuna
 from tabular.trainers.finetune import do_finetune_run
-from tabular.utils.utils import cprint
 
-# We are refactoring this code. CatBoost and XGBoost can be used with `do_benchmark.py`
-BASELINES = [TabPFNv2, CARTE, RandomForest, CatBoostOptuna, XGBoostOptuna]
+# We are refactoring this code, use `do_benchmark.py`
+BASELINES = [TabPFNv2, CARTE, CatBoostOptuna, XGBoostOptuna]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 
@@ -31,7 +29,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # with warning print
     print(f"⚠️ Running baseline in legacy flow. Move to `tabstar_paper/do_baseline.py` if possible. ⚠️")
-    cprint(f"🧹 Running {args.exp} with {args.model} on dataset {args.dataset_id} for run {args.run_num}")
+    print(f"🧹 Running {args.exp} with {args.model} on dataset {args.dataset_id} for run {args.run_num}")
 
     model = SHORT2MODELS[args.model]
     if model == CARTE and not 0 <= args.carte_lr_index <= 5:

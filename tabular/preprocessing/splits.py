@@ -5,16 +5,12 @@ from typing import List, Dict, Tuple
 from pandas import DataFrame, Series
 from sklearn.model_selection import train_test_split
 
+from tabstar.preprocessing.splits import MAX_TEST_SIZE, TEST_RATIO, MAX_VAL_SIZE, VAL_RATIO
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.preprocessing.objects import SupervisedTask, PreprocessingMethod, CV_METHODS
 from tabular.utils.utils import SEED, verbose_print
 
-TEST_RATIO = 0.1
-MAX_TEST_SIZE = 2000
-
-NN_DEV_RATIO = 0.1
 NN_PRETRAIN_DEV_RATIO = 0.05
-MAX_DEV_SIZE = 1000
 
 MIN_TOTAL_EXAMPLES = 100
 
@@ -59,9 +55,9 @@ def _get_train_dev(raw: RawDataset, indices: List[int], use_dev: bool, run_num: 
                    is_pretrain: bool) -> Tuple[List[int], List[int]]:
     if not use_dev:
         return indices, []
-    nn_dev_ratio = NN_PRETRAIN_DEV_RATIO if is_pretrain else NN_DEV_RATIO
+    nn_dev_ratio = NN_PRETRAIN_DEV_RATIO if is_pretrain else VAL_RATIO
     dev_size = int(len(indices) * nn_dev_ratio)
-    dev_size = min(dev_size, MAX_DEV_SIZE)
+    dev_size = min(dev_size, MAX_VAL_SIZE)
     return _do_split(raw=raw, indices=indices, run_num=run_num, test_size=dev_size)
 
 
@@ -108,7 +104,6 @@ def _uses_dev(processing: PreprocessingMethod) -> bool:
     if processing in CV_METHODS:
         return False
     process2dev = {PreprocessingMethod.TABSTAR: True,
-                   PreprocessingMethod.TREES: True,
                    # TabPFN-v2 and CARTE don't use dev
                    PreprocessingMethod.TABPFNV2: False,
                    PreprocessingMethod.CARTE: False,

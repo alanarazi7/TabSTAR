@@ -25,7 +25,6 @@ class PreprocessingMethod(StrEnum):
     TABSTAR = f"TabSTAR-20250622-{NUM_VERBALIZATION}"
     CARTE = "Carte"
     TABPFNV2 = "TabPFN-v2"
-    TREES = "Trees"
     TREES_OPT = "Trees-Optuna"
     CATBOOST_OPT = "CatBoost-Optuna"
 
