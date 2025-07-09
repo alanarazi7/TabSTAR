@@ -6,6 +6,7 @@ import numpy as np
 from pandas import Series, DataFrame
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
+from tabstar.preprocessing.scaler import Z_MAX_ABS_VAL
 from tabstar_paper.datasets.objects import SupervisedTask
 from tabular.datasets.manual_curation_obj import CuratedDataset, CuratedTarget
 from tabular.datasets.raw_dataset import RawDataset
@@ -14,10 +15,9 @@ from tabular.preprocessing.nulls import convert_series_to_numeric
 from tabular.preprocessing.objects import PreprocessingMethod, CV_METHODS
 from tabular.preprocessing.splits import DataSplit, get_y_train
 from tabular.utils.processing import transform_encoded
-from tabular.utils.utils import cprint, verbose_print
+from tabular.utils.utils import verbose_print
 
 MIN_MULTICLASS_FREQUENCY = 5
-Z_MAX_ABS_VAL = 3
 
 
 def handle_raw_target(x: DataFrame, y: Optional[Series], curation: CuratedDataset,
@@ -119,7 +119,7 @@ def _remove_rare_target_rows(x: DataFrame, y: Series, sid: str):
     invalid_labels = [k for k, v in label_cnt.items() if v < MIN_MULTICLASS_FREQUENCY]
     if not invalid_labels:
         return x, y
-    cprint(f"🦄 Removing for {sid} the rare labels: {invalid_labels}: {label_cnt}")
+    print(f"🦄 Removing for {sid} the rare labels: {invalid_labels}: {label_cnt}")
     valid_labels = [k for k in label_cnt if k not in invalid_labels]
     if len(valid_labels) <= 2:
         raise ValueError(f"Too few valid labels: {valid_labels}, with count {label_cnt}")

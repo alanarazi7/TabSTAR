@@ -8,7 +8,7 @@ from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UN
 from tabular.tabstar.params.constants import D_MODEL
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.utils import cprint, verbose_print
+from tabular.utils.utils import verbose_print
 
 
 # TODO: move this config to the paper section
@@ -68,7 +68,7 @@ class TabStarConfig(PretrainedConfig):
         return config
 
     def print_lrs(self):
-        cprint(f"🤓 Using LR of {self.lr=}, with {self.batch_size=} and {self.macro_batch_size=}!")
+        print(f"🤓 Using LR of {self.lr=}, with {self.batch_size=} and {self.macro_batch_size=}!")
 
     def adjust_for_finetune(self, args: FinetuneArgs):
         self.lr = args.lora_lr

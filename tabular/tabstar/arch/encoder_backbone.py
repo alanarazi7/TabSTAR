@@ -1,9 +1,6 @@
 import torch
 import torch.nn as nn
 
-from tabular.utils.utils import cprint
-
-
 class TabularEncoderBackbone(nn.Module):
     def __init__(self, num_layers: int, d_model: int, num_heads_factor: int = 64,
                  ffn_d_hidden_multiplier: int = 4, dropout: float = 0.1):
@@ -21,7 +18,6 @@ class TabularEncoderBackbone(nn.Module):
             )
         self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers,
                                              enable_nested_tensor=False)
-        cprint(f"❗ Our encoder has {num_layers} layers")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.encoder(x)

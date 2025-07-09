@@ -30,14 +30,10 @@ def get_ts() -> str:
 def get_today() -> str:
     return datetime.now().strftime('%Y_%m_%d')
 
-def cprint(s: str):
-    # TODO: use logger
-    print(f"[{get_ts()}]: {s}")
-
 def verbose_print(s: str):
     # TODO: use logger
     if VERBOSE:
-        cprint(s)
+        print(s)
 
 def hash_now() -> str:
     return hash_str(get_ts())

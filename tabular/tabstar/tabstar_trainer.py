@@ -34,7 +34,7 @@ from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
 from tabular.utils.optimizer import get_optimizer, MAX_EPOCHS
 from tabular.utils.paths import get_model_path
-from tabular.utils.utils import cprint, verbose_print, fix_seed
+from tabular.utils.utils import verbose_print, fix_seed
 
 torch.set_num_threads(1)
 if hasattr(torch, 'set_float32_matmul_precision'):
@@ -53,7 +53,6 @@ class TabStarTrainer(TabularModel):
                  carte_lr_index: Optional[int] = None):
         super().__init__(run_name=run_name, dataset_ids=dataset_ids, device=device, run_num=run_num,
                          train_examples=train_examples, args=args, carte_lr_index=carte_lr_index)
-        cprint(f"Initialized the network {self.MODEL_NAME}")
         self.is_pretrain = isinstance(self.args, PretrainArgs)
         self.model: Optional[Module] = None
         self.optimizer: Optional[Optimizer] = None
@@ -72,7 +71,7 @@ class TabStarTrainer(TabularModel):
             # For pretraining, create a new model and unfreeze textual encoder layers.
             self.model = TabStarModel(config=self.config)
             self.model.unfreeze_textual_encoder_layers()
-            cprint("Loaded pre-trained model and unfreezing all downstream layers for finetuning.")
+            print("Loaded pre-trained model and unfreezing all downstream layers for finetuning.")
         else:
             # For finetuning, load a pre-trained model from the checkpoint and wrap with Lora.
             assert isinstance(self.args, FinetuneArgs)
@@ -84,7 +83,7 @@ class TabStarTrainer(TabularModel):
         assert isinstance(self.model, Module)
         self.init_optimizer()
         dataset_names = '\n🗂️ '.join([''] + [str(d) for d in self.datasets])
-        cprint(f"Initializing model {self.MODEL_NAME} for datasets:{dataset_names}")
+        print(f"Initializing model {self.MODEL_NAME} for datasets:{dataset_names}")
 
     def set_config(self) -> TabStarConfig:
         return TabStarConfig.create(self.args)
@@ -99,10 +98,10 @@ class TabStarTrainer(TabularModel):
     def train(self):
         print_model_summary(self.model)
         if not self.dataset_ids:
-            cprint(f"No datasets to train on for {self.MODEL_NAME}")
+            print(f"No datasets to train on for {self.MODEL_NAME}")
             self.model.save_pretrained(self.model_path)
             return 0.0
-        cprint(f"Training {self.MODEL_NAME}!")
+        print(f"Training {self.MODEL_NAME}!")
         self.prepare_dev_test_dataloaders()
         early_stopper = EarlyStopping(args=self.args)
         steps = 0
@@ -156,7 +155,7 @@ class TabStarTrainer(TabularModel):
                 if early_stopper.is_best:
                     self.model.save_pretrained(self.model_path)
                 elif early_stopper.should_stop:
-                    cprint(f"Early stopping at epoch {epoch}")
+                    print(f"Early stopping at epoch {epoch}")
                     break
                 self.scheduler.step()
                 pbar_epochs.update(1)

@@ -12,7 +12,7 @@ from tabular.evaluation.sklearn_model import init_model
 from tabular.models.abstract_sklearn import TabularSklearnModel
 from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
 from tabular.preprocessing.target import standardize_y_train_test, fit_standard_scaler, transform_target
-from tabular.utils.utils import verbose_print, cprint
+from tabular.utils.utils import verbose_print
 
 LOG_LEVEL = "Verbose" if VERBOSE else "Silent"
 
@@ -42,14 +42,14 @@ class CatBoostOptuna(TabularSklearnModel):
     def train(self):
         self.config = None
         self.model = None
-        cprint(f"Starting Optuna study for {self.dataset.sid}")
+        print(f"Starting Optuna study for {self.dataset.sid}")
         study = get_optuna_study()
         study.optimize(self.objective, n_jobs=OPTUNA_CPU, timeout=OPTUNA_BUDGET,
                        catch=(CatBoostError,))
-        cprint(f"Done studying, did {len(study.trials)} runs 🤓")
+        print(f"Done studying, did {len(study.trials)} runs 🤓")
         self.config = CatBoostTunedHyperparams(**study.best_params)
         wandb.log({"optuna_best_params": asdict(self.config), "optuna_n_trials": len(study.trials)})
-        cprint(f"✅ Best params: {self.config}")
+        print(f"✅ Best params: {self.config}")
         self.initialize_model()
         assert self.model is not None
         verbose_print(f"Training {self.MODEL_NAME} FULL model for dataset {self.dataset.sid}")

@@ -13,7 +13,7 @@ from tabular.evaluation.sklearn_model import init_model
 from tabular.models.abstract_sklearn import TabularSklearnModel
 from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.utils import SEED, cprint
+from tabular.utils.utils import SEED
 
 #  [2.5, 5, 7.5] × [1e−4, 1e−3]
 CARTE_LRS = [0.00025, 0.0025, 0.0005, 0.005, 0.00075, 0.0075]
@@ -54,7 +54,7 @@ class CARTE(TabularSklearnModel):
     def train(self) -> float:
         # https://github.com/soda-inria/carte
         x_train, y_train = self.load_train()
-        cprint(f"Training {self.MODEL_NAME} for {self.dataset.sid}, lr {self.carte_lr_index}, {len(x_train)} examples")
+        print(f"Training {self.MODEL_NAME} for {self.dataset.sid}, lr {self.carte_lr_index}, {len(x_train)} examples")
         x_train = self.preprocessor.fit_transform(x_train, y=y_train)
         self.model.fit(x_train, y_train)
         return self.model.valid_loss_
@@ -65,7 +65,7 @@ class CARTE(TabularSklearnModel):
 
     def set_config(self) -> CarteHyperparameters:
         if self.carte_lr_index is None:
-            cprint(f"Invalid null `carte_lr_index`: {self.carte_lr_index}. Should be 0-{len(CARTE_LRS) - 1}. Set to 0")
+            print(f"Invalid null `carte_lr_index`: {self.carte_lr_index}. Should be 0-{len(CARTE_LRS) - 1}. Set to 0")
             self.carte_lr_index = 0
         lr = CARTE_LRS[self.carte_lr_index]
         task2loss = {SupervisedTask.REGRESSION: 'squared_error',

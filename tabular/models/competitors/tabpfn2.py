@@ -7,7 +7,6 @@ from pandas import DataFrame
 
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, TabularDatasetID, KaggleDatasetID, get_sid
 from tabular.preprocessing.splits import MAX_TEST_SIZE
-from tabular.utils.utils import cprint
 
 from tabular.models.abstract_sklearn import TabularSklearnModel
 from tabular.preprocessing.objects import PreprocessingMethod
@@ -24,16 +23,16 @@ class TabPFNv2(TabularSklearnModel):
 
     def initialize_model(self):
         model_cls = ClientTabPFNRegressor if self.dataset.is_regression else ClientTabPFNClassifier
-        cprint(f"☁️ Using API model for TabPFN over textual dataset {self.dataset}")
+        print(f"☁️ Using API model for TabPFN over textual dataset {self.dataset}")
         self.model = model_cls()
 
     def train(self):
         x_train, y_train = self.load_train()
         if len(x_train) > MAX_SAMPLES:
-            cprint(f"👇 Using only {MAX_SAMPLES} samples for training TabPFN")
+            print(f"👇 Using only {MAX_SAMPLES} samples for training TabPFN")
             x_train = x_train[:MAX_SAMPLES]
             y_train = y_train[:MAX_SAMPLES]
-        cprint(f"Training {self.MODEL_NAME} over {len(x_train)} examples.")
+        print(f"Training {self.MODEL_NAME} over {len(x_train)} examples.")
         self.model.fit(x_train, y_train)
 
     def set_config(self) -> None:
@@ -55,15 +54,15 @@ class TabPFNv2(TabularSklearnModel):
             batch_size = 1000
         all_probs = []
         x_batches = [x.iloc[i:i + batch_size] for i in range(0, len(x), batch_size)]
-        cprint(f"Have {len(x_batches)} batches of size {batch_size} for TabPFN")
+        print(f"Have {len(x_batches)} batches of size {batch_size} for TabPFN")
         for x_batch in x_batches:
             probs = super().predict_from_model(x=x_batch, model=model)
             all_probs.append(probs)
             if len(x_batches) > 1:
                 to_sleep = 15
-                cprint(f"😴 Sleeping for {to_sleep} seconds to avoid overloading TabPFN API")
+                print(f"😴 Sleeping for {to_sleep} seconds to avoid overloading TabPFN API")
                 time.sleep(to_sleep)
-                cprint(f"💤 Waking up to continue TabPFN API calls")
+                print(f"💤 Waking up to continue TabPFN API calls")
         all_probs = np.concatenate(all_probs)
         assert len(all_probs) == original_dim, f"Expected {original_dim} predictions, got {len(all_probs)}"
         return all_probs

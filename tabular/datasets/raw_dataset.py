@@ -3,12 +3,9 @@ from typing import Dict, Set, List
 
 import pandas as pd
 
+from tabstar_paper.pretraining.datasets import MAX_PRETRAIN_FEATURES
 from tabular.datasets.manual_curation_obj import CuratedDataset
 from tabular.preprocessing.objects import SupervisedTask, FeatureType
-from tabular.utils.utils import cprint
-
-MAX_DATASET_EXAMPLES = 300_000
-MAX_FEATURES = 200
 
 
 @dataclass
@@ -23,8 +20,8 @@ class RawDataset:
     def __post_init__(self):
         assert len(self.x) == len(self.y)
         self.verify_unique_col_names()
-        if len(self.x.columns) > MAX_FEATURES:
-            raise ValueError(f"⚠️⚠️⚠️ Dataset {self.sid} has {len(self.x.columns)} features, we allow {MAX_FEATURES=}!")
+        if len(self.x.columns) > MAX_PRETRAIN_FEATURES:
+            raise ValueError(f"⚠️⚠️⚠️ Dataset {self.sid} has {len(self.x.columns)} features, we allow {MAX_FEATURES____=}!")
 
     def verify_unique_col_names(self):
         all_cols = list(self.x.columns) + [self.y.name]
@@ -37,7 +34,7 @@ class RawDataset:
         summary = f"{self.sid}: {len(self)} samples. {features} Features: {feat_cnt}. Task: {self.task_type}"
         if self.task_type == SupervisedTask.MULTICLASS:
             summary += f" [{len(set(self.y.values))} classes]"
-        cprint(summary)
+        print(summary)
 
     @property
     def dates(self) -> List[str]:

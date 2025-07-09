@@ -12,7 +12,7 @@ from tabular.tabstar.arch.encoder_backbone import TabularEncoderBackbone
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.preprocessing.tokenization import tokenize
 from tabular.utils.deep import get_last_layers_num
-from tabular.utils.utils import cprint, verbose_print
+from tabular.utils.utils import verbose_print
 
 
 # TODO: Consider merging "NumericalFusion, TabularEncoderBackbone" into this class directly
@@ -59,7 +59,7 @@ class TabStarModel(PreTrainedModel):
                 text_batch_size //= 2
                 self.text_encoder_batch_size[sid] = text_batch_size
                 torch.cuda.empty_cache()
-                cprint(f"Reducing batch size to {text_batch_size} for dataset {sid} due to OOM: {oom}")
+                print(f"Reducing batch size to {text_batch_size} for dataset {sid} due to OOM: {oom}")
         raise RuntimeError(f"OOM even with batch size 1 for {sid}!")
 
     def get_textual_embedding_in_batches(self, x_txt: np.array, text_batch_size: int) -> Tensor:
@@ -94,12 +94,12 @@ class TabStarModel(PreTrainedModel):
             self._unfreeze_pooler_and_num_layers()
         total_params = sum(p.numel() for p in self.text_encoder.parameters())
         unfrozen_params = sum(p.numel() for p in self.text_encoder.parameters() if p.requires_grad)
-        cprint(f"🥶 Unfroze {unfrozen_params:,} out of {total_params:,} parameters!")
+        print(f"🥶 Unfroze {unfrozen_params:,} out of {total_params:,} parameters!")
 
     def _freeze_the_whole_encoder(self):
         for name, param in self.text_encoder.named_parameters():
             param.requires_grad = False
-        cprint(f"🥶 Freezing the whole text encoder - including the pooling!")
+        print(f"🥶 Freezing the whole text encoder - including the pooling!")
 
     def _unfreeze_pooler_and_num_layers(self):
         assert 0 <= self.config.unfreeze_layers <= E5_LAYERS
@@ -108,7 +108,7 @@ class TabStarModel(PreTrainedModel):
         for name, param in self.text_encoder.embeddings.named_parameters():
             param.requires_grad = False
         to_unfreeze = get_last_layers_num(to_unfreeze=self.config.unfreeze_layers)
-        cprint(f"🥶 Planning to unfreeze {self.config.unfreeze_layers}/{E5_LAYERS} layers: {to_unfreeze}!")
+        print(f"🥶 Planning to unfreeze {self.config.unfreeze_layers}/{E5_LAYERS} layers: {to_unfreeze}!")
         layer_prefixes = [f'layer.{i}.' for i in to_unfreeze]
         for name, param in self.text_encoder.encoder.named_parameters():
             if any(name.startswith(prefix) for prefix in layer_prefixes):

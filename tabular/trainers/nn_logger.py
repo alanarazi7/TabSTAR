@@ -7,7 +7,6 @@ from tabular.datasets.properties import DatasetProperties
 from tabular.evaluation.loss import LossAccumulator
 from tabular.evaluation.predictions import Predictions
 from tabular.utils.early_stopping import EarlyStopping
-from tabular.utils.utils import cprint
 
 
 def log_general(scheduler: LRScheduler, steps: int, epoch: int):
@@ -42,7 +41,7 @@ def summarize_epoch(epoch: int, train_loss: LossAccumulator, dev_loss: LossAccum
         log_str += " 🥇"
     elif is_pretrain:
         log_str += f" 😓 [{early_stopper.epochs_without_improvement}]"
-    cprint(log_str)
+    print(log_str)
 
 def prefix(is_pretrain: bool) -> str:
     return 'Pretrain' if is_pretrain else 'Downstream'

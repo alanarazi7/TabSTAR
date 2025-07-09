@@ -11,7 +11,6 @@ from tabular.models.abstract_model import TabularModel
 from tabular.trainers.downstream_train import ModelTrainer, RunMetadata
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.utils.logging import wandb_run, RunType
-from tabular.utils.utils import cprint
 
 def do_finetune_run(exp_name: str,
                     model: Type[TabularModel],
@@ -31,13 +30,13 @@ def do_finetune_run(exp_name: str,
                            run_num=run_num, args=finetune_args, train_examples=train_examples,
                            carte_lr_idx=carte_lr_idx)
     if run_metadata := trainer.existing_score():
-        cprint(f"Already trained {model.MODEL_NAME} on {dataset.name} for run {run_num}: {run_metadata.test_score:.3f}")
+        print(f"Already trained {model.MODEL_NAME} on {dataset.name} for run {run_num}: {run_metadata.test_score:.3f}")
         return run_metadata
     run_type = RunType.FINETUNE if finetune_args else RunType.BASELINE
     wandb_run(trainer.run_name, run_type=run_type)
-    cprint(f"🏆 Training {dataset} on baseline: {trainer.run_name}")
+    print(f"🏆 Training {dataset} on baseline: {trainer.run_name}")
     run_metadata = trainer.run()
-    cprint(f"Run: {trainer.run_name}\n💯 Score: {run_metadata.test_score:.3f}")
+    print(f"Run: {trainer.run_name}\n💯 Score: {run_metadata.test_score:.3f}")
     results = {'model': model.MODEL_NAME,
                'dataset': dataset.name,
                'score': run_metadata.test_score,

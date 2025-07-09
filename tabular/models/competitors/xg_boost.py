@@ -15,7 +15,7 @@ from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
 from tabular.preprocessing.target import standardize_y_train_test, transform_target, fit_standard_scaler
 from tabular.preprocessing.trees.categorical import fit_encode_categorical, transform_encoder_categorical
 from tabular.preprocessing.trees.numerical import fill_median
-from tabular.utils.utils import cprint, verbose_print
+from tabular.utils.utils import verbose_print
 
 
 
@@ -49,13 +49,13 @@ class XGBoostOptuna(TabularSklearnModel):
         self.model = None
         self.config = None
         assert all(v is None for v in [self.config, self.model, self.y_scaler, self.x_median])
-        cprint(f"Starting Optuna study for {self.dataset.sid}")
+        print(f"Starting Optuna study for {self.dataset.sid}")
         study = get_optuna_study()
         study.optimize(self.objective, n_jobs=OPTUNA_CPU, timeout=OPTUNA_BUDGET)
-        cprint(f"Done studying, did {len(study.trials)} runs 🤓")
+        print(f"Done studying, did {len(study.trials)} runs 🤓")
         self.config = XGBoostTunedHyperparams(**study.best_params)
         wandb.log({"optuna_best_params": asdict(self.config), "optuna_n_trials": len(study.trials)})
-        cprint(f"✅ Best params: {self.config}")
+        print(f"✅ Best params: {self.config}")
         self.initialize_model()
         assert self.model is not None
         x_train, y_train = self.load_train()
