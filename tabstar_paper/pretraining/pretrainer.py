@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from tabstar.training.metrics import apply_loss_fn, calculate_metric
+from tabstar.training.utils import fix_seed
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_epoch_dataloader
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
@@ -30,7 +31,6 @@ from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
 from tabular.utils.optimizer import get_optimizer, MAX_EPOCHS
 from tabular.utils.paths import get_model_path
-from tabular.utils.utils import fix_seed
 
 torch.set_num_threads(1)
 if hasattr(torch, 'set_float32_matmul_precision'):
@@ -40,7 +40,6 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 class TabSTARPretrainer:
 
     def __init__(self, run_name: str, dataset_ids: List[TabularDatasetID], device: torch.device, pretrain_args: PretrainArgs):
-        fix_seed()
         self.run_name = run_name
         self.dataset_ids = dataset_ids
         self.device = device

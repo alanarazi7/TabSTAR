@@ -5,10 +5,11 @@ from typing import List, Dict, Tuple
 from pandas import DataFrame, Series
 from sklearn.model_selection import train_test_split
 
+from tabstar.constants import SEED
 from tabstar.preprocessing.splits import MAX_TEST_SIZE, TEST_RATIO, MAX_VAL_SIZE, VAL_RATIO
 from tabular.datasets.raw_dataset import RawDataset
 from tabular.preprocessing.objects import SupervisedTask, PreprocessingMethod, CV_METHODS
-from tabular.utils.utils import SEED, verbose_print
+from tabular.utils.utils import verbose_print
 
 NN_PRETRAIN_DEV_RATIO = 0.05
 

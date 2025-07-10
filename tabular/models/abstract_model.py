@@ -14,7 +14,6 @@ from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
 from tabular.preprocessing.trees.categorical import ColumnLabelEncoder
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.utils import fix_seed
 
 
 class TabularModel:
@@ -26,7 +25,6 @@ class TabularModel:
     def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
                  run_num: int, train_examples: int = 0, args: Optional[PretrainArgs] = None,
                  carte_lr_index: Optional[int] = None):
-        fix_seed()
         self.run_name = run_name
         self.dataset_ids = dataset_ids
         self.device = device

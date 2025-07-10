@@ -8,12 +8,12 @@ from huggingface_hub import hf_hub_download
 import torch
 from pandas import DataFrame
 
+from tabstar.constants import SEED
 from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID
 from tabular.evaluation.sklearn_model import init_model
 from tabular.models.abstract_sklearn import TabularSklearnModel
 from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.utils import SEED
 
 #  [2.5, 5, 7.5] × [1e−4, 1e−3]
 CARTE_LRS = [0.00025, 0.0025, 0.0005, 0.005, 0.00075, 0.0075]

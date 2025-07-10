@@ -13,7 +13,6 @@ from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.logging import LOG_SEP
 from tabular.utils.paths import create_dir, train_results_path
-from tabular.utils.utils import fix_seed, SEED
 
 
 @dataclass
@@ -24,7 +23,7 @@ class RunMetadata:
     test_score: float
     run_num: int
     train_examples: int
-    seed: int
+    seed: Optional[int] = None
     dev_loss: Optional[float] = None
 
 
@@ -56,7 +55,6 @@ class ModelTrainer:
             return RunMetadata.from_json(self.res_path)
 
     def run(self) -> RunMetadata:
-        fix_seed()
         create_dir(self.res_path, is_file=True)
         model = self.model_cls(run_name=self.run_name, dataset_ids=[self.dataset_id], device=self.device,
                                run_num=self.run_num, args=self.args, train_examples=self.train_examples,
@@ -70,8 +68,7 @@ class ModelTrainer:
                                dev_loss=dev_loss,
                                test_score=float(test_results[DataSplit.TEST].score),
                                run_num=self.run_num,
-                               train_examples=self.train_examples,
-                               seed=SEED)
+                               train_examples=self.train_examples)
         dump_json(asdict(metadata), self.res_path)
         return metadata
 

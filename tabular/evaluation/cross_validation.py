@@ -5,7 +5,7 @@ from optuna.samplers import RandomSampler
 from pandas import DataFrame, Series
 from sklearn.model_selection import KFold, StratifiedKFold
 
-from tabular.utils.utils import SEED
+from tabstar.constants import SEED
 
 N_SPLITS = 5
 

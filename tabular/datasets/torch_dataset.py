@@ -23,7 +23,7 @@ from tabular.preprocessing.objects import PreprocessingMethod
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.utils.paths import create_dir, dataset_run_properties_dir, properties_path
 from tabular.utils.processing import pd_indices_to_array
-from tabular.utils.utils import fix_seed, verbose_print
+from tabular.utils.utils import verbose_print
 
 
 class PandasDataset(Dataset):
@@ -95,7 +95,6 @@ def get_data_dir(dataset: TabularDatasetID, processing: PreprocessingMethod, run
 
 def create_dataset(data_dir: str, dataset: TabularDatasetID, processing: PreprocessingMethod, run_num: int,
                    train_examples: int, device: torch.device, number_verbalization: Optional[NumberVerbalization] = None):
-    fix_seed()
     raw_dataset = get_raw_dataset(dataset)
     dataset = TabularDataset.from_raw(raw=raw_dataset, processing=processing, run_num=run_num,
                                       train_examples=train_examples, device=device,
