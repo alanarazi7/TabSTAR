@@ -4,6 +4,7 @@ from typing import Tuple
 from catboost import CatBoostRegressor, CatBoostClassifier
 from pandas import DataFrame, Series
 
+from tabstar.constants import SEED
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 
@@ -14,7 +15,7 @@ class CatBoostDefaultHyperparams:
     early_stopping_rounds: int = 50
     iterations: int = 2000
     od_pval: float = 0.001
-
+    random_state: int = SEED
 
 class CatBoost(TabularModel):
 

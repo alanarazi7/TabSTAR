@@ -4,6 +4,7 @@ from typing import Tuple
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from pandas import DataFrame, Series
 
+from tabstar.constants import SEED
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
@@ -14,6 +15,7 @@ from tabstar_paper.utils.logging import log_all_methods
 @dataclass
 class RandomForestDefaultHyperparams:
     n_estimators: int = 100
+    random_state: int = SEED
 
 
 @log_all_methods

@@ -4,12 +4,12 @@ from typing import Tuple
 from xgboost import XGBRegressor, XGBClassifier
 from pandas import DataFrame, Series
 
+from tabstar.constants import SEED
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
 from tabstar_paper.baselines.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
 from tabstar_paper.utils.logging import log_all_methods
-
 
 @dataclass
 class XGBoostDefaultHyperparams:
@@ -17,6 +17,7 @@ class XGBoostDefaultHyperparams:
     n_estimators: int = 2000
     early_stopping_rounds: int = 50
     booster: str = "gbtree"
+    random_state: int = SEED
 
 @log_all_methods
 class XGBoost(TabularModel):
