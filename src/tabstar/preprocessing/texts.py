@@ -12,8 +12,8 @@ def replace_column_names(x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, 
     return x, y
 
 def normalize_col_name(text: str) -> str:
-    text = text.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
-    text = text.replace('\u00A0', ' ')
+    for c in ['\n', '\r', '\t', '\u00A0']:
+        text = text.replace(c, ' ')
     text = replace_unspaced_symbols(text)
     text = replace_whitespaces(text)
     return text
@@ -21,7 +21,7 @@ def normalize_col_name(text: str) -> str:
 def replace_unspaced_symbols(text: str) -> str:
     if ' ' not in text:
         return text
-    for c in ['_', '-', "."]:
+    for c in ['_', '-', ".", ":"]:
         text = text.replace(c, ' ')
     return text
 
