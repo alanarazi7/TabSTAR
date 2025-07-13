@@ -1,3 +1,5 @@
+# TabSTAR
+
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
 [![PyPI version](https://badge.fury.io/py/tabstar.svg)](https://badge.fury.io/py/tabstar)
