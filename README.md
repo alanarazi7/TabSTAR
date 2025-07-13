@@ -1,4 +1,4 @@
-# TabSTAR
+# TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations
 
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
