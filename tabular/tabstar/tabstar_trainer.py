@@ -34,7 +34,7 @@ from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
 from tabular.utils.optimizer import get_optimizer, MAX_EPOCHS
 from tabular.utils.paths import get_model_path
-from tabular.utils.utils import verbose_print, fix_seed_______
+from tabular.utils.utils import verbose_print
 
 torch.set_num_threads(1)
 if hasattr(torch, 'set_float32_matmul_precision'):
@@ -60,7 +60,6 @@ class TabStarTrainer(TabularModel):
         self.scaler = GradScaler()
         self.max_epochs = MAX_EPOCHS
         self.data_loaders: Dict[DataSplit, List[DataLoader]] = {}
-        fix_seed_______()
 
     @property
     def model_path(self) -> str:
