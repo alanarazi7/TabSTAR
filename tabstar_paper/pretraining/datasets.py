@@ -17,8 +17,8 @@ MAX_PRETRAIN_EXAMPLES = 300_000
 MAX_PRETRAIN_FEATURES = 200
 
 
-def create_pretrain_dataset(dataset_id: TabularDatasetID) -> str:
-    data_dir = f".tabstar_datasets/{dataset_id.name.replace('/', '_')}"
+def create_pretrain_dataset(dataset_id: TabularDatasetID, cache_dir: str = ".tabstar_datasets") -> str:
+    data_dir = join(cache_dir, dataset_id.name.replace('/', '_'))
     if exists(join(data_dir, HDF5Dataset.PROPERTIES)):
         return data_dir
     train_data, val_data = prepare_pretrain_dataset(dataset_id=dataset_id)

@@ -48,6 +48,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()), default=None)
     parser.add_argument('--dataset_id')
+    # TODO: change the name 'run_num' to 'trial' for consistency
     parser.add_argument('--run_num', type=int)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--cls', action='store_true', default=False)
@@ -85,30 +86,32 @@ def run_benchmarks(combinations, args):
     Run evaluation for each (model, dataset, run_num) combination.
     Saves results to local files.
     """
+
+    # TODO: change the name 'run_num' to 'trial' for consistency
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d['run_num']) for _, d in existing.iterrows()}
-    for model, dataset_id, run_num in tqdm(combinations):
+    for model, dataset_id, trial in tqdm(combinations):
         if args.cls and dataset_id.name.startswith("REG_"):
             continue
         model_name = model.__name__
-        if (model_name, dataset_id.name, run_num) in existing_combos:
+        if (model_name, dataset_id.name, trial) in existing_combos:
             continue
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{run_num}.txt"
+        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{trial}.txt"
         if os.path.exists(key_file):
             continue
-        print(f"Evaluating {model_name} on {dataset_id.name} with run num {run_num}")
+        print(f"Evaluating {model_name} on {dataset_id.name} with trial {trial}")
         start_time = time.time()
         metrics = evaluate_on_dataset(
             model_cls=model,
             dataset_id=dataset_id,
-            run_num=run_num,
+            trial=trial,
             train_examples=args.train_examples,
             device=device
         )
         result = {
             "score": metrics.score,
             "dataset": dataset_id.name,
-            "run_num": run_num,
+            "trial": trial,
             "model": model_name,
             "metrics": dict(metrics.metrics),
             "runtime": time.time() - start_time,
