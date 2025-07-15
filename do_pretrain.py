@@ -3,7 +3,7 @@ import argparse
 from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
-from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
+# from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.pretraining import do_pretrain
@@ -32,8 +32,9 @@ if __name__ == "__main__":
     if args.fold is not None:
         fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
         downstream_data = fold_dict[args.fold]
-    elif args.analysis:
-        downstream_data = ANALYSIS_TEXT_DOWNSTREAM
+    # TODO: put back analysis?
+    # elif args.analysis:
+    #     downstream_data = ANALYSIS_TEXT_DOWNSTREAM
     else:
         downstream_data = []
 
