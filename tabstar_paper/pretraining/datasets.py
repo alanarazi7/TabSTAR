@@ -22,9 +22,7 @@ def create_pretrain_dataset(dataset_id: TabularDatasetID, cache_dir: str = ".tab
     if exists(join(data_dir, HDF5Dataset.PROPERTIES)):
         return data_dir
     train_data, val_data = prepare_pretrain_dataset(dataset_id=dataset_id)
-    idx2text = {}
-    fill_idx2text(train_data, idx2text=idx2text)
-    fill_idx2text(val_data, idx2text=idx2text)
+    idx2text = fill_idx2text(train_data=train_data, val_data=val_data)
     properties = DatasetProperties(name=dataset_id.name, d_output=train_data.d_output, idx2text=idx2text,
                                    train_size=len(train_data), val_size=len(val_data))
     save_pretrain_dataset(data_dir=data_dir, train_data=train_data, val_data=val_data, properties=properties)
@@ -45,15 +43,16 @@ def prepare_pretrain_dataset(dataset_id: TabularDatasetID, verbose: bool = False
     val_data = preprocessor.transform(x_val, y_val)
     return train_data, val_data
 
-def fill_idx2text(data: TabSTARData, idx2text: Dict[int, str]):
-    assert isinstance(data.x_txt, np.ndarray), "data.x_txt must be a NumPy array"
-    assert data.x_txt.ndim == 2, "data.x_txt must be 2D"
-    all_texts = set(data.x_txt.ravel())
-    for t in all_texts:
-        if t not in idx2text:
-            idx2text[len(idx2text)] = t
+def fill_idx2text(train_data: TabSTARData, val_data: TabSTARData) -> Dict[int, str]:
+    # TODO: add test?
+    assert isinstance(train_data.x_txt, np.ndarray) and isinstance(val_data.x_txt, np.ndarray)
+    assert train_data.x_txt.ndim == 2 and val_data.x_txt.ndim == 2
+    all_texts = set(train_data.x_txt.ravel()).union(set(val_data.x_txt.ravel()))
+    idx2text = {i: t for i, t in enumerate(all_texts)}
     text2idx = {t: i for i, t in idx2text.items()}
-    data.x_txt = np.vectorize(lambda x: text2idx[x])(data.x_txt)
+    train_data.x_txt = np.vectorize(lambda x: text2idx[x])(train_data.x_txt)
+    val_data.x_txt = np.vectorize(lambda x: text2idx[x])(val_data.x_txt)
+    return idx2text
 
 
 def _downsample_max_examples(dataset: TabularDataset):
@@ -73,5 +72,3 @@ def _downsample_max_features(dataset: TabularDataset):
     columns = list(dataset.x.columns)
     chosen_columns = sample(columns, k=MAX_PRETRAIN_FEATURES)
     dataset.x = dataset.x[chosen_columns]
-
-
