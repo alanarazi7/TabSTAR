@@ -8,7 +8,6 @@ from torch.optim.lr_scheduler import OneCycleLR, LRScheduler
 
 from tabstar.training.optimizer import WARMUP_PROPORTION, MAX_EPOCHS
 from tabular.tabstar.params.config import TabStarConfig
-from tabular.tabstar.params.optimizer import get_tabstar_parameters_by_group
 
 
 def get_optimizer(model: nn.Module, config: TabStarConfig) -> Tuple[AdamW, LRScheduler]:
@@ -41,10 +40,9 @@ class ParamGroup:
 
 
 def get_groups_for_optimizer(model: nn.Module, config: TabStarConfig) -> List[Dict]:
-    # TODO: this function was useful when we had differential LR, now it is legacy
+    # TODO: this function is a bit too complex for no reason due to legacy, improve.
     groups = []
-    text_params, tab_params = get_tabstar_parameters_by_group(model)
-    for grp, lr, name in [(tab_params, config.lr, "tab")]:
-        group = ParamGroup(params=grp, lr=lr, wd=config.weight_decay, name=name)
-        groups.extend(group.split_weights_and_biases())
+    named_params = [(name, param) for name, param in model.named_parameters()]
+    group = ParamGroup(params=named_params, lr=config.lr, wd=config.weight_decay, name="tabstar")
+    groups.extend(group.split_weights_and_biases())
     return groups
