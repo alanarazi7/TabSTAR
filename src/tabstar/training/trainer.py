@@ -35,7 +35,7 @@ class TabStarTrainer:
         self.model = load_pretrained(model_version=model_version)
         self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model)
-        self.scheduler = get_scheduler(optimizer=self.optimizer)
+        self.scheduler = get_scheduler(optimizer=self.optimizer, epochs=self.max_epochs)
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping()
