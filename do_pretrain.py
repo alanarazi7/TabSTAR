@@ -1,12 +1,49 @@
 import argparse
+from dataclasses import asdict
+from os.path import exists
+from typing import List
 
+import wandb
+
+from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
 from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
+from tabstar.training.devices import get_device
+from tabstar.training.optimizer import MAX_EPOCHS
+from tabstar_paper.constants import GPU
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
-# from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
+from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
+from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.trainers.pretraining import do_pretrain
+from tabular.utils.logging import wandb_run, RunType
+
+
+def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: PretrainArgs):
+    if exists(pretrain_args.path):
+        print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")
+        return
+    print(f"🧪 Initializing experiment {pretrain_args.full_exp_name}")
+    device = get_device(device=GPU)
+    wandb_run(exp_name=pretrain_args.raw_exp_name, run_type=RunType.PRETRAIN)
+    wandb.config.update(asdict(pretrain_args), allow_val_change=True)
+    print(f"Pretraining over {len(pretrain_datasets)} datasets")
+    model = TabSTARPretrainer(run_name=pretrain_args.full_exp_name, dataset_ids=pretrain_datasets, device=device,
+                              pretrain_args=pretrain_args)
+    model.train()
+    pretrain_args.to_json()
+    wandb.finish()
+    print(f"🌟 TabSTAR was pretrained. The experiment name is: {pretrain_args.full_exp_name}")
+
+
+def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID]:
+    if arg.analysis:
+        return ANALYSIS_TEXT_DOWNSTREAM
+    if arg.fold is None:
+        return []
+    fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
+    return fold_dict[args.fold]
+
 
 if __name__ == "__main__":
 
@@ -14,6 +51,7 @@ if __name__ == "__main__":
     # General
     parser.add_argument('--exp', type=str, default="default_pretrain_exp")
     parser.add_argument('--analysis', action='store_true', default=False)
+    parser.add_argument('--debug', action='store_true', default=False)
     # Arch
     parser.add_argument('--tabular_layers', type=int, default=TABULAR_LAYERS)
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
@@ -26,24 +64,23 @@ if __name__ == "__main__":
     # Optimizer
     parser.add_argument('--base_lr', type=float, default=BASE_LR)
     parser.add_argument('--weight_decay', type=float, default=WEIGHT_DECAY)
+    parser.add_argument('--epochs', type=int, default=MAX_EPOCHS)
 
     args = parser.parse_args()
 
-    if args.fold is not None:
-        fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
-        downstream_data = fold_dict[args.fold]
-    # TODO: put back analysis?
-    # elif args.analysis:
-    #     downstream_data = ANALYSIS_TEXT_DOWNSTREAM
-    else:
-        downstream_data = []
+    downstream_data = define_downstream_datasets(args)
 
     pretrain_data = [d for d in PRETRAIN2FOLD if d not in downstream_data]
 
     if args.n_datasets is not None:
         pretrain_data = pretrain_data[:args.n_datasets]
+    elif args.debug:
+        pretrain_data = [OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
+                         OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
+                         OpenMLDatasetID.REG_SPORTS_MONEYBALL]
+        args.epochs = 1
 
     # TODO: use HfArgumentParser probably
-    pretrain_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)
+    pretraining_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)
 
-    do_pretrain(pretrain_datasets=pretrain_data, pretrain_args=pretrain_args)
+    do_pretrain(pretrain_datasets=pretrain_data, pretrain_args=pretraining_args)

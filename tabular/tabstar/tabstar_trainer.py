@@ -13,6 +13,7 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar.training.optimizer import get_optimizer, get_scheduler
 from tabular.datasets.tabular_datasets import TabularDatasetID
 from tabular.datasets.properties import DatasetProperties
 from tabular.datasets.torch_dataset import HDF5Dataset
@@ -32,7 +33,6 @@ from tabular.utils.dataloaders import get_pretrain_epoch_dataloader, get_dataloa
 from tabular.utils.deep import print_model_summary, get_last_layers_num
 from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
-from tabular.utils.optimizer import get_optimizer, MAX_EPOCHS
 from tabular.utils.paths import get_model_path
 from tabular.utils.utils import verbose_print
 
@@ -42,7 +42,7 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 
 
 # TODO: replace all this with HF built in Trainer, exclude custom logics
-class TabStarTrainer(TabularModel):
+class TabStarFinetuneTrainer(TabularModel):
 
     MODEL_NAME = "TabSTAR 🌟"
     SHORT_NAME = "Tab*"
@@ -57,7 +57,7 @@ class TabStarTrainer(TabularModel):
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
         self.scaler = GradScaler()
-        self.max_epochs = MAX_EPOCHS
+        self.max_epochs = args.epochs
         self.data_loaders: Dict[DataSplit, List[DataLoader]] = {}
 
     @property
@@ -71,16 +71,11 @@ class TabStarTrainer(TabularModel):
         self.model.config = self.config
         self.wrap_with_lora()
         self.model = self.model.to(self.device)
-        assert isinstance(self.model, Module)
-        self.init_optimizer()
-        dataset_names = '\n🗂️ '.join([''] + [str(d) for d in self.datasets])
-        print(f"Initializing model {self.MODEL_NAME} for datasets:{dataset_names}")
+        self.optimizer = get_optimizer(model=self.model, lr=self.config.lr)
+        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.config.lr, epochs=self.max_epochs)
 
     def set_config(self) -> TabStarConfig:
         return TabStarConfig.create(self.args)
-
-    def init_optimizer(self):
-        self.optimizer, self.scheduler = get_optimizer(model=self.model, config=self.config)
 
     def infer(self, x_txt: np.ndarray, x_num: np.ndarray, properties: DatasetProperties) -> InferenceOutput:
         y_pred = self.model(x_txt=x_txt, x_num=x_num, sid=properties.sid, d_output=properties.d_effective_output)
@@ -88,10 +83,6 @@ class TabStarTrainer(TabularModel):
 
     def train(self):
         print_model_summary(self.model)
-        if not self.dataset_ids:
-            print(f"No datasets to train on for {self.MODEL_NAME}")
-            self.model.save_pretrained(self.model_path)
-            return 0.0
         print(f"Training {self.MODEL_NAME}!")
         self.prepare_dev_test_dataloaders()
         early_stopper = EarlyStopping(args=self.args)
@@ -213,7 +204,6 @@ class TabStarTrainer(TabularModel):
         self.model.to(self.device)
 
     def test(self) -> Dict[DataSplit, Predictions]:
-        assert not self.is_pretrain
         self.load_model(cp_path=self.model_path)
         ret = {}
         for split in [DataSplit.DEV, DataSplit.TEST]:

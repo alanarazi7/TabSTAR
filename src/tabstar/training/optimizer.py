@@ -8,8 +8,8 @@ WARMUP_PROPORTION = 0.1
 MAX_EPOCHS = 50
 
 
-def get_optimizer(model: nn.Module) -> AdamW:
-    params = [{"params": model.parameters(), "lr": LORA_LR, "name": "lora_lr"}]
+def get_optimizer(model: nn.Module, lr: float = LORA_LR) -> AdamW:
+    params = [{"params": model.parameters(), "lr": lr, "name": "lora_lr"}]
     optimizer = AdamW(params)
     return optimizer
 

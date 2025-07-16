@@ -3,22 +3,8 @@ from typing import List, Dict, Tuple
 
 from torch import nn
 from torch.nn.parameter import Parameter
-from torch.optim import AdamW
-from torch.optim.lr_scheduler import OneCycleLR, LRScheduler
 
-from tabstar.training.optimizer import WARMUP_PROPORTION, MAX_EPOCHS
 from tabular.tabstar.params.config import TabStarConfig
-
-
-def get_optimizer(model: nn.Module, config: TabStarConfig) -> Tuple[AdamW, LRScheduler]:
-    if config.is_pretrain:
-        params = get_groups_for_optimizer(model=model, config=config)
-    else:
-        params = [{"params": model.parameters(), "lr": config.lr, "name": "lora_lr"}]
-    optimizer = AdamW(params)
-    scheduler = OneCycleLR(optimizer=optimizer, max_lr=config.lr, total_steps=MAX_EPOCHS,
-                           pct_start=WARMUP_PROPORTION, anneal_strategy='cos')
-    return optimizer, scheduler
 
 
 @dataclass

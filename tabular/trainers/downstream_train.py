@@ -7,7 +7,7 @@ import torch
 from tabstar_paper.utils.io_handlers import load_json, dump_json
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_sid
 from tabular.models.abstract_model import TabularModel
-from tabular.tabstar.tabstar_trainer import TabStarTrainer
+from tabular.tabstar.tabstar_trainer import TabStarFinetuneTrainer
 from tabular.preprocessing.splits import DataSplit
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
@@ -44,7 +44,7 @@ class ModelTrainer:
         self.train_examples = train_examples
         self.run_num = run_num
         self.device = device
-        is_tabstar = issubclass(model_cls, TabStarTrainer)
+        is_tabstar = issubclass(model_cls, TabStarFinetuneTrainer)
         self.res_path = train_results_path(self.run_name, is_tabstar=is_tabstar)
         self.args = args
         # Hacky that it is here, but, oh well

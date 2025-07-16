@@ -16,6 +16,7 @@ class FinetuneArgs:
     lora_batch: int
     lora_r: int
     patience: int
+    epochs: int
     keep_model: bool = False
     full_exp_name: Optional[str] = None
 
@@ -29,11 +30,13 @@ class FinetuneArgs:
                             lora_lr=args.lora_lr,
                             lora_batch=args.lora_batch,
                             lora_r=args.lora_r,
+                            epochs=args.epochs,
                             keep_model=args.downstream_keep_model,
                             patience=args.downstream_patience)
 
     def set_full_exp_name(self) -> str:
         strings = [self.raw_exp_name,
+                   f"epochs_{self.epochs}",
                    f"lora_lr_{self.lora_lr}",
                    f"lora_batch_{self.lora_batch}",
                    f"lora_r_{self.lora_r}",

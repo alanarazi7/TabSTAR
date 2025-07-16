@@ -6,9 +6,10 @@ import torch
 from tabstar.arch.config import LORA_LR, LORA_R
 from tabstar.training.devices import get_device
 from tabstar.training.early_stopping import FINETUNE_PATIENCE
+from tabstar.training.optimizer import MAX_EPOCHS
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
-from tabular.tabstar.tabstar_trainer import TabStarTrainer
+from tabular.tabstar.tabstar_trainer import TabStarFinetuneTrainer
 from tabular.tabstar.params.constants import LORA_BATCH
 from tabular.trainers.finetune import do_finetune_run
 from tabular.trainers.finetune_args import FinetuneArgs
@@ -24,7 +25,7 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
         device = get_device()
     if dataset.value in finetune_args.pretrain_args.datasets:
         raise NotImplementedError(f"😱😱😱 Dataset {dataset} is already in pretrain datasets, beware!")
-    do_finetune_run(dataset=dataset, model=TabStarTrainer, run_num=run_num, device=device,
+    do_finetune_run(dataset=dataset, model=TabStarFinetuneTrainer, run_num=run_num, device=device,
                     finetune_args=finetune_args, exp_name=finetune_args.full_exp_name,
                     train_examples=train_examples)
 
@@ -40,6 +41,7 @@ if __name__ == "__main__":
     parser.add_argument('--downstream_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--downstream_keep_model', action='store_true', default=False)
     parser.add_argument('--downstream_patience', type=int, default=FINETUNE_PATIENCE)
+    parser.add_argument('--epochs', type=int, default=MAX_EPOCHS)
     parser.add_argument('--lora_lr', type=float, default=LORA_LR)
     parser.add_argument('--lora_batch', type=int, default=LORA_BATCH)
     parser.add_argument('--lora_r', type=int, default=LORA_R)

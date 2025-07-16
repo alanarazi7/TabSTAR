@@ -21,6 +21,7 @@ class PretrainArgs:
     numbers_verbalization: NumberVerbalization
     unfreeze_layers: int
     datasets: List[int]
+    epochs: int
     fold: Optional[int] = None
     full_exp_name: Optional[str] = None
     cached: bool = False
@@ -41,6 +42,7 @@ class PretrainArgs:
                             weight_decay=args.weight_decay,
                             numbers_verbalization=NumberVerbalization(args.numbers_verbalization),
                             datasets=[d.value for d in pretrain_data],
+                            epochs=args.epochs,
                             fold=args.fold)
 
     @classmethod
@@ -73,6 +75,7 @@ class PretrainArgs:
                    f"num_verb_{self.numbers_verbalization}",
                    f"lr_{str_float(self.base_lr)}",
                    f"wd_{str_float(self.weight_decay)}",
+                   f"epochs_{self.epochs}",
                    f"git_{get_current_commit_hash()}"]
         if self.fold is not None:
             strings.append(f"fold_{self.fold}")

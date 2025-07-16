@@ -1,9 +1,9 @@
 from importlib.resources import files
 import pandas as pd
-from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
 from tabstar.tabstar_model import TabSTARClassifier
+
 
 csv_path = files("tabstar").joinpath("resources", "imdb.csv")
 x = pd.read_csv(csv_path)
