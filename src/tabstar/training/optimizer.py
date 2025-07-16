@@ -13,6 +13,6 @@ def get_optimizer(model: nn.Module) -> AdamW:
     optimizer = AdamW(params)
     return optimizer
 
-def get_scheduler(optimizer: AdamW) -> LRScheduler:
-    return OneCycleLR(optimizer=optimizer, max_lr=LORA_LR, total_steps=MAX_EPOCHS,
+def get_scheduler(optimizer: AdamW, max_lr: float = LORA_LR, epochs: int = MAX_EPOCHS) -> LRScheduler:
+    return OneCycleLR(optimizer=optimizer, max_lr=max_lr, total_steps=epochs,
                       pct_start=WARMUP_PROPORTION, anneal_strategy='cos')

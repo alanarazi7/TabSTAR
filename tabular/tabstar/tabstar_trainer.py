@@ -53,7 +53,6 @@ class TabStarTrainer(TabularModel):
                  carte_lr_index: Optional[int] = None):
         super().__init__(run_name=run_name, dataset_ids=dataset_ids, device=device, run_num=run_num,
                          train_examples=train_examples, args=args, carte_lr_index=carte_lr_index)
-        self.is_pretrain = isinstance(self.args, PretrainArgs)
         self.model: Optional[Module] = None
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
@@ -63,21 +62,14 @@ class TabStarTrainer(TabularModel):
 
     @property
     def model_path(self) -> str:
-        return get_model_path(self.run_name, is_pretrain=self.is_pretrain)
+        return get_model_path(self.run_name, is_pretrain=False)
 
     def initialize_model(self):
-        if self.is_pretrain:
-            # For pretraining, create a new model and unfreeze textual encoder layers.
-            self.model = TabStarModel(config=self.config)
-            self.model.unfreeze_textual_encoder_layers()
-            print("Loaded pre-trained model and unfreezing all downstream layers for finetuning.")
-        else:
-            # For finetuning, load a pre-trained model from the checkpoint and wrap with Lora.
-            assert isinstance(self.args, FinetuneArgs)
-            pretrain_path = get_model_path(self.args.pretrain_args.full_exp_name, is_pretrain=True)
-            self.model = TabStarModel.from_pretrained(pretrain_path)
-            self.model.config = self.config
-            self.wrap_with_lora()
+        assert isinstance(self.args, FinetuneArgs)
+        pretrain_path = get_model_path(self.args.pretrain_args.full_exp_name, is_pretrain=True)
+        self.model = TabStarModel.from_pretrained(pretrain_path)
+        self.model.config = self.config
+        self.wrap_with_lora()
         self.model = self.model.to(self.device)
         assert isinstance(self.model, Module)
         self.init_optimizer()
@@ -132,8 +124,7 @@ class TabStarTrainer(TabularModel):
                     if (batch_idx + 1) % self.config.accumulation_steps != 0:
                         self.do_update()
 
-                log_train_loss(train_loss=train_loss, epoch=epoch, is_pretrain=self.is_pretrain,
-                               dataset2losses=dataset2losses)
+                log_train_loss(train_loss=train_loss, epoch=epoch, dataset2losses=dataset2losses)
                 dev_loss = LossAccumulator()
                 dev_metrics = []
                 with tqdm(total=len(self.data_dirs), desc="Eval", leave=False) as pbar_eval:
@@ -143,13 +134,13 @@ class TabStarTrainer(TabularModel):
                         data_dev_loss, predictions = self.eval_dataset(data_loader=data_loader, is_test_time=False)
                         dev_loss += data_dev_loss
                         dev_metrics.append(predictions.score)
-                        log_dev_performance(properties=properties, is_pretrain=self.is_pretrain, epoch=epoch,
+                        log_dev_performance(properties=properties, epoch=epoch,
                                             data_dev_loss=data_dev_loss, predictions=predictions)
                         pbar_eval.update(1)
                 metric_score = float(np.mean(dev_metrics))
-                log_dev_loss(is_pretrain=self.is_pretrain, dev_loss=dev_loss, metric=metric_score, epoch=epoch)
+                log_dev_loss(dev_loss=dev_loss, epoch=epoch)
                 summarize_epoch(epoch=epoch, train_loss=train_loss, dev_loss=dev_loss, metric_score=metric_score,
-                                early_stopper=early_stopper, is_pretrain=self.is_pretrain)
+                                early_stopper=early_stopper)
                 early_stopper.update(metric_score)
                 if early_stopper.is_best:
                     self.model.save_pretrained(self.model_path)
@@ -163,8 +154,6 @@ class TabStarTrainer(TabularModel):
 
     def prepare_dev_test_dataloaders(self):
         for split in [DataSplit.DEV, DataSplit.TEST]:
-            if self.is_pretrain and split == DataSplit.TEST:
-                continue
             split_dirs = []
             for d in self.data_dirs:
                 data = get_dataloader(data_dir=d, split=split, batch_size=self.config.batch_size)

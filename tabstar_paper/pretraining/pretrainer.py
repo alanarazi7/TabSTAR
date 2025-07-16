@@ -5,12 +5,13 @@ import torch
 import wandb
 from torch.amp import autocast, GradScaler
 from torch.nn import Module, CrossEntropyLoss, MSELoss
-from torch.optim import Optimizer
+from torch.optim import Optimizer, AdamW
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from tabstar.training.metrics import apply_loss_fn, calculate_metric
+from tabstar.training.optimizer import get_scheduler
 from tabstar.training.utils import fix_seed
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_epoch_dataloader
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
@@ -29,7 +30,7 @@ from tabular.utils.dataloaders import round_robin_batches
 from tabular.utils.deep import print_model_summary
 from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
-from tabular.utils.optimizer import get_optimizer, MAX_EPOCHS
+from tabular.utils.optimizer import MAX_EPOCHS, get_groups_for_optimizer
 from tabular.utils.paths import get_model_path
 
 torch.set_num_threads(1)
@@ -80,7 +81,9 @@ class TabSTARPretrainer:
         return TabStarConfig.create(self.args)
 
     def init_optimizer(self):
-        self.optimizer, self.scheduler = get_optimizer(model=self.model, config=self.config)
+        params = get_groups_for_optimizer(model=self.model, config=self.config)
+        self.optimizer = AdamW(params)
+        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.config.lr, epochs=self.max_epochs)
 
     def train(self):
         print_model_summary(self.model)
