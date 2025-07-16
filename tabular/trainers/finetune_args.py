@@ -4,7 +4,6 @@ from os.path import join
 from typing import Optional, Self
 
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.logging import LOG_SEP
 
 
 # TODO: use HfArgumentParser
@@ -41,5 +40,5 @@ class FinetuneArgs:
                    f"lora_batch_{self.lora_batch}",
                    f"lora_r_{self.lora_r}",
                    f"patience_{self.patience}"]
-        finetune_exp = LOG_SEP.join(strings)
+        finetune_exp = "__".join(strings)
         return join(self.pretrain_args.full_exp_name, finetune_exp)

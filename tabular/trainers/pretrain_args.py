@@ -6,7 +6,6 @@ from tabstar_paper.utils.io_handlers import load_json, dump_json
 from tabstar_paper.utils.logging import get_current_commit_hash
 from tabular.datasets.tabular_datasets import OpenMLDatasetID
 from tabular.tabstar.params.constants import NumberVerbalization
-from tabular.utils.logging import LOG_SEP
 from tabular.utils.paths import pretrain_args_path, create_dir
 from tabular.utils.utils import get_today, verbose_print
 
@@ -79,7 +78,7 @@ class PretrainArgs:
                    f"git_{get_current_commit_hash()}"]
         if self.fold is not None:
             strings.append(f"fold_{self.fold}")
-        return LOG_SEP.join(strings)
+        return "__".join(strings)
 
 
 def str_float(f: float) -> str:

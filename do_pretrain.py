@@ -13,10 +13,10 @@ from tabstar.training.hyperparams import MAX_EPOCHS
 from tabstar_paper.constants import GPU
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
+from tabstar_paper.utils.logging import wandb_run
 from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.logging import wandb_run, RunType
 
 
 def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: PretrainArgs):
@@ -25,7 +25,7 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: Pretra
         return
     print(f"🧪 Initializing experiment {pretrain_args.full_exp_name}")
     device = get_device(device=GPU)
-    wandb_run(exp_name=pretrain_args.raw_exp_name, run_type=RunType.PRETRAIN)
+    wandb_run(exp_name=pretrain_args.raw_exp_name, project="tabstar_pretrain")
     wandb.config.update(asdict(pretrain_args), allow_val_change=True)
     print(f"Pretraining over {len(pretrain_datasets)} datasets")
     model = TabSTARPretrainer(run_name=pretrain_args.full_exp_name, dataset_ids=pretrain_datasets, device=device,

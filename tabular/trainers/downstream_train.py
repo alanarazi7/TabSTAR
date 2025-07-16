@@ -10,8 +10,6 @@ from tabular.models.abstract_model import TabularModel
 from tabular.tabstar.tabstar_trainer import TabStarFinetuneTrainer
 from tabular.preprocessing.splits import DataSplit
 from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.logging import LOG_SEP
 from tabular.utils.paths import create_dir, train_results_path
 
 
@@ -79,4 +77,4 @@ class ModelTrainer:
                    f"sid_{get_sid(self.dataset_id)}",
                    f"run_{self.run_num}",
                    f"examples_{self.train_examples}"]
-        return LOG_SEP.join(strings)
+        return "__".join(strings)
