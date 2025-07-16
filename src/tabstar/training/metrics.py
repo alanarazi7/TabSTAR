@@ -7,6 +7,7 @@ from numpy.exceptions import AxisError
 from pandas import Series
 from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error
 from torch import Tensor, softmax
+from torch.nn import CrossEntropyLoss, MSELoss
 
 
 @dataclass
@@ -67,3 +68,17 @@ def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
         # We want the probability of '1'
         prediction = prediction[:, 1]
     return prediction
+
+
+def calculate_loss(predictions: Tensor, y: Series, is_reg: bool) -> Tensor:
+    if is_reg:
+        loss_fn = MSELoss()
+        dtype = torch.float32
+    else:
+        loss_fn = CrossEntropyLoss()
+        dtype = torch.long
+    y = torch.tensor(y, dtype=dtype).to(predictions.device)
+    if is_reg and y.ndim == 1:
+        y = y.unsqueeze(1)
+    loss = loss_fn(predictions, y)
+    return loss

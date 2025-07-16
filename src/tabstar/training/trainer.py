@@ -7,7 +7,6 @@ import torch
 from peft import PeftModel
 from torch import Tensor
 from torch.amp import autocast, GradScaler
-from torch.nn import MSELoss, CrossEntropyLoss
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -16,7 +15,7 @@ from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.lora import load_pretrained, load_finetuned
-from tabstar.training.metrics import calculate_metric, apply_loss_fn
+from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_loss
 from tabstar.training.optimizer import get_optimizer, get_scheduler, MAX_EPOCHS
 from tabstar.training.utils import concat_predictions
 
@@ -99,16 +98,8 @@ class TabStarTrainer:
 
     def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
         predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-        if data.d_output == 1:
-            loss_fn = MSELoss()
-            dtype = torch.float32
-        else:
-            loss_fn = CrossEntropyLoss()
-            dtype = torch.long
-        y = torch.tensor(data.y, dtype=dtype).to(self.device)
-        if data.d_output == 1 and y.ndim == 1:
-            y = y.unsqueeze(1)
-        loss = loss_fn(predictions, y)
+        is_reg = bool(data.d_output == 1)
+        loss = calculate_loss(predictions=predictions, y=data.y, is_reg=is_reg)
         return loss, predictions
 
     def _do_update(self):
