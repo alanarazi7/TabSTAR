@@ -16,7 +16,7 @@ from tabstar.training.dataloader import get_dataloader
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.lora import load_pretrained, load_finetuned
 from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_loss
-from tabstar.training.optimizer import get_optimizer, get_scheduler, MAX_EPOCHS
+from tabstar.training.optimizer import get_optimizer, get_scheduler
 from tabstar.training.utils import concat_predictions
 
 torch.set_num_threads(1)
@@ -27,7 +27,8 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 # TODO: replace with HF built in Trainer, exclude custom logics
 class TabStarTrainer:
 
-    def __init__(self, device: torch.device, model_version: str, debug: bool = False):
+    def __init__(self, max_epochs: int, device: torch.device, model_version: str, debug: bool = False):
+        self.max_epochs = max_epochs
         self.device = device
         self.debug = debug
         self.model_version = model_version
@@ -46,7 +47,7 @@ class TabStarTrainer:
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True)
         val_loader = get_dataloader(val_data, is_train=False)
-        for epoch in tqdm(range(1, MAX_EPOCHS + 1), desc="Epochs", leave=False):
+        for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
             if val_metric > self.early_stopper.metric:
