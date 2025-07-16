@@ -10,8 +10,9 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar.training.hyperparams import MAX_EPOCHS
 from tabstar.training.metrics import apply_loss_fn, calculate_metric
-from tabstar.training.optimizer import get_scheduler, MAX_EPOCHS
+from tabstar.training.optimizer import get_scheduler
 from tabstar.training.utils import fix_seed
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_epoch_dataloader
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset

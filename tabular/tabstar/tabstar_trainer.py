@@ -27,7 +27,6 @@ from tabular.tabstar.arch.arch import TabStarModel
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.tabstar.params.constants import E5_LAYERS
 from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.nn_logger import log_general, log_dev_loss, log_dev_performance, log_train_loss, summarize_epoch
 from tabular.utils.dataloaders import get_pretrain_epoch_dataloader, get_dataloader, round_robin_batches
 from tabular.utils.deep import print_model_summary, get_last_layers_num
@@ -48,11 +47,10 @@ class TabStarFinetuneTrainer(TabularModel):
     SHORT_NAME = "Tab*"
     PROCESSING = PreprocessingMethod.TABSTAR
 
-    def __init__(self, run_name: str, dataset_ids: List[TabularDatasetID], device: torch.device, run_num: int = 0,
-                 train_examples: int = 0, args: Optional[PretrainArgs] = None,
-                 carte_lr_index: Optional[int] = None):
+    def __init__(self, run_name: str, dataset_ids: List[TabularDatasetID], device: torch.device, args: FinetuneArgs,
+                 run_num: int = 0, train_examples: int = 0):
         super().__init__(run_name=run_name, dataset_ids=dataset_ids, device=device, run_num=run_num,
-                         train_examples=train_examples, args=args, carte_lr_index=carte_lr_index)
+                         train_examples=train_examples, args=args)
         self.model: Optional[Module] = None
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
@@ -71,8 +69,8 @@ class TabStarFinetuneTrainer(TabularModel):
         self.model.config = self.config
         self.wrap_with_lora()
         self.model = self.model.to(self.device)
-        self.optimizer = get_optimizer(model=self.model, lr=self.config.lr)
-        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.config.lr, epochs=self.max_epochs)
+        self.optimizer = get_optimizer(model=self.model, lr=self.args.lora_lr)
+        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.args.lora_lr, epochs=self.max_epochs)
 
     def set_config(self) -> TabStarConfig:
         return TabStarConfig.create(self.args)

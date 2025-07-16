@@ -9,7 +9,7 @@ from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
 from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
-from tabstar.training.optimizer import MAX_EPOCHS
+from tabstar.training.hyperparams import MAX_EPOCHS
 from tabstar_paper.constants import GPU
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer

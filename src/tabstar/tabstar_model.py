@@ -14,19 +14,23 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
+from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS
 from tabstar.training.metrics import apply_loss_fn, calculate_metric, Metrics
-from tabstar.training.optimizer import MAX_EPOCHS
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions
 
 
 class BaseTabSTAR:
     def __init__(self,
+                 lora_lr: float = LORA_LR,
+                 lora_r: int = LORA_R,
                  max_epochs: int = MAX_EPOCHS,
                  verbose: bool = False,
                  device: Optional[str] = None,
                  pretrain_dataset: Optional[TabularDatasetID] = None,
                  debug: bool = False):
+        self.lora_lr = lora_lr
+        self.lora_r = lora_r
         self.max_epochs = max_epochs
         self.verbose = verbose
         self.debug = debug
@@ -45,7 +49,9 @@ class BaseTabSTAR:
         y = y.copy()
         train_data, val_data = self._prepare_for_train(x, y)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
-        trainer = TabStarTrainer(max_epochs=self.max_epochs,
+        trainer = TabStarTrainer(lora_lr=self.lora_lr,
+                                 lora_r=self.lora_r,
+                                 max_epochs=self.max_epochs,
                                  device=self.device,
                                  model_version=self.model_version,
                                  debug=self.debug)

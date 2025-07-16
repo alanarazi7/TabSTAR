@@ -23,7 +23,7 @@ class TabularModel:
     PROCESSING: PreprocessingMethod
 
     def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
-                 run_num: int, train_examples: int = 0, args: Optional[PretrainArgs] = None,
+                 run_num: int, train_examples: int = 0, args: Optional[FinetuneArgs] = None,
                  carte_lr_index: Optional[int] = None):
         self.run_name = run_name
         self.dataset_ids = dataset_ids

@@ -36,7 +36,7 @@ class RunMetadata:
 class ModelTrainer:
 
     def __init__(self, dataset_id: TabularDatasetID, model_cls: Type[TabularModel], exp_name: str, device: torch.device,
-                 run_num: int, train_examples: int, args: Optional[PretrainArgs | FinetuneArgs] = None,
+                 run_num: int, train_examples: int, args: Optional[FinetuneArgs] = None,
                  carte_lr_idx: Optional[int] = None):
         self.model_cls = model_cls
         self.dataset_id = dataset_id
