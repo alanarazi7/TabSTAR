@@ -4,6 +4,7 @@ from functools import wraps
 import inspect
 
 import wandb
+from wandb.errors import CommError
 
 from tabstar_paper.constants import WANDB_API_KEY, WANDB_ENTITY
 
@@ -47,4 +48,8 @@ def wandb_run(exp_name: str, project: str) -> None:
     if WANDB_API_KEY and WANDB_ENTITY is None:
         raise ValueError("WANDB_ENTITY is not set! Please set it in your .env file.")
     wandb.login(key=WANDB_API_KEY)
-    wandb.init(entity=WANDB_ENTITY, project=project, reinit=True, name=exp_name, mode=mode)
+    try:
+        wandb.init(entity=WANDB_ENTITY, project=project, reinit=True, name=exp_name, mode=mode)
+    except CommError as e:
+        print(f"⚠️ WandB couldn't connect to entity `{WANDB_ENTITY}`!")
+        raise e
