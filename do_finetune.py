@@ -4,11 +4,10 @@ from typing import Optional
 import torch
 
 from tabstar.training.devices import get_device
-from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE
+from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.tabstar.tabstar_trainer import TabStarFinetuneTrainer
-from tabular.tabstar.params.constants import LORA_BATCH
 from tabular.trainers.finetune import do_finetune_run
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
