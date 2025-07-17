@@ -101,8 +101,7 @@ class TabStarTrainer:
 
     def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
         predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-        is_reg = bool(data.d_output == 1)
-        loss = calculate_loss(predictions=predictions, y=data.y, is_reg=is_reg)
+        loss = calculate_loss(predictions=predictions, y=data.y, d_output=data.d_output)
         return loss, predictions
 
     def _do_update(self):

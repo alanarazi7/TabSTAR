@@ -4,15 +4,14 @@ import numpy as np
 import torch
 import wandb
 from torch.amp import autocast, GradScaler
-from torch.nn import Module, CrossEntropyLoss, MSELoss
+from torch.nn import Module
 from torch.optim import Optimizer, AdamW
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from tabstar.training.early_stopping import EarlyStopping
-from tabstar.training.hyperparams import MAX_EPOCHS
-from tabstar.training.metrics import apply_loss_fn, calculate_metric
+from tabstar.training.metrics import apply_loss_fn, calculate_metric, calculate_loss
 from tabstar.training.optimizer import get_scheduler
 from tabstar.training.utils import fix_seed
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_epoch_dataloader
@@ -150,15 +149,7 @@ class TabSTARPretrainer:
     def do_forward(self, x_txt: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> InferenceOutput:
         y_pred = self.model(x_txt=x_txt, x_num=x_num, sid=properties.name, d_output=properties.d_output)
         inference = InferenceOutput(y_pred=y_pred)
-        if properties.is_cls:
-            loss_fn = CrossEntropyLoss()
-            dtype =  torch.long
-        else:
-            loss_fn = MSELoss()
-            dtype = torch.float32
-        y = torch.tensor(y, dtype=dtype).to(self.device)
-        loss = loss_fn(inference.y_pred, y)
-        inference.loss = loss
+        inference.loss = calculate_loss(predictions=y_pred, y=y, d_output=properties.d_output)
         return inference
 
     def train_one_batch(self, x_cat: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> Loss:
