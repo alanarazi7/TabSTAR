@@ -42,7 +42,12 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 
 class TabSTARPretrainer:
 
-    def __init__(self, run_name: str, dataset_ids: List[TabularDatasetID], device: torch.device, pretrain_args: PretrainArgs):
+    def __init__(self,
+                 run_name: str,
+                 dataset_ids: List[TabularDatasetID],
+                 max_epochs: int,
+                 device: torch.device,
+                 pretrain_args: PretrainArgs):
         self.run_name = run_name
         self.dataset_ids = dataset_ids
         self.device = device
@@ -55,7 +60,7 @@ class TabSTARPretrainer:
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
         self.scaler = GradScaler()
-        self.max_epochs = MAX_EPOCHS
+        self.max_epochs = max_epochs
         self.patience = PRETRAIN_PATIENCE
         fix_seed()
         self.initialize_model()
@@ -114,7 +119,6 @@ class TabSTARPretrainer:
                     # If the total number of batches isn't divisible by accumulation_steps, update one last time.
                     if (batch_idx + 1) % self.config.accumulation_steps != 0:
                         self.do_update()
-                wandb.log({}, step=epoch)
                 dev_loss = LossAccumulator()
                 dev_metrics = []
                 with tqdm(total=len(self.data_dirs), desc="Eval", leave=False) as pbar_eval:

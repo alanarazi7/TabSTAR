@@ -19,7 +19,8 @@ from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
 
 
-def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: PretrainArgs):
+def do_pretrain(pretrain_datasets: List[TabularDatasetID],
+                pretrain_args: PretrainArgs):
     if exists(pretrain_args.path):
         print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")
         return
@@ -28,7 +29,10 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID], pretrain_args: Pretra
     wandb_run(exp_name=pretrain_args.raw_exp_name, project="tabstar_pretrain")
     wandb.config.update(asdict(pretrain_args), allow_val_change=True)
     print(f"Pretraining over {len(pretrain_datasets)} datasets")
-    model = TabSTARPretrainer(run_name=pretrain_args.full_exp_name, dataset_ids=pretrain_datasets, device=device,
+    model = TabSTARPretrainer(run_name=pretrain_args.full_exp_name,
+                              dataset_ids=pretrain_datasets,
+                              max_epochs=pretrain_args.epochs,
+                              device=device,
                               pretrain_args=pretrain_args)
     model.train()
     pretrain_args.to_json()
