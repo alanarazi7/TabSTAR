@@ -3,10 +3,10 @@ from typing import Dict
 import wandb
 from torch.optim.lr_scheduler import LRScheduler
 
+from tabstar.training.early_stopping import EarlyStopping
 from tabular.datasets.properties import DatasetProperties
 from tabular.evaluation.loss import LossAccumulator
 from tabular.evaluation.predictions import Predictions
-from tabular.utils.early_stopping import EarlyStopping
 
 
 def log_general(scheduler: LRScheduler, steps: int, epoch: int):
@@ -36,7 +36,7 @@ def summarize_epoch(epoch: int, train_loss: LossAccumulator, dev_loss: LossAccum
     if metric_score > early_stopper.metric:
         log_str += " 🥇"
     else:
-        log_str += f" 😓 [{early_stopper.epochs_without_improvement}]"
+        log_str += f" 😓 [{early_stopper.failed}]"
     print(log_str)
 
 def prefix(is_pretrain: bool) -> str:

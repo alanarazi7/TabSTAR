@@ -6,7 +6,7 @@ from typing import Optional, Self
 from tabular.trainers.pretrain_args import PretrainArgs
 
 
-# TODO: use HfArgumentParser
+# TODO: Kill FinetuneArgs, not really needed.
 @dataclass
 class FinetuneArgs:
     raw_exp_name: str

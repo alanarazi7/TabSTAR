@@ -13,6 +13,7 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.optimizer import get_optimizer, get_scheduler
 from tabular.datasets.tabular_datasets import TabularDatasetID
 from tabular.datasets.properties import DatasetProperties
@@ -30,7 +31,6 @@ from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.nn_logger import log_general, log_dev_loss, log_dev_performance, log_train_loss, summarize_epoch
 from tabular.utils.dataloaders import get_pretrain_epoch_dataloader, get_dataloader, round_robin_batches
 from tabular.utils.deep import print_model_summary, get_last_layers_num
-from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
 from tabular.utils.paths import get_model_path
 from tabular.utils.utils import verbose_print
@@ -83,7 +83,7 @@ class TabStarFinetuneTrainer(TabularModel):
         print_model_summary(self.model)
         print(f"Training {self.MODEL_NAME}!")
         self.prepare_dev_test_dataloaders()
-        early_stopper = EarlyStopping(args=self.args)
+        early_stopper = EarlyStopping(patience=self.args.patience)
         steps = 0
         with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
             for epoch in range(1, self.max_epochs + 1):

@@ -10,6 +10,7 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.hyperparams import MAX_EPOCHS
 from tabstar.training.metrics import apply_loss_fn, calculate_metric
 from tabstar.training.optimizer import get_scheduler
@@ -17,6 +18,7 @@ from tabstar.training.utils import fix_seed
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_epoch_dataloader
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
+from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
 
 ## TODO: Stop importing from tabular repo
 from tabular.datasets.tabular_datasets import TabularDatasetID
@@ -29,7 +31,6 @@ from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.nn_logger import log_general
 from tabular.utils.dataloaders import round_robin_batches
 from tabular.utils.deep import print_model_summary
-from tabular.utils.early_stopping import EarlyStopping
 from tabular.evaluation.inference import InferenceOutput, Loss
 from tabular.utils.optimizer import get_groups_for_optimizer
 from tabular.utils.paths import get_model_path
@@ -55,6 +56,7 @@ class TabSTARPretrainer:
         self.scheduler: Optional[LRScheduler] = None
         self.scaler = GradScaler()
         self.max_epochs = MAX_EPOCHS
+        self.patience = PRETRAIN_PATIENCE
         fix_seed()
         self.initialize_model()
         self.initialize_data_dirs()
@@ -88,7 +90,7 @@ class TabSTARPretrainer:
 
     def train(self):
         print_model_summary(self.model)
-        early_stopper = EarlyStopping(args=self.args)
+        early_stopper = EarlyStopping(patience=self.patience)
         steps = 0
         with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
             for epoch in range(1, self.max_epochs + 1):
@@ -128,7 +130,7 @@ class TabSTARPretrainer:
                 if metric > early_stopper.metric:
                     log_str += " 🥇"
                 else:
-                    log_str += f" 😓 [{early_stopper.epochs_without_improvement}]"
+                    log_str += f" 😓 [{early_stopper.failed}]"
                 print(log_str)
                 early_stopper.update(metric)
                 if early_stopper.is_best:
