@@ -1,11 +1,9 @@
-FINETUNE_PATIENCE = 5
-
 class EarlyStopping:
 
-    def __init__(self):
+    def __init__(self, patience: int):
         self.metric: float = float('-inf')
         self.failed: int = 0
-        self.patience = FINETUNE_PATIENCE
+        self.patience = patience
 
     def update(self, metric: float):
         if metric > self.metric:

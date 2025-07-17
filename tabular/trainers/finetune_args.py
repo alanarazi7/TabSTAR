@@ -31,7 +31,7 @@ class FinetuneArgs:
                             lora_r=args.lora_r,
                             epochs=args.epochs,
                             keep_model=args.downstream_keep_model,
-                            patience=args.downstream_patience)
+                            patience=args.patience)
 
     def set_full_exp_name(self) -> str:
         strings = [self.raw_exp_name,

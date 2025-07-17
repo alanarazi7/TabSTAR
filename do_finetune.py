@@ -4,8 +4,7 @@ from typing import Optional
 import torch
 
 from tabstar.training.devices import get_device
-from tabstar.training.early_stopping import FINETUNE_PATIENCE
-from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS
+from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_dataset_from_arg
 from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES, N_RUNS
 from tabular.tabstar.tabstar_trainer import TabStarFinetuneTrainer
@@ -39,8 +38,9 @@ if __name__ == "__main__":
     parser.add_argument('--run_num', type=int, default=0)
     parser.add_argument('--downstream_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--downstream_keep_model', action='store_true', default=False)
-    parser.add_argument('--downstream_patience', type=int, default=FINETUNE_PATIENCE)
+    # Training
     parser.add_argument('--epochs', type=int, default=MAX_EPOCHS)
+    parser.add_argument('--patience', type=int, default=FINETUNE_PATIENCE)
     parser.add_argument('--lora_lr', type=float, default=LORA_LR)
     parser.add_argument('--lora_batch', type=int, default=LORA_BATCH)
     parser.add_argument('--lora_r', type=int, default=LORA_R)

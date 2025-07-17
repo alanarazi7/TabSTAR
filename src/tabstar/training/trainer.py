@@ -27,8 +27,8 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 # TODO: replace with HF built in Trainer, exclude custom logics
 class TabStarTrainer:
 
-    def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, device: torch.device, model_version: str,
-                 debug: bool = False):
+    def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, patience: int, device: torch.device,
+                 model_version: str, debug: bool = False):
         self.lora_lr = lora_lr
         self.max_epochs = max_epochs
         self.device = device
@@ -40,7 +40,7 @@ class TabStarTrainer:
         self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.lora_lr, epochs=self.max_epochs)
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.early_stopper = EarlyStopping()
+        self.early_stopper = EarlyStopping(patience=patience)
         self.steps: int = 0
         # TODO the config should be initialized earlier, and allow hyperparameters control
         self.config = TabStarConfig()
