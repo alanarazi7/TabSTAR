@@ -50,22 +50,16 @@ class TabStarModel(PreTrainedModel):
         raise RuntimeError(f"🤯 OOM even with batch size 1!")
 
     def get_textual_embedding_in_batches(self, x_txt: Tensor, tokenized: Dict[str, Tensor], text_batch_size: int) -> Tensor:
-        # Get unique texts and mapping indices
-        unique_texts, inverse_indices = np.unique(x_txt, return_inverse=True)
-        num_unique_texts = len(unique_texts)
+        num_unique_texts = tokenized['input_ids'].size(0)
         embeddings = []
         for i in range(0, num_unique_texts, text_batch_size):
-            batch_texts = unique_texts[i:i + text_batch_size].tolist()
-            inputs = self.tokenizer(batch_texts, padding=True, return_tensors='pt', truncation=True)
-            inputs = {k: v.to(self.device) for k, v in inputs.items()}
-            outputs = self.text_encoder(**inputs)
+            batch_inputs = {k: v[i:i + text_batch_size] for k, v in tokenized.items()}
+            outputs = self.text_encoder(**batch_inputs)
             # Take the [CLS] token representation
             embeddings.append(outputs.last_hidden_state[:, 0, :])
         embeddings = torch.cat(embeddings, dim=0)
-        inverse_indices = torch.tensor(inverse_indices, dtype=torch.long, device=embeddings.device)
-        # Map the unique embeddings back to the original positions and reshape to match the original dimension
         batch_size, seq_len = x_txt.shape
-        embeddings = embeddings[inverse_indices].view(batch_size, seq_len, -1)
+        embeddings = embeddings[x_txt]
         if not tuple(embeddings.shape) == (batch_size, seq_len, self.config.d_model):
             raise RuntimeError(f"Unexpected embedding shape: {embeddings.shape}")
         return embeddings
