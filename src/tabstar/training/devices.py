@@ -11,8 +11,12 @@ def get_device(device: Optional[str | torch.device] = None) -> torch.device:
         device = _get_device_type()
     if 'cuda' in device:
         gpu_num = get_gpu_num(device)
+        # TODO: with warning emoji
+        print(f"EMOJI: About to use GPU {gpu_num} with device {device}.")
         torch.cuda.set_device(gpu_num)
+        print(f"Before setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}")
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_num)
+        print(f"After setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}")
     return torch.device(device)
 
 def clear_cuda_cache():
