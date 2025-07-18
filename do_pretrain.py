@@ -15,7 +15,6 @@ from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UN
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
 from tabstar_paper.utils.logging import wandb_run
 from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
-from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.trainers.pretrain_args import PretrainArgs
 
 
@@ -61,8 +60,6 @@ if __name__ == "__main__":
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
     # Data
     parser.add_argument('--n_datasets', type=int, default=None)
-    parser.add_argument('--numbers_verbalization', default="full",
-                        choices=[v.value for v in NumberVerbalization])
     parser.add_argument('--fold', type=int, default=None)
     parser.add_argument('--only_text_folds', action='store_true', default=False)
     # Optimizer
