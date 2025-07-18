@@ -1,26 +1,18 @@
 import os
 from os.path import join
 
+from tabstar_paper.pretraining.paths import pretrain_exp_dir
+
 CACHE_DIR = ".tabular_cache"
 
-
-
-_PRETRAIN_DIR = join(CACHE_DIR, "pretrain")
 _FINETUNE_DIR = join(CACHE_DIR, "finetune")
 _BASELINES_DIR = join(CACHE_DIR, "baselines")
 _DATASET_DIR = join(CACHE_DIR, "datasets")
 
 
-def pretrain_exp_dir(exp_name: str) -> str:
-    return join(_PRETRAIN_DIR, exp_name)
-
 def get_model_path(run_name: str) -> str:
     main_dir = pretrain_exp_dir(run_name)
-    return join(main_dir, "best")
-
-
-def pretrain_args_path(exp_name: str) -> str:
-    return join(pretrain_exp_dir(exp_name), "pretrain_args.json")
+    return join(main_dir, "best_checkpoint")
 
 
 def downstream_run_dir(run_name: str, is_tabstar: bool) -> str:

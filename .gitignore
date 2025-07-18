@@ -6,10 +6,8 @@
 **/catboost_info/
 **/wandb/
 **/.benchmark_results/
-**/.tabstar_checkpoint/
-**/.tabstar_datasets/
+**/.tabstar_*/
 **/tabstar.egg-info/
-**/.tabular_cache/
 **/check_whl/
 
 

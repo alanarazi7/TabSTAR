@@ -1,11 +1,14 @@
 import argparse
 from dataclasses import dataclass, asdict
-from typing import List, Optional, Self
+from typing import List, Optional, Self, Any
 
+from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar_paper.pretraining.paths import pretrain_args_path
 from tabstar_paper.utils.io_handlers import load_json, dump_json
-from tabular.datasets.tabular_datasets import OpenMLDatasetID
-from tabular.utils.paths import pretrain_args_path, create_dir
-from tabular.utils.utils import get_now, verbose_print
+from tabstar_paper.utils.timing import get_now
+
+from tabular.utils.paths import create_dir
+from tabular.utils.utils import verbose_print
 
 
 # TODO: use HfArgumentParser
@@ -16,14 +19,14 @@ class PretrainArgs:
     base_lr: float
     weight_decay: float
     unfreeze_layers: int
-    datasets: List[int]
+    datasets: List[Any]
     epochs: int
     timestamp: str
     num_datasets: int
     fold: Optional[int] = None
 
     @classmethod
-    def from_args(cls, args: argparse.Namespace, pretrain_data: List[OpenMLDatasetID]) -> Self:
+    def from_args(cls, args: argparse.Namespace, pretrain_data: List[TabularDatasetID]) -> Self:
         num_datasets = len(pretrain_data)
         return PretrainArgs(raw_exp_name=args.exp,
                             tabular_layers=args.tabular_layers,
