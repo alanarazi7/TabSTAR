@@ -3,7 +3,9 @@ from typing import Optional
 import torch
 
 
-def get_device(device: Optional[str] = None) -> torch.device:
+def get_device(device: Optional[str | torch.device] = None) -> torch.device:
+    if isinstance(device, torch.device):
+        return device
     if device is None:
         device = _get_device_type()
     if 'cuda' in device:
