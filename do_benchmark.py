@@ -74,6 +74,7 @@ def prepare_combinations(args):
 
     combos = [(m, d, r) for m in models for d in datasets for r in run_numbers]
     if device is not None:
+        print(f"Using device: {device}")
         count_gpus_in_machine = torch.cuda.device_count()
         gpu_num = int(GPU.strip('cuda:'))
         combos = combos[gpu_num::count_gpus_in_machine]
@@ -89,6 +90,7 @@ def run_benchmarks(combinations, args):
     """
 
     # TODO: change the name 'run_num' to 'trial' for consistency
+    print("Running benchmarks with the following combinations:")
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d['run_num']) for _, d in existing.iterrows()}
     for model, dataset_id, trial in tqdm(combinations):
