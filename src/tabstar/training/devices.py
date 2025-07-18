@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 import torch
@@ -11,6 +12,7 @@ def get_device(device: Optional[str | torch.device] = None) -> torch.device:
     if 'cuda' in device:
         gpu_num = get_gpu_num(device)
         torch.cuda.set_device(gpu_num)
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_num)
     return torch.device(device)
 
 def clear_cuda_cache():
