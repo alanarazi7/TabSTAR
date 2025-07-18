@@ -10,7 +10,6 @@ from tabular.tabstar.arch.numerical_fusion import NumericalFusion
 from tabular.tabstar.arch.prediction_head import TabularPredictionHead
 from tabular.tabstar.arch.encoder_backbone import TabularEncoderBackbone
 from tabular.tabstar.params.config import TabStarConfig
-from tabular.preprocessing.tokenization import tokenize
 from tabular.utils.deep import get_last_layers_num
 from tabular.utils.utils import verbose_print
 
@@ -70,10 +69,11 @@ class TabStarModel(PreTrainedModel):
         verbose_print(f"Unique texts: {num_unique_texts}, Text Batch size: {text_batch_size}, Input: {x_txt.shape}")
         for i in range(0, num_unique_texts, text_batch_size):
             batch_texts = unique_texts[i:i + text_batch_size].tolist()
-            inputs = tokenize(batch_texts, device=self.device)
-            outputs = self.text_encoder(**inputs)
-            # Take the [CLS] token representation
-            embeddings.append(outputs.last_hidden_state[:, 0, :])
+            assert False, "We are not tokenizing anymore inside the ARCH!"
+            # inputs = tokenize_(batch_texts, device=self.device)
+            # outputs = self.text_encoder(**inputs)
+            # # Take the [CLS] token representation
+            # embeddings.append(outputs.last_hidden_state[:, 0, :])
         embeddings = torch.cat(embeddings, dim=0)
         inverse_indices = torch.tensor(inverse_indices, dtype=torch.long, device=embeddings.device)
         # Map the unique embeddings back to the original positions and reshape to match the original dimension
