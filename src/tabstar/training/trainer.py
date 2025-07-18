@@ -75,8 +75,8 @@ class TabStarTrainer:
         total_samples = 0
         for data in tqdm(dataloader, desc="Batches", leave=False):
             batch_loss = self._train_batch(data)
-            total_loss += batch_loss * len(data.y)
-            total_samples += len(data.y)
+            total_loss += batch_loss * len(data['y'])
+            total_samples += len(data['y'])
             self.steps += 1
             if self.steps % self.config.accumulation_steps == 0:
                 self._do_update()
@@ -126,14 +126,14 @@ class TabStarTrainer:
         d_output = None
 
         for data in dataloader:
-            d_output = data.d_output
+            d_output = data['d_output']
             with torch.no_grad(), autocast(device_type=self.device.type, enabled=self.use_amp):
                 batch_loss, batch_predictions = self._do_forward(data=data)
-                total_loss += batch_loss * len(data.y)
-                total_samples += len(data.y)
+                total_loss += batch_loss * len(data['y'])
+                total_samples += len(data['y'])
                 batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=d_output)
                 y_pred.append(batch_predictions)
-                y_true.append(data.y)
+                y_true.append(data['y'])
         y_pred = concat_predictions(y_pred)
         y_true = np.concatenate(y_true)
         metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)

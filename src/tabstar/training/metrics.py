@@ -70,7 +70,7 @@ def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
     return prediction
 
 
-def calculate_loss(predictions: Tensor, y: Series | np.ndarray, d_output: int) -> Tensor:
+def calculate_loss(predictions: Tensor, y: Tensor | Series | np.ndarray, d_output: int) -> Tensor:
     is_reg = bool(d_output == 1)
     if is_reg:
         loss_fn = MSELoss()
@@ -78,7 +78,9 @@ def calculate_loss(predictions: Tensor, y: Series | np.ndarray, d_output: int) -
     else:
         loss_fn = CrossEntropyLoss()
         dtype = torch.long
-    y = torch.tensor(y, dtype=dtype).to(predictions.device)
+    if not isinstance(y, Tensor):
+        print(f"Converting y to tensor: {type(y)}")
+        y = torch.tensor(y, dtype=dtype).to(predictions.device)
     if is_reg and y.ndim == 1:
         y = y.unsqueeze(1)
     loss = loss_fn(predictions, y)
