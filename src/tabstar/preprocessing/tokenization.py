@@ -1,6 +1,5 @@
-from typing import List, Dict
+from typing import List
 
-import torch
 from transformers import AutoTokenizer, BatchEncoding
 
 from tabstar.arch.config import E5_SMALL
@@ -8,10 +7,9 @@ from tabstar.arch.config import E5_SMALL
 TOKENIZER = {}
 
 
-def tokenize(texts: List[str], device: torch.device) -> BatchEncoding | Dict:
+def tokenize(texts: List[str]) -> BatchEncoding:
     tokenizer = get_tokenizer()
     inputs = tokenizer(texts, padding=True, return_tensors='pt', truncation=True)
-    inputs = {k: v.to(device) for k, v in inputs.items()}
     return inputs
 
 
