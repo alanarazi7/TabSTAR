@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     device = get_device(device=GPU)
     combos = [(m, d, r) for m in models for d in datasets for r in trials]
-    if device is not None:
+    if GPU is not None:
         count_gpus_in_machine = torch.cuda.device_count()
         gpu_num = int(GPU.replace('cuda:', ''))
         combos = combos[gpu_num::count_gpus_in_machine]
