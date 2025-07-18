@@ -1,12 +1,9 @@
-import os
 from typing import Optional
 
 import torch
 
 
-def get_device(device: Optional[str | torch.device] = None) -> torch.device:
-    if isinstance(device, torch.device):
-        return device
+def get_device(device: Optional[str] = None) -> torch.device:
     if device is None:
         device = _get_device_type()
     if 'cuda' in device:
@@ -41,7 +38,7 @@ def _get_most_free_gpu() -> Optional[str]:
                 best_free_mem = free_mem
                 best_idx = f'cuda:{idx}'
         except RuntimeError as e:
-            print(f"[WARN] Could not check GPU {idx}: {e}")
+            print(f"⛔ Could not check GPU {idx}: {e}")
             continue
     if best_idx is None:
         raise RuntimeError("No available GPU found: all GPUs are out of memory or inaccessible.")

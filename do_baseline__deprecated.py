@@ -42,4 +42,4 @@ if __name__ == "__main__":
 
     device = get_device(device=GPU)
     do_finetune_run(exp_name=args.exp, dataset=dataset, model=model, run_num=args.run_num, train_examples=n_examples,
-                    device=torch.device(device))
+                    device=device)

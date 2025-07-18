@@ -1,5 +1,7 @@
 from typing import Type, Optional
 
+import torch
+
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegressor
@@ -14,8 +16,8 @@ DOWNSTREAM_EXAMPLES = 10_000
 def evaluate_on_dataset(model_cls: Type[TabularModel],
                         dataset_id: TabularDatasetID,
                         trial: int,
-                        train_examples: int = DOWNSTREAM_EXAMPLES,
-                        device: Optional[str] = None,
+                        train_examples: int,
+                        device: torch.device,
                         verbose: bool = False) -> Metrics:
     is_tabstar = issubclass(model_cls, BaseTabSTAR)
     name = "TabSTAR ⭐" if is_tabstar else model_cls.MODEL_NAME
@@ -28,7 +30,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
         model = tabstar_cls(pretrain_dataset_or_path=dataset_id, device=device, verbose=verbose)
     else:
-        model = model_cls(is_cls=is_cls, verbose=verbose)
+        model = model_cls(is_cls=is_cls, device=device, verbose=verbose)
     model.fit(x_train, y_train)
     metrics = model.score_all_metrics(X=x_test, y=y_test)
     print(f"Scored {metrics.score:.4f} on dataset {dataset.dataset_id}.")

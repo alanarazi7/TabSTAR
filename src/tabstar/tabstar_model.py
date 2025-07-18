@@ -27,7 +27,7 @@ class BaseTabSTAR:
                  max_epochs: int = MAX_EPOCHS,
                  patience: int = FINETUNE_PATIENCE,
                  verbose: bool = False,
-                 device: Optional[str] = None,
+                 device: Optional[str | torch.device] = None,
                  pretrain_dataset_or_path: Optional[str | TabularDatasetID] = None,
                  debug: bool = False):
         self.lora_lr = lora_lr
@@ -38,7 +38,10 @@ class BaseTabSTAR:
         self.debug = debug
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
-        self.device = get_device(device=device)
+        if isinstance(device, torch.device):
+            self.device = device
+        else:
+            self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
         self.use_amp = bool(self.device.type == "cuda")
         self.model_version = get_tabstar_version(pretrain_dataset_or_path=pretrain_dataset_or_path)
