@@ -58,7 +58,8 @@ class TabSTARPretrainer:
         self.model: Optional[Module] = None
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
-        self.scaler = GradScaler()
+        self.use_amp = bool(self.device.type == "cuda")
+        self.scaler = GradScaler(enabled=self.use_amp)
         self.max_epochs = max_epochs
         self.patience = PRETRAIN_PATIENCE
         fix_seed()
@@ -154,7 +155,7 @@ class TabSTARPretrainer:
 
     def train_one_batch(self, x_cat: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> Loss:
         self.model.train()
-        with autocast(device_type=self.device.type):
+        with autocast(device_type=self.device.type, enabled=self.use_amp):
             inference = self.do_forward(x_txt=x_cat, x_num=x_num, y=y, properties=properties)
             # Divide the loss to scale gradients appropriately.
             loss = inference.loss / self.config.accumulation_steps
@@ -177,7 +178,7 @@ class TabSTARPretrainer:
 
     def eval_one_batch(self, x_txt: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties, cache: PredictionsCache) -> Loss:
         self.model.eval()
-        with torch.no_grad(), autocast(device_type=self.device.type):
+        with torch.no_grad(), autocast(device_type=self.device.type, enabled=self.use_amp):
             inference = self.do_forward(x_txt=x_txt, x_num=x_num, y=y, properties=properties)
         predictions = apply_loss_fn(inference.y_pred, d_output=properties.d_output)
         cache.append(y=y, predictions=predictions)
