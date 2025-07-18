@@ -7,7 +7,7 @@ from pandas import DataFrame
 from tqdm import tqdm
 
 from tabstar.tabstar_model import BaseTabSTAR
-from tabstar.training.devices import get_device
+from tabstar.training.devices import get_device, get_gpu_num
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.baselines.xgboost import XGBoost
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     combos = [(m, d, r) for m in models for d in datasets for r in trials]
     if GPU is not None:
         count_gpus_in_machine = torch.cuda.device_count()
-        gpu_num = int(GPU.replace('cuda:', ''))
+        gpu_num = get_gpu_num(device=GPU)
         combos = combos[gpu_num::count_gpus_in_machine]
 
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
