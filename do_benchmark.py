@@ -16,72 +16,43 @@ from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.constants import GPU
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
-from tabstar_paper.utils.logging import log_calls_______, get_current_commit_hash
+from tabstar_paper.utils.logging import get_current_commit_hash
 
 BASELINES = [CatBoost, XGBoost, RandomForest]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
 SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
 
-device = get_device(device=GPU)
 
-
-def main():
-    """
-    Entry point for running benchmarks on tabular models.
-    Parses arguments, prepares model/dataset/run combinations, and evaluates each.
-    """
-    args = parse_args()
-    combinations = prepare_combinations(args)
-    run_benchmarks(combinations, args)
-
-
-def parse_args():
-    """Parse command-line arguments for the benchmark script."""
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, choices=list(SHORT2MODELS.keys()), default=None)
     parser.add_argument('--dataset_id')
-    # TODO: change the name 'run_num' to 'trial' for consistency
-    parser.add_argument('--run_num', type=int)
+    parser.add_argument('--trial', type=int)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--cls', action='store_true', default=False)
-    return parser.parse_args()
+    args = parser.parse_args()
 
-
-def prepare_combinations(args):
-    """
-    Prepare all (model, dataset, run_num) combinations to evaluate.
-    Returns a list of tuples.
-    """
     models = list(SHORT2MODELS.values())
-    run_numbers = list(range(10))
+    trials = list(range(10))
     datasets = TEXTUAL_DATASETS
 
     if args.model:
         models = [SHORT2MODELS[args.model]]
     if args.dataset_id:
         datasets = [get_dataset_from_arg(args.dataset_id)]
-    if isinstance(args.run_num, int):
-        run_numbers = [args.run_num]
+    if isinstance(args.trial, int):
+        trials = [args.trial]
 
-    combos = [(m, d, r) for m in models for d in datasets for r in run_numbers]
+    device = get_device(device=GPU)
+    combos = [(m, d, r) for m in models for d in datasets for r in trials]
     if device is not None:
         count_gpus_in_machine = torch.cuda.device_count()
         combos = combos[int(GPU)::count_gpus_in_machine]
 
-    return combos
-
-
-def run_benchmarks(combinations, args):
-    """
-    Run evaluation for each (model, dataset, run_num) combination.
-    Saves results to local files.
-    """
-
-    # TODO: change the name 'run_num' to 'trial' for consistency
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
-    existing_combos = {(d['model'], d['dataset'], d['run_num']) for _, d in existing.iterrows()}
-    for model, dataset_id, trial in tqdm(combinations):
+    existing_combos = {(d['model'], d['dataset'], d.get('run_num') or d.get('trial')) for _, d in existing.iterrows()}
+    for model, dataset_id, trial in tqdm(combos):
         if args.cls and dataset_id.name.startswith("REG_"):
             continue
         model_name = model.__name__
@@ -114,7 +85,3 @@ def run_benchmarks(combinations, args):
         key_file_dir = os.path.dirname(key_file)
         os.makedirs(key_file_dir, exist_ok=True)
         dump_json(result, key_file)
-
-
-if __name__ == "__main__":
-    main()
