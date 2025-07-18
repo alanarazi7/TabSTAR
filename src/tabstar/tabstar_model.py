@@ -99,8 +99,12 @@ class BaseTabSTAR:
         predictions = []
         for data in dataloader:
             with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
-                batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
+                x_num = data['x_num'].to(self.device)
+                x_txt = data['x_txt'].to(self.device)
+                tokenized = {k: v.to(self.device) for k, v in data['tokenized'].items()}
+                d_output = data['d_output']
+                batch_predictions = self.model_(x_txt=x_txt, x_num=x_num, tokenized=tokenized, d_output=d_output)
+                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=d_output)
                 predictions.append(batch_predictions)
         predictions = concat_predictions(predictions)
         return predictions
