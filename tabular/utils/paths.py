@@ -14,12 +14,9 @@ _DATASET_DIR = join(CACHE_DIR, "datasets")
 def pretrain_exp_dir(exp_name: str) -> str:
     return join(_PRETRAIN_DIR, exp_name)
 
-def get_model_path(run_name: str, is_pretrain: bool) -> str:
-    if is_pretrain:
-        main_dir = pretrain_exp_dir(run_name)
-    else:
-        main_dir = downstream_run_dir(run_name, is_tabstar=True)
-    return join(main_dir, "best.pt")
+def get_model_path(run_name: str) -> str:
+    main_dir = pretrain_exp_dir(run_name)
+    return join(main_dir, "best")
 
 
 def pretrain_args_path(exp_name: str) -> str:

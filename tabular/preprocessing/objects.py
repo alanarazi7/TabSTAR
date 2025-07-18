@@ -1,7 +1,5 @@
 from enum import StrEnum
 
-from tabular.constants import NUM_VERBALIZATION
-
 
 class FeatureType(StrEnum):
     # Native OpenML Features
@@ -22,7 +20,6 @@ class SupervisedTask(StrEnum):
 
 
 class PreprocessingMethod(StrEnum):
-    TABSTAR = f"TabSTAR-20250622-{NUM_VERBALIZATION}"
     CARTE = "Carte"
     TABPFNV2 = "TabPFN-v2"
     TREES_OPT = "Trees-Optuna"

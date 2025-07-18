@@ -2,7 +2,7 @@ from collections import Counter
 from enum import StrEnum
 from typing import List, Dict, Tuple
 
-from pandas import DataFrame, Series
+from pandas import Series
 from sklearn.model_selection import train_test_split
 
 from tabstar.constants import SEED
@@ -61,14 +61,6 @@ def _get_train_dev(raw: RawDataset, indices: List[int], use_dev: bool, run_num: 
     dev_size = min(dev_size, MAX_VAL_SIZE)
     return _do_split(raw=raw, indices=indices, run_num=run_num, test_size=dev_size)
 
-
-def get_x_train(x: DataFrame, splits: List[DataSplit]) -> DataFrame:
-    return get_x_split(x=x, splits=splits, split=DataSplit.TRAIN)
-
-def get_x_split(x: DataFrame, splits: List[DataSplit], split: DataSplit) -> DataFrame:
-    indices = [i for i, s in enumerate(splits) if s == split]
-    return x.iloc[indices].reset_index(drop=True)
-
 def get_y_train(y: Series, splits: List[DataSplit]) -> Series:
     return get_y_split(y=y, splits=splits, split=DataSplit.TRAIN)
 
@@ -104,7 +96,7 @@ def _sample_xy_and_get_array(raw: RawDataset, n: int, splits: Dict[DataSplit, Li
 def _uses_dev(processing: PreprocessingMethod) -> bool:
     if processing in CV_METHODS:
         return False
-    process2dev = {PreprocessingMethod.TABSTAR: True,
+    process2dev = {
                    # TabPFN-v2 and CARTE don't use dev
                    PreprocessingMethod.TABPFNV2: False,
                    PreprocessingMethod.CARTE: False,

@@ -23,13 +23,8 @@ def do_finetune_run(exp_name: str,
                     carte_lr_idx: Optional[int] = None) -> RunMetadata:
     if device is None:
         device = get_device()
-    if isinstance(finetune_args, FinetuneArgs):
-        if finetune_args.pretrain_args.datasets:
-            if dataset.value in finetune_args.pretrain_args.datasets:
-                raise RuntimeError(f"Can't finetune model with dataset {dataset} that appears in pretraining!")
     trainer = ModelTrainer(dataset_id=dataset, model_cls=model, exp_name=exp_name, device=device,
-                           run_num=run_num, args=finetune_args, train_examples=train_examples,
-                           carte_lr_idx=carte_lr_idx)
+                           run_num=run_num, train_examples=train_examples, carte_lr_idx=carte_lr_idx)
     if run_metadata := trainer.existing_score():
         print(f"Already trained {model.MODEL_NAME} on {dataset.name} for run {run_num}: {run_metadata.test_score:.3f}")
         return run_metadata

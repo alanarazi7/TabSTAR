@@ -3,11 +3,10 @@ from dataclasses import dataclass, asdict
 from typing import List, Optional, Self
 
 from tabstar_paper.utils.io_handlers import load_json, dump_json
-from tabstar_paper.utils.logging import get_current_commit_hash
 from tabular.datasets.tabular_datasets import OpenMLDatasetID
 from tabular.tabstar.params.constants import NumberVerbalization
 from tabular.utils.paths import pretrain_args_path, create_dir
-from tabular.utils.utils import get_today, verbose_print
+from tabular.utils.utils import get_now, verbose_print
 
 
 # TODO: use HfArgumentParser
@@ -21,19 +20,13 @@ class PretrainArgs:
     unfreeze_layers: int
     datasets: List[int]
     epochs: int
+    timestamp: str
+    num_datasets: int
     fold: Optional[int] = None
-    full_exp_name: Optional[str] = None
-    cached: bool = False
-    num_datasets: int = 0
-
-    def __post_init__(self):
-        if self.cached:
-            return
-        self.num_datasets = len(self.datasets)
-        self.full_exp_name = self.set_full_exp_name()
 
     @classmethod
     def from_args(cls, args: argparse.Namespace, pretrain_data: List[OpenMLDatasetID]) -> Self:
+        num_datasets = len(pretrain_data)
         return PretrainArgs(raw_exp_name=args.exp,
                             tabular_layers=args.tabular_layers,
                             base_lr=args.base_lr,
@@ -42,14 +35,15 @@ class PretrainArgs:
                             numbers_verbalization=NumberVerbalization(args.numbers_verbalization),
                             datasets=[d.value for d in pretrain_data],
                             epochs=args.epochs,
-                            fold=args.fold)
+                            fold=args.fold,
+                            timestamp=get_now(),
+                            num_datasets=num_datasets)
 
     @classmethod
     def from_json(cls, pretrain_exp: str):
         path = pretrain_args_path(pretrain_exp)
         data = load_json(path)
         verbose_print(f"Loaded the following pretrain args: {data}")
-        data['cached'] = True
         args = PretrainArgs(**data)
         args.numbers_verbalization = NumberVerbalization(args.numbers_verbalization)
         if len(args.datasets) == 0:
@@ -62,24 +56,9 @@ class PretrainArgs:
         dump_json(d, self.path)
 
     @property
+    def full_exp_name(self) -> str:
+        return f"{self.timestamp}_{self.raw_exp_name}"
+
+    @property
     def path(self) -> str:
         return pretrain_args_path(self.full_exp_name)
-
-    def set_full_exp_name(self) -> str:
-        strings = [get_today(),
-                   self.raw_exp_name,
-                   f"data_{self.num_datasets}",
-                   f"tab_{self.tabular_layers}",
-                   f"layers_{self.unfreeze_layers}",
-                   f"num_verb_{self.numbers_verbalization}",
-                   f"lr_{str_float(self.base_lr)}",
-                   f"wd_{str_float(self.weight_decay)}",
-                   f"epochs_{self.epochs}",
-                   f"git_{get_current_commit_hash()}"]
-        if self.fold is not None:
-            strings.append(f"fold_{self.fold}")
-        return "__".join(strings)
-
-
-def str_float(f: float) -> str:
-    return str(f).replace('.', '')

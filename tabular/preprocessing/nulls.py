@@ -20,9 +20,6 @@ def convert_series_to_numeric(s: pd.Series, missing_value: str = None) -> pd.Ser
         return _convert_numeric_with_missing(s=s, missing_value=missing_value)
     raise ValueError(f"Missing values detected are {unique_non_numeric}. Should be only one!")
 
-def get_invalid_indices(ls: List | Series) -> Set[int]:
-    return {i for i, x in enumerate(ls) if _get_non_null_value(x) is None}
-
 
 def get_valid_values(ls: List | Series) -> List:
     return [x for x in ls if _get_non_null_value(x) is not None]

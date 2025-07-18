@@ -68,7 +68,7 @@ class TabSTARPretrainer:
 
     @property
     def model_path(self) -> str:
-        return get_model_path(self.run_name, is_pretrain=True)
+        return get_model_path(self.run_name)
 
 
     def initialize_data_dirs(self):

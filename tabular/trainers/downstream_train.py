@@ -7,9 +7,7 @@ import torch
 from tabstar_paper.utils.io_handlers import load_json, dump_json
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_sid
 from tabular.models.abstract_model import TabularModel
-from tabular.tabstar.tabstar_trainer import TabStarFinetuneTrainer
 from tabular.preprocessing.splits import DataSplit
-from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.utils.paths import create_dir, train_results_path
 
 
@@ -33,8 +31,13 @@ class RunMetadata:
 
 class ModelTrainer:
 
-    def __init__(self, dataset_id: TabularDatasetID, model_cls: Type[TabularModel], exp_name: str, device: torch.device,
-                 run_num: int, train_examples: int, args: Optional[FinetuneArgs] = None,
+    def __init__(self,
+                 dataset_id: TabularDatasetID,
+                 model_cls: Type[TabularModel],
+                 exp_name: str,
+                 device: torch.device,
+                 run_num: int,
+                 train_examples: int,
                  carte_lr_idx: Optional[int] = None):
         self.model_cls = model_cls
         self.dataset_id = dataset_id
@@ -42,9 +45,7 @@ class ModelTrainer:
         self.train_examples = train_examples
         self.run_num = run_num
         self.device = device
-        is_tabstar = issubclass(model_cls, TabStarFinetuneTrainer)
-        self.res_path = train_results_path(self.run_name, is_tabstar=is_tabstar)
-        self.args = args
+        self.res_path = train_results_path(self.run_name, is_tabstar=False)
         # Hacky that it is here, but, oh well
         self.carte_lr_idx = carte_lr_idx
 
@@ -73,8 +74,9 @@ class ModelTrainer:
     @property
     def run_name(self) -> str:
         strings = [self.exp_name,
-                   self.model_cls.SHORT_NAME,
                    f"sid_{get_sid(self.dataset_id)}",
                    f"run_{self.run_num}",
                    f"examples_{self.train_examples}"]
+        if self.model_cls is not None:
+            strings.append(self.model_cls.MODEL_NAME)
         return "__".join(strings)

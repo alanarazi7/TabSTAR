@@ -28,7 +28,7 @@ class BaseTabSTAR:
                  patience: int = FINETUNE_PATIENCE,
                  verbose: bool = False,
                  device: Optional[str] = None,
-                 pretrain_dataset: Optional[TabularDatasetID] = None,
+                 pretrain_dataset_or_path: Optional[str | TabularDatasetID] = None,
                  debug: bool = False):
         self.lora_lr = lora_lr
         self.lora_r = lora_r
@@ -41,7 +41,7 @@ class BaseTabSTAR:
         self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
         self.use_amp = bool(self.device.type == "cuda")
-        self.model_version = get_tabstar_version(pretrain_dataset=pretrain_dataset)
+        self.model_version = get_tabstar_version(pretrain_dataset_or_path=pretrain_dataset_or_path)
 
     def fit(self, X, y):
         if self.model_ is not None:

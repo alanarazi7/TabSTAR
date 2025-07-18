@@ -7,12 +7,10 @@ from tabstar.training.metrics import Metrics
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
-from tabstar_paper.utils.logging import log_calls
 
 DOWNSTREAM_EXAMPLES = 10_000
 
 
-@log_calls
 def evaluate_on_dataset(model_cls: Type[TabularModel],
                         dataset_id: TabularDatasetID,
                         trial: int,
@@ -28,7 +26,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, trial=trial, train_examples=train_examples)
     if is_tabstar:
         tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
-        model = tabstar_cls(pretrain_dataset=dataset_id, device=device, verbose=verbose)
+        model = tabstar_cls(pretrain_dataset_or_path=dataset_id, device=device, verbose=verbose)
     else:
         model = model_cls(is_cls=is_cls, verbose=verbose)
     model.fit(x_train, y_train)
