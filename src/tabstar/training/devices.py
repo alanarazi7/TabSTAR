@@ -4,10 +4,11 @@ import torch
 
 
 def get_device(device: Optional[str] = None) -> torch.device:
-    print(f"Loading device: {device}")
     if device is None:
         device = _get_device_type()
-    print(f"My device is: {device}")
+    if 'cuda' in device:
+        gpu_num = get_gpu_num(device)
+        torch.cuda.set_device(gpu_num)
     return torch.device(device)
 
 def clear_cuda_cache():
@@ -38,3 +39,9 @@ def _get_most_free_gpu() -> Optional[str]:
     if best_idx is None:
         raise RuntimeError("No available GPU found: all GPUs are out of memory.")
     return best_idx
+
+
+def get_gpu_num(device: str) -> int:
+    prefix = "cuda:"
+    assert device.startswith(prefix), f"Device {device} should start with {prefix}"
+    return int(device.replace(prefix, ''))
