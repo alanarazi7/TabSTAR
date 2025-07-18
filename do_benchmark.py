@@ -1,5 +1,4 @@
 import argparse
-import logging
 import os
 import time
 
@@ -17,21 +16,16 @@ from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.constants import GPU
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
-from tabstar_paper.utils.logging import log_calls, get_current_commit_hash
+from tabstar_paper.utils.logging import log_calls_______, get_current_commit_hash
 
 BASELINES = [CatBoost, XGBoost, RandomForest]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
 SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.WARNING, format='[%(levelname)s] %(message)s') # as a default, will only print warnings and errors. \
-# locally, you can set it to DEBUG or INFO to see more details.
-
 device = get_device(device=GPU)
 
 
-@log_calls
 def main():
     """
     Entry point for running benchmarks on tabular models.
@@ -42,7 +36,6 @@ def main():
     run_benchmarks(combinations, args)
 
 
-@log_calls
 def parse_args():
     """Parse command-line arguments for the benchmark script."""
     parser = argparse.ArgumentParser()
@@ -55,7 +48,6 @@ def parse_args():
     return parser.parse_args()
 
 
-@log_calls
 def prepare_combinations(args):
     """
     Prepare all (model, dataset, run_num) combinations to evaluate.
@@ -80,7 +72,6 @@ def prepare_combinations(args):
     return combos
 
 
-@log_calls
 def run_benchmarks(combinations, args):
     """
     Run evaluation for each (model, dataset, run_num) combination.

@@ -14,10 +14,8 @@ from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_
 from tabstar.training.devices import get_device
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
-from tabstar_paper.utils.logging import log_all_methods
 
 
-@log_all_methods
 class TabularModel:
 
     MODEL_NAME: str
