@@ -1,4 +1,3 @@
-import traceback
 from typing import Optional, Tuple
 
 import joblib
@@ -7,7 +6,6 @@ import torch
 from pandas import Series, DataFrame
 from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
-from torch import nn
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.datasets.benchmark_folds import get_tabstar_version
@@ -21,23 +19,6 @@ from tabstar.training.metrics import apply_loss_fn, calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions
 
-import torch
-orig_tensor_to = torch.Tensor.to
-
-def logging_tensor_to(self, *args, **kwargs):
-    device = kwargs.get('device') or (args[0] if args else None)
-    stack = ''.join(traceback.format_stack(limit=3))
-    print(f"[GPU MOVE][Tensor] {self.shape} → {device}\nCall stack:\n{stack}")
-    return orig_tensor_to(self, *args, **kwargs)
-
-torch.Tensor.to = logging_tensor_to
-
-orig_module_to = nn.Module.to
-def logging_module_to(self, *args, **kwargs):
-    device = kwargs.get('device') or (args[0] if args else None)
-    print(f"[GPU MOVE][Module] {self.__class__.__name__} → {device}")
-    return orig_module_to(self, *args, **kwargs)
-nn.Module.to = logging_module_to
 
 class BaseTabSTAR:
     def __init__(self,
