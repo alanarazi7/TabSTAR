@@ -75,7 +75,8 @@ def prepare_combinations(args):
     combos = [(m, d, r) for m in models for d in datasets for r in run_numbers]
     if device is not None:
         count_gpus_in_machine = torch.cuda.device_count()
-        combos = combos[int(GPU)::count_gpus_in_machine]
+        gpu_num = int(GPU.replace('cuda:'))
+        combos = combos[gpu_num::count_gpus_in_machine]
 
     return combos
 
