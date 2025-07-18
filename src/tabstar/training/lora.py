@@ -11,6 +11,7 @@ def load_pretrained(model_version: str, lora_r: int) -> PeftModel:
     print(f"🤩 Loading pretrained model version: {model_version}")
     curr_viz = os.environ.get("CUDA_VISIBLE_DEVICES", "")
     print(f"before loading, current device is: {torch.cuda.current_device()}, visible are {curr_viz}")
+    breakpoint()
     model = TabStarModel.from_pretrained(model_version, device_map="cpu")
     curr_viz = os.environ.get("CUDA_VISIBLE_DEVICES", "")
     print(f"after loading, current device is: {torch.cuda.current_device()}, visible are {curr_viz}")
