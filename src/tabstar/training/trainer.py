@@ -1,6 +1,6 @@
 import datetime
 import os
-from typing import Tuple
+from typing import Tuple, Dict
 
 import numpy as np
 import torch
@@ -99,9 +99,14 @@ class TabStarTrainer:
         original_mean_batch_loss = loss.item()
         return original_mean_batch_loss
 
-    def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
-        predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-        loss = calculate_loss(predictions=predictions, y=data.y, d_output=data.d_output)
+    def _do_forward(self, data: Dict) -> Tuple[Tensor, Tensor]:
+        y = data['y'].to(self.device)
+        x_num = data['x_num'].to(self.device)
+        x_txt = data['x_txt'].to(self.device)
+        tokenized = {k: v.to(self.device) for k, v in data['tokenized'].items()}
+        d_output = data['d_output']
+        predictions = self.model(x_txt=x_txt, x_num=x_num, tokenized=tokenized, d_output=d_output)
+        loss = calculate_loss(predictions=predictions, y=y, d_output=d_output)
         return loss, predictions
 
     def _do_update(self):

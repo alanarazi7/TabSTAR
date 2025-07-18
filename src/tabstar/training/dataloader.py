@@ -47,15 +47,15 @@ def collate_fn(batch):
     # For x_txt, we convert to indices and tokenize the unique texts
     x_txt_flat = np.array(x_txt_batch).reshape(-1)
     unique_texts, inverse_indices = np.unique(x_txt_flat, return_inverse=True)
-    x_txt_indices = inverse_indices.reshape(len(x_txt_batch), -1)
-    x_txt_indices = torch.tensor(x_txt_indices, dtype=torch.long)
-    assert x_txt_indices.shape == x_num.shape
+    x_txt = inverse_indices.reshape(len(x_txt_batch), -1)
+    x_txt = torch.tensor(x_txt, dtype=torch.long)
+    assert x_txt.shape == x_num.shape
 
     tokenized = tokenize(texts=list(unique_texts))
 
     return {
-        'x_txt_indices': x_txt_indices,
-        'x_txt_tokenized': tokenized,
+        'x_txt': x_txt,
+        'tokenized': tokenized,
         'x_num': x_num,
         'y': y,
         'd_output': d_output

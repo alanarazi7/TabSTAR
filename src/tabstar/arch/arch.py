@@ -1,3 +1,5 @@
+from typing import Dict
+
 import numpy as np
 import torch
 from torch import Tensor
@@ -23,8 +25,8 @@ class TabStarModel(PreTrainedModel):
         self.reg_head = PredictionHead()
         self.post_init()
 
-    def forward(self, x_txt: np.ndarray, x_num: np.ndarray, d_output: int) -> Tensor:
-        textual_embeddings = self.get_textual_embedding(x_txt)
+    def forward(self, x_txt: Tensor, x_num: Tensor, tokenized: Dict[str, Tensor], d_output: int) -> Tensor:
+        textual_embeddings = self.get_textual_embedding(x_txt, tokenized=tokenized)
         embeddings = self.numerical_fusion(textual_embeddings=textual_embeddings, x_num=x_num)
         encoded = self.tabular_encoder(embeddings)
         target_tokens = encoded[:, :d_output]
@@ -36,18 +38,18 @@ class TabStarModel(PreTrainedModel):
         assert tuple(target_scores.shape) == (x_txt.shape[0], d_output)
         return target_scores
 
-    def get_textual_embedding(self, x_txt: np.array) -> Tensor:
+    def get_textual_embedding(self, x_txt: Tensor, tokenized: Dict[str, Tensor]) -> Tensor:
         text_batch_size = 128
         while text_batch_size > 1:
             try:
-                return self.get_textual_embedding_in_batches(x_txt, text_batch_size=text_batch_size)
+                return self.get_textual_embedding_in_batches(x_txt, tokenized=tokenized, text_batch_size=text_batch_size)
             except torch.cuda.OutOfMemoryError:
                 text_batch_size //= 2
                 clear_cuda_cache()
                 print(f"🤯 Reducing batch size to {text_batch_size} due to OOM")
         raise RuntimeError(f"🤯 OOM even with batch size 1!")
 
-    def get_textual_embedding_in_batches(self, x_txt: np.array, text_batch_size: int) -> Tensor:
+    def get_textual_embedding_in_batches(self, x_txt: Tensor, tokenized: Dict[str, Tensor], text_batch_size: int) -> Tensor:
         # Get unique texts and mapping indices
         unique_texts, inverse_indices = np.unique(x_txt, return_inverse=True)
         num_unique_texts = len(unique_texts)
