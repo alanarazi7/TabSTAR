@@ -20,12 +20,7 @@ def clear_cuda_cache():
 def _get_device_type() -> str:
     if torch.cuda.is_available():
         clear_cuda_cache()
-        try:
-            best = _get_most_free_gpu()
-            if best is not None:
-                return best
-        except Exception:
-            return "cuda"
+        return _get_most_free_gpu()
     elif torch.backends.mps.is_available():
         torch.mps.empty_cache()
         return "mps"
@@ -40,4 +35,6 @@ def _get_most_free_gpu() -> Optional[str]:
         if free_mem > best_free_mem:
             best_free_mem = free_mem
             best_idx = f'cuda:{idx}'
+    if best_idx is None:
+        raise RuntimeError("No available GPU found: all GPUs are out of memory.")
     return best_idx
