@@ -17,6 +17,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
                         train_examples: int = DOWNSTREAM_EXAMPLES,
                         device: Optional[str] = None,
                         verbose: bool = False) -> Metrics:
+    print(f"My device is of type {type(device)}; using {device} for training.")
     is_tabstar = issubclass(model_cls, BaseTabSTAR)
     name = "TabSTAR ⭐" if is_tabstar else model_cls.MODEL_NAME
     print(f"Running model {name} over dataset {dataset_id} with trial {trial}")

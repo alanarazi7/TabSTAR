@@ -4,8 +4,10 @@ import torch
 
 
 def get_device(device: Optional[str] = None) -> torch.device:
+    print(f"Loading device: {device}")
     if device is None:
         device = _get_device_type()
+    print(f"My device is: {device}")
     return torch.device(device)
 
 def clear_cuda_cache():
