@@ -14,9 +14,9 @@ def get_device(device: Optional[str | torch.device] = None) -> torch.device:
         # TODO: with warning emoji
         print(f"EMOJI: About to use GPU {gpu_num} with device {device}.")
         torch.cuda.set_device(gpu_num)
-        print(f"Before setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}")
+        print(f"Before setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}, visible are {os.environ["CUDA_VISIBLE_DEVICES"]}")
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_num)
-        print(f"After setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}")
+        print(f"After setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}, visible are {os.environ["CUDA_VISIBLE_DEVICES"]}")
     return torch.device(device)
 
 def clear_cuda_cache():
