@@ -1,13 +1,14 @@
 from os.path import exists
 
+import torch
 from peft import LoraConfig, get_peft_model, PeftModel
 
 from tabstar.arch.arch import TabStarModel
 
 
-def load_pretrained(model_version: str, lora_r: int) -> PeftModel:
+def load_pretrained(model_version: str, lora_r: int, device: torch.device) -> PeftModel:
     print(f"🤩 Loading pretrained model version: {model_version}")
-    model = TabStarModel.from_pretrained(model_version, device_map="cpu")
+    model = TabStarModel.from_pretrained(model_version, device_map=device)
     # TODO: probably best if this is written more generic and not so hard-coded
     lora_modules = ["query", "key", "value", "out_proj", "linear1", "linear2",
                     "cls_head.layers.0", "reg_head.layers.0"]
