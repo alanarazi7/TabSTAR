@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from torch import Tensor
 from torch.utils.data import DataLoader
 
 from tabstar.arch.config import BATCH_SIZE
@@ -40,6 +41,11 @@ def get_dataloader(data: TabSTARData, is_train: bool, batch_size: int = BATCH_SI
 def collate_fn(batch) -> TabSTARData:
     x_txt_batch, x_num_batch, y_batch, d_output_batch = zip(*batch)
     # Assuming all batches have the same d_output, which is correct for finetune
+    assert isinstance(x_txt_batch, Tensor)
+    assert isinstance(x_num_batch, Tensor)
+    assert isinstance(y_batch, Tensor)
+    tokenize_in_collate = False
+    assert tokenize_in_collate, "Tokenization should be done in the collate function."
     d_output = d_output_batch[0]
     x_txt = np.stack(x_txt_batch)
     x_num = np.stack(x_num_batch)
