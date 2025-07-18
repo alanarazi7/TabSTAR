@@ -45,7 +45,8 @@ def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID
     if arg.fold is None:
         return []
     fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
-    return fold_dict[args.fold]
+    datasets = [d for d, f in fold_dict.items() if f == arg.fold]
+    return datasets
 
 
 if __name__ == "__main__":
