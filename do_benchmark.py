@@ -46,9 +46,10 @@ if __name__ == "__main__":
 
     device = get_device(device=GPU)
     combos = [(m, d, r) for m in models for d in datasets for r in trials]
-    if device is not None:
+    if GPU is not None:
         count_gpus_in_machine = torch.cuda.device_count()
-        combos = combos[int(GPU)::count_gpus_in_machine]
+        gpu_num = int(GPU.replace('cuda:', ''))
+        combos = combos[gpu_num::count_gpus_in_machine]
 
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d.get('run_num') or d.get('trial')) for _, d in existing.iterrows()}
