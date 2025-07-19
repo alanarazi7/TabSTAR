@@ -7,9 +7,6 @@ import torch
 def get_device(device: Optional[str] = None) -> torch.device:
     if device is None:
         device = _get_device_type()
-    if 'cuda' in device:
-        gpu_num = get_gpu_num(device)
-        torch.cuda.set_device(gpu_num)
     return torch.device(device)
 
 def clear_cuda_cache():
