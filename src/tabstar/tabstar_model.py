@@ -38,7 +38,6 @@ class BaseTabSTAR:
         self.debug = debug
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
-        print(f"Got device: {device} of type {type(device)}")
         self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
         self.use_amp = bool(self.device.type == "cuda")
