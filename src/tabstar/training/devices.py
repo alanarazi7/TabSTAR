@@ -36,7 +36,7 @@ def _get_free_gpu() -> str:
     for i, line in enumerate(processes_output.strip().split("\n")):
         if line.endswith("None"):
             return f"cuda:{i}"
-    raise RuntimeError("No free GPU found")
+    raise RuntimeError("No free GPU found!")
 
 
 def get_gpu_num(device: str) -> int:
