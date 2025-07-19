@@ -1,7 +1,5 @@
-import os
 from os.path import exists
 
-import torch
 from peft import LoraConfig, get_peft_model, PeftModel
 
 from tabstar.arch.arch import TabStarModel
