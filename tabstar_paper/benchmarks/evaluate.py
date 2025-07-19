@@ -28,7 +28,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, trial=trial, train_examples=train_examples)
     if is_tabstar:
         tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
-        model = tabstar_cls(pretrain_dataset_or_path=dataset_id, device=device.type, verbose=verbose)
+        model = tabstar_cls(pretrain_dataset_or_path=dataset_id, device=device, verbose=verbose)
     else:
         model = model_cls(is_cls=is_cls, device=device, verbose=verbose)
     model.fit(x_train, y_train)

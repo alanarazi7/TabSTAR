@@ -27,7 +27,7 @@ class BaseTabSTAR:
                  max_epochs: int = MAX_EPOCHS,
                  patience: int = FINETUNE_PATIENCE,
                  verbose: bool = False,
-                 device: Optional[str] = None,
+                 device: Optional[str | torch.device] = None,
                  pretrain_dataset_or_path: Optional[str | TabularDatasetID] = None,
                  debug: bool = False):
         self.lora_lr = lora_lr
