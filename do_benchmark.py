@@ -78,7 +78,6 @@ if __name__ == "__main__":
             "model": model_name,
             "metrics": dict(metrics.metrics),
             "runtime": time.time() - start_time,
-            "device": device,
             "train_examples": args.train_examples,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             "git":  get_current_commit_hash(),
