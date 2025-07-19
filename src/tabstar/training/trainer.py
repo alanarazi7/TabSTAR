@@ -18,7 +18,7 @@ from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.lora import load_pretrained, load_finetuned
 from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_loss
 from tabstar.training.optimizer import get_optimizer, get_scheduler
-from tabstar.training.utils import concat_predictions, fix_seed
+from tabstar.training.utils import concat_predictions
 
 torch.set_num_threads(1)
 if hasattr(torch, 'set_float32_matmul_precision'):
@@ -48,7 +48,6 @@ class TabStarTrainer:
         self.save_dir: str = os.path.join(".tabstar_checkpoint/", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
-        fix_seed()
         train_loader = get_dataloader(train_data, is_train=True)
         val_loader = get_dataloader(val_data, is_train=False)
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
