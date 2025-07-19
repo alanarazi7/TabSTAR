@@ -17,7 +17,7 @@ from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE
 from tabstar.training.metrics import apply_loss_fn, calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
-from tabstar.training.utils import concat_predictions
+from tabstar.training.utils import concat_predictions, fix_seed
 
 
 class BaseTabSTAR:
@@ -28,6 +28,7 @@ class BaseTabSTAR:
                  patience: int = FINETUNE_PATIENCE,
                  verbose: bool = False,
                  device: Optional[str | torch.device] = None,
+                 random_state: Optional[int] = None,
                  pretrain_dataset_or_path: Optional[str | TabularDatasetID] = None,
                  debug: bool = False):
         self.lora_lr = lora_lr
@@ -38,6 +39,8 @@ class BaseTabSTAR:
         self.debug = debug
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
+        self.random_state = random_state
+        fix_seed(seed=self.random_state)
         self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
         self.use_amp = bool(self.device.type == "cuda")
