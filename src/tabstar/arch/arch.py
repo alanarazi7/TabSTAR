@@ -42,6 +42,7 @@ class TabStarModel(PreTrainedModel):
         text_batch_size = 128
         unique_texts = tokenized['input_ids'].size(0)
         x_txt_shape = x_txt.shape
+        print(f"🔍 Getting textual embeddings for {x_txt_shape=}, with {unique_texts=} unique texts {unique_texts=}")
         while text_batch_size > 1:
             try:
                 return self.get_textual_embedding_in_batches(x_txt, tokenized=tokenized, text_batch_size=text_batch_size)
