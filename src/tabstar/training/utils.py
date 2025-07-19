@@ -10,6 +10,8 @@ from tabstar.constants import SEED
 
 
 def fix_seed(seed: int = SEED):
+    if seed is None:
+        return
     random.seed(seed)
     # Set a fixed value for the hash seed
     os.environ['PYTHONHASHSEED'] = str(seed)
