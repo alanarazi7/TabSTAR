@@ -54,16 +54,14 @@ if __name__ == "__main__":
 
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d.get('run_num') or d.get('trial')) for _, d in existing.iterrows()}
-    if args.no_cache:
-        existing_combos = set()
     for model, dataset_id, trial in tqdm(combos):
         if args.cls and dataset_id.name.startswith("REG_"):
             continue
         model_name = model.__name__
-        if (model_name, dataset_id.name, trial) in existing_combos:
+        if (model_name, dataset_id.name, trial) in existing_combos and (not args.no_cache):
             continue
         key_file = f".tabstar_benchmark/{model_name}_{dataset_id.name}_{trial}.txt"
-        if os.path.exists(key_file):
+        if os.path.exists(key_file) and (not args.no_cache):
             continue
         print(f"Evaluating {model_name} on {dataset_id.name} with trial {trial}")
         start_time = time.time()
