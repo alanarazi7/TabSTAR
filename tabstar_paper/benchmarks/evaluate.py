@@ -34,5 +34,4 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         model = model_cls(is_cls=is_cls, device=device, verbose=verbose)
     model.fit(x_train, y_train)
     metrics = model.score_all_metrics(X=x_test, y=y_test)
-    print(f"Scored {metrics.score:.4f} on dataset {dataset.dataset_id}.")
     return metrics
