@@ -59,7 +59,7 @@ if __name__ == "__main__":
         model_name = model.__name__
         if (model_name, dataset_id.name, trial) in existing_combos:
             continue
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{trial}.txt"
+        key_file = f".tabstar_benchmark/{model_name}_{dataset_id.name}_{trial}.txt"
         if os.path.exists(key_file):
             continue
         print(f"Evaluating {model_name} on {dataset_id.name} with trial {trial}")
