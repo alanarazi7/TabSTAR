@@ -4,12 +4,11 @@ from typing import Optional
 import torch
 
 
-def get_device(device: Optional[str] = None) -> torch.device:
+def get_device(device: Optional[str | torch.device] = None) -> torch.device:
+    if isinstance(device, torch.device):
+        return device
     if device is None:
         device = _get_device_type()
-    if 'cuda' in device:
-        gpu_num = get_gpu_num(device)
-        torch.cuda.set_device(gpu_num)
     return torch.device(device)
 
 def clear_cuda_cache():
@@ -36,10 +35,8 @@ def _get_free_gpu() -> str:
     processes_output = gpu_processes.communicate()[0]
     for i, line in enumerate(processes_output.strip().split("\n")):
         if line.endswith("None"):
-            print(f"Found Free GPU ID: {i}")
-            cuda_device = f"cuda:{i}"
-            return cuda_device
-    raise RuntimeError("No free GPU found")
+            return f"cuda:{i}"
+    raise RuntimeError("No free GPU found!")
 
 
 def get_gpu_num(device: str) -> int:

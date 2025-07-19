@@ -38,10 +38,7 @@ class BaseTabSTAR:
         self.debug = debug
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
-        if isinstance(device, torch.device):
-            self.device = device
-        else:
-            self.device = get_device(device=device)
+        self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
         self.use_amp = bool(self.device.type == "cuda")
         self.model_version = get_tabstar_version(pretrain_dataset_or_path=pretrain_dataset_or_path)
