@@ -2,6 +2,7 @@ from typing import Dict
 
 import numpy as np
 import torch
+
 from tabular.tabstar.params.constants import E5_SMALL, E5_LAYERS
 from torch import Tensor
 from transformers import AutoModel, PreTrainedModel
