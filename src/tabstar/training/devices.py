@@ -1,24 +1,15 @@
-import os
+from subprocess import Popen, PIPE
 from typing import Optional
 
 import torch
 
 
-def get_device(device: Optional[str | torch.device] = None) -> torch.device:
-    if isinstance(device, torch.device):
-        return device
+def get_device(device: Optional[str] = None) -> torch.device:
     if device is None:
         device = _get_device_type()
     if 'cuda' in device:
         gpu_num = get_gpu_num(device)
-        # TODO: with warning emoji
-        print(f"EMOJI: About to use GPU {gpu_num} with device {device}.")
         torch.cuda.set_device(gpu_num)
-        curr_viz = os.environ.get("CUDA_VISIBLE_DEVICES", "")
-        print(f"Before setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}, visible are {curr_viz}")
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_num)
-        curr_viz = os.environ.get("CUDA_VISIBLE_DEVICES", "")
-        print(f"After setting CUDA_VISIBLE_DEVICES, current device is: {torch.cuda.current_device()}, visible are {curr_viz}")
     return torch.device(device)
 
 def clear_cuda_cache():
@@ -31,28 +22,24 @@ def clear_cuda_cache():
 def _get_device_type() -> str:
     if torch.cuda.is_available():
         clear_cuda_cache()
-        return _get_most_free_gpu()
+        return _get_free_gpu()
     elif torch.backends.mps.is_available():
         torch.mps.empty_cache()
         return "mps"
     print(f"⚠️ No GPU available, using CPU. This may lead to slow performance.")
     return "cpu"
 
-def _get_most_free_gpu() -> Optional[str]:
-    best_idx = None
-    best_free_mem = 0
-    for idx in range(torch.cuda.device_count()):
-        try:
-            free_mem, _ = torch.cuda.mem_get_info(idx)
-            if free_mem > best_free_mem:
-                best_free_mem = free_mem
-                best_idx = f'cuda:{idx}'
-        except RuntimeError as e:
-            print(f"[WARN] Could not check GPU {idx}: {e}")
-            continue
-    if best_idx is None:
-        raise RuntimeError("No available GPU found: all GPUs are out of memory or inaccessible.")
-    return best_idx
+def _get_free_gpu() -> str:
+    gpu_output = Popen(["nvidia-smi", "-q", "-d", "PIDS"], stdout=PIPE, encoding="utf-8")
+    gpu_processes = Popen(["grep", "Processes"], stdin=gpu_output.stdout, stdout=PIPE, encoding="utf-8")
+    gpu_output.stdout.close()
+    processes_output = gpu_processes.communicate()[0]
+    for i, line in enumerate(processes_output.strip().split("\n")):
+        if line.endswith("None"):
+            print(f"Found Free GPU ID: {i}")
+            cuda_device = f"cuda:{i}"
+            return cuda_device
+    raise RuntimeError("No free GPU found")
 
 
 def get_gpu_num(device: str) -> int:

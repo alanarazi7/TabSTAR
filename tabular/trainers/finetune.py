@@ -3,11 +3,9 @@ from typing import Type, Optional
 import torch
 import wandb
 
-from tabstar.training.devices import get_device
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
 from tabstar_paper.utils.logging import wandb_run
 from tabular.datasets.tabular_datasets import TabularDatasetID
-from tabular.evaluation.constants import DOWNSTREAM_EXAMPLES
 from tabular.models.abstract_model import TabularModel
 from tabular.trainers.downstream_train import ModelTrainer, RunMetadata
 from tabular.trainers.finetune_args import FinetuneArgs
@@ -17,12 +15,10 @@ def do_finetune_run(exp_name: str,
                     model: Type[TabularModel],
                     dataset: TabularDatasetID,
                     run_num: int,
-                    train_examples: int = DOWNSTREAM_EXAMPLES,
-                    device: Optional[torch.device] = None,
+                    train_examples: int,
+                    device: torch.device,
                     finetune_args: Optional[FinetuneArgs] = None,
                     carte_lr_idx: Optional[int] = None) -> RunMetadata:
-    if device is None:
-        device = get_device()
     trainer = ModelTrainer(dataset_id=dataset, model_cls=model, exp_name=exp_name, device=device,
                            run_num=run_num, train_examples=train_examples, carte_lr_idx=carte_lr_idx)
     if run_metadata := trainer.existing_score():

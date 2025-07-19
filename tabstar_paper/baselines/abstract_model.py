@@ -1,6 +1,7 @@
 from typing import Tuple, Dict, Optional, Set
 
 import numpy as np
+import torch
 from pandas import DataFrame, Series
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from skrub import DatetimeEncoder, TextEncoder
@@ -11,7 +12,6 @@ from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
-from tabstar.training.devices import get_device
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
 
@@ -21,9 +21,9 @@ class TabularModel:
     MODEL_NAME: str
     SHORT_NAME: str
 
-    def __init__(self, is_cls: bool, verbose: bool = False):
+    def __init__(self, is_cls: bool, device: torch.device, verbose: bool = False):
         self.is_cls = is_cls
-        self.device = get_device()
+        self.device = device
         self.verbose = verbose
         self.model_ = self.initialize_model()
         self.d_output: int = 0
