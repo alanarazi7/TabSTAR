@@ -57,8 +57,8 @@ if __name__ == "__main__":
         if args.cls and dataset_id.name.startswith("REG_"):
             continue
         model_name = model.__name__
-        if (model_name, dataset_id.name, trial) in existing_combos:
-            continue
+        # if (model_name, dataset_id.name, trial) in existing_combos:
+        #     continue
         key_file = f".tabstar_benchmark/{model_name}_{dataset_id.name}_{trial}.txt"
         if os.path.exists(key_file):
             continue
