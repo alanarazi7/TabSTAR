@@ -1,4 +1,5 @@
 import datetime
+import gc
 import os
 from typing import Tuple
 
@@ -137,6 +138,10 @@ class TabStarTrainer:
         return loss, metrics.score
 
     def load_model(self) -> PeftModel:
+        self.model = None
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        gc.collect()
         self.model = load_finetuned(self.save_dir, tabstar_version=self.model_version)
         self.model.to(self.device)
         self.model.eval()
