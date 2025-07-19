@@ -59,7 +59,7 @@ if __name__ == "__main__":
         model_name = model.__name__
         if (model_name, dataset_id.name, trial) in existing_combos:
             continue
-        key_file = f".benchmark_results/{model_name}_{dataset_id.name}_{trial}.txt"
+        key_file = f".tabstar_benchmark/{model_name}_{dataset_id.name}_{trial}.txt"
         if os.path.exists(key_file):
             continue
         print(f"Evaluating {model_name} on {dataset_id.name} with trial {trial}")
@@ -71,14 +71,15 @@ if __name__ == "__main__":
             train_examples=args.train_examples,
             device=device
         )
+        runtime = time.time() - start_time
+        print(f"Scored {metrics.score:.4f} on dataset {dataset_id.name} in {int(runtime)} seconds.")
         result = {
             "score": metrics.score,
             "dataset": dataset_id.name,
             "trial": trial,
             "model": model_name,
             "metrics": dict(metrics.metrics),
-            "runtime": time.time() - start_time,
-            "device": device,
+            "runtime": runtime,
             "train_examples": args.train_examples,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             "git":  get_current_commit_hash(),

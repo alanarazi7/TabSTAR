@@ -2,10 +2,8 @@
 .env
 .idea
 .venv
-**/cache/
 **/catboost_info/
 **/wandb/
-**/.benchmark_results/
 **/.tabstar_*/
 **/tabstar.egg-info/
 **/check_whl/
