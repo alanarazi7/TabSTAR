@@ -44,9 +44,7 @@ if __name__ == "__main__":
     if isinstance(args.trial, int):
         trials = [args.trial]
 
-    print(f'With GPU: {GPU}, device is..')
     device = get_device(device=GPU)
-    print(f"Using device: {device}, of type {type(device)}")
     combos = [(m, d, r) for m in models for d in datasets for r in trials]
     if GPU is not None:
         count_gpus_in_machine = torch.cuda.device_count()
