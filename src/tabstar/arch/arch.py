@@ -40,13 +40,15 @@ class TabStarModel(PreTrainedModel):
 
     def get_textual_embedding(self, x_txt: Tensor, tokenized: Dict[str, Tensor]) -> Tensor:
         text_batch_size = 128
+        unique_texts = tokenized['input_ids'].size(0)
+        x_txt_shape = x_txt.shape
         while text_batch_size > 1:
             try:
                 return self.get_textual_embedding_in_batches(x_txt, tokenized=tokenized, text_batch_size=text_batch_size)
             except torch.cuda.OutOfMemoryError:
                 text_batch_size //= 2
                 clear_cuda_cache()
-                print(f"🤯 Reducing textual embedding internal batch size to {text_batch_size} due to OOM")
+                print(f"🤯 Reducing textual embedding internal batch size to {text_batch_size} due to OOM for {x_txt_shape=}, with {unique_texts=} unique texts {unique_texts=}")
         raise RuntimeError(f"🤯 OOM even with batch size 1! Consider reducing the model's batch size")
 
     def get_textual_embedding_in_batches(self, x_txt: Tensor, tokenized: Dict[str, Tensor], text_batch_size: int) -> Tensor:
