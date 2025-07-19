@@ -5,7 +5,7 @@ D_MODEL = 384
 E5_SMALL = 'intfloat/e5-small-v2'
 
 GLOBAL_BATCH_SIZE = 128
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 WEIGHT_DECAY = 0.001
 
 class TabStarConfig(PretrainedConfig):
