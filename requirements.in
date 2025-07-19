@@ -12,6 +12,7 @@ pandas >= 2.2.2
 peft
 pytest
 python-dotenv
+pytorch-lightning
 scikit-learn
 sentence_transformers
 scipy

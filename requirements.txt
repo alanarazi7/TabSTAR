@@ -5,7 +5,9 @@ accelerate==1.5.2
 aiohappyeyeballs==2.6.1
     # via aiohttp
 aiohttp==3.11.16
-    # via torch-geometric
+    # via
+    #   fsspec
+    #   torch-geometric
 aiosignal==1.3.2
     # via aiohttp
 alembic==1.15.2
@@ -71,6 +73,7 @@ frozenlist==1.5.0
 fsspec==2025.2.0
     # via
     #   huggingface-hub
+    #   pytorch-lightning
     #   torch
     #   torch-geometric
 gitdb==4.0.12
@@ -121,6 +124,10 @@ kiwisolver==1.4.8
     # via matplotlib
 liac-arff==2.5.0
     # via openml
+lightning-utilities==0.14.3
+    # via
+    #   pytorch-lightning
+    #   torchmetrics
 mako==1.3.10
     # via alembic
 markupsafe==3.0.2
@@ -167,6 +174,7 @@ numpy==1.26.4
     #   statsmodels
     #   tabpfn-extensions
     #   torch-geometric
+    #   torchmetrics
     #   torchvision
     #   transformers
     #   xgboost
@@ -183,14 +191,17 @@ packaging==24.2
     #   accelerate
     #   huggingface-hub
     #   kagglehub
+    #   lightning-utilities
     #   matplotlib
     #   openml
     #   optuna
     #   peft
     #   plotly
     #   pytest
+    #   pytorch-lightning
     #   skrub
     #   statsmodels
+    #   torchmetrics
     #   transformers
 pandas==2.2.3
     # via
@@ -264,6 +275,8 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-dotenv==1.1.0
     # via -r requirements.in
+pytorch-lightning==2.5.2
+    # via -r requirements.in
 pytz==2025.1
     # via pandas
 pyyaml==6.0.2
@@ -274,6 +287,7 @@ pyyaml==6.0.2
     #   omegaconf
     #   optuna
     #   peft
+    #   pytorch-lightning
     #   transformers
     #   wandb
 regex==2024.11.6
@@ -330,6 +344,7 @@ setproctitle==1.3.5
 setuptools==75.8.2
     # via
     #   fasttext
+    #   lightning-utilities
     #   wandb
 six==1.17.0
     # via
@@ -374,14 +389,18 @@ torch==2.6.0
     #   accelerate
     #   carte-ai
     #   peft
+    #   pytorch-lightning
     #   sentence-transformers
     #   tabpfn
     #   tabpfn-extensions
+    #   torchmetrics
     #   torchvision
 torch-geometric==2.6.1
     # via carte-ai
 torcheval==0.0.7
     # via carte-ai
+torchmetrics==1.7.4
+    # via pytorch-lightning
 torchvision==0.21.0
     # via -r requirements.in
 tqdm==4.67.1
@@ -392,6 +411,7 @@ tqdm==4.67.1
     #   openml
     #   optuna
     #   peft
+    #   pytorch-lightning
     #   sentence-transformers
     #   tabpfn-client
     #   torch-geometric
@@ -406,9 +426,11 @@ typing-extensions==4.12.2
     #   alembic
     #   anyio
     #   huggingface-hub
+    #   lightning-utilities
     #   minio
     #   pydantic
     #   pydantic-core
+    #   pytorch-lightning
     #   sqlalchemy
     #   tabpfn
     #   torch

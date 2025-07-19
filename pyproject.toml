@@ -16,6 +16,7 @@ dependencies = [
   "numpy",
   "pandas>=2.2.2",
   "peft",
+  "pytorch-lightning",
   "scikit-learn",
   "skrub",
   "torch>=2.6.0",
