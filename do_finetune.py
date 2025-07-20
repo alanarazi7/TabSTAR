@@ -7,14 +7,13 @@ from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARRegressor, TabSTARClassifier
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH
-from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES
+from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, TRIALS
 from tabstar_paper.constants import GPU
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 
 # TODO: remove tabular imports
 from tabular.constants import VERBOSE
-from tabular.evaluation.constants import N_RUNS
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.paths import get_model_path
@@ -55,9 +54,9 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--pretrain_exp', type=str, required=True)
-    parser.add_argument('--dataset_id', type=int, default=OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN.value)
+    parser.add_argument('--dataset_id', required=True)
+    parser.add_argument('--trial', type=int, required=True)
     parser.add_argument('--exp', type=str, default="default_finetune_exp")
-    parser.add_argument('--run_num', type=int, default=0)
     parser.add_argument('--downstream_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--downstream_keep_model', action='store_true', default=False)
     # Training
@@ -70,10 +69,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     assert args.pretrain_exp, "Pretrain path is required"
     data = get_dataset_from_arg(args.dataset_id)
-    assert 0 <= args.run_num < N_RUNS, f"Invalid run number: {args.run_num}. Should be between 0 and {N_RUNS - 1}"
+    assert 0 <= args.trial < TRIALS, f"Invalid run number: {args.trial}. Should be between 0 and {TRIALS - 1}"
 
     pretrain_args = PretrainArgs.from_json(pretrain_exp=args.pretrain_exp)
     run_args = FinetuneArgs.from_args(args=args, pretrain_args=pretrain_args, exp_name=args.exp)
     my_device = get_device(device=GPU)
     finetune_tabstar(finetune_args=run_args, dataset_id=data,
-                     trial=args.run_num, train_examples=args.downstream_examples, device=my_device)
+                     trial=args.trial, train_examples=args.downstream_examples, device=my_device)
