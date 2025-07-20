@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 class EarlyStopping:
 
     def __init__(self, patience: int):
@@ -19,3 +22,11 @@ class EarlyStopping:
     @property
     def should_stop(self) -> bool:
         return self.failed >= self.patience
+
+    def state_dict(self) -> Dict:
+        return {'metric': self.metric, 'failed': self.failed, 'patience': self.patience}
+
+    def load_state_dict(self, state_dict: Dict):
+        self.metric = state_dict['metric']
+        self.failed = state_dict['failed']
+        self.patience = state_dict['patience']

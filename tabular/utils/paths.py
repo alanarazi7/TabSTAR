@@ -14,6 +14,10 @@ def get_model_path(run_name: str) -> str:
     main_dir = pretrain_exp_dir(run_name)
     return join(main_dir, "best_checkpoint")
 
+def get_checkpoint(run_name: str, epoch: int) -> str:
+    main_dir = pretrain_exp_dir(run_name)
+    return join(main_dir, f"checkpoint_{epoch}")
+
 
 def downstream_run_dir(run_name: str, is_tabstar: bool) -> str:
     if is_tabstar:

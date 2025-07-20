@@ -56,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument('--exp', type=str, default="default_pretrain_exp")
     parser.add_argument('--analysis', action='store_true', default=False)
     parser.add_argument('--debug', action='store_true', default=False)
+    parser.add_argument('--checkpoint', type=int, default=None)
     # Arch
     parser.add_argument('--tabular_layers', type=int, default=TABULAR_LAYERS)
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
