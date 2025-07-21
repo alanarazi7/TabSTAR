@@ -1,4 +1,5 @@
 import os.path
+import time
 from typing import Optional, Tuple, List, Any
 
 import numpy as np
@@ -18,7 +19,7 @@ from tabstar.training.metrics import apply_loss_fn, calculate_metric, calculate_
 from tabstar.training.optimizer import get_scheduler
 from tabstar.training.utils import fix_seed, concat_predictions
 from tabstar_paper.pretraining.checkpoint import save_checkpoint, load_checkpoint
-from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_epoch_dataloader
+from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_multi_dataloader
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
 from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
@@ -28,7 +29,6 @@ from tabular.tabstar.arch.arch import TabStarModel
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.nn_logger import log_general
-from tabular.utils.dataloaders import round_robin_batches
 from tabular.utils.deep import print_model_summary
 from tabular.utils.optimizer import get_groups_for_optimizer
 from tabular.utils.paths import get_model_path, get_checkpoint
@@ -91,21 +91,20 @@ class TabSTARPretrainer:
         self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.config.lr, epochs=self.max_epochs)
 
     def train(self):
+        t0 = time.time()
         print_model_summary(self.model)
-        print(f"💪 Starting pretraining for {self.run_name} over {len(self.data_dirs)} datasets.")
+        print(f"💪 Pretraining for {self.run_name} over {len(self.data_dirs)} datasets on device {self.device}.")
         if self.args.checkpoint:
             self.load_checkpoint()
         with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
             for epoch in range(self.epoch + 1, self.max_epochs + 1):
                 self.epoch = epoch
                 log_general(scheduler=self.scheduler, steps=self.steps, epoch=self.epoch)
-                dataloaders = get_pretrain_epoch_dataloader(data_dirs=self.data_dirs, batch_size=self.config.batch_size)
-                num_batches = sum(len(dl) for dl in dataloaders)
-                batches_generator = round_robin_batches(dataloaders)
+                dataloader = get_pretrain_multi_dataloader(data_dirs=self.data_dirs, batch_size=self.config.batch_size)
                 train_loss = 0
                 train_examples = 0
-                with tqdm(total=num_batches, desc="Batches", leave=False) as pbar_batches:
-                    for batch_idx, (x_txt, x_num, y, properties) in enumerate(batches_generator):
+                with tqdm(total=len(dataloader), desc="Batches", leave=False) as pbar_batches:
+                    for batch_idx, (x_txt, x_num, y, properties) in enumerate(dataloader):
                         batch_loss = self.train_one_batch(x_cat=x_txt, x_num=x_num, y=y, properties=properties)
                         train_loss += batch_loss * len(y)
                         train_examples += len(y)
@@ -131,7 +130,8 @@ class TabSTARPretrainer:
                 dev_loss = dev_loss / dev_examples
                 wandb.log({'train_loss': train_loss, 'val_loss': dev_loss, 'val_metric': dev_metric}, step=epoch)
                 emoji = " 🥇" if dev_metric > self.early_stopper.metric else f" 😓 [{self.early_stopper.failed}]"
-                print(f"Epoch {epoch} || Train {train_loss:.5f} || Val {dev_loss:.5f} || Metric {dev_metric:.5f} {emoji}")
+                elapsed = time.time() - t0
+                print(f"Epoch {epoch} || Time {elapsed:.2f} || Train {train_loss:.5f} || Val {dev_loss:.5f} || Metric {dev_metric:.5f} {emoji}")
                 self.early_stopper.update(dev_metric)
                 if self.early_stopper.is_best:
                     self.model.save_pretrained(get_model_path(self.run_name))
@@ -144,12 +144,14 @@ class TabSTARPretrainer:
         wandb.log({'train_epochs': epoch})
         return self.early_stopper.metric
 
-    def do_forward(self, x_txt: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> Tuple[Tensor, Tensor]:
+    def do_forward(self, x_txt: np.ndarray, x_num: Tensor, y: Tensor, properties: DatasetProperties) -> Tuple[Tensor, Tensor]:
+        x_num = x_num.to(self.device)
+        y = y.to(self.device)
         predictions = self.model(x_txt=x_txt, x_num=x_num, sid=properties.name, d_output=properties.d_output)
         loss = calculate_loss(predictions=predictions, y=y, d_output=properties.d_output)
         return predictions, loss
 
-    def train_one_batch(self, x_cat: np.ndarray, x_num: np.ndarray, y: np.ndarray, properties: DatasetProperties) -> float:
+    def train_one_batch(self, x_cat: np.ndarray, x_num: Tensor, y: Tensor, properties: DatasetProperties) -> float:
         self.model.train()
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             predictions, loss = self.do_forward(x_txt=x_cat, x_num=x_num, y=y, properties=properties)
