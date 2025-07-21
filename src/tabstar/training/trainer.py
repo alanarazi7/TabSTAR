@@ -57,8 +57,7 @@ class TabStarTrainer:
                 emoji = "🥇"
             else:
                 emoji = f"😓 [{self.early_stopper.failed + 1}/{self.early_stopper.patience} worse]"
-            metric_str = f"{'AUROC' if val_data.d_output > 1 else 'R-Squared'} {val_metric:.4f}"
-            print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || {metric_str} {emoji}")
+            print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
             self.early_stopper.update(val_metric)
             if self.early_stopper.is_best:
                 self.model.save_pretrained(self.save_dir)

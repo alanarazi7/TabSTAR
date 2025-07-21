@@ -24,6 +24,7 @@ class PretrainArgs:
     timestamp: str
     num_datasets: int
     fold: Optional[int] = None
+    checkpoint: Optional[int] = None
 
     @classmethod
     def from_args(cls, args: argparse.Namespace, pretrain_data: List[TabularDatasetID]) -> Self:
@@ -37,7 +38,8 @@ class PretrainArgs:
                             epochs=args.epochs,
                             fold=args.fold,
                             timestamp=get_now(),
-                            num_datasets=num_datasets)
+                            num_datasets=num_datasets,
+                            checkpoint=args.checkpoint)
 
     @classmethod
     def from_json(cls, pretrain_exp: str):
@@ -56,6 +58,8 @@ class PretrainArgs:
 
     @property
     def full_exp_name(self) -> str:
+        if self.checkpoint:
+            return self.raw_exp_name
         return f"{self.timestamp}_{self.raw_exp_name}"
 
     @property

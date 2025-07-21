@@ -12,8 +12,6 @@ from tabular.evaluation.predictions import Predictions
 from tabular.preprocessing.splits import DataSplit
 from tabular.preprocessing.objects import PreprocessingMethod, SupervisedTask
 from tabular.preprocessing.trees.categorical import ColumnLabelEncoder
-from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.trainers.pretrain_args import PretrainArgs
 
 
 class TabularModel:
@@ -23,14 +21,12 @@ class TabularModel:
     PROCESSING: PreprocessingMethod
 
     def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
-                 run_num: int, train_examples: int = 0, args: Optional[FinetuneArgs] = None,
-                 carte_lr_index: Optional[int] = None):
+                 run_num: int, train_examples: int = 0, carte_lr_index: Optional[int] = None):
         self.run_name = run_name
         self.dataset_ids = dataset_ids
         self.device = device
         self.run_num = run_num
         self.train_examples = train_examples
-        self.args = args
         self.data_dirs: List[str] = self.initialize_data_dirs()
         self.datasets: List[DatasetProperties] = [get_properties(d) for d in self.data_dirs]
         self.model: Optional[Any] = None

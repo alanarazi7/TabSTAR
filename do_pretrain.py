@@ -35,8 +35,8 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
                               pretrain_args=pretrain_args)
     model.train()
     pretrain_args.to_json()
-    wandb.finish()
     print(f"🌟 TabSTAR was pretrained. The experiment name is: {pretrain_args.full_exp_name}")
+    wandb.finish()
 
 
 def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID]:
@@ -56,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument('--exp', type=str, default="default_pretrain_exp")
     parser.add_argument('--analysis', action='store_true', default=False)
     parser.add_argument('--debug', action='store_true', default=False)
+    parser.add_argument('--checkpoint', type=int, default=None)
     # Arch
     parser.add_argument('--tabular_layers', type=int, default=TABULAR_LAYERS)
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
@@ -80,7 +81,7 @@ if __name__ == "__main__":
         pretrain_data = [OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
                          OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
                          OpenMLDatasetID.REG_SPORTS_MONEYBALL]
-        args.epochs = 1
+        args.epochs = 3
 
     # TODO: use HfArgumentParser probably
     pretraining_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)

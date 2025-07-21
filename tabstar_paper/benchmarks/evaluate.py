@@ -12,6 +12,7 @@ from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 
 DOWNSTREAM_EXAMPLES = 10_000
+TRIALS = 10
 
 
 def evaluate_on_dataset(model_cls: Type[TabularModel],
