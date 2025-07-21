@@ -45,7 +45,7 @@ class ModelTrainer:
         self.train_examples = train_examples
         self.run_num = run_num
         self.device = device
-        self.res_path = train_results_path(self.run_name, is_tabstar=False)
+        self.res_path = train_results_path(self.run_name)
         # Hacky that it is here, but, oh well
         self.carte_lr_idx = carte_lr_idx
 
@@ -56,7 +56,7 @@ class ModelTrainer:
     def run(self) -> RunMetadata:
         create_dir(self.res_path, is_file=True)
         model = self.model_cls(run_name=self.run_name, dataset_ids=[self.dataset_id], device=self.device,
-                               run_num=self.run_num, args=self.args, train_examples=self.train_examples,
+                               run_num=self.run_num, train_examples=self.train_examples,
                                carte_lr_index=self.carte_lr_idx)
         model.initialize_model()
         dev_loss = model.train()
