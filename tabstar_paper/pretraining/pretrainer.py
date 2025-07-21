@@ -192,15 +192,16 @@ class TabSTARPretrainer:
         self.optimizer.zero_grad()
 
     def save_checkpoint(self):
-        save_path = get_checkpoint(self.run_name, epoch=self.epoch)
-        save_checkpoint(save_path=save_path,
-                        model=self.model,
-                        optimizer=self.optimizer,
-                        scheduler=self.scheduler,
-                        scaler=self.scaler,
-                        epoch=self.epoch,
-                        steps=self.steps,
-                        early_stopping=self.early_stopper)
+        if self.epoch != self.max_epochs:
+            save_path = get_checkpoint(self.run_name, epoch=self.epoch)
+            save_checkpoint(save_path=save_path,
+                            model=self.model,
+                            optimizer=self.optimizer,
+                            scheduler=self.scheduler,
+                            scaler=self.scaler,
+                            epoch=self.epoch,
+                            steps=self.steps,
+                            early_stopping=self.early_stopper)
         last_epoch_checkpoint = get_checkpoint(self.run_name, epoch=self.epoch-1)
         if os.path.exists(last_epoch_checkpoint):
             os.remove(last_epoch_checkpoint)
