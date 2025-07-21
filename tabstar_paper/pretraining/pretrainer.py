@@ -215,5 +215,4 @@ class TabSTARPretrainer:
                              early_stopping=self.early_stopper)
         self.epoch = cp.epoch
         self.steps = cp.steps
-        fix_seed(seed=self.steps)
         print(f"⏪ Loaded checkpoint from {load_path} at epoch {self.epoch}.")

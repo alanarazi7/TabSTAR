@@ -6,6 +6,7 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
 from tabstar.training.early_stopping import EarlyStopping
+from tabstar_paper.pretraining.seeds import Seeds
 
 
 @dataclass
@@ -15,6 +16,7 @@ class Checkpoint:
     scheduler_dict: dict
     scaler_dict: dict
     early_stop_dict: dict
+    seeds_dict: dict
     epoch: int
     steps: int
 
@@ -28,6 +30,7 @@ def save_checkpoint(save_path: str, model: nn.Module, optimizer: Optimizer, sche
         scheduler_dict=scheduler.state_dict(),
         scaler_dict=scaler.state_dict(),
         early_stop_dict=early_stopping.state_dict(),
+        seeds_dict=Seeds.state_dict(),
         epoch=epoch,
         steps=steps,
     )
@@ -44,4 +47,5 @@ def load_checkpoint(load_path: str, model: nn.Module, optimizer: Optimizer, sche
     scheduler.load_state_dict(cp.scheduler_dict)
     scaler.load_state_dict(cp.scaler_dict)
     early_stopping.load_state_dict(cp.early_stop_dict)
+    Seeds.load_state_dict(cp.seeds_dict)
     return cp

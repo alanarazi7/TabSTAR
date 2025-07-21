@@ -81,7 +81,7 @@ if __name__ == "__main__":
         pretrain_data = [OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
                          OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
                          OpenMLDatasetID.REG_SPORTS_MONEYBALL]
-        args.epochs = 1
+        args.epochs = 3
 
     # TODO: use HfArgumentParser probably
     pretraining_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)
