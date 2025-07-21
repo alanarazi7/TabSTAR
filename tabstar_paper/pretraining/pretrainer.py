@@ -19,7 +19,8 @@ from tabstar.training.metrics import apply_loss_fn, calculate_metric, calculate_
 from tabstar.training.optimizer import get_scheduler
 from tabstar.training.utils import fix_seed, concat_predictions
 from tabstar_paper.pretraining.checkpoint import save_checkpoint, load_checkpoint
-from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_multi_dataloader
+from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_multi_dataloader, \
+    MultiDatasetEpochBatches
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
 from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
@@ -96,11 +97,13 @@ class TabSTARPretrainer:
         print(f"💪 Pretraining for {self.run_name} over {len(self.data_dirs)} datasets on device {self.device}.")
         if self.args.checkpoint:
             self.load_checkpoint()
+        dataloader = get_pretrain_multi_dataloader(data_dirs=self.data_dirs, batch_size=self.config.batch_size)
+        assert isinstance(dataloader.dataset, MultiDatasetEpochBatches)
         with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
             for epoch in range(self.epoch + 1, self.max_epochs + 1):
                 self.epoch = epoch
                 log_general(scheduler=self.scheduler, steps=self.steps, epoch=self.epoch)
-                dataloader = get_pretrain_multi_dataloader(data_dirs=self.data_dirs, batch_size=self.config.batch_size)
+                dataloader.dataset.make_batches()
                 train_loss = 0
                 train_examples = 0
                 with tqdm(total=len(dataloader), desc="Batches", leave=False) as pbar_batches:
