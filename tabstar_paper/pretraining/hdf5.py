@@ -59,7 +59,7 @@ class HDF5Dataset(Dataset):
         self.size: int = self.properties.train_size if is_train else self.properties.val_size
         self.h5_file: Optional[h5py.File] = None
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.size
 
     def __getitem__(self, idx):
