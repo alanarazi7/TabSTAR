@@ -10,6 +10,7 @@ from tabstar.tabstar_model import BaseTabSTAR
 from tabstar.training.devices import get_device, get_gpu_num
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.random_forest import RandomForest
+from tabstar_paper.baselines.tabpfn import TabPFN
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_DATASETS
@@ -18,7 +19,7 @@ from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.io_handlers import dump_json, load_json_lines
 from tabstar_paper.utils.logging import get_current_commit_hash
 
-BASELINES = [CatBoost, XGBoost, RandomForest]
+BASELINES = [CatBoost, XGBoost, RandomForest, TabPFN]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
 SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
