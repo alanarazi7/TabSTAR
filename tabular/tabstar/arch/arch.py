@@ -36,7 +36,7 @@ class TabStarModel(PreTrainedModel):
         # TODO: (Optional: call post_init hook if you have any weight initialization logic)
         self.post_init()
 
-    def forward(self, x_txt: np.ndarray, x_num: np.ndarray, sid: str, d_output: int) -> Tensor:
+    def forward(self, x_txt: np.ndarray, x_num: Tensor, sid: str, d_output: int) -> Tensor:
         # TODO: we should use Tensors and not np.arrays as inputs
         textual_embeddings = self.get_textual_embedding(x_txt, sid=sid)
         embeddings = self.numerical_fusion(textual_embeddings=textual_embeddings, x_num=x_num)

@@ -36,10 +36,10 @@ class CARTE(TabularSklearnModel):
     PROCESSING = PreprocessingMethod.CARTE
 
     def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
-                 run_num: int, train_examples: int = 0, args: Optional[PretrainArgs] = None,
+                 run_num: int, train_examples: int = 0, args____: Optional[PretrainArgs] = None,
                  carte_lr_index: Optional[int] = None):
         super().__init__(run_name=run_name, dataset_ids=dataset_ids, device=device, run_num=run_num,
-                         train_examples=train_examples, args=args, carte_lr_index=carte_lr_index)
+                         train_examples=train_examples, args____=args____, carte_lr_index=carte_lr_index)
         token = os.getenv("HUGGINGFACE_HUB_TOKEN")
         if token is None:
             raise ValueError("HUGGINGFACE_HUB_TOKEN not set in .env")

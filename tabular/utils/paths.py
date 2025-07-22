@@ -5,7 +5,6 @@ from tabstar_paper.pretraining.paths import pretrain_exp_dir
 
 CACHE_DIR = ".tabular_cache"
 
-_FINETUNE_DIR = join(CACHE_DIR, "finetune")
 _BASELINES_DIR = join(CACHE_DIR, "baselines")
 _DATASET_DIR = join(CACHE_DIR, "datasets")
 
@@ -14,17 +13,13 @@ def get_model_path(run_name: str) -> str:
     main_dir = pretrain_exp_dir(run_name)
     return join(main_dir, "best_checkpoint")
 
-
-def downstream_run_dir(run_name: str, is_tabstar: bool) -> str:
-    if is_tabstar:
-        main_dir = _FINETUNE_DIR
-    else:
-        main_dir = _BASELINES_DIR
-    return join(main_dir, run_name)
+def get_checkpoint(run_name: str, epoch: int) -> str:
+    main_dir = pretrain_exp_dir(run_name)
+    return join(main_dir, f"checkpoint_{epoch}")
 
 
-def train_results_path(run_name: str, is_tabstar: bool) -> str:
-    return join(downstream_run_dir(run_name, is_tabstar=is_tabstar), "results.json")
+def train_results_path(run_name: str) -> str:
+    return join(_BASELINES_DIR, run_name, "results.json")
 
 
 def dataset_run_properties_dir(run_num: int, train_examples: int) -> str:
