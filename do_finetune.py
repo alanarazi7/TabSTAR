@@ -2,7 +2,7 @@ import argparse
 
 import torch
 
-from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
+from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARRegressor, TabSTARClassifier
 from tabstar.training.devices import get_device
@@ -42,7 +42,7 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                         max_epochs=finetune_args.epochs,
                         patience=finetune_args.patience,
                         verbose=VERBOSE,
-                        device=device.type)
+                        device=device)
     model.fit(x_train, y_train)
     metrics = model.score_all_metrics(X=x_test, y=y_test)
     print(f"Scored {metrics.score:.4f} on dataset {dataset_id.dataset_id}.")
