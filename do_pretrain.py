@@ -35,6 +35,9 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
                               pretrain_args=pretrain_args)
     model.train()
     pretrain_args.to_json()
+    d_summary = {**asdict(pretrain_args), 'full_exp_name': pretrain_args.full_exp_name}
+    wandb.log(d_summary)
+    wandb.summary.update(d_summary)
     print(f"🌟 TabSTAR was pretrained. The experiment name is: {pretrain_args.full_exp_name}")
     wandb.finish()
 
