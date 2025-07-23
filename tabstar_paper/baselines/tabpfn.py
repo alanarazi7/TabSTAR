@@ -17,16 +17,6 @@ from tabpfn_client import TabPFNClassifier as ClientTabPFNClassifier, TabPFNRegr
 MAX_SAMPLES = 10_000
 MAX_TEST_SIZE = 10_000
 
-
-# TODO is this really needed? if so we need to move it to a common place
-def get_sid(dataset: TabularDatasetID) -> str:
-    if isinstance(dataset, OpenMLDatasetID):
-        return f"{dataset.value}_{dataset.name}"
-    elif isinstance(dataset, (KaggleDatasetID, TabularDatasetID)):
-        return f"{dataset.name}".replace('/', '__')
-    raise ValueError(f"Invalid dataset type: {dataset}")
-
-
 @dataclass
 class TabPFNDefaultHyperparams:
     random_state: int = SEED
