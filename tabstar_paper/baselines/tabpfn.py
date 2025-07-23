@@ -82,13 +82,6 @@ class TabPFN(TabularModel):
         original_dim = x.shape[0]
         batch_size = MAX_TEST_SIZE
         
-        # TODO is the following really needed? if so i need to understand it 
-        # There is a limit of up to 500,000 cells for inference
-        # if self.dataset.sid == get_sid(OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY):
-        #     # JIGSAW is 45 features, so 10,000 * 45 = 450,000 training cells.
-        #     batch_size = 1000
-
-
         all_probs = []
         x_batches = [x.iloc[i:i + batch_size] for i in range(0, len(x), batch_size)]
         print(f"Have {len(x_batches)} batches of size {batch_size} for TabPFN")
