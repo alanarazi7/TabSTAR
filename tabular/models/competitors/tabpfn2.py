@@ -39,7 +39,7 @@ class TabPFNv2(TabularSklearnModel):
         return None
 
     @staticmethod
-    def is_valid_dataset(dataset: TabularDatasetID) -> bool:
+    def is_valid_tabpfn_dataset(dataset: TabularDatasetID) -> bool:
         if dataset in TABPFN_BLACKLIST:
             print(f"Skipping {dataset} for TabPFN, as it's too big")
             return False
@@ -75,4 +75,5 @@ TABPFN_BLACKLIST = {
     # There is a limit of up to 500,000 cells for inference
     KaggleDatasetID.REG_CONSUMER_CAR_PRICE_CARDEKHO,
     KaggleDatasetID.MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23,
+    OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY
 }
