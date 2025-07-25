@@ -10,11 +10,11 @@ from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import MAX_EPOCHS
+from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
 from tabstar_paper.constants import GPU
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
 from tabstar_paper.utils.logging import wandb_run
-from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
 from tabular.trainers.pretrain_args import PretrainArgs
 
 
@@ -44,7 +44,8 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
 
 def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID]:
     if arg.analysis:
-        return ANALYSIS_TEXT_DOWNSTREAM
+        args.n_datasets = 256
+        return ANALYSIS_DOWNSTREAM
     if arg.fold is None:
         return []
     fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
