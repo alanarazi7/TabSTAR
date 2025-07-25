@@ -20,6 +20,7 @@ class TabularModel:
 
     MODEL_NAME: str
     SHORT_NAME: str
+    DO_VAL_SPLIT: bool = True
 
     def __init__(self, is_cls: bool, device: torch.device, verbose: bool = False):
         self.is_cls = is_cls
@@ -40,11 +41,15 @@ class TabularModel:
         raise NotImplementedError("Initialize model method not implemented yet")
 
     def fit(self, x: DataFrame, y: Series):
-        # TODO: for methods which don't require internal split_to_val, skip this step
-        x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        x_train, y_train = x.copy(), y.copy()
+        if self.DO_VAL_SPLIT:
+            x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        else:
+            x_val, y_val = None, None
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
-        x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
+        if x_val is not None and y_val is not None:
+            x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
         self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
@@ -66,7 +71,7 @@ class TabularModel:
     def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
         raise NotImplementedError("Transform internal preprocessor method not implemented yet")
 
-    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: Optional[DataFrame], y_val: Optional[Series]):
         raise NotImplementedError("Fit model method not implemented yet")
 
     def do_model_agnostic_preprocessing(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:

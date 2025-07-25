@@ -22,6 +22,8 @@ argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 attrs==25.1.0
     # via aiohttp
+beautifulsoup4==4.13.4
+    # via gdown
 blessed==1.20.0
     # via gpustat
 carte-ai==0.0.26
@@ -54,11 +56,16 @@ cycler==0.12.1
 docker-pycreds==0.4.0
     # via wandb
 einops==0.8.1
-    # via tabpfn
+    # via
+    #   tabicl
+    #   tabpfn
+faiss-cpu==1.11.0.post1
+    # via tabdpt
 fasttext==0.9.3
     # via carte-ai
 filelock==3.17.0
     # via
+    #   gdown
     #   huggingface-hub
     #   torch
     #   transformers
@@ -73,6 +80,8 @@ fsspec==2025.2.0
     #   huggingface-hub
     #   torch
     #   torch-geometric
+gdown==5.2.0
+    # via tabdpt
 gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
@@ -95,6 +104,7 @@ huggingface-hub==0.29.1
     #   accelerate
     #   peft
     #   sentence-transformers
+    #   tabicl
     #   tabpfn
     #   tokenizers
     #   transformers
@@ -115,6 +125,7 @@ joblib==1.4.2
     # via
     #   -r requirements.in
     #   scikit-learn
+    #   tabicl
 kagglehub==0.3.12
     # via -r requirements.in
 kiwisolver==1.4.8
@@ -152,6 +163,7 @@ numpy==1.26.4
     #   catboost
     #   category-encoders
     #   contourpy
+    #   faiss-cpu
     #   fasttext
     #   h5py
     #   matplotlib
@@ -165,6 +177,8 @@ numpy==1.26.4
     #   seaborn
     #   skrub
     #   statsmodels
+    #   tabdpt
+    #   tabicl
     #   tabpfn-extensions
     #   torch-geometric
     #   torchvision
@@ -181,6 +195,7 @@ optuna==4.3.0
 packaging==24.2
     # via
     #   accelerate
+    #   faiss-cpu
     #   huggingface-hub
     #   kagglehub
     #   matplotlib
@@ -235,6 +250,7 @@ psutil==7.0.0
     #   accelerate
     #   gpustat
     #   peft
+    #   tabicl
     #   torch-geometric
     #   wandb
 pyarrow==19.0.1
@@ -255,6 +271,8 @@ pyparsing==3.2.1
     # via
     #   matplotlib
     #   torch-geometric
+pysocks==1.7.1
+    # via requests
 pytest==8.3.4
     # via -r requirements.in
 python-dateutil==2.9.0.post0
@@ -280,6 +298,7 @@ regex==2024.11.6
     # via transformers
 requests==2.32.3
     # via
+    #   gdown
     #   huggingface-hub
     #   kagglehub
     #   openml
@@ -300,6 +319,8 @@ scikit-learn==1.5.2
     #   openml
     #   sentence-transformers
     #   skrub
+    #   tabdpt
+    #   tabicl
     #   tabpfn
     #   tabpfn-client
     #   tabpfn-extensions
@@ -314,6 +335,7 @@ scipy==1.15.2
     #   sentence-transformers
     #   skrub
     #   statsmodels
+    #   tabicl
     #   tabpfn
     #   tabpfn-extensions
     #   xgboost
@@ -346,6 +368,8 @@ sniffio==1.3.1
     # via
     #   anyio
     #   httpx
+soupsieve==2.7
+    # via beautifulsoup4
 sqlalchemy==2.0.40
     # via
     #   alembic
@@ -356,6 +380,10 @@ statsmodels==0.14.4
     # via category-encoders
 sympy==1.13.1
     # via torch
+tabdpt==0.1.0
+    # via -r requirements.in
+tabicl==0.1.3
+    # via -r requirements.in
 tabpfn==2.0.8
     # via
     #   -r requirements.in
@@ -375,6 +403,8 @@ torch==2.6.0
     #   carte-ai
     #   peft
     #   sentence-transformers
+    #   tabdpt
+    #   tabicl
     #   tabpfn
     #   tabpfn-extensions
     #   torchvision
@@ -387,12 +417,14 @@ torchvision==0.21.0
 tqdm==4.67.1
     # via
     #   -r requirements.in
+    #   gdown
     #   huggingface-hub
     #   kagglehub
     #   openml
     #   optuna
     #   peft
     #   sentence-transformers
+    #   tabicl
     #   tabpfn-client
     #   torch-geometric
     #   transformers
@@ -401,10 +433,12 @@ transformers==4.49.0
     #   -r requirements.in
     #   peft
     #   sentence-transformers
+    #   tabicl
 typing-extensions==4.12.2
     # via
     #   alembic
     #   anyio
+    #   beautifulsoup4
     #   huggingface-hub
     #   minio
     #   pydantic
@@ -422,13 +456,16 @@ urllib3==2.3.0
     #   requests
     #   sentry-sdk
 wandb==0.19.7
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   tabicl
 wcwidth==0.2.13
     # via blessed
 xgboost==2.1.4
     # via
     #   -r requirements.in
     #   carte-ai
+    #   tabicl
 xmltodict==0.14.2
     # via openml
 xxhash==3.5.0
