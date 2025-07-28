@@ -1,4 +1,5 @@
-from typing import Type
+from dataclasses import asdict
+from typing import Type, Dict
 
 import torch
 
@@ -6,8 +7,8 @@ from tabstar.constants import SEED
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegressor
-from tabstar.training.metrics import Metrics
 from tabstar_paper.baselines.abstract_model import TabularModel
+from tabstar_paper.benchmarks.profiling import get_profiling_dict
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 
@@ -20,7 +21,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
                         trial: int,
                         train_examples: int,
                         device: torch.device,
-                        verbose: bool = False) -> Metrics:
+                        verbose: bool = False) -> Dict:
     is_tabstar = issubclass(model_cls, BaseTabSTAR)
     name = "TabSTAR ⭐" if is_tabstar else model_cls.MODEL_NAME
     print(f"Running model {name} over dataset {dataset_id} with trial {trial}")
@@ -35,4 +36,9 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         model = model_cls(is_cls=is_cls, device=device, verbose=verbose)
     model.fit(x_train, y_train)
     metrics = model.score_all_metrics(X=x_test, y=y_test)
-    return metrics
+    ret = {'test_score': metrics.score,
+           'metrics_dict': asdict(metrics),
+           'train_compute': get_profiling_dict(model.train_tracker.resource_usage),
+           'test_compute': get_profiling_dict(model.train_tracker.resource_usage),
+           }
+    return ret

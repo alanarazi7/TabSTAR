@@ -67,7 +67,7 @@ if __name__ == "__main__":
             continue
         print(f"Evaluating {model_name} on {dataset_id.name} with trial {trial}")
         start_time = time.time()
-        metrics = evaluate_on_dataset(
+        ret = evaluate_on_dataset(
             model_cls=model,
             dataset_id=dataset_id,
             trial=trial,
@@ -75,18 +75,17 @@ if __name__ == "__main__":
             device=device
         )
         runtime = time.time() - start_time
-        print(f"Scored {metrics.score:.4f} on dataset {dataset_id.name} in {int(runtime)} seconds.")
-        result = {
-            "score": metrics.score,
-            "dataset": dataset_id.name,
-            "trial": trial,
-            "model": model_name,
-            "metrics": dict(metrics.metrics),
-            "runtime": runtime,
-            "train_examples": args.train_examples,
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-            "git":  get_current_commit_hash(),
-        }
+        print(f"Scored {ret['test_score']:.4f} on dataset {dataset_id.name} in {int(runtime)} seconds.")
+        ret.update(
+            {
+                "model": model_name,
+                "dataset": dataset_id.name,
+                "trial": trial,
+                "train_examples": args.train_examples,
+                "runtime": runtime,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                "git": get_current_commit_hash(),
+            })
         key_file_dir = os.path.dirname(key_file)
         os.makedirs(key_file_dir, exist_ok=True)
-        dump_json(result, key_file)
+        dump_json(ret, key_file)

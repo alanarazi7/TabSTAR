@@ -2,6 +2,7 @@ from typing import Tuple, Dict, Optional, Set
 
 import numpy as np
 import torch
+from gpu_tracker import Tracker
 from pandas import DataFrame, Series
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from skrub import DatetimeEncoder, TextEncoder
@@ -26,6 +27,9 @@ class TabularModel:
         self.is_cls = is_cls
         self.device = device
         self.verbose = verbose
+        # TODO: need to make sure we are passing only the device we care about for the Tracker
+        self.train_tracker = Tracker()
+        self.test_tracker = Tracker()
         self.model_ = self.initialize_model()
         self.d_output: int = 0
         self.target_transformer: Optional[LabelEncoder | StandardScaler] = None
@@ -41,6 +45,7 @@ class TabularModel:
         raise NotImplementedError("Initialize model method not implemented yet")
 
     def fit(self, x: DataFrame, y: Series):
+        self.train_tracker.start()
         x_train, y_train = x.copy(), y.copy()
         if self.DO_VAL_SPLIT:
             x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
@@ -51,6 +56,7 @@ class TabularModel:
         if x_val is not None and y_val is not None:
             x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
         self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
+        self.train_tracker.stop()
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
         x_train, y_train = self.do_model_agnostic_preprocessing(x=x_train, y=y_train)
@@ -108,11 +114,14 @@ class TabularModel:
         return metrics.score
 
     def score_all_metrics(self, X, y) -> Metrics:
+        self.test_tracker.start()
         x = X.copy()
         y = y.copy()
         y_true = transform_preprocess_y(y=y, scaler=self.target_transformer)
         y_pred = self.predict(x)
-        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
+        self.test_tracker.stop()
+        return metrics
 
     def vprint(self, s: str):
         if self.verbose:
