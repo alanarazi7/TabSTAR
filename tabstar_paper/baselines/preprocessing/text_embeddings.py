@@ -1,3 +1,7 @@
+import os
+# TODO: understand whether this flag can make pre-training code slower
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Suppresses warning, avoids deadlock
+
 from typing import Dict, Set
 
 import pandas as pd
