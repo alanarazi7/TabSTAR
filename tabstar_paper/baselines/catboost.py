@@ -7,6 +7,7 @@ from pandas import DataFrame, Series
 from tabstar.constants import SEED
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
+from tabstar_paper.benchmarks.constants import CPU_CORES
 
 
 @dataclass
@@ -16,7 +17,7 @@ class CatBoostDefaultHyperparams:
     iterations: int = 2000
     od_pval: float = 0.001
     random_state: int = SEED
-    thread_count = 1
+    thread_count = CPU_CORES
 
 class CatBoost(TabularModel):
 
