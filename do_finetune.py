@@ -8,7 +8,7 @@ from tabstar.tabstar_model import TabSTARRegressor, TabSTARClassifier
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH
 from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, TRIALS
-from tabstar_paper.constants import GPU
+from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 
@@ -73,6 +73,6 @@ if __name__ == "__main__":
 
     pretrain_args = PretrainArgs.from_json(pretrain_exp=args.pretrain_exp)
     run_args = FinetuneArgs.from_args(args=args, pretrain_args=pretrain_args, exp_name=args.exp)
-    my_device = get_device(device=GPU)
+    my_device = get_device(device=DEVICE)
     finetune_tabstar(finetune_args=run_args, dataset_id=data,
                      trial=args.trial, train_examples=args.downstream_examples, device=my_device)
