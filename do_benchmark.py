@@ -57,7 +57,7 @@ if __name__ == "__main__":
     existing = DataFrame(load_json_lines("tabstar_paper/benchmarks/benchmark_runs.txt"))
     existing_combos = {(d['model'], d['dataset'], d.get('run_num') or d.get('trial')) for _, d in existing.iterrows()}
     for model, dataset_id, trial in tqdm(combos):
-        if args.cls and dataset_id.name.startswith("REG_"):
+        if dataset_id.name.startswith("REG_") and (args.cls or args.model == "icl"):
             continue
         model_name = model.__name__
         if (model_name, dataset_id.name, trial) in existing_combos and (not args.no_cache):
