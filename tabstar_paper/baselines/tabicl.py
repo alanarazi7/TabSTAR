@@ -12,6 +12,7 @@ class TabICL(TabularModel):
 
     MODEL_NAME = "TabICL 🤖"
     SHORT_NAME = "icl"
+    ALLOW_GPU = True
     DO_VAL_SPLIT = False
 
     def initialize_model(self) -> TabICLClassifier:

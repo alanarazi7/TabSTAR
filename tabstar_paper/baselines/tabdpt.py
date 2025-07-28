@@ -13,6 +13,7 @@ class TabDPT(TabularModel):
 
     MODEL_NAME = "TabDPT 6️⃣"
     SHORT_NAME = "dpt"
+    ALLOW_GPU = True
     DO_VAL_SPLIT = False
 
     def initialize_model(self) -> TabDPTClassifier | TabDPTRegressor:

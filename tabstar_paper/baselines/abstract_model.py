@@ -20,11 +20,14 @@ class TabularModel:
 
     MODEL_NAME: str
     SHORT_NAME: str
+    ALLOW_GPU: bool
     DO_VAL_SPLIT: bool = True
 
     def __init__(self, is_cls: bool, device: torch.device, verbose: bool = False):
         self.is_cls = is_cls
         self.device = device
+        if not self.ALLOW_GPU:
+            self.device = torch.device("cpu")
         self.verbose = verbose
         self.model_ = self.initialize_model()
         self.d_output: int = 0
