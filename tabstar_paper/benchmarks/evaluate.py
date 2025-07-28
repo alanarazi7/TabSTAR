@@ -9,7 +9,6 @@ from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegressor
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabstar_paper.benchmarks.profiling import get_profiling_dict
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 from tabstar_paper.utils.logging import get_current_commit_hash
@@ -42,8 +41,6 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     runtime = time.time() - start_time
     ret = {'test_score': metrics.score,
            'metrics_dict': asdict(metrics),
-           'train_compute': get_profiling_dict(model.train_tracker.resource_usage),
-           'test_compute': get_profiling_dict(model.train_tracker.resource_usage),
            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
            "git": get_current_commit_hash(),
            "runtime": runtime,

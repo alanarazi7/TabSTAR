@@ -1,6 +1,5 @@
 carte-ai
 catboost
-gpu_tracker
 gpustat
 h5py
 huggingface_hub
