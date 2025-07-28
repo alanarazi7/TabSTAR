@@ -14,7 +14,7 @@ from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
 from tabstar_paper.constants import GPU
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
-from tabstar_paper.utils.logging import wandb_run
+from tabstar_paper.utils.logging import wandb_run, wandb_finish
 from tabular.trainers.pretrain_args import PretrainArgs
 
 
@@ -36,10 +36,8 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
     model.train()
     pretrain_args.to_json()
     d_summary = {**asdict(pretrain_args), 'full_exp_name': pretrain_args.full_exp_name}
-    wandb.log(d_summary)
-    wandb.summary.update(d_summary)
     print(f"🌟 TabSTAR was pretrained. The experiment name is: {pretrain_args.full_exp_name}")
-    wandb.finish()
+    wandb_finish(d_summary)
 
 
 def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID]:

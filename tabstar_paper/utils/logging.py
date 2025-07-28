@@ -1,4 +1,5 @@
 import subprocess
+from typing import Dict
 
 import wandb
 from wandb.errors import CommError
@@ -28,3 +29,9 @@ def wandb_run(exp_name: str, project: str) -> None:
     except CommError as e:
         print(f"⚠️ WandB couldn't connect to entity `{WANDB_ENTITY}`!")
         raise e
+
+
+def wandb_finish(d_summary: Dict):
+    wandb.log(d_summary)
+    wandb.summary.update(d_summary)
+    wandb.finish()
