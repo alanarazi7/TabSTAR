@@ -16,6 +16,7 @@ class CatBoostDefaultHyperparams:
     iterations: int = 2000
     od_pval: float = 0.001
     random_state: int = SEED
+    thread_count = 1
 
 class CatBoost(TabularModel):
 
