@@ -2,6 +2,7 @@ import argparse
 
 from tabstar.tabstar_model import BaseTabSTAR
 from tabstar.training.devices import get_device
+from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.baselines.tabdpt import TabDPT
@@ -28,6 +29,8 @@ if __name__ == "__main__":
 
     model = SHORT2MODELS[args.model]
     dataset = get_dataset_from_arg(args.dataset_id)
+    if issubclass(model, TabularModel) and not model.ALLOW_GPU:
+        DEVICE = "cpu"
     device = get_device(device=DEVICE)
 
     if dataset.name.startswith("REG_") and args.model == "icl":
