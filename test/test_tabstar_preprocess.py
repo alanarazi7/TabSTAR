@@ -86,7 +86,7 @@ def test_tabstar_preprocessing_imdb():
     assert properties.d_output == 2
     assert properties.train_size == 760
     assert properties.val_size == 40
-    assert np.mean(y) == 0.475
+    assert np.mean(y.numpy()) == 0.475
 
     # First example
     assert y[0] == 1
