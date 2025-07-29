@@ -21,6 +21,7 @@ class RandomForest(TabularModel):
 
     MODEL_NAME = "RandomForest 🌳"
     SHORT_NAME = "rf"
+    ALLOW_GPU = False
 
     def initialize_model(self) -> RandomForestRegressor | RandomForestClassifier:
         model_cls = RandomForestClassifier if self.is_cls else RandomForestRegressor

@@ -5,7 +5,9 @@ accelerate==1.5.2
 aiohappyeyeballs==2.6.1
     # via aiohttp
 aiohttp==3.11.16
-    # via torch-geometric
+    # via
+    #   fsspec
+    #   torch-geometric
 aiosignal==1.3.2
     # via aiohttp
 alembic==1.15.2
@@ -22,6 +24,8 @@ argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 attrs==25.1.0
     # via aiohttp
+beautifulsoup4==4.13.4
+    # via gdown
 blessed==1.20.0
     # via gpustat
 carte-ai==0.0.26
@@ -54,11 +58,16 @@ cycler==0.12.1
 docker-pycreds==0.4.0
     # via wandb
 einops==0.8.1
-    # via tabpfn
+    # via
+    #   tabicl
+    #   tabpfn
+faiss-cpu==1.11.0.post1
+    # via tabdpt
 fasttext==0.9.3
     # via carte-ai
 filelock==3.17.0
     # via
+    #   gdown
     #   huggingface-hub
     #   torch
     #   transformers
@@ -71,8 +80,11 @@ frozenlist==1.5.0
 fsspec==2025.2.0
     # via
     #   huggingface-hub
+    #   pytorch-lightning
     #   torch
     #   torch-geometric
+gdown==5.2.0
+    # via tabdpt
 gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
@@ -95,6 +107,7 @@ huggingface-hub==0.29.1
     #   accelerate
     #   peft
     #   sentence-transformers
+    #   tabicl
     #   tabpfn
     #   tokenizers
     #   transformers
@@ -115,12 +128,17 @@ joblib==1.4.2
     # via
     #   -r requirements.in
     #   scikit-learn
+    #   tabicl
 kagglehub==0.3.12
     # via -r requirements.in
 kiwisolver==1.4.8
     # via matplotlib
 liac-arff==2.5.0
     # via openml
+lightning-utilities==0.15.0
+    # via
+    #   pytorch-lightning
+    #   torchmetrics
 mako==1.3.10
     # via alembic
 markupsafe==3.0.2
@@ -152,6 +170,7 @@ numpy==1.26.4
     #   catboost
     #   category-encoders
     #   contourpy
+    #   faiss-cpu
     #   fasttext
     #   h5py
     #   matplotlib
@@ -160,13 +179,17 @@ numpy==1.26.4
     #   pandas
     #   patsy
     #   peft
+    #   pytabkit
     #   scikit-learn
     #   scipy
     #   seaborn
     #   skrub
     #   statsmodels
+    #   tabdpt
+    #   tabicl
     #   tabpfn-extensions
     #   torch-geometric
+    #   torchmetrics
     #   torchvision
     #   transformers
     #   xgboost
@@ -181,16 +204,20 @@ optuna==4.3.0
 packaging==24.2
     # via
     #   accelerate
+    #   faiss-cpu
     #   huggingface-hub
     #   kagglehub
+    #   lightning-utilities
     #   matplotlib
     #   openml
     #   optuna
     #   peft
     #   plotly
     #   pytest
+    #   pytorch-lightning
     #   skrub
     #   statsmodels
+    #   torchmetrics
     #   transformers
 pandas==2.2.3
     # via
@@ -199,6 +226,7 @@ pandas==2.2.3
     #   catboost
     #   category-encoders
     #   openml
+    #   pytabkit
     #   seaborn
     #   skrub
     #   statsmodels
@@ -235,6 +263,8 @@ psutil==7.0.0
     #   accelerate
     #   gpustat
     #   peft
+    #   pytabkit
+    #   tabicl
     #   torch-geometric
     #   wandb
 pyarrow==19.0.1
@@ -255,6 +285,10 @@ pyparsing==3.2.1
     # via
     #   matplotlib
     #   torch-geometric
+pysocks==1.7.1
+    # via requests
+pytabkit==1.6.0
+    # via -r requirements.in
 pytest==8.3.4
     # via -r requirements.in
 python-dateutil==2.9.0.post0
@@ -264,6 +298,8 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-dotenv==1.1.0
     # via -r requirements.in
+pytorch-lightning==2.5.2
+    # via pytabkit
 pytz==2025.1
     # via pandas
 pyyaml==6.0.2
@@ -274,12 +310,14 @@ pyyaml==6.0.2
     #   omegaconf
     #   optuna
     #   peft
+    #   pytorch-lightning
     #   transformers
     #   wandb
 regex==2024.11.6
     # via transformers
 requests==2.32.3
     # via
+    #   gdown
     #   huggingface-hub
     #   kagglehub
     #   openml
@@ -298,8 +336,11 @@ scikit-learn==1.5.2
     #   carte-ai
     #   category-encoders
     #   openml
+    #   pytabkit
     #   sentence-transformers
     #   skrub
+    #   tabdpt
+    #   tabicl
     #   tabpfn
     #   tabpfn-client
     #   tabpfn-extensions
@@ -314,6 +355,7 @@ scipy==1.15.2
     #   sentence-transformers
     #   skrub
     #   statsmodels
+    #   tabicl
     #   tabpfn
     #   tabpfn-extensions
     #   xgboost
@@ -330,6 +372,7 @@ setproctitle==1.3.5
 setuptools==75.8.2
     # via
     #   fasttext
+    #   lightning-utilities
     #   wandb
 six==1.17.0
     # via
@@ -346,6 +389,8 @@ sniffio==1.3.1
     # via
     #   anyio
     #   httpx
+soupsieve==2.7
+    # via beautifulsoup4
 sqlalchemy==2.0.40
     # via
     #   alembic
@@ -356,6 +401,10 @@ statsmodels==0.14.4
     # via category-encoders
 sympy==1.13.1
     # via torch
+tabdpt==0.1.0
+    # via -r requirements.in
+tabicl==0.1.3
+    # via -r requirements.in
 tabpfn==2.0.8
     # via
     #   -r requirements.in
@@ -374,25 +423,37 @@ torch==2.6.0
     #   accelerate
     #   carte-ai
     #   peft
+    #   pytabkit
+    #   pytorch-lightning
     #   sentence-transformers
+    #   tabdpt
+    #   tabicl
     #   tabpfn
     #   tabpfn-extensions
+    #   torchmetrics
     #   torchvision
 torch-geometric==2.6.1
     # via carte-ai
 torcheval==0.0.7
     # via carte-ai
+torchmetrics==1.8.0
+    # via
+    #   pytabkit
+    #   pytorch-lightning
 torchvision==0.21.0
     # via -r requirements.in
 tqdm==4.67.1
     # via
     #   -r requirements.in
+    #   gdown
     #   huggingface-hub
     #   kagglehub
     #   openml
     #   optuna
     #   peft
+    #   pytorch-lightning
     #   sentence-transformers
+    #   tabicl
     #   tabpfn-client
     #   torch-geometric
     #   transformers
@@ -401,14 +462,18 @@ transformers==4.49.0
     #   -r requirements.in
     #   peft
     #   sentence-transformers
+    #   tabicl
 typing-extensions==4.12.2
     # via
     #   alembic
     #   anyio
+    #   beautifulsoup4
     #   huggingface-hub
+    #   lightning-utilities
     #   minio
     #   pydantic
     #   pydantic-core
+    #   pytorch-lightning
     #   sqlalchemy
     #   tabpfn
     #   torch
@@ -422,13 +487,16 @@ urllib3==2.3.0
     #   requests
     #   sentry-sdk
 wandb==0.19.7
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   tabicl
 wcwidth==0.2.13
     # via blessed
 xgboost==2.1.4
     # via
     #   -r requirements.in
     #   carte-ai
+    #   tabicl
 xmltodict==0.14.2
     # via openml
 xxhash==3.5.0

@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Optional, Set
+from typing import Tuple, Dict, Optional, Set, Literal
 
 import numpy as np
 import torch
@@ -14,16 +14,22 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
+from tabstar_paper.datasets.objects import SupervisedTask
 
 
 class TabularModel:
 
     MODEL_NAME: str
     SHORT_NAME: str
+    ALLOW_GPU: bool
+    DO_VAL_SPLIT: bool = True
 
-    def __init__(self, is_cls: bool, device: torch.device, verbose: bool = False):
-        self.is_cls = is_cls
+    def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False):
+        self.problem_type = problem_type
+        self.is_cls = bool(problem_type in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS})
         self.device = device
+        if not self.ALLOW_GPU:
+            self.device = torch.device("cpu")
         self.verbose = verbose
         self.model_ = self.initialize_model()
         self.d_output: int = 0
@@ -40,11 +46,15 @@ class TabularModel:
         raise NotImplementedError("Initialize model method not implemented yet")
 
     def fit(self, x: DataFrame, y: Series):
-        # TODO: for methods which don't require internal split_to_val, skip this step
-        x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        x_train, y_train = x.copy(), y.copy()
+        if self.DO_VAL_SPLIT:
+            x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
+        else:
+            x_val, y_val = None, None
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
-        x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
+        if x_val is not None and y_val is not None:
+            x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
         self.fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
@@ -66,7 +76,7 @@ class TabularModel:
     def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
         raise NotImplementedError("Transform internal preprocessor method not implemented yet")
 
-    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: Optional[DataFrame], y_val: Optional[Series]):
         raise NotImplementedError("Fit model method not implemented yet")
 
     def do_model_agnostic_preprocessing(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
@@ -107,7 +117,8 @@ class TabularModel:
         y = y.copy()
         y_true = transform_preprocess_y(y=y, scaler=self.target_transformer)
         y_pred = self.predict(x)
-        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.d_output)
+        return metrics
 
     def vprint(self, s: str):
         if self.verbose:

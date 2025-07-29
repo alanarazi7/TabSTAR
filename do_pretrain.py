@@ -10,11 +10,11 @@ from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import MAX_EPOCHS
-from tabstar_paper.constants import GPU
+from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
+from tabstar_paper.constants import DEVICE
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
-from tabstar_paper.utils.logging import wandb_run
-from tabular.benchmarks.all_datasets import ANALYSIS_TEXT_DOWNSTREAM
+from tabstar_paper.utils.logging import wandb_run, wandb_finish
 from tabular.trainers.pretrain_args import PretrainArgs
 
 
@@ -24,7 +24,7 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
         print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")
         return
     print(f"🧪 Initializing experiment {pretrain_args.full_exp_name}")
-    device = get_device(device=GPU)
+    device = get_device(device=DEVICE)
     wandb_run(exp_name=pretrain_args.raw_exp_name, project="tabstar_pretrain")
     wandb.config.update(asdict(pretrain_args), allow_val_change=True)
     print(f"Pretraining over {len(pretrain_datasets)} datasets")
@@ -36,15 +36,14 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
     model.train()
     pretrain_args.to_json()
     d_summary = {**asdict(pretrain_args), 'full_exp_name': pretrain_args.full_exp_name}
-    wandb.log(d_summary)
-    wandb.summary.update(d_summary)
     print(f"🌟 TabSTAR was pretrained. The experiment name is: {pretrain_args.full_exp_name}")
-    wandb.finish()
+    wandb_finish(d_summary)
 
 
 def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID]:
     if arg.analysis:
-        return ANALYSIS_TEXT_DOWNSTREAM
+        args.n_datasets = 256
+        return ANALYSIS_DOWNSTREAM
     if arg.fold is None:
         return []
     fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD

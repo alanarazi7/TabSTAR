@@ -6,7 +6,8 @@ import wandb
 from optuna import Trial
 from xgboost import XGBRegressor, XGBClassifier
 
-from tabular.constants import VERBOSE, OPTUNA_BUDGET, OPTUNA_CPU
+from tabstar_paper.benchmarks.constants import CPU_CORES
+from tabular.constants import VERBOSE, OPTUNA_BUDGET
 from tabular.evaluation.cross_validation import get_kfold_splitter, get_optuna_study, make_train_dev_splits
 from tabular.evaluation.metrics import calculate_metric
 from tabular.evaluation.sklearn_model import init_model
@@ -51,7 +52,7 @@ class XGBoostOptuna(TabularSklearnModel):
         assert all(v is None for v in [self.config, self.model, self.y_scaler, self.x_median])
         print(f"Starting Optuna study for {self.dataset.sid}")
         study = get_optuna_study()
-        study.optimize(self.objective, n_jobs=OPTUNA_CPU, timeout=OPTUNA_BUDGET)
+        study.optimize(self.objective, n_jobs=CPU_CORES, timeout=OPTUNA_BUDGET)
         print(f"Done studying, did {len(study.trials)} runs 🤓")
         self.config = XGBoostTunedHyperparams(**study.best_params)
         wandb.log({"optuna_best_params": asdict(self.config), "optuna_n_trials": len(study.trials)})

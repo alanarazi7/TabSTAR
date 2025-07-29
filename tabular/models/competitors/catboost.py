@@ -5,7 +5,8 @@ import wandb
 from catboost import CatBoostRegressor, CatBoostClassifier, CatBoostError
 from optuna import Trial
 
-from tabular.constants import VERBOSE, OPTUNA_CPU, OPTUNA_BUDGET
+from tabstar_paper.benchmarks.constants import CPU_CORES
+from tabular.constants import VERBOSE, OPTUNA_BUDGET
 from tabular.evaluation.cross_validation import get_kfold_splitter, get_optuna_study, make_train_dev_splits
 from tabular.evaluation.metrics import calculate_metric
 from tabular.evaluation.sklearn_model import init_model
@@ -44,8 +45,7 @@ class CatBoostOptuna(TabularSklearnModel):
         self.model = None
         print(f"Starting Optuna study for {self.dataset.sid}")
         study = get_optuna_study()
-        study.optimize(self.objective, n_jobs=OPTUNA_CPU, timeout=OPTUNA_BUDGET,
-                       catch=(CatBoostError,))
+        study.optimize(self.objective, n_jobs=CPU_CORES, timeout=OPTUNA_BUDGET, catch=(CatBoostError,))
         print(f"Done studying, did {len(study.trials)} runs 🤓")
         self.config = CatBoostTunedHyperparams(**study.best_params)
         wandb.log({"optuna_best_params": asdict(self.config), "optuna_n_trials": len(study.trials)})

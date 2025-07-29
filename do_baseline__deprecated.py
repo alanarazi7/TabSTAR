@@ -1,7 +1,7 @@
 import argparse
 
 from tabstar.training.devices import get_device
-from tabstar_paper.constants import GPU
+from tabstar_paper.constants import DEVICE
 from tabular.datasets.tabular_datasets import get_dataset_from_arg
 from tabular.models.competitors.carte import CARTE
 from tabular.models.competitors.catboost import CatBoostOptuna
@@ -35,6 +35,6 @@ if __name__ == "__main__":
     dataset = get_dataset_from_arg(args.dataset_id)
     n_examples = args.n_examples
 
-    device = get_device(device=GPU)
+    device = get_device(device=DEVICE)
     do_finetune_run(exp_name=args.exp, dataset=dataset, model=model, run_num=args.run_num, train_examples=n_examples,
                     device=device)

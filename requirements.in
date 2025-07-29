@@ -10,12 +10,15 @@ openml
 optuna
 pandas >= 2.2.2
 peft
+pytabkit
 pytest
 python-dotenv
 scikit-learn
 sentence_transformers
 scipy
 skrub
+tabdpt
+tabicl
 tabpfn >= 2.0.8
 tabpfn-client >= 0.1.7
 tabpfn_extensions
