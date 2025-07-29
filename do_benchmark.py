@@ -10,7 +10,7 @@ from tabstar_paper.baselines.tabdpt import TabDPT
 from tabstar_paper.baselines.tabicl import TabICL
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
-from tabstar_paper.constants import DEVICE
+from tabstar_paper.constants import DEVICE, GPU
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.logging import wandb_run, wandb_finish
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     model = SHORT2MODELS[args.model]
     dataset = get_dataset_from_arg(args.dataset_id)
-    if issubclass(model, TabularModel) and not model.ALLOW_GPU:
+    if issubclass(model, TabularModel) and (not model.ALLOW_GPU) and GPU is None:
         DEVICE = "cpu"
     device = get_device(device=DEVICE)
 
