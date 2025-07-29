@@ -56,6 +56,10 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         "metrics_dict": asdict(metrics),
         "runtime": runtime,
         "use_gpu": bool(device.type == 'cuda'),
+        "n_train": len(y_train),
+        "n_test": len(y_test),
+        "m_features": x_train.shape[1],
+        "class_labels": model.d_output,
         **train_tracker.summary(),
         **test_tracker.summary()
            }
