@@ -5,6 +5,7 @@ from tabstar.training.devices import get_device
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.random_forest import RandomForest
+from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.tabdpt import TabDPT
 from tabstar_paper.baselines.tabicl import TabICL
 from tabstar_paper.baselines.xgboost import XGBoost
@@ -13,7 +14,9 @@ from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.logging import wandb_run, wandb_finish
 
-BASELINES = [CatBoost, XGBoost, RandomForest, TabICL, TabDPT]
+BASELINES = [CatBoost, XGBoost, RandomForest,
+             RealMLP,
+             TabICL, TabDPT]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
 SHORT2MODELS = {'tabstar': BaseTabSTAR, **baseline_names}
@@ -25,6 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset_id', required=True)
     parser.add_argument('--trial', type=int, required=True)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
+    parser.add_argument('--verbose', action='store_true', default=False)
     args = parser.parse_args()
 
     model = SHORT2MODELS[args.model]
@@ -42,6 +46,7 @@ if __name__ == "__main__":
         dataset_id=dataset,
         trial=args.trial,
         train_examples=args.train_examples,
-        device=device
+        device=device,
+        verbose=args.verbose
     )
     wandb_finish(d_summary=ret)
