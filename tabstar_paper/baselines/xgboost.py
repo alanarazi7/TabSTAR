@@ -24,7 +24,6 @@ class XGBoost(TabularModel):
 
     MODEL_NAME = "XGBoost 🌲"
     SHORT_NAME = "xgb"
-    ALLOW_GPU = False
 
     def initialize_model(self) -> XGBRegressor | XGBClassifier:
         model_cls = XGBClassifier if self.is_cls else XGBRegressor

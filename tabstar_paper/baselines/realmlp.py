@@ -14,7 +14,6 @@ from tabstar_paper.datasets.objects import SupervisedTask
 class RealMLP(TabularModel):
     MODEL_NAME = "RealMLP 🕸"
     SHORT_NAME = "real"
-    ALLOW_GPU = True
 
     def initialize_model(self) -> RealMLP_TD_Classifier | RealMLP_TD_Regressor:
         task2metric = {SupervisedTask.BINARY: 'cross_entropy',
