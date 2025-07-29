@@ -10,6 +10,7 @@ openml
 optuna
 pandas >= 2.2.2
 peft
+pytabkit
 pytest
 python-dotenv
 scikit-learn
