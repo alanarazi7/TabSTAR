@@ -10,6 +10,7 @@ from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARClassifier, BaseTabSTAR, TabSTARRegressor
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
+from tabstar_paper.datasets.objects import SupervisedTask
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 from tabstar_paper.utils.logging import get_current_commit_hash
 from tabstar_paper.utils.profiling import PeakMemoryTracker
@@ -36,7 +37,9 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
         model = tabstar_cls(pretrain_dataset_or_path=dataset_id, device=device, verbose=verbose, random_state=SEED)
     else:
-        model = model_cls(is_cls=is_cls, device=device, verbose=verbose)
+        prefix2task = {"REG": SupervisedTask.REGRESSION, "BIN": SupervisedTask.BINARY, "MUL": SupervisedTask.MULTICLASS}
+        problem_type = prefix2task[dataset_id.name[:3]]
+        model = model_cls(problem_type=problem_type, device=device, verbose=verbose)
     with PeakMemoryTracker(phase='train', device=device) as train_tracker:
         model.fit(x_train, y_train)
     with PeakMemoryTracker(phase='inference', device=device) as test_tracker:

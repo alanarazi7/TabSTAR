@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Optional, Set
+from typing import Tuple, Dict, Optional, Set, Literal
 
 import numpy as np
 import torch
@@ -14,6 +14,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
+from tabstar_paper.datasets.objects import SupervisedTask
 
 
 class TabularModel:
@@ -23,8 +24,9 @@ class TabularModel:
     ALLOW_GPU: bool
     DO_VAL_SPLIT: bool = True
 
-    def __init__(self, is_cls: bool, device: torch.device, verbose: bool = False):
-        self.is_cls = is_cls
+    def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False):
+        self.problem_type = problem_type
+        self.is_cls = bool(problem_type in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS})
         self.device = device
         if not self.ALLOW_GPU:
             self.device = torch.device("cpu")
