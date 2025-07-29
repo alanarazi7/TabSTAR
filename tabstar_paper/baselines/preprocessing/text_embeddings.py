@@ -12,6 +12,9 @@ from skrub import TextEncoder
 from tabstar.arch.config import E5_SMALL
 
 
+# TODO: there's a little gotcha in the way this is implemented, as there's no decoupling between encoding and PCA.
+# In realistic scenarios where we tune the model over and over, the efficient way would be to fit the encoder once,
+# cache the embeddings, and then apply PCA on the cached embeddings over and over for every train split in every run.
 def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.device) -> Dict[str, TextEncoder]:
     text_encoders = {}
     for col, dtype in x.dtypes.items():
