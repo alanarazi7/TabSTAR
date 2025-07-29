@@ -17,13 +17,12 @@ class RealMLP(TabularModel):
     ALLOW_GPU = True
 
     def initialize_model(self) -> RealMLP_TD_Classifier | RealMLP_TD_Regressor:
-        params = {'device': str(self.device), 'n_threads': CPU_CORES}
-        if self.is_cls:
-            model_cls = RealMLP_TD_Classifier
-        else:
-            model_cls = RealMLP_TD_Regressor
-            val_metric_name = 'cross_entropy' if self.problem_type == SupervisedTask.BINARY else '1-auc_ovr'
-            params.update({'val_metric_name': val_metric_name, 'use_ls': False})
+        task2metric = {SupervisedTask.BINARY: 'cross_entropy',
+                       SupervisedTask.MULTICLASS: '1-auc_ovr',
+                       SupervisedTask.REGRESSION: 'rmse'}
+        val_metric = task2metric[self.problem_type]
+        model_cls = RealMLP_TD_Classifier if self.is_cls else RealMLP_TD_Regressor
+        params = {'device': str(self.device), 'n_threads': CPU_CORES, 'val_metric_name': val_metric, 'use_ls': False}
         model = model_cls(**params)
         return model
 
