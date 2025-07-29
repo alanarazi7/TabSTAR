@@ -33,7 +33,7 @@ class XGBoost(TabularModel):
         return model
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
-        self.numerical_features = fit_numerical_median(x=x, numerical_features=self.numerical_features)
+        self.numerical_medians = fit_numerical_median(x=x, numerical_features=self.numerical_features)
         self.categorical_encoders = fit_categorical_encoders(x=x, categorical_features=self.categorical_features)
         self.text_transformers = fit_text_encoders(x=x, text_features=self.text_features, device=self.device)
         self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
