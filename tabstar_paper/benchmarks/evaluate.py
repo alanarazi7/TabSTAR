@@ -1,4 +1,5 @@
 import time
+from dataclasses import asdict
 from typing import Type, Dict
 
 import torch
@@ -42,7 +43,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     with PeakMemoryTracker(phase='train', device=device) as train_tracker:
         model.fit(x_train, y_train)
     with PeakMemoryTracker(phase='inference', device=device) as test_tracker:
-        test_score = model.score(X=x_test, y=y_test)
+        metrics = model.score_all_metrics(X=x_test, y=y_test)
     runtime = time.time() - start_time
     d_summary = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
@@ -51,7 +52,8 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         "dataset": dataset_id.name,
         "trial": trial,
         "train_examples": train_examples,
-        "test_score": test_score,
+        "test_score": metrics.score,
+        "metrics_dict": asdict(metrics),
         "runtime": runtime,
         "use_gpu": bool(device.type == 'cuda'),
         "n_train": len(y_train),
@@ -60,5 +62,5 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         **train_tracker.summary(),
         **test_tracker.summary()
            }
-    print(f"Scored {test_score:.4f} on dataset {dataset_id.name}, trial {trial} in {int(runtime)} seconds.")
+    print(f"Scored {metrics.score:.4f} on dataset {dataset_id.name}, trial {trial} in {int(runtime)} seconds.")
     return d_summary

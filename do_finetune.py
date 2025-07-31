@@ -44,8 +44,9 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                         verbose=VERBOSE,
                         device=device)
     model.fit(x_train, y_train)
-    test_score = model.score(X=x_test, y=y_test)
-    print(f"Scored {test_score:.4f} on dataset {dataset_id.dataset_id}.")
+    metrics = model.score_all_metrics(X=x_test, y=y_test)
+    print(f"Scored {metrics.score:.4f} on dataset {dataset_id.dataset_id}.")
+    return metrics
 
 
 
