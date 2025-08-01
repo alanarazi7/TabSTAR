@@ -1,5 +1,5 @@
 import psutil
-from typing import Dict
+from typing import Dict, Optional
 import torch
 
 def get_hardware_dict(device: torch.device) -> Dict:
@@ -31,8 +31,11 @@ def byte_to_gb(byte_size: int) -> float:
     return byte_size / (1024 ** 3)
 
 
-def get_cpu_name_linux():
-    with open("/proc/cpuinfo") as f:
-        for line in f:
-            if "model name" in line:
-                return line.split(":", 1)[1].strip()
+def get_cpu_name_linux() -> Optional[str]:
+    try:
+        with open("/proc/cpuinfo") as f:
+            for line in f:
+                if "model name" in line:
+                    return line.split(":", 1)[1].strip()
+    except FileNotFoundError:
+        return None
