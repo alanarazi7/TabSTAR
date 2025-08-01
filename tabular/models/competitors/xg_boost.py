@@ -6,7 +6,7 @@ import wandb
 from optuna import Trial
 from xgboost import XGBRegressor, XGBClassifier
 
-from tabstar_paper.benchmarks.constants import CPU_CORES
+from tabstar.training.devices import CPU_CORES
 from tabular.constants import VERBOSE, OPTUNA_BUDGET
 from tabular.evaluation.cross_validation import get_kfold_splitter, get_optuna_study, make_train_dev_splits
 from tabular.evaluation.metrics import calculate_metric

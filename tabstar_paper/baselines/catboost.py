@@ -5,9 +5,9 @@ from catboost import CatBoostRegressor, CatBoostClassifier
 from pandas import DataFrame, Series
 
 from tabstar.constants import SEED
+from tabstar.training.devices import CPU_CORES
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
-from tabstar_paper.benchmarks.constants import CPU_CORES
 
 
 @dataclass

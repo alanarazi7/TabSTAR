@@ -3,11 +3,11 @@ from typing import Tuple
 from pandas import DataFrame, Series
 from pytabkit import RealMLP_TD_Classifier, RealMLP_TD_Regressor
 
+from tabstar.training.devices import CPU_CORES
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
 from tabstar_paper.baselines.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
-from tabstar_paper.benchmarks.constants import CPU_CORES
 from tabstar_paper.datasets.objects import SupervisedTask
 
 

@@ -14,6 +14,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from tabstar.datasets.all_datasets import TabularDatasetID
+from tabstar.training.devices import CPU_CORES
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.metrics import apply_loss_fn, calculate_metric, calculate_loss
 from tabstar.training.optimizer import get_scheduler
@@ -34,7 +35,7 @@ from tabular.utils.deep import print_model_summary
 from tabular.utils.optimizer import get_groups_for_optimizer
 from tabular.utils.paths import get_model_path, get_checkpoint
 
-torch.set_num_threads(1)
+torch.set_num_threads(CPU_CORES)
 if hasattr(torch, 'set_float32_matmul_precision'):
     torch.set_float32_matmul_precision('high')
 

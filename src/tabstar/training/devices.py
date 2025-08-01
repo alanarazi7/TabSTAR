@@ -1,8 +1,16 @@
+import os
 from subprocess import Popen, PIPE
 from typing import Optional
 
 import torch
 
+
+CPU_CORES = 8
+
+EXISTING_CORES = os.cpu_count()
+if EXISTING_CORES < CPU_CORES:
+    print(f"❗ Warning: {CPU_CORES} CPU devices requested, but only {EXISTING_CORES} available.")
+    CPU_CORES = EXISTING_CORES
 
 def get_device(device: Optional[str | torch.device] = None) -> torch.device:
     if isinstance(device, torch.device):
