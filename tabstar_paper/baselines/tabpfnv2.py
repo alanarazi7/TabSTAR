@@ -4,8 +4,9 @@ from pandas import DataFrame, Series
 
 from tabstar.constants import SEED
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabpfn_client import TabPFNClassifier as ClientTabPFNClassifier, TabPFNRegressor as ClientTabPFNRegressor
+from tabpfn_client import TabPFNClassifier, TabPFNRegressor, set_access_token
 
+from tabstar_paper.constants import TABPFN_TOKEN
 
 MAX_SAMPLES = 10_000
 
@@ -15,9 +16,11 @@ class TabPFNv2(TabularModel):
     SHORT_NAME = "pfn"
     DO_VAL_SPLIT = False
 
-    def initialize_model(self) -> ClientTabPFNClassifier | ClientTabPFNRegressor:
+    def initialize_model(self) -> TabPFNClassifier | TabPFNRegressor:
         # TODO: Move away from closed-source client version, as this isn't reproducible, they improve the model
-        model_cls = ClientTabPFNRegressor if not self.is_cls else ClientTabPFNClassifier
+        assert TABPFN_TOKEN, f"Please set the TABPFN_TOKEN environment variable to use TabPFN."
+        set_access_token(TABPFN_TOKEN)
+        model_cls = TabPFNRegressor if not self.is_cls else TabPFNClassifier
         model = model_cls(random_state=SEED)
         return model
 
