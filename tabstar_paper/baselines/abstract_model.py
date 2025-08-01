@@ -22,6 +22,7 @@ class TabularModel:
 
     MODEL_NAME: str
     SHORT_NAME: str
+    # TODO: remove the default, this is error prone
     DO_VAL_SPLIT: bool = True
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False):

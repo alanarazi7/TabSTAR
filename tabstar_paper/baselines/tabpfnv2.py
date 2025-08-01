@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from pandas import DataFrame, Series
 
 from tabstar.constants import SEED
@@ -11,6 +13,7 @@ class TabPFNv2(TabularModel):
 
     MODEL_NAME = "TabPFN-v2 🤯"
     SHORT_NAME = "pfn"
+    DO_VAL_SPLIT = False
 
     def initialize_model(self) -> ClientTabPFNClassifier | ClientTabPFNRegressor:
         # TODO: Move away from closed-source client version, as this isn't reproducible, they improve the model
@@ -22,3 +25,9 @@ class TabPFNv2(TabularModel):
         if len(x_train) > MAX_SAMPLES:
             raise RuntimeError(f"TabPFN is not designed to handle datasets larger than {MAX_SAMPLES} samples. ")
         self.model_.fit(x_train, y_train)
+
+    def fit_internal_preprocessor(self, x: DataFrame, y: Series):
+        pass
+
+    def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        return x, y
