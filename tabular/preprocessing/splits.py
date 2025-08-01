@@ -97,8 +97,7 @@ def _uses_dev(processing: PreprocessingMethod) -> bool:
     if processing in CV_METHODS:
         return False
     process2dev = {
-                   # TabPFN-v2 and CARTE don't use dev
-                   PreprocessingMethod.TABPFNV2: False,
+                   # CARTE doesn't use dev
                    PreprocessingMethod.CARTE: False,
                    }
     return process2dev[processing]

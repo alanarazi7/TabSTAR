@@ -5,12 +5,11 @@ from tabstar_paper.constants import DEVICE
 from tabular.datasets.tabular_datasets import get_dataset_from_arg
 from tabular.models.competitors.carte import CARTE
 from tabular.models.competitors.catboost import CatBoostOptuna
-from tabular.models.competitors.tabpfn2 import TabPFNv2
 from tabular.models.competitors.xg_boost import XGBoostOptuna
 from tabular.trainers.finetune import do_finetune_run
 
 # We are refactoring this code, use `do_benchmark.py`
-BASELINES = [TabPFNv2, CARTE, CatBoostOptuna, XGBoostOptuna]
+BASELINES = [CARTE, CatBoostOptuna, XGBoostOptuna]
 
 SHORT2MODELS = {model.SHORT_NAME: model for model in BASELINES}
 

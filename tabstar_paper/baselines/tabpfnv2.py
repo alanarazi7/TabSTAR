@@ -1,0 +1,24 @@
+from pandas import DataFrame, Series
+
+from tabstar.constants import SEED
+from tabstar_paper.baselines.abstract_model import TabularModel
+from tabpfn_client import TabPFNClassifier as ClientTabPFNClassifier, TabPFNRegressor as ClientTabPFNRegressor
+
+
+MAX_SAMPLES = 10_000
+
+class TabPFNv2(TabularModel):
+
+    MODEL_NAME = "TabPFN-v2 🤯"
+    SHORT_NAME = "pfn"
+
+    def initialize_model(self) -> ClientTabPFNClassifier | ClientTabPFNRegressor:
+        # TODO: Move away from closed-source client version, as this isn't reproducible, they improve the model
+        model_cls = ClientTabPFNRegressor if not self.is_cls else ClientTabPFNClassifier
+        model = model_cls(random_state=SEED)
+        return model
+
+    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+        if len(x_train) > MAX_SAMPLES:
+            raise RuntimeError(f"TabPFN is not designed to handle datasets larger than {MAX_SAMPLES} samples. ")
+        self.model_.fit(x_train, y_train)

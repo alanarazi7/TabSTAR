@@ -21,7 +21,6 @@ class SupervisedTask(StrEnum):
 
 class PreprocessingMethod(StrEnum):
     CARTE = "Carte"
-    TABPFNV2 = "TabPFN-v2"
     TREES_OPT = "Trees-Optuna"
     CATBOOST_OPT = "CatBoost-Optuna"
 
