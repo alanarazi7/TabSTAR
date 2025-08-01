@@ -12,6 +12,7 @@ from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.datasets.objects import SupervisedTask
 from tabstar_paper.preprocessing.sampling import subsample_dataset
+from tabstar_paper.utils.hardware import get_hardware_dict
 from tabstar_paper.utils.logging import get_current_commit_hash
 from tabstar_paper.utils.profiling import PeakMemoryTracker
 
@@ -55,12 +56,12 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         "test_score": metrics.score,
         "metrics_dict": asdict(metrics),
         "runtime": runtime,
-        "use_gpu": bool(device.type == 'cuda'),
         "n_train": len(y_train),
         "n_test": len(y_test),
         "m_features": x_train.shape[1],
         **train_tracker.summary(),
-        **test_tracker.summary()
+        **test_tracker.summary(),
+        **get_hardware_dict(device),
            }
     print(f"Scored {metrics.score:.4f} on dataset {dataset_id.name}, trial {trial} in {int(runtime)} seconds.")
     return d_summary

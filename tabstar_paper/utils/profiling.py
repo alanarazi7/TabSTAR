@@ -2,6 +2,8 @@ import os, time, threading, psutil
 from typing import Optional
 import torch
 
+from tabstar_paper.utils.hardware import byte_to_gb
+
 
 class PeakMemoryTracker:
     def __init__(self, phase: str, device: Optional[torch.device] = None, interval: float = 0.5):
@@ -57,7 +59,3 @@ class PeakMemoryTracker:
             f'{self.phase}_peak_cpu_gb': peak_ram_gb,
             f'{self.phase}_peak_gpu_gb': peak_gpu_ram_gb,
         }
-
-
-def byte_to_gb(byte_size: int) -> float:
-    return byte_size / (1024 ** 3)
