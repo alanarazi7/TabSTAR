@@ -42,7 +42,7 @@ if __name__ == "__main__":
     ret = evaluate_on_dataset(
         model_cls=model,
         dataset_id=dataset,
-        trial=args.trial,
+        fold=args.trial,
         train_examples=args.train_examples,
         device=device,
         verbose=args.verbose

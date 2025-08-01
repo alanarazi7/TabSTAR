@@ -7,7 +7,7 @@ from tabstar.preprocessing.splits import split_to_test
 from tabstar.tabstar_model import TabSTARRegressor, TabSTARClassifier
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH
-from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, TRIALS
+from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, FOLDS
 from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.preprocessing.sampling import subsample_dataset
@@ -28,8 +28,8 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
         raise RuntimeError(f"😱 Dataset {dataset_id} is already in pretrain datasets, beware!")
     dataset_id = download_dataset(dataset_id=dataset_id)
     is_cls = dataset_id.is_cls
-    x, y = subsample_dataset(x=dataset_id.x, y=dataset_id.y, is_cls=is_cls, train_examples=train_examples, trial=trial)
-    x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, trial=trial, train_examples=train_examples)
+    x, y = subsample_dataset(x=dataset_id.x, y=dataset_id.y, is_cls=is_cls, train_examples=train_examples, fold=trial)
+    x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold_num=trial, train_examples=train_examples)
     if is_cls:
         tabstar_cls = TabSTARClassifier
     else:
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     assert args.pretrain_exp, "Pretrain path is required"
     data = get_dataset_from_arg(args.dataset_id)
-    assert 0 <= args.trial < TRIALS, f"Invalid run number: {args.trial}. Should be between 0 and {TRIALS - 1}"
+    assert 0 <= args.trial < FOLDS, f"Invalid run number: {args.trial}. Should be between 0 and {FOLDS - 1}"
 
     pretrain_args = PretrainArgs.from_json(pretrain_exp=args.pretrain_exp)
     run_args = FinetuneArgs.from_args(args=args, pretrain_args=pretrain_args, exp_name=args.exp)

@@ -11,23 +11,23 @@ MAX_TEST_SIZE = 2000
 VAL_RATIO = 0.1
 MAX_VAL_SIZE = 1000
 
-def split_to_test(x: DataFrame, y: Series, is_cls: bool, trial: int = -1, train_examples: Optional[int] = None) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def split_to_test(x: DataFrame, y: Series, is_cls: bool, fold: int = -1, train_examples: Optional[int] = None) -> Tuple[DataFrame, DataFrame, Series, Series]:
     test_size = int(len(y) * TEST_RATIO)
     test_size = min(test_size, MAX_TEST_SIZE)
     if (train_examples is not None) and len(x) > train_examples:
         test_size = len(x) - train_examples
-    x_train, x_test, y_train, y_test = do_split(x=x, y=y, test_size=test_size, is_cls=is_cls, trial=trial)
+    x_train, x_test, y_train, y_test = do_split(x=x, y=y, test_size=test_size, is_cls=is_cls, fold=fold)
     return x_train, x_test, y_train, y_test
 
-def split_to_val(x: DataFrame, y: Series, is_cls: bool, trial: int = -1, val_ratio: float = VAL_RATIO) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def split_to_val(x: DataFrame, y: Series, is_cls: bool, fold: int = -1, val_ratio: float = VAL_RATIO) -> Tuple[DataFrame, DataFrame, Series, Series]:
     val_size = int(len(y) * val_ratio)
     val_size = min(val_size, MAX_VAL_SIZE)
-    x_train, x_val, y_train, y_val = do_split(x=x, y=y, test_size=val_size, is_cls=is_cls, trial=trial)
+    x_train, x_val, y_train, y_val = do_split(x=x, y=y, test_size=val_size, is_cls=is_cls, fold=fold)
     return x_train, x_val, y_train, y_val
 
 
-def do_split(x: DataFrame, y: Series, test_size: int, is_cls: bool, trial: int) -> Tuple[DataFrame, DataFrame, Series, Series]:
-    random_state = SEED + trial
+def do_split(x: DataFrame, y: Series, test_size: int, is_cls: bool, fold: int) -> Tuple[DataFrame, DataFrame, Series, Series]:
+    random_state = SEED + fold
     if not is_cls:
         return train_test_split(x, y, test_size=test_size, random_state=random_state)
     has_rare_class = y.value_counts().min() <= 1
