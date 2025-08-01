@@ -35,3 +35,4 @@ def wandb_finish(d_summary: Dict):
     wandb.log(d_summary)
     wandb.summary.update(d_summary)
     wandb.finish()
+    print(f"Summary logged to WandB: {d_summary}")
