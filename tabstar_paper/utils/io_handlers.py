@@ -19,7 +19,7 @@ def load_json_lines(path: str) -> List[Dict]:
     return data
 
 def dump_json(data: Dict, path: str) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    create_dir(path)
     with open(path, 'w') as file:
         json.dump(data, file, indent=4)
 
@@ -28,3 +28,9 @@ def dump_json_lines(data, path: str) -> None:
         for d in data:
             json.dump(d, file)
             file.write('\n')
+
+
+def create_dir(path: str):
+    dir_name = os.path.dirname(path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)

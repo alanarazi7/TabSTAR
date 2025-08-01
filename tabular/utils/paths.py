@@ -1,4 +1,3 @@
-import os
 from os.path import join
 
 from tabstar_paper.pretraining.paths import pretrain_exp_dir
@@ -27,8 +26,3 @@ def dataset_run_properties_dir(run_num: int, train_examples: int) -> str:
 
 def properties_path(data_dir: str) -> str:
     return join(data_dir, "properties.json")
-
-def create_dir(path: str, is_file: bool = False):
-    if is_file:
-        path = os.path.dirname(path)
-    os.makedirs(path, exist_ok=True)

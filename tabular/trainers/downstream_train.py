@@ -4,11 +4,11 @@ from typing import Type, Optional
 
 import torch
 
-from tabstar_paper.utils.io_handlers import load_json, dump_json
+from tabstar_paper.utils.io_handlers import load_json, dump_json, create_dir
 from tabular.datasets.tabular_datasets import TabularDatasetID, get_sid
 from tabular.models.abstract_model import TabularModel
 from tabular.preprocessing.splits import DataSplit
-from tabular.utils.paths import create_dir, train_results_path
+from tabular.utils.paths import train_results_path
 
 
 @dataclass
@@ -54,7 +54,7 @@ class ModelTrainer:
             return RunMetadata.from_json(self.res_path)
 
     def run(self) -> RunMetadata:
-        create_dir(self.res_path, is_file=True)
+        create_dir(self.res_path)
         model = self.model_cls(run_name=self.run_name, dataset_ids=[self.dataset_id], device=self.device,
                                run_num=self.run_num, train_examples=self.train_examples,
                                carte_lr_index=self.carte_lr_idx)

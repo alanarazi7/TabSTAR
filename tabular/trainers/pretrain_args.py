@@ -4,11 +4,8 @@ from typing import List, Optional, Self, Any
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar_paper.pretraining.paths import pretrain_args_path
-from tabstar_paper.utils.io_handlers import load_json, dump_json
+from tabstar_paper.utils.io_handlers import load_json, dump_json, create_dir
 from tabstar_paper.utils.timing import get_now
-
-from tabular.utils.paths import create_dir
-from tabular.utils.utils import verbose_print
 
 
 # TODO: use HfArgumentParser
@@ -45,14 +42,13 @@ class PretrainArgs:
     def from_json(cls, pretrain_exp: str):
         path = pretrain_args_path(pretrain_exp)
         data = load_json(path)
-        verbose_print(f"Loaded the following pretrain args: {data}")
         args = PretrainArgs(**data)
         if len(args.datasets) == 0:
             assert args.num_datasets == 0, "num_datasets should be 0 if datasets is empty"
         return args
 
     def to_json(self):
-        create_dir(self.path, is_file=True)
+        create_dir(self.path)
         d = asdict(self)
         dump_json(d, self.path)
 

@@ -6,7 +6,7 @@ import torch
 from pandas import DataFrame, Series
 from torch.utils.data import Dataset
 
-from tabstar_paper.utils.io_handlers import dump_json
+from tabstar_paper.utils.io_handlers import dump_json, create_dir
 from tabular.datasets.data_processing import TabularDataset
 from tabular.datasets.df_loader import load_df_dataset
 from tabular.datasets.kaggle_loader import load_kaggle_dataset
@@ -17,7 +17,7 @@ from tabular.datasets.properties import DatasetProperties
 from tabular.datasets.openml_loader import load_openml_dataset
 from tabular.preprocessing.splits import DataSplit
 from tabular.preprocessing.objects import PreprocessingMethod
-from tabular.utils.paths import create_dir, dataset_run_properties_dir, properties_path
+from tabular.utils.paths import dataset_run_properties_dir, properties_path
 from tabular.utils.processing import pd_indices_to_array
 from tabular.utils.utils import verbose_print
 
