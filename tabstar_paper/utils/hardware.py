@@ -2,6 +2,9 @@ import psutil
 from typing import Dict, Optional
 import torch
 
+from tabstar.training.devices import CPU_CORES
+
+
 def get_hardware_dict(device: torch.device) -> Dict:
     return {**_get_gpu_dict(device), **_get_cpu_dict()}
 
@@ -20,11 +23,10 @@ def _get_gpu_dict(device: torch.device) -> Dict:
 
 
 def _get_cpu_dict() -> Dict:
-    cpu_cores = torch.get_num_threads()
     ram_bytes = psutil.virtual_memory().total
     ram_gb = byte_to_gb(ram_bytes)
     cpu_name = get_cpu_name_linux()
-    return {"cpu_cores": cpu_cores, "system_ram_gb": ram_gb, "cpu_name": cpu_name}
+    return {"cpu_cores": CPU_CORES, "system_ram_gb": ram_gb, "cpu_name": cpu_name}
 
 
 def byte_to_gb(byte_size: int) -> float:

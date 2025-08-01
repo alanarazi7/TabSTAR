@@ -14,14 +14,14 @@ from tqdm import tqdm
 from tabstar.arch.config import TabStarConfig
 from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
-from tabstar.training.devices import EXISTING_CORES
+from tabstar.training.devices import CPU_CORES
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.lora import load_pretrained, load_finetuned
 from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_loss
 from tabstar.training.optimizer import get_optimizer, get_scheduler
 from tabstar.training.utils import concat_predictions
 
-torch.set_num_threads(EXISTING_CORES)
+torch.set_num_threads(CPU_CORES)
 if hasattr(torch, 'set_float32_matmul_precision'):
     torch.set_float32_matmul_precision('high')
 
