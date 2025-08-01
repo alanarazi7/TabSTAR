@@ -38,7 +38,7 @@ if __name__ == "__main__":
     if dataset.name.startswith("REG_") and args.model == "icl":
         print(f"Skipping {dataset.name} for TabICL as it is a regression dataset.")
         exit()
-    wandb_run(exp_name=f"{args.model}_{dataset.name}_{args.trial}", project="tabstar_baseline")
+    wandb_run(exp_name=f"{args.model}_{dataset.name}_{args.trial}", project="tabstar_benchmark")
     ret = evaluate_on_dataset(
         model_cls=model,
         dataset_id=dataset,

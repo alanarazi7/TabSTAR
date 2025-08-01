@@ -5,7 +5,8 @@ import numpy as np
 import torch
 from numpy.exceptions import AxisError
 from pandas import Series
-from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error
+from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error, accuracy_score, f1_score, log_loss, \
+    precision_score, recall_score, top_k_accuracy_score
 from torch import Tensor, softmax
 from torch.nn import CrossEntropyLoss, MSELoss
 
@@ -22,27 +23,59 @@ class Metrics:
 
 def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int) -> Metrics:
     if d_output == 1:
-        rsq = r2_score(y_true=y_true, y_pred=y_pred)
-        mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
-        one_minus_mse = 1 - mse
-        metrics = {'r2': rsq, 'mse': mse, '1-mse': one_minus_mse}
-        return Metrics(score=one_minus_mse, metrics=metrics)
+        return _calculate_metrics_for_regression(y_true=y_true, y_pred=y_pred)
     elif d_output == 2:
-        # TODO: add more metrics pehraps
-        score = roc_auc_score(y_true=y_true, y_score=y_pred)
+        return _calculate_metrics_for_binary(y_true=y_true, y_pred=y_pred)
     elif d_output > 2:
-        try:
-            score = roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
-        except (ValueError, AxisError):
-            # Error calculating AUC, likely due to class imbalance or insufficient samples
-            score = per_class_auc(y_true=y_true, y_pred=y_pred)
-    else:
-        raise ValueError(f"Unsupported number of output classes: {d_output}")
-    # TODO: add more metrics for classification
-    return Metrics(score=score, metrics={'auc': score})
+        return _calculate_metrics_for_multiclass(y_true=y_true, y_pred=y_pred)
+    raise ValueError(f"Unsupported d_output: {d_output}. Expected 1 (regression), 2 (binary), or >2 (multiclass).")
 
+def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
+    rsq = r2_score(y_true=y_true, y_pred=y_pred)
+    mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
+    rmse = np.sqrt(mse)
+    one_minus_mse = 1 - mse
+    metrics = {'r2': rsq, 'mse': mse, '1-mse': one_minus_mse, 'rmse': rmse}
+    return Metrics(score=rsq, metrics=metrics)
 
-def per_class_auc(y_true, y_pred) -> float:
+def _calculate_metrics_for_binary(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
+    y_pred_label = (y_pred > 0.5).astype(int)
+    auc = roc_auc_score(y_true, y_pred)
+    acc = accuracy_score(y_true, y_pred_label)
+    f1 = f1_score(y_true, y_pred_label)
+    logloss = log_loss(y_true, y_pred)
+    precision = precision_score(y_true, y_pred_label)
+    recall = recall_score(y_true, y_pred_label)
+    metrics = {'auc': auc, 'accuracy': acc, 'f1': f1, 'logloss': logloss, 'precision': precision, 'recall': recall}
+    return Metrics(score=auc, metrics=metrics)
+
+def _calculate_metrics_for_multiclass(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
+    try:
+        auc = roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
+    except (ValueError, AxisError):
+        # Error calculating AUC, likely due to class imbalance or insufficient samples
+        auc = _per_class_auc(y_true=y_true, y_pred=y_pred)
+    try:
+        logloss = log_loss(y_true, y_pred)
+    except Exception:
+        logloss = np.nan
+    y_pred_label = np.argmax(y_pred, axis=1)
+    f1 = f1_score(y_true, y_pred_label, average='macro')
+    acc = accuracy_score(y_true, y_pred_label)
+    try:
+        topk_acc = top_k_accuracy_score(y_true, y_pred, k=3, labels=np.unique(y_true))
+    except Exception:
+        topk_acc = np.nan
+    metrics = {
+        'auc': auc,
+        'logloss': logloss,
+        'macro_f1': f1,
+        'accuracy': acc,
+        f'top3_accuracy': topk_acc,
+    }
+    return Metrics(score=auc, metrics=metrics)
+
+def _per_class_auc(y_true, y_pred) -> float:
     present_classes = np.unique(y_true)
     aucs = {}
     for cls in present_classes:
