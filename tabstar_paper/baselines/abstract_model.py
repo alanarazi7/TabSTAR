@@ -22,8 +22,7 @@ class TabularModel:
 
     MODEL_NAME: str
     SHORT_NAME: str
-    # TODO: remove the default, this is error prone
-    DO_VAL_SPLIT: bool = True
+    USE_VAL_SPLIT: bool
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False):
         assert problem_type in {SupervisedTask.REGRESSION, SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
@@ -49,7 +48,7 @@ class TabularModel:
 
     def fit(self, x: DataFrame, y: Series):
         x_train, y_train = x.copy(), y.copy()
-        if self.DO_VAL_SPLIT:
+        if self.USE_VAL_SPLIT:
             x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
         else:
             x_val, y_val = None, None
