@@ -21,22 +21,23 @@ class Metrics:
         self.metrics = {k: float(v) for k, v in self.metrics.items()}
 
 
-def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int) -> Metrics:
+def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int, is_pretrain: bool = False) -> Metrics:
     if d_output == 1:
-        return _calculate_metrics_for_regression(y_true=y_true, y_pred=y_pred)
+        return _calculate_metrics_for_regression(y_true=y_true, y_pred=y_pred, is_pretrain=is_pretrain)
     elif d_output == 2:
         return _calculate_metrics_for_binary(y_true=y_true, y_pred=y_pred)
     elif d_output > 2:
         return _calculate_metrics_for_multiclass(y_true=y_true, y_pred=y_pred)
     raise ValueError(f"Unsupported d_output: {d_output}. Expected 1 (regression), 2 (binary), or >2 (multiclass).")
 
-def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
+def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, is_pretrain: bool) -> Metrics:
     rsq = r2_score(y_true=y_true, y_pred=y_pred)
     mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
     rmse = np.sqrt(mse)
     one_minus_mse = 1 - mse
     metrics = {'r2': rsq, 'mse': mse, '1-mse': one_minus_mse, 'rmse': rmse}
-    return Metrics(score=rsq, metrics=metrics)
+    score = one_minus_mse if is_pretrain else rsq
+    return Metrics(score=score, metrics=metrics)
 
 def _calculate_metrics_for_binary(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
     y_pred_label = (y_pred > 0.5).astype(int)
@@ -44,9 +45,12 @@ def _calculate_metrics_for_binary(y_true: Union[np.ndarray, Series], y_pred: np.
     acc = accuracy_score(y_true, y_pred_label)
     f1 = f1_score(y_true, y_pred_label)
     logloss = log_loss(y_true, y_pred)
-    precision = precision_score(y_true, y_pred_label)
+    # TODO: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+    # precision = precision_score(y_true, y_pred_label)
     recall = recall_score(y_true, y_pred_label)
-    metrics = {'auc': auc, 'accuracy': acc, 'f1': f1, 'logloss': logloss, 'precision': precision, 'recall': recall}
+    metrics = {'auc': auc, 'accuracy': acc, 'f1': f1, 'logloss': logloss,
+               # 'precision': precision,
+               'recall': recall}
     return Metrics(score=auc, metrics=metrics)
 
 def _calculate_metrics_for_multiclass(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
@@ -62,16 +66,17 @@ def _calculate_metrics_for_multiclass(y_true: Union[np.ndarray, Series], y_pred:
     y_pred_label = np.argmax(y_pred, axis=1)
     f1 = f1_score(y_true, y_pred_label, average='macro')
     acc = accuracy_score(y_true, y_pred_label)
-    try:
-        topk_acc = top_k_accuracy_score(y_true, y_pred, k=3, labels=np.unique(y_true))
-    except Exception:
-        topk_acc = np.nan
+    # TODO: UndefinedMetricWarning: 'k' (3) greater than or equal to 'n_classes' (3) will result in a perfect score and is therefore meaningless
+    # try:
+    #     topk_acc = top_k_accuracy_score(y_true, y_pred, k=3, labels=np.unique(y_true))
+    # except Exception:
+    #     topk_acc = np.nan
     metrics = {
         'auc': auc,
         'logloss': logloss,
         'macro_f1': f1,
         'accuracy': acc,
-        f'top3_accuracy': topk_acc,
+        # f'top3_accuracy': topk_acc,
     }
     return Metrics(score=auc, metrics=metrics)
 
