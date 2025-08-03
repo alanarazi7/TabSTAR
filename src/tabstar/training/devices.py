@@ -15,6 +15,9 @@ if EXISTING_CORES < CPU_CORES:
 def get_device(device: Optional[Union[str, torch.device]] = None) -> torch.device:
     if isinstance(device, torch.device):
         return device
+    gpu = os.getenv('CUDA_VISIBLE_DEVICES')
+    if isinstance(gpu, int) or gpu.isdigit():
+        return torch.device(f"cuda:{gpu}")
     if device is None:
         device = _get_device_type()
     return torch.device(device)
@@ -44,7 +47,7 @@ def _get_free_gpu() -> str:
     for i, line in enumerate(processes_output.strip().split("\n")):
         if line.endswith("None"):
             return f"cuda:{i}"
-    raise RuntimeError("No free GPU found!")
+    raise RuntimeError("No free GPU found! However, pass `CUDA_VISIBLE_DEVICES` if you insist on using one.")
 
 
 def get_gpu_num(device: str) -> int:
