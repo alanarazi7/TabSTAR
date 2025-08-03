@@ -99,7 +99,7 @@ class TabSTARVerbalizer:
         data = TabSTARData(d_output=self.d_output, x_txt=x_txt, x_num=x_num, y=y)
         return data
 
-    def transform_target(self, y: Optional[Series]) -> Optional[Series | np.ndarray]:
+    def transform_target(self, y: Optional[Series]) -> Optional[Union[Series, np.ndarray]]:
         if y is None:
             return None
         y = y.copy()

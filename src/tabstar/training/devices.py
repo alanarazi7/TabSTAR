@@ -1,6 +1,6 @@
 import os
 from subprocess import Popen, PIPE
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 
@@ -12,7 +12,7 @@ if EXISTING_CORES < CPU_CORES:
     print(f"❗ Warning: {CPU_CORES} CPU devices requested, but only {EXISTING_CORES} available.")
     CPU_CORES = EXISTING_CORES
 
-def get_device(device: Optional[str | torch.device] = None) -> torch.device:
+def get_device(device: Optional[Union[str, torch.device]] = None) -> torch.device:
     if isinstance(device, torch.device):
         return device
     if device is None:

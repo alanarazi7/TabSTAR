@@ -108,7 +108,7 @@ def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
     return prediction
 
 
-def calculate_loss(predictions: Tensor, y: Series | np.ndarray, d_output: int) -> Tensor:
+def calculate_loss(predictions: Tensor, y: Union[Series, np.ndarray], d_output: int) -> Tensor:
     is_reg = bool(d_output == 1)
     if is_reg:
         loss_fn = MSELoss()

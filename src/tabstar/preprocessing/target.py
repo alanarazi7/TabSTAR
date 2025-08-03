@@ -7,7 +7,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_z_scores
 
 
-def transform_preprocess_y(y: Series | np.ndarray, scaler: Union[LabelEncoder, StandardScaler]) -> Series:
+def transform_preprocess_y(y: Union[Series, np.ndarray], scaler: Union[LabelEncoder, StandardScaler]) -> Series:
     y = y.copy()
     if isinstance(scaler, StandardScaler):
         return transform_clipped_z_scores(s=y, scaler=scaler)

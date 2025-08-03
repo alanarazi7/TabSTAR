@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from tabstar.datasets.all_datasets import KaggleDatasetID, UrlDatasetID, OpenMLDatasetID, TabularDatasetID
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
@@ -55,7 +55,7 @@ TEXT2FOLD = {KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING: 0,
              UrlDatasetID.REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT: 4}
 
 
-def get_tabstar_version(pretrain_dataset_or_path: Optional[str | TabularDatasetID] = None) -> str:
+def get_tabstar_version(pretrain_dataset_or_path: Optional[Union[str, TabularDatasetID]] = None) -> str:
     if isinstance(pretrain_dataset_or_path, str):
         return pretrain_dataset_or_path
     tabstar_version = get_tabstar_version_from_dataset(pretrain_dataset=pretrain_dataset_or_path)
