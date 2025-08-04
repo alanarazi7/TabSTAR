@@ -3,6 +3,7 @@ import argparse
 from tabstar.tabstar_model import BaseTabSTAR
 from tabstar.training.devices import get_device
 from tabstar_paper.baselines.catboost import CatBoost
+from tabstar_paper.baselines.lightgbm import LightGBM
 from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.tabdpt import TabDPT
@@ -14,7 +15,7 @@ from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.logging import wandb_run, wandb_finish
 
-BASELINES = [CatBoost, XGBoost, RandomForest,
+BASELINES = [CatBoost, XGBoost, LightGBM, RandomForest,
              RealMLP,
              TabICL, TabDPT, TabPFNv2]
 
