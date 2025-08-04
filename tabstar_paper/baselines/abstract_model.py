@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Optional, Set
+from typing import Tuple, Dict, Optional, Set, List
 
 import numpy as np
 import torch
@@ -39,6 +39,7 @@ class TabularModel:
         self.numerical_features: Set[str] = set()
         self.numerical_medians: Dict[str, float] = {}
         self.categorical_features: Set[str] = set()
+        self.categorical_indices: List[int] = []
         self.categorical_encoders: Dict[str, LabelEncoder] = {}
         self.text_features: Set[str] = set()
         self.text_transformers: Dict[str, TextEncoder] = {}
@@ -90,8 +91,9 @@ class TabularModel:
         self.vprint(f"🔢 Detected {len(self.numerical_features)} numerical features: {sorted(self.numerical_features)}")
         x = transform_feature_types(x=x, numerical_features=self.numerical_features)
         semantic_types = classify_semantic_features(x=x, numerical_features=self.numerical_features)
-        self.categorical_features = semantic_types.categorical_features
         self.text_features = semantic_types.text_features
+        self.categorical_features = semantic_types.categorical_features
+        self.categorical_indices = [i for i, c in enumerate(x.columns) if c in self.categorical_features]
         self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
         if self.is_cls:
             self.d_output = len(self.target_transformer.classes_)

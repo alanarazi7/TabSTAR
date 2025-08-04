@@ -135,6 +135,8 @@ kiwisolver==1.4.8
     # via matplotlib
 liac-arff==2.5.0
     # via openml
+lightgbm==4.6.0
+    # via -r requirements.in
 lightning-utilities==0.15.0
     # via
     #   pytorch-lightning
@@ -173,6 +175,7 @@ numpy==1.26.4
     #   faiss-cpu
     #   fasttext
     #   h5py
+    #   lightgbm
     #   matplotlib
     #   openml
     #   optuna
@@ -350,6 +353,7 @@ scipy==1.15.2
     #   carte-ai
     #   catboost
     #   category-encoders
+    #   lightgbm
     #   openml
     #   scikit-learn
     #   sentence-transformers
