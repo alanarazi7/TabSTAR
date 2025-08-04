@@ -3,7 +3,7 @@ import argparse
 from tabstar.tabstar_model import BaseTabSTAR
 from tabstar.training.devices import get_device
 from tabstar_paper.baselines.catboost import CatBoost
-from tabstar_paper.baselines.lightgbm import LightGBM
+from tabstar_paper.baselines.lgbm import LightGBM
 from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.tabdpt import TabDPT
