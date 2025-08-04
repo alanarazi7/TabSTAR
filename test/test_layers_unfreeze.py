@@ -1,4 +1,4 @@
-from tabular.utils.deep import get_last_layers_num
+from tabstar_paper.pretraining.unfreezing import get_last_layers_num
 
 
 def test_unfreeze_layers():

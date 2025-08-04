@@ -2,10 +2,10 @@ from typing import Self
 
 from transformers import PretrainedConfig
 
+from tabstar.arch.config import D_MODEL
 from tabstar_paper.constants import PRETRAIN_BATCH_SIZE
 from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY, \
     PRETRAIN_GLOBAL_BATCH_SIZE
-from tabular.tabstar.params.constants import D_MODEL
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.utils import verbose_print

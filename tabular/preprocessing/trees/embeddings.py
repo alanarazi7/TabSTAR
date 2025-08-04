@@ -1,8 +1,8 @@
 import torch
 from skrub import TextEncoder
 
+from tabstar.arch.config import E5_SMALL
 from tabular.datasets.raw_dataset import RawDataset
-from tabular.tabstar.params.constants import E5_SMALL
 from tabular.utils.processing import pd_concat_cols
 
 
