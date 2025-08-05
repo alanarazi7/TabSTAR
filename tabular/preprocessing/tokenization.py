@@ -1,8 +1,9 @@
 from typing import List, Dict
 
 import torch
-from tabular.tabstar.params.constants import E5_SMALL
 from transformers import AutoTokenizer, BatchEncoding
+
+from tabstar.arch.config import E5_SMALL
 
 TOKENIZER = {}
 

@@ -2,16 +2,15 @@ from typing import Dict
 
 import numpy as np
 import torch
-from tabular.tabstar.params.constants import E5_SMALL, E5_LAYERS
 from torch import Tensor
 from transformers import AutoModel, PreTrainedModel
 
+from tabstar.arch.config import E5_SMALL
 from tabular.tabstar.arch.numerical_fusion import NumericalFusion
 from tabular.tabstar.arch.prediction_head import TabularPredictionHead
 from tabular.tabstar.arch.encoder_backbone import TabularEncoderBackbone
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.preprocessing.tokenization import tokenize
-from tabular.utils.deep import get_last_layers_num
 from tabular.utils.utils import verbose_print
 
 
@@ -30,10 +29,7 @@ class TabStarModel(PreTrainedModel):
         self.tabular_encoder = TabularEncoderBackbone(num_layers=config.num_layers, d_model=config.d_model)
         self.cls_head = TabularPredictionHead(input_size=config.d_model)
         self.reg_head = TabularPredictionHead(input_size=config.d_model)
-
         self.text_encoder_batch_size: Dict[str, int] = {}
-
-        # TODO: (Optional: call post_init hook if you have any weight initialization logic)
         self.post_init()
 
     def forward(self, x_txt: np.ndarray, x_num: Tensor, sid: str, d_output: int) -> Tensor:
@@ -82,37 +78,3 @@ class TabStarModel(PreTrainedModel):
         if not tuple(embeddings.shape) == (batch_size, seq_len, self.config.d_model):
             raise RuntimeError(f"Unexpected embedding shape: {embeddings.shape}")
         return embeddings
-
-    def unfreeze_textual_encoder_layers(self):
-        blocks = [block_name for block_name, _ in self.text_encoder.named_children()]
-        assert blocks == ['embeddings', 'encoder', 'pooler'], f"Unexpected block structure: {blocks}"
-        assert self.text_encoder.config.num_hidden_layers == E5_LAYERS
-        assert 0 <= self.config.unfreeze_layers <= E5_LAYERS
-        if self.config.unfreeze_layers == 0:
-            self._freeze_the_whole_encoder()
-        else:
-            self._unfreeze_pooler_and_num_layers()
-        total_params = sum(p.numel() for p in self.text_encoder.parameters())
-        unfrozen_params = sum(p.numel() for p in self.text_encoder.parameters() if p.requires_grad)
-        print(f"🥶 Unfroze {unfrozen_params:,} out of {total_params:,} parameters!")
-
-    def _freeze_the_whole_encoder(self):
-        for name, param in self.text_encoder.named_parameters():
-            param.requires_grad = False
-        print(f"🥶 Freezing the whole text encoder - including the pooling!")
-
-    def _unfreeze_pooler_and_num_layers(self):
-        assert 0 <= self.config.unfreeze_layers <= E5_LAYERS
-        for name, param in self.text_encoder.pooler.named_parameters():
-            param.requires_grad = True
-        for name, param in self.text_encoder.embeddings.named_parameters():
-            param.requires_grad = False
-        to_unfreeze = get_last_layers_num(to_unfreeze=self.config.unfreeze_layers)
-        print(f"🥶 Planning to unfreeze {self.config.unfreeze_layers}/{E5_LAYERS} layers: {to_unfreeze}!")
-        layer_prefixes = [f'layer.{i}.' for i in to_unfreeze]
-        for name, param in self.text_encoder.encoder.named_parameters():
-            if any(name.startswith(prefix) for prefix in layer_prefixes):
-                param.requires_grad = True
-            else:
-                param.requires_grad = False
-
