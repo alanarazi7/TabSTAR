@@ -25,6 +25,7 @@ from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretra
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
 from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
+from tabstar_paper.pretraining.unfreezing import unfreeze_text_encoder
 
 ## TODO: Stop importing from tabular repo
 from tabular.tabstar.arch.arch import TabStarModel
@@ -79,7 +80,7 @@ class TabSTARPretrainer:
 
     def initialize_model(self):
         self.model = TabStarModel(config=self.config)
-        self.model.unfreeze_textual_encoder_layers()
+        unfreeze_text_encoder(text_encoder=self.model.text_encoder, layers_to_unfreeze=self.config.unfreeze_layers)
         self.model = self.model.to(self.device)
         assert isinstance(self.model, Module)
         self.init_optimizer()
