@@ -38,12 +38,6 @@ metric = tabstar.score(X=x_test, y=y_test)
 print(f"AUC: {metric:.4f}")
 ```
 
-🔜 Pending Features:
-- [ ] Fixed seed support for reproducibility
-- [ ] Automatic task type detection (classification/regression)
-- [ ] Hyperparameter tuning support
-
-
 For paper replication, TabSTAR evaluation on benchmarks, custom pretraining or research purposes, see:
 
 🔗 [TabSTAR Research Repository](https://github.com/alanarazi7/TabSTAR)

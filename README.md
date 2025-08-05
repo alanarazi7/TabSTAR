@@ -12,11 +12,6 @@
 **Welcome to the TabSTAR repository! 👋**  
 You can either use TabSTAR as a package for your own tabular data tasks, or explore the full repository for research purposes, including customized pretraining and replication of paper results.
 
-🔜 Pending Features:
-- [ ] Fixed seed support for reproducibility
-- [ ] Automatic task type detection (classification/regression)
-- [ ] Hyperparameter tuning support
-
 🚧 The repository is under construction: Any bugs or feature request? Please open an issue! 🚧
 
 ---
