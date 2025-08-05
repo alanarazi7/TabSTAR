@@ -14,9 +14,7 @@ from tabular.preprocessing.tokenization import tokenize
 from tabular.utils.utils import verbose_print
 
 
-# TODO: Consider merging "NumericalFusion, TabularEncoderBackbone" into this class directly
-# We need to Ensure that all custom modules (e.g. numerica fusion) are either integrated
-# into our main repository or properly registered so that they’re available when loading from the Hub.
+# TODO: this class should be completely deprecated. We should aim for using a single class architecture.
 class TabStarModel(PreTrainedModel):
     config_class = TabStarConfig
 
