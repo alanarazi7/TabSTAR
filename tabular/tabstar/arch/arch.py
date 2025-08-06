@@ -6,15 +6,15 @@ from torch import Tensor
 from transformers import AutoModel, PreTrainedModel
 
 from tabstar.arch.config import E5_SMALL
+from tabstar.arch.prediction import PredictionHead
 from tabular.tabstar.arch.numerical_fusion import NumericalFusion
-from tabular.tabstar.arch.prediction_head import TabularPredictionHead
 from tabular.tabstar.arch.encoder_backbone import TabularEncoderBackbone
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.preprocessing.tokenization import tokenize
 from tabular.utils.utils import verbose_print
 
 
-# TODO: this class should be completely deprecated. We should aim for using a single class architecture.
+# TODO: this should be completely deprecated. We should aim for using a single class architecture.
 class TabStarModel(PreTrainedModel):
     config_class = TabStarConfig
 
@@ -25,8 +25,8 @@ class TabStarModel(PreTrainedModel):
 
         self.numerical_fusion = NumericalFusion(config=config)
         self.tabular_encoder = TabularEncoderBackbone(num_layers=config.num_layers, d_model=config.d_model)
-        self.cls_head = TabularPredictionHead(input_size=config.d_model)
-        self.reg_head = TabularPredictionHead(input_size=config.d_model)
+        self.cls_head = PredictionHead(input_size=config.d_model)
+        self.reg_head = PredictionHead(input_size=config.d_model)
         self.text_encoder_batch_size: Dict[str, int] = {}
         self.post_init()
 
