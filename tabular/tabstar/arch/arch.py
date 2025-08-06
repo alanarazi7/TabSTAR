@@ -6,9 +6,9 @@ from torch import Tensor
 from transformers import AutoModel, PreTrainedModel
 
 from tabstar.arch.config import E5_SMALL
+from tabstar.arch.interaction import InteractionEncoder
 from tabstar.arch.prediction import PredictionHead
 from tabular.tabstar.arch.numerical_fusion import NumericalFusion
-from tabular.tabstar.arch.encoder_backbone import TabularEncoderBackbone
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.preprocessing.tokenization import tokenize
 from tabular.utils.utils import verbose_print
@@ -24,7 +24,7 @@ class TabStarModel(PreTrainedModel):
         assert config.d_model == self.text_encoder.config.hidden_size, "Block mismatch!"
 
         self.numerical_fusion = NumericalFusion(config=config)
-        self.tabular_encoder = TabularEncoderBackbone(num_layers=config.num_layers, d_model=config.d_model)
+        self.interaction_encoder = InteractionEncoder(num_layers=config.num_layers, d_model=config.d_model)
         self.cls_head = PredictionHead(input_size=config.d_model)
         self.reg_head = PredictionHead(input_size=config.d_model)
         self.text_encoder_batch_size: Dict[str, int] = {}
@@ -34,7 +34,7 @@ class TabStarModel(PreTrainedModel):
         # TODO: we should use Tensors and not np.arrays as inputs
         textual_embeddings = self.get_textual_embedding(x_txt, sid=sid)
         embeddings = self.numerical_fusion(textual_embeddings=textual_embeddings, x_num=x_num)
-        encoded = self.tabular_encoder(embeddings)
+        encoded = self.interaction_encoder(embeddings)
         target_tokens = encoded[:, :d_output]
         if d_output == 1:
             target_scores = self.reg_head(target_tokens)
