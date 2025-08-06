@@ -6,9 +6,9 @@ from torch import Tensor
 from transformers import AutoModel, PreTrainedModel
 
 from tabstar.arch.config import E5_SMALL
+from tabstar.arch.fusion import NumericalFusion
 from tabstar.arch.interaction import InteractionEncoder
 from tabstar.arch.prediction import PredictionHead
-from tabular.tabstar.arch.numerical_fusion import NumericalFusion
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.preprocessing.tokenization import tokenize
 from tabular.utils.utils import verbose_print
@@ -22,8 +22,7 @@ class TabStarModel(PreTrainedModel):
         super().__init__(config)
         self.text_encoder = AutoModel.from_pretrained(E5_SMALL)
         assert config.d_model == self.text_encoder.config.hidden_size, "Block mismatch!"
-
-        self.numerical_fusion = NumericalFusion(config=config)
+        self.numerical_fusion = NumericalFusion()
         self.interaction_encoder = InteractionEncoder(num_layers=config.num_layers, d_model=config.d_model)
         self.cls_head = PredictionHead(input_size=config.d_model)
         self.reg_head = PredictionHead(input_size=config.d_model)
