@@ -13,6 +13,7 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from tabstar.arch.arch import TabStarModel
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.training.devices import CPU_CORES
 from tabstar.training.early_stopping import EarlyStopping
@@ -28,7 +29,6 @@ from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
 from tabstar_paper.pretraining.unfreezing import unfreeze_text_encoder
 
 ## TODO: Stop importing from tabular repo
-from tabular.tabstar.arch.arch import TabStarModel
 from tabular.tabstar.params.config import TabStarConfig
 from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.trainers.nn_logger import log_general
