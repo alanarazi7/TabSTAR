@@ -21,15 +21,15 @@ from tabular.utils.paths import get_model_path
 
 def finetune_tabstar(finetune_args: FinetuneArgs,
                      dataset_id: TabularDatasetID,
-                     trial: int,
+                     fold: int,
                      train_examples: int,
                      device: torch.device):
     if dataset_id.value in finetune_args.pretrain_args.datasets:
         raise RuntimeError(f"😱 Dataset {dataset_id} is already in pretrain datasets, beware!")
     dataset_id = download_dataset(dataset_id=dataset_id)
     is_cls = dataset_id.is_cls
-    x, y = subsample_dataset(x=dataset_id.x, y=dataset_id.y, is_cls=is_cls, train_examples=train_examples, fold=trial)
-    x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold_num=trial, train_examples=train_examples)
+    x, y = subsample_dataset(x=dataset_id.x, y=dataset_id.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
+    x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
     if is_cls:
         tabstar_cls = TabSTARClassifier
     else:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--pretrain_exp', type=str, required=True)
     parser.add_argument('--dataset_id', required=True)
-    parser.add_argument('--trial', type=int, required=True)
+    parser.add_argument('--fold', type=int, required=True)
     parser.add_argument('--exp', type=str, default="default_finetune_exp")
     parser.add_argument('--downstream_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--downstream_keep_model', action='store_true', default=False)
@@ -69,10 +69,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     assert args.pretrain_exp, "Pretrain path is required"
     data = get_dataset_from_arg(args.dataset_id)
-    assert 0 <= args.trial < FOLDS, f"Invalid run number: {args.trial}. Should be between 0 and {FOLDS - 1}"
+    assert 0 <= args.fold < FOLDS, f"Invalid run number: {args.fold}. Should be between 0 and {FOLDS - 1}"
 
     pretrain_args = PretrainArgs.from_json(pretrain_exp=args.pretrain_exp)
     run_args = FinetuneArgs.from_args(args=args, pretrain_args=pretrain_args, exp_name=args.exp)
     my_device = get_device(device=DEVICE)
     finetune_tabstar(finetune_args=run_args, dataset_id=data,
-                     trial=args.trial, train_examples=args.downstream_examples, device=my_device)
+                     fold=args.fold, train_examples=args.downstream_examples, device=my_device)
