@@ -25,9 +25,8 @@ class NumericalFusion(nn.Module):
         )
 
 
-    def forward(self, textual_embeddings: Tensor, x_num: np.ndarray) -> Tensor:
+    def forward(self, textual_embeddings: Tensor, x_num: Tensor) -> Tensor:
         batch_size, seq_len, d_model = textual_embeddings.shape
-        x_num = torch.tensor(x_num, dtype=textual_embeddings.dtype, device=textual_embeddings.device)
         num_embeddings = self.scalar_embedder(x_num.unsqueeze(-1))
         assert num_embeddings.shape == textual_embeddings.shape
         fusion_input = torch.stack([textual_embeddings, num_embeddings], dim=2)
