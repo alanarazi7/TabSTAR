@@ -1,6 +1,7 @@
 import argparse
 
 import torch
+import wandb
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
@@ -11,6 +12,7 @@ from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, FOLDS
 from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.preprocessing.sampling import subsample_dataset
+from tabstar_paper.utils.logging import wandb_run
 
 # TODO: remove tabular imports
 from tabular.constants import VERBOSE
@@ -24,11 +26,12 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                      fold: int,
                      train_examples: int,
                      device: torch.device):
+    wandb_run(exp_name=finetune_args.full_exp_name, project="tabstar_finetune")
     if dataset_id.value in finetune_args.pretrain_args.datasets:
         raise RuntimeError(f"😱 Dataset {dataset_id} is already in pretrain datasets, beware!")
-    dataset_id = download_dataset(dataset_id=dataset_id)
-    is_cls = dataset_id.is_cls
-    x, y = subsample_dataset(x=dataset_id.x, y=dataset_id.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
+    dataset = download_dataset(dataset_id=dataset_id)
+    is_cls = dataset.is_cls
+    x, y = subsample_dataset(x=dataset.x, y=dataset.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
     if is_cls:
         tabstar_cls = TabSTARClassifier
@@ -45,7 +48,18 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                         device=device)
     model.fit(x_train, y_train)
     metrics = model.score_all_metrics(X=x_test, y=y_test)
-    print(f"Scored {metrics.score:.4f} on dataset {dataset_id.dataset_id}.")
+    print(f"Scored {metrics.score:.4f} on dataset {dataset_id}.")
+    results = {"model": "TabSTAR 🌟",
+               "dataset_id": dataset_id.name,
+               "dataset_value": dataset_id.value,
+               "test_score": metrics.score,
+               "fold": fold,
+               "train_examples": train_examples,
+               "pretrain_model": finetune_args.pretrain_args.full_exp_name,
+               "finetune_exp": finetune_args.raw_exp_name}
+    wandb.log(results)
+    wandb.summary.update(results)
+    wandb.finish()
     return metrics
 
 
