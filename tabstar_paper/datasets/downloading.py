@@ -66,10 +66,16 @@ def load_url_dataset(dataset_id: UrlDatasetID) -> TabularDataset:
 
 
 def _read_csv(path: str, dataset_id: TabularDatasetID) -> DataFrame:
+    if dataset_id == UrlDatasetID.REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT:
+        # This dataset was blocked, so we simply downloaded it directly
+        path = os.path.join(os.path.dirname(__file__), 'url_datasets/scimagojr_2024.csv')
+    if dataset_id == UrlDatasetID.REG_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES:
+        # The access to this dataset seems to be changed
+        path = "https://github.com/foorilla/ai-jobs-net-salaries/blob/main/salaries.csv"
     sep = ","
     if dataset_id in {KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY,
-                      UrlDatasetID.REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT,
-                      UrlDatasetID.REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER}:
+                      UrlDatasetID.REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER,
+                      UrlDatasetID.REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT}:
         sep = ";"
     return read_csv(path, sep=sep)
 
