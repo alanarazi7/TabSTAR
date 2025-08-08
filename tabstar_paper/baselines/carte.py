@@ -22,9 +22,9 @@ class CARTE(TabularModel):
     def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False):
         self.carte_lr_idx = carte_lr_idx
         super().__init__(problem_type=problem_type, device=device, verbose=verbose)
-        token = os.getenv("HUGGINGFACE_HUB_TOKEN")
+        token = os.getenv("HF_TOKEN")
         if token is None:
-            raise ValueError("HUGGINGFACE_HUB_TOKEN not set in .env")
+            raise ValueError("HF_TOKEN not set in .env")
         model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
         self.carte_preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
 
