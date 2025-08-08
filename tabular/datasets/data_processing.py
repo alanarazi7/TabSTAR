@@ -30,9 +30,7 @@ class TabularDataset:
         feat_cnt = {feat_type.value: len(names) for feat_type, names in raw.feature_types.items()}
         process_dates(raw=raw)
         assert not raw.feature_types[FeatureType.DATE]
-        if processing in {PreprocessingMethod.CARTE}:
-            return cls.from_processed(raw=raw, processing=processing, splits=splits, feat_cnt=feat_cnt, targets=targets)
-        elif processing == PreprocessingMethod.CATBOOST_OPT:
+        if processing == PreprocessingMethod.CATBOOST_OPT:
             return cls.for_catboost(raw, splits=splits, feat_cnt=feat_cnt, device=device, processing=processing)
         elif processing == PreprocessingMethod.TREES_OPT:
             return cls.for_trees_opt(raw, splits=splits, targets=targets, feat_cnt=feat_cnt, device=device)

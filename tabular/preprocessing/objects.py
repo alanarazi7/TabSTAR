@@ -20,7 +20,6 @@ class SupervisedTask(StrEnum):
 
 
 class PreprocessingMethod(StrEnum):
-    CARTE = "Carte"
     TREES_OPT = "Trees-Optuna"
     CATBOOST_OPT = "CatBoost-Optuna"
 
