@@ -43,6 +43,7 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                         lora_lr=finetune_args.lora_lr,
                         lora_r=finetune_args.lora_r,
                         max_epochs=finetune_args.epochs,
+                        lora_batch=finetune_args.lora_batch,
                         patience=finetune_args.patience,
                         verbose=VERBOSE,
                         device=device)

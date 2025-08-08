@@ -11,7 +11,7 @@ from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.utils import verbose_print
 
 
-# TODO: move this config to the paper section
+# TODO: move this config to the paper section. Also, much of this is not really the ARCH config.
 class TabStarConfig(PretrainedConfig):
     model_type = "tabstar"
 

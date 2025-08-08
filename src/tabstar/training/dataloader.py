@@ -2,12 +2,10 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import DataLoader
 
-from tabstar.arch.config import BATCH_SIZE
-
-
 from torch.utils.data import Dataset
 
 from tabstar.tabstar_verbalizer import TabSTARData
+from tabstar.training.hyperparams import GLOBAL_BATCH
 
 
 class TabSTARDataset(Dataset):
@@ -32,7 +30,7 @@ class TabSTARDataset(Dataset):
         y = self.y.iloc[idx]
         return x_txt, x_num, y, self.d_output
     
-def get_dataloader(data: TabSTARData, is_train: bool, batch_size: int = BATCH_SIZE) -> DataLoader:
+def get_dataloader(data: TabSTARData, is_train: bool, batch_size: int = GLOBAL_BATCH) -> DataLoader:
     dataset = TabSTARDataset(data)
     return DataLoader(dataset, shuffle=is_train, batch_size=batch_size, num_workers=0, collate_fn=collate_fn)
 

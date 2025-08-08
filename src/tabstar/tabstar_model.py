@@ -14,7 +14,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
-from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE
+from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH, GLOBAL_BATCH
 from tabstar.training.metrics import apply_loss_fn, calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions, fix_seed
@@ -24,6 +24,8 @@ class BaseTabSTAR:
     def __init__(self,
                  lora_lr: float = LORA_LR,
                  lora_r: int = LORA_R,
+                 lora_batch: int = LORA_BATCH,
+                 global_batch: int = GLOBAL_BATCH,
                  max_epochs: int = MAX_EPOCHS,
                  patience: int = FINETUNE_PATIENCE,
                  verbose: bool = False,
@@ -33,6 +35,8 @@ class BaseTabSTAR:
                  debug: bool = False):
         self.lora_lr = lora_lr
         self.lora_r = lora_r
+        self.lora_batch = lora_batch
+        self.global_batch = global_batch
         self.max_epochs = max_epochs
         self.patience = patience
         self.verbose = verbose
@@ -56,6 +60,8 @@ class BaseTabSTAR:
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
         trainer = TabStarTrainer(lora_lr=self.lora_lr,
                                  lora_r=self.lora_r,
+                                 lora_batch=self.lora_batch,
+                                 global_batch=self.global_batch,
                                  max_epochs=self.max_epochs,
                                  patience=self.patience,
                                  device=self.device,

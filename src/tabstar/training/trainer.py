@@ -11,11 +11,11 @@ from torch.amp import autocast, GradScaler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from tabstar.arch.config import TabStarConfig
 from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import CPU_CORES
 from tabstar.training.early_stopping import EarlyStopping
+from tabstar.training.hyperparams import set_accumulation_steps
 from tabstar.training.lora import load_pretrained, load_finetuned
 from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_loss
 from tabstar.training.optimizer import get_optimizer, get_scheduler
@@ -26,12 +26,14 @@ if hasattr(torch, 'set_float32_matmul_precision'):
     torch.set_float32_matmul_precision('high')
 
 
-# TODO: replace with HF built in Trainer, exclude custom logics
 class TabStarTrainer:
 
-    def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, patience: int, device: torch.device,
-                 model_version: str, debug: bool = False):
+    def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
+                 global_batch: int, device: torch.device, model_version: str, debug: bool = False):
         self.lora_lr = lora_lr
+        self.lora_batch = lora_batch
+        self.global_batch = global_batch
+        self.accumulation_steps = set_accumulation_steps(global_batch=global_batch, batch_size=lora_batch)
         self.max_epochs = max_epochs
         self.device = device
         self.debug = debug
@@ -44,12 +46,10 @@ class TabStarTrainer:
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping(patience=patience)
         self.steps: int = 0
-        # TODO the config should be initialized earlier, and allow hyperparameters control
-        self.config = TabStarConfig()
         self.save_dir: str = os.path.join(".tabstar_checkpoint/", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
-        train_loader = get_dataloader(train_data, is_train=True)
+        train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
         val_loader = get_dataloader(val_data, is_train=False)
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
@@ -79,11 +79,11 @@ class TabStarTrainer:
             total_loss += batch_loss * len(data.y)
             total_samples += len(data.y)
             self.steps += 1
-            if self.steps % self.config.accumulation_steps == 0:
+            if self.steps % self.accumulation_steps == 0:
                 self._do_update()
                 if self.debug:
                     break
-        if self.steps % self.config.accumulation_steps != 0:
+        if self.steps % self.accumulation_steps != 0:
             self._do_update()
         epoch_loss = total_loss / total_samples
         return epoch_loss
@@ -91,7 +91,7 @@ class TabStarTrainer:
     def _train_batch(self, data: TabSTARData) -> float:
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             loss, predictions = self._do_forward(data=data)
-            loss_for_backward = loss / self.config.accumulation_steps
+            loss_for_backward = loss / self.accumulation_steps
         if self.use_amp:
             scaled_loss = self.scaler.scale(loss_for_backward)
             scaled_loss.backward()
