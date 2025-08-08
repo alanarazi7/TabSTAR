@@ -2,6 +2,7 @@ import argparse
 
 from tabstar.tabstar_model import BaseTabSTAR
 from tabstar.training.devices import get_device
+from tabstar_paper.baselines.carte import CARTE
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.lgbm import LightGBM
 from tabstar_paper.baselines.random_forest import RandomForest
@@ -17,6 +18,7 @@ from tabstar_paper.utils.logging import wandb_run, wandb_finish
 
 BASELINES = [CatBoost, XGBoost, LightGBM, RandomForest,
              RealMLP,
+             CARTE,
              TabICL, TabDPT, TabPFNv2]
 
 baseline_names = {model.SHORT_NAME: model for model in BASELINES}
@@ -29,6 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset_id', required=True)
     parser.add_argument('--fold', type=int, required=True)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
+    parser.add_argument('--carte_lr_index', type=int, default=None)
     parser.add_argument('--verbose', action='store_true', default=False)
     args = parser.parse_args()
 
@@ -46,6 +49,7 @@ if __name__ == "__main__":
         fold=args.fold,
         train_examples=args.train_examples,
         device=device,
-        verbose=args.verbose
+        verbose=args.verbose,
+        carte_lr_idx=args.carte_lr_index,
     )
     wandb_finish(d_summary=ret)

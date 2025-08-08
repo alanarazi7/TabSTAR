@@ -1,6 +1,6 @@
 import time
 from dataclasses import asdict
-from typing import Type, Dict
+from typing import Type, Dict, Optional
 
 import torch
 
@@ -25,7 +25,8 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
                         fold: int,
                         device: torch.device,
                         train_examples: int = DOWNSTREAM_EXAMPLES,
-                        verbose: bool = False) -> Dict:
+                        verbose: bool = False,
+                        carte_lr_idx: Optional[int] = None) -> Dict:
     start_time = time.time()
     is_tabstar = issubclass(model_cls, BaseTabSTAR)
     name = "TabSTAR ⭐" if is_tabstar else model_cls.MODEL_NAME
@@ -40,7 +41,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     else:
         prefix2task = {"REG": SupervisedTask.REGRESSION, "BIN": SupervisedTask.BINARY, "MUL": SupervisedTask.MULTICLASS}
         problem_type = prefix2task[dataset_id.name[:3]]
-        model = model_cls(problem_type=problem_type, device=device, verbose=verbose)
+        model = model_cls(problem_type=problem_type, device=device, verbose=verbose, carte_lr_idx=carte_lr_idx)
     with PeakMemoryTracker(phase='train', device=device) as train_tracker:
         model.fit(x_train, y_train)
     with PeakMemoryTracker(phase='inference', device=device) as test_tracker:
@@ -59,6 +60,8 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         "n_train": len(y_train),
         "n_test": len(y_test),
         "m_features": x_train.shape[1],
+        "carte_lr_idx": carte_lr_idx,
+        "best_val_loss": getattr(model, "best_val_loss")
         **train_tracker.summary(),
         **test_tracker.summary(),
         **get_hardware_dict(device),

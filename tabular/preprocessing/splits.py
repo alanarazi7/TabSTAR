@@ -27,15 +27,11 @@ def create_splits(raw: RawDataset, run_num: int, train_examples: int, processing
     if n < MIN_TOTAL_EXAMPLES:
         raise ValueError(f"Dataset {raw.sid} has too few examples: {n}")
     indices = list(range(n))
-    is_pretrain = bool(train_examples < 0)
-    use_dev = _uses_dev(processing)
-    if is_pretrain:
-        test = []
-    else:
-        indices, test = _get_test(raw=raw, indices=indices, n=n, run_num=run_num)
-        indices, exclude = _get_exclude(raw=raw, indices=indices, run_num=run_num, train_examples=train_examples)
-    train, dev = _get_train_dev(raw=raw, indices=indices, use_dev=use_dev, run_num=run_num, is_pretrain=is_pretrain)
-    splits = {DataSplit.TRAIN: train, DataSplit.DEV: dev, DataSplit.TEST: test}
+    assert train_examples >= 0
+    assert processing in CV_METHODS
+    indices, test = _get_test(raw=raw, indices=indices, n=n, run_num=run_num)
+    train, exclude = _get_exclude(raw=raw, indices=indices, run_num=run_num, train_examples=train_examples)
+    splits = {DataSplit.TRAIN: train, DataSplit.DEV: [], DataSplit.TEST: test}
     split_array = _sample_xy_and_get_array(raw=raw, n=n, splits=splits)
     verbose_print(f"Created splits for {raw.sid} of length {n} and {train_examples=}: {Counter(split_array)}")
     return split_array
@@ -51,15 +47,6 @@ def _get_exclude(raw: RawDataset, indices: List[int], run_num: int, train_exampl
     exclude_examples = len(indices) - train_examples
     return _do_split(raw=raw, indices=indices, run_num=run_num, test_size=exclude_examples)
 
-
-def _get_train_dev(raw: RawDataset, indices: List[int], use_dev: bool, run_num: int,
-                   is_pretrain: bool) -> Tuple[List[int], List[int]]:
-    if not use_dev:
-        return indices, []
-    nn_dev_ratio = NN_PRETRAIN_DEV_RATIO if is_pretrain else VAL_RATIO
-    dev_size = int(len(indices) * nn_dev_ratio)
-    dev_size = min(dev_size, MAX_VAL_SIZE)
-    return _do_split(raw=raw, indices=indices, run_num=run_num, test_size=dev_size)
 
 def get_y_train(y: Series, splits: List[DataSplit]) -> Series:
     return get_y_split(y=y, splits=splits, split=DataSplit.TRAIN)
@@ -92,12 +79,3 @@ def _sample_xy_and_get_array(raw: RawDataset, n: int, splits: Dict[DataSplit, Li
     raw.y = raw.y[valid_mask].reset_index(drop=True)
     split_array = [s for s, valid in zip(splits_array, valid_mask) if valid]
     return split_array
-
-def _uses_dev(processing: PreprocessingMethod) -> bool:
-    if processing in CV_METHODS:
-        return False
-    process2dev = {
-                   # CARTE doesn't use dev
-                   PreprocessingMethod.CARTE: False,
-                   }
-    return process2dev[processing]
