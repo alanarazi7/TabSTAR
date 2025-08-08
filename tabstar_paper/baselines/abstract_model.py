@@ -24,7 +24,7 @@ class TabularModel:
     SHORT_NAME: str
     USE_VAL_SPLIT: bool
 
-    def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False):
+    def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False, **kwargs):
         assert problem_type in {SupervisedTask.REGRESSION, SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
         self.problem_type = problem_type
         self.is_cls = bool(problem_type in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS})
