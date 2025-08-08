@@ -2,13 +2,15 @@ import os
 from typing import Tuple
 
 import torch
+from carte_ai import Table2GraphTransformer
+from dotenv import load_dotenv
+from huggingface_hub import hf_hub_download
 from pandas import DataFrame, Series
-from tabicl import TabICLClassifier
 
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.datasets.objects import SupervisedTask
 
+load_dotenv()
 
 class CARTE(TabularModel):
 
@@ -16,20 +18,16 @@ class CARTE(TabularModel):
     SHORT_NAME = "carte"
     USE_VAL_SPLIT = False
 
-    # def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False,
-    #              *args, **kwargs):
-    #     super().__init__(problem_type=problem_type, device=device, verbose=verbose, *args, **kwargs)
-    #     self.carte_lr_idx = carte_lr_idx
-    #     token = os.getenv("HUGGINGFACE_HUB_TOKEN")
-    #     if token is None:
-    #         raise ValueError("HUGGINGFACE_HUB_TOKEN not set in .env")
-    #
-    #     if model == CARTE__ and not 0 <= args.carte_lr_index <= 5:
-    #         raise ValueError(f"Invalid CARTE lr index: {args.carte_lr_index}. Should be between 0 and 5.")
-    #
-    #     self.carte_lr = carte_lr
-    #     model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
-    #     self.preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
+    def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False):
+        super().__init__(problem_type=problem_type, device=device, verbose=verbose)
+        token = os.getenv("HUGGINGFACE_HUB_TOKEN")
+        if token is None:
+            raise ValueError("HUGGINGFACE_HUB_TOKEN not set in .env")
+        if not 0 <= carte_lr_idx <= 5:
+            raise ValueError(f"Invalid CARTE lr index: {carte_lr_idx}. Should be between 0 and 5.")
+        self.carte_lr_idx = carte_lr_idx
+        model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
+        self.carte_preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
         pass
@@ -83,18 +81,6 @@ class CarteHyperparameters:
 
 
 class CARTE__(TabularSklearnModel):
-
-    def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
-                 run_num: int, train_examples: int = 0, args____: Optional[PretrainArgs] = None,
-                 carte_lr_index: Optional[int] = None):
-        super().__init__(run_name=run_name, dataset_ids=dataset_ids, device=device, run_num=run_num,
-                         train_examples=train_examples, args____=args____, carte_lr_index=carte_lr_index)
-        token = os.getenv("HUGGINGFACE_HUB_TOKEN")
-        if token is None:
-            raise ValueError("HUGGINGFACE_HUB_TOKEN not set in .env")
-        model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
-        self.preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
-
 
     def initialize_model(self):
         self.model = init_model(config=self.config, is_reg=self.dataset.is_regression,
