@@ -1,4 +1,57 @@
 import os
+from typing import Tuple
+
+import torch
+from pandas import DataFrame, Series
+from tabicl import TabICLClassifier
+
+from tabstar_paper.baselines.abstract_model import TabularModel
+from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
+from tabstar_paper.datasets.objects import SupervisedTask
+
+
+class CARTE(TabularModel):
+
+    MODEL_NAME = "CARTE 🗺️"
+    SHORT_NAME = "carte"
+    USE_VAL_SPLIT = False
+
+    # def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False,
+    #              *args, **kwargs):
+    #     super().__init__(problem_type=problem_type, device=device, verbose=verbose, *args, **kwargs)
+    #     self.carte_lr_idx = carte_lr_idx
+    #     token = os.getenv("HUGGINGFACE_HUB_TOKEN")
+    #     if token is None:
+    #         raise ValueError("HUGGINGFACE_HUB_TOKEN not set in .env")
+    #
+    #     if model == CARTE__ and not 0 <= args.carte_lr_index <= 5:
+    #         raise ValueError(f"Invalid CARTE lr index: {args.carte_lr_index}. Should be between 0 and 5.")
+    #
+    #     self.carte_lr = carte_lr
+    #     model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
+    #     self.preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
+
+    def fit_internal_preprocessor(self, x: DataFrame, y: Series):
+        pass
+
+    def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+        return x, y
+
+    # def initialize_model(self) -> TabICLClassifier:
+    #     if not self.is_cls:
+    #         raise ValueError("TabICL is only supported for classification tasks for now.")
+    #     model = TabICLClassifier(device=str(self.device), checkpoint_version="tabicl-classifier-v1-0208.ckpt")
+    #     return model
+    #
+    # def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+    #     self.model_.fit(x_train, y_train)
+
+
+
+
+
+'''
+import os
 from dataclasses import dataclass
 from typing import List, Optional, Tuple, Any
 
@@ -29,11 +82,7 @@ class CarteHyperparameters:
     disable_pbar: bool = False
 
 
-class CARTE(TabularSklearnModel):
-
-    MODEL_NAME = f"CARTE 🗺️"
-    SHORT_NAME = "carte"
-    PROCESSING = PreprocessingMethod.CARTE
+class CARTE__(TabularSklearnModel):
 
     def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
                  run_num: int, train_examples: int = 0, args____: Optional[PretrainArgs] = None,
@@ -101,3 +150,4 @@ BAD_CARTE_DATASETS = {
     # ValueError: Length mismatch: Expected axis has 3 elements, new values have 4 elements
     KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN,
 }
+'''
