@@ -8,6 +8,7 @@ from huggingface_hub import hf_hub_download
 from pandas import DataFrame, Series
 
 from tabstar.constants import SEED
+from tabstar.datasets.all_datasets import KaggleDatasetID, OpenMLDatasetID, UrlDatasetID
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.objects import SupervisedTask
 
@@ -60,3 +61,25 @@ class CARTE(TabularModel):
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         self.model_.fit(x_train, y_train)
         self.best_val_loss = self.model_.valid_loss_
+
+
+# The power transform struggles with some of the variables
+BAD_CARTE_DATASETS = {
+    # scipy.optimize._optimize.BracketError: The algorithm terminated without finding a valid bracket. Consider trying different initial points.
+    OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
+    OpenMLDatasetID.BIN_SOCIAL_JIGSAW_TOXICITY,
+    UrlDatasetID.REG_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES,
+    KaggleDatasetID.REG_FOOD_WINE_POLISH_MARKET_PRICES,
+    KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_PAKISTAN,
+    KaggleDatasetID.REG_FOOD_CHOCOLATE_BAR_RATINGS,
+    UrlDatasetID.REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER,
+    KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY,
+    KaggleDatasetID.MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23,
+    UrlDatasetID.REG_CONSUMER_BIKE_PRICE_BIKEWALE,
+    KaggleDatasetID.REG_SOCIAL_KOREAN_DRAMA,
+    KaggleDatasetID.REG_TRANSPORTATION_USED_CAR_SAUDI_ARABIA,
+    KaggleDatasetID.MUL_FOOD_YELP_REVIEWS,
+    OpenMLDatasetID.MUL_HOUSES_MELBOURNE_AIRBNB,
+    # ValueError: Length mismatch: Expected axis has 3 elements, new values have 4 elements
+    KaggleDatasetID.REG_FOOD_WINE_VIVINO_SPAIN,
+}
