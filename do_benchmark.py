@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset_id', required=True)
     parser.add_argument('--fold', type=int, required=True)
     parser.add_argument('--train_examples', type=int, default=DOWNSTREAM_EXAMPLES)
-    parser.add_argument('--carte_lr_index', type=int, default=None)
+    parser.add_argument('--carte_lr_idx', type=int, default=None)
     parser.add_argument('--verbose', action='store_true', default=False)
     args = parser.parse_args()
 
@@ -50,6 +50,6 @@ if __name__ == "__main__":
         train_examples=args.train_examples,
         device=device,
         verbose=args.verbose,
-        carte_lr_idx=args.carte_lr_index,
+        carte_lr_idx=args.carte_lr_idx,
     )
     wandb_finish(d_summary=ret)

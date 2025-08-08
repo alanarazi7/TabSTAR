@@ -21,7 +21,7 @@ class TabularModel:
     PROCESSING: PreprocessingMethod
 
     def __init__(self, run_name: str, dataset_ids: List[OpenMLDatasetID], device: torch.device,
-                 run_num: int, train_examples: int = 0, carte_lr_index: Optional[int] = None):
+                 run_num: int, train_examples: int = 0, carte_lr_idx: Optional[int] = None):
         self.run_name = run_name
         self.dataset_ids = dataset_ids
         self.device = device
@@ -30,7 +30,7 @@ class TabularModel:
         self.data_dirs: List[str] = self.initialize_data_dirs()
         self.datasets: List[DatasetProperties] = [get_properties(d) for d in self.data_dirs]
         self.model: Optional[Any] = None
-        self.carte_lr_index = carte_lr_index
+        self.carte_lr_idx = carte_lr_idx
         self.config = self.set_config()
         # For processing
         self.y_scaler: Optional[StandardScaler] = None

@@ -57,7 +57,7 @@ class ModelTrainer:
         create_dir(self.res_path)
         model = self.model_cls(run_name=self.run_name, dataset_ids=[self.dataset_id], device=self.device,
                                run_num=self.run_num, train_examples=self.train_examples,
-                               carte_lr_index=self.carte_lr_idx)
+                               carte_lr_idx=self.carte_lr_idx)
         model.initialize_model()
         dev_loss = model.train()
         test_results = model.test()
