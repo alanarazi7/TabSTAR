@@ -30,10 +30,10 @@ class CARTE(TabularModel):
         self.carte_preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
-        pass
+        self.carte_preprocessor.fit_transform(x, y=y)
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        return x, y
+        raise NotImplementedError("apply the transform")
 
     # def initialize_model(self) -> TabICLClassifier:
     #     if not self.is_cls:
@@ -41,8 +41,9 @@ class CARTE(TabularModel):
     #     model = TabICLClassifier(device=str(self.device), checkpoint_version="tabicl-classifier-v1-0208.ckpt")
     #     return model
     #
-    # def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-    #     self.model_.fit(x_train, y_train)
+    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series) -> float:
+        self.model_.fit(x_train, y_train)
+        self.best_val_loss = self.model_.valid_loss_
 
 
 
@@ -87,7 +88,6 @@ class CARTE__(TabularSklearnModel):
                                 classifier_cls=CARTEClassifier, regressor_cls=CARTERegressor)
 
     def train(self) -> float:
-        # https://github.com/soda-inria/carte
         x_train, y_train = self.load_train()
         print(f"Training {self.MODEL_NAME} for {self.dataset.sid}, lr {self.carte_lr_index}, {len(x_train)} examples")
         x_train = self.preprocessor.fit_transform(x_train, y=y_train)

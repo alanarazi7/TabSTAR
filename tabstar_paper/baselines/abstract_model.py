@@ -29,6 +29,7 @@ class TabularModel:
         self.problem_type = problem_type
         self.is_cls = bool(problem_type in {SupervisedTask.BINARY, SupervisedTask.MULTICLASS})
         self.device = device
+        self.best_val_loss: Optional[None] = None
         if CPU:
             self.device = torch.device("cpu")
         self.verbose = verbose
