@@ -1,4 +1,3 @@
-import os
 from typing import Tuple, Any
 
 import torch
@@ -10,6 +9,7 @@ from pandas import DataFrame, Series
 from tabstar.constants import SEED
 from tabstar.datasets.all_datasets import KaggleDatasetID, OpenMLDatasetID, UrlDatasetID
 from tabstar_paper.baselines.abstract_model import TabularModel
+from tabstar_paper.constants import HF_TOKEN
 from tabstar_paper.datasets.objects import SupervisedTask
 
 load_dotenv()
@@ -23,8 +23,7 @@ class CARTE(TabularModel):
     def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False):
         self.carte_lr_idx = carte_lr_idx
         super().__init__(problem_type=problem_type, device=device, verbose=verbose)
-        token = os.getenv("HF_TOKEN")
-        if token is None:
+        if HF_TOKEN is None:
             raise ValueError("HF_TOKEN not set in .env")
         model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
         self.carte_preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)

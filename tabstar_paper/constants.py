@@ -7,6 +7,7 @@ load_dotenv()
 WANDB_API_KEY = os.getenv("WANDB_API_KEY")
 WANDB_ENTITY = os.getenv("WANDB_ENTITY")
 TABPFN_TOKEN = os.getenv("TABPFN_TOKEN")
+HF_TOKEN = os.getenv("HF_TOKEN")
 PRETRAIN_BATCH_SIZE = int(os.getenv("PRETRAIN_BATCH_SIZE", 32))
 GPU = os.getenv("GPU")
 CPU = os.getenv("CPU") is not None
