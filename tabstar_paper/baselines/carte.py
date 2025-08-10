@@ -29,10 +29,13 @@ class CARTE(TabularModel):
         self.carte_preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
-        self.carte_preprocessor.fit_transform(x, y=y)
+        y = y.copy()
+        y = self.target_transformer.transform(y)
+        self.carte_preprocessor.fit(x, y=y)
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[Any, Series]:
-        x = self.carte_preprocessor.transform(x, y=y)
+        y_npy = y.copy().to_numpy()
+        x = self.carte_preprocessor.transform(x, y=y_npy)
         return x, y
 
     def initialize_model(self) -> CARTEClassifier | CARTERegressor:
@@ -58,7 +61,8 @@ class CARTE(TabularModel):
         return model
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        self.model_.fit(x_train, y_train)
+        y_train_array = y_train.to_numpy()
+        self.model_.fit(X=x_train, y=y_train_array)
         self.best_val_loss = self.model_.valid_loss_
 
 
