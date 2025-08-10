@@ -25,7 +25,7 @@ class CARTE(TabularModel):
         super().__init__(problem_type=problem_type, device=device, verbose=verbose)
         if HF_TOKEN is None:
             raise ValueError("HF_TOKEN not set in .env")
-        model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=token)
+        model_path = hf_hub_download(repo_id="hi-paris/fastText", filename="cc.en.300.bin", token=HF_TOKEN)
         self.carte_preprocessor = Table2GraphTransformer(fasttext_model_path=model_path)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
