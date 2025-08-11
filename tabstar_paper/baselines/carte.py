@@ -1,4 +1,4 @@
-from typing import Tuple, Any
+from typing import Tuple, Any, Optional
 
 import torch
 from carte_ai import Table2GraphTransformer, CARTEClassifier, CARTERegressor
@@ -33,8 +33,8 @@ class CARTE(TabularModel):
         y = self.target_transformer.transform(y)
         self.carte_preprocessor.fit(x, y=y)
 
-    def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[Any, Series]:
-        y_npy = y.copy().to_numpy()
+    def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[Any, Series]:
+        y_npy = y.copy().to_numpy() if y is not None else None
         x = self.carte_preprocessor.transform(x, y=y_npy)
         return x, y
 
