@@ -1,5 +1,6 @@
 from typing import Tuple, Any, Optional
 
+import numpy as np
 import torch
 from carte_ai import Table2GraphTransformer, CARTEClassifier, CARTERegressor
 from dotenv import load_dotenv
@@ -64,6 +65,13 @@ class CARTE(TabularModel):
         y_train_array = y_train.to_numpy()
         self.model_.fit(X=x_train, y=y_train_array)
         self.best_val_loss = self.model_.valid_loss_
+
+    def predict(self, x: DataFrame) -> np.ndarray:
+        x, _ = self.transform_preprocessor(x=x, y=None)
+        if not self.is_cls:
+            return self.model_.predict(x)
+        else:
+            return self.model_.predict_proba(x)
 
 
 # The power transform struggles with some of the variables
