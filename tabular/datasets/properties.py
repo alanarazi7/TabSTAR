@@ -74,14 +74,6 @@ class DatasetProperties:
         return obj
 
     @property
-    def d_effective_output(self) -> int:
-        if self.task_type == SupervisedTask.REGRESSION:
-            assert self.targets is None
-            return 1
-        else:
-            return len(self.targets)
-
-    @property
     def is_regression(self) -> bool:
         return self.task_type == SupervisedTask.REGRESSION
 
