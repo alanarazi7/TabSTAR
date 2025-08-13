@@ -5,6 +5,7 @@ class SupervisedTask(Enum):
     REGRESSION = "📈 regression"
     BINARY = "⚖️ binary"
     MULTICLASS = "🎨 multiclass"
+    MULTILABEL = "🏷️ multilabel"
 
 
 class FeatureType(Enum):

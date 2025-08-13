@@ -77,6 +77,10 @@ class BaseTabSTAR:
     def is_cls(self) -> bool:
         raise NotImplementedError("Must be implemented in subclass")
 
+    @property
+    def is_multilabel(self) -> bool:
+        return False
+
     def save(self, path: str):
         joblib.dump(self, path, compress=3)
 
@@ -169,3 +173,12 @@ class TabSTARRegressor(BaseTabSTAR, BaseEstimator, RegressorMixin):
         return False
 
 
+class TabSTARMultilabelClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
+
+    @property
+    def is_cls(self) -> bool:
+        return True
+
+    @property
+    def is_multilabel(self) -> bool:
+        return True
