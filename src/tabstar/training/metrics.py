@@ -143,7 +143,7 @@ def _calculate_metrics_for_multilabel(
     y_true: (B, C) in {0,1}
     y_pred: (B, C) probabilities in [0,1]
     """
-    y_true = np.asarray(y_true)
+    y_true = np.array(list(y_true), dtype=int)
     y_pred = np.asarray(y_pred)
 
     assert y_true.shape == y_pred.shape, f"Shape mismatch: {y_true.shape} vs {y_pred.shape}"
