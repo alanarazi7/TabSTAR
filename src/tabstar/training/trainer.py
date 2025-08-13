@@ -29,7 +29,8 @@ if hasattr(torch, 'set_float32_matmul_precision'):
 class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, debug: bool = False):
+                 global_batch: int, device: torch.device, model_version: str, debug: bool = False,
+                 is_multilabel: bool = False):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
@@ -46,6 +47,7 @@ class TabStarTrainer:
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping(patience=patience)
         self.steps: int = 0
+        self.is_multilabel = is_multilabel
         self.save_dir: str = os.path.join(".tabstar_checkpoint/", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
@@ -102,7 +104,8 @@ class TabStarTrainer:
 
     def _do_forward(self, data: TabSTARData) -> Tuple[Tensor, Tensor]:
         predictions = self.model(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-        loss = calculate_loss(predictions=predictions, y=data.y, d_output=data.d_output)
+        loss = calculate_loss(predictions=predictions, y=data.y, d_output=data.d_output,
+                              is_multilabel=self.is_multilabel)
         return loss, predictions
 
     def _do_update(self):
@@ -127,12 +130,14 @@ class TabStarTrainer:
                 batch_loss, batch_predictions = self._do_forward(data=data)
                 total_loss += batch_loss * len(data.y)
                 total_samples += len(data.y)
-                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=d_output)
+                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=d_output,
+                                                  is_multilabel=self.is_multilabel)
                 y_pred.append(batch_predictions)
                 y_true.append(data.y)
         y_pred = concat_predictions(y_pred)
         y_true = np.concatenate(y_true)
-        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output,
+                                   is_multilabel=self.is_multilabel)
         loss = total_loss / total_samples
         loss = loss.item()
         return loss, metrics.score

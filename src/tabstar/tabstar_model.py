@@ -66,7 +66,8 @@ class BaseTabSTAR:
                                  patience=self.patience,
                                  device=self.device,
                                  model_version=self.model_version,
-                                 debug=self.debug)
+                                 debug=self.debug,
+                                 is_multilabel=self.is_multilabel)
         trainer.train(train_data, val_data)
         self.model_ = trainer.load_model()
 
@@ -114,7 +115,8 @@ class BaseTabSTAR:
         for data in dataloader:
             with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
                 batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
+                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output,
+                                                  is_multilabel=self.is_multilabel)
                 predictions.append(batch_predictions)
         predictions = concat_predictions(predictions)
         return predictions
@@ -132,7 +134,8 @@ class BaseTabSTAR:
         y = y.copy()
         y_pred = self._infer(x)
         y_true = self.preprocessor_.transform_target(y)
-        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
+        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output,
+                                is_multilabel=self.is_multilabel)
 
 
 

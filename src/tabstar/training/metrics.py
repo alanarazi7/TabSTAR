@@ -1,14 +1,14 @@
 from dataclasses import dataclass
-from typing import Union, Dict
+from typing import Union, Dict, Any
 
 import numpy as np
 import torch
 from numpy.exceptions import AxisError
 from pandas import Series
 from sklearn.metrics import roc_auc_score, r2_score, mean_squared_error, accuracy_score, f1_score, log_loss, \
-    precision_score, recall_score, top_k_accuracy_score
+    recall_score, average_precision_score
 from torch import Tensor, softmax
-from torch.nn import CrossEntropyLoss, MSELoss
+from torch.nn import CrossEntropyLoss, MSELoss, BCEWithLogitsLoss
 
 
 @dataclass
@@ -21,7 +21,10 @@ class Metrics:
         self.metrics = {k: float(v) for k, v in self.metrics.items()}
 
 
-def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int, is_pretrain: bool = False) -> Metrics:
+def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int, is_pretrain: bool = False,
+                     is_multilabel: bool = False) -> Metrics:
+    if is_multilabel:
+        return _calculate_metrics_for_multilabel(y_true=y_true, y_pred=y_pred)
     if d_output == 1:
         return _calculate_metrics_for_regression(y_true=y_true, y_pred=y_pred, is_pretrain=is_pretrain)
     elif d_output == 2:
@@ -97,7 +100,9 @@ def _per_class_auc(y_true, y_pred) -> float:
     return macro_avg
 
 
-def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
+def apply_loss_fn(prediction: Tensor, d_output: int, is_multilabel: bool = False) -> Tensor:
+    if is_multilabel:
+        return prediction.sigmoid()
     if d_output == 1:
         return prediction
     prediction = prediction.to(torch.float32)
@@ -108,10 +113,14 @@ def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
     return prediction
 
 
-def calculate_loss(predictions: Tensor, y: Union[Series, np.ndarray], d_output: int) -> Tensor:
+def calculate_loss(predictions: Tensor, y: Union[Series, np.ndarray], d_output: int,
+                   is_multilabel: bool = False) -> Tensor:
     is_reg = bool(d_output == 1)
     if is_reg:
         loss_fn = MSELoss()
+        dtype = torch.float32
+    elif is_multilabel:
+        loss_fn = BCEWithLogitsLoss()
         dtype = torch.float32
     else:
         loss_fn = CrossEntropyLoss()
@@ -123,3 +132,27 @@ def calculate_loss(predictions: Tensor, y: Union[Series, np.ndarray], d_output: 
         y = y.unsqueeze(1)
     loss = loss_fn(predictions, y)
     return loss
+
+
+def _calculate_metrics_for_multilabel(
+    y_true: Union[np.ndarray, Series],
+    y_pred: np.ndarray,
+    threshold: float = 0.5
+):
+    """
+    y_true: (B, C) in {0,1}
+    y_pred: (B, C) probabilities in [0,1]
+    """
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+
+    assert y_true.shape == y_pred.shape, f"Shape mismatch: {y_true.shape} vs {y_pred.shape}"
+    assert np.all((0.0 <= y_pred) & (y_pred <= 1.0)), "y_pred must be in [0, 1]"
+
+    y_hat = (y_pred >= threshold).astype(int)
+
+    ap_micro = float(average_precision_score(y_true, y_pred, average="micro"))
+    f1_micro = float(f1_score(y_true, y_hat, average="micro", zero_division=0))
+
+    score = ap_micro if not np.isnan(ap_micro) else f1_micro
+    return Metrics(score=score, metrics={"ap_micro": ap_micro, "f1_micro": f1_micro})
