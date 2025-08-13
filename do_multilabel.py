@@ -1,3 +1,4 @@
+import pandas as pd
 from sklearn.datasets import make_multilabel_classification
 from sklearn.model_selection import train_test_split
 
@@ -12,6 +13,11 @@ x, y = make_multilabel_classification(
     random_state=42,
     return_distributions=False,
 )
+
+x = pd.DataFrame(x, columns=[f"f{i}" for i in range(x.shape[1])])
+
+label_indices = [tuple(int(j) for j in y[i].nonzero()[0]) for i in range(y.shape[0])]
+y = pd.Series(label_indices)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
 tabstar = TabSTARMultilabelClassifier(debug=True)
