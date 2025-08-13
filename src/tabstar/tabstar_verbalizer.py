@@ -28,8 +28,9 @@ class TabSTARData:
         return len(self.x_txt)
 
 class TabSTARVerbalizer:
-    def __init__(self, is_cls: bool, verbose: bool = False):
+    def __init__(self, is_cls: bool, verbose: bool = False, is_multilabel: bool = False):
         self.is_cls = is_cls
+        self.is_multilabel = is_multilabel
         self.verbose = verbose
         self.date_transformers: Dict[str, DatetimeEncoder] = {}
         self.numerical_transformers: Dict[str, StandardScaler] = {}
@@ -57,7 +58,7 @@ class TabSTARVerbalizer:
         text_features = [col for col in x.columns if col not in numerical_features]
         self.vprint(f"📝 Detected {len(text_features)} textual features: {sorted(text_features)}")
         x = transform_feature_types(x=x, numerical_features=numerical_features)
-        self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls)
+        self.target_transformer = fit_preprocess_y(y=y, is_cls=self.is_cls, is_multilabel=self.is_multilabel)
         if self.is_cls:
             self.d_output = len(self.target_transformer.classes_)
         else:
