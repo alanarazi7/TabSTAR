@@ -14,10 +14,10 @@ from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.metrics import calculate_metric, Metrics
-from tabstar_paper.baselines.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
-from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
-from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
-from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
+from tabstar_paper.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
+from tabstar_paper.preprocessing.feat_types import classify_semantic_features
+from tabstar_paper.preprocessing.numerical import fit_numerical_median, transform_numerical_features
+from tabstar_paper.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.constants import CPU
 from tabstar_paper.datasets.objects import SupervisedTask
 
