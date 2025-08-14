@@ -47,6 +47,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     with PeakMemoryTracker(phase='inference', device=device) as test_tracker:
         metrics = model.score_all_metrics(X=x_test, y=y_test)
     runtime = time.time() - start_time
+    optuna_dict = getattr(model, "optuna_dict", {})
     d_summary = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         "git": get_current_commit_hash(),
@@ -65,6 +66,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
         **train_tracker.summary(),
         **test_tracker.summary(),
         **get_hardware_dict(device),
+        **optuna_dict,
            }
     print(f"Scored {metrics.score:.4f} on dataset {dataset_id.name}, fold {fold} in {int(runtime)} seconds.")
     return d_summary
