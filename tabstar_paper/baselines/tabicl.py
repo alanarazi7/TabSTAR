@@ -14,6 +14,7 @@ class TabICL(TabularModel):
     SHORT_NAME = "icl"
     USE_VAL_SPLIT = False
     USE_MEDIAN_FILLING = False
+    USE_CATEGORICAL_ENCODING = False
 
     def initialize_model(self) -> TabICLClassifier:
         if not self.is_cls:

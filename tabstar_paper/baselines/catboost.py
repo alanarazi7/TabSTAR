@@ -25,6 +25,7 @@ class CatBoost(TabularModel):
     SHORT_NAME = "cat"
     USE_VAL_SPLIT = True
     USE_MEDIAN_FILLING = False
+    USE_CATEGORICAL_ENCODING = False
 
     def initialize_model(self) -> CatBoostRegressor | CatBoostClassifier:
         model_cls = CatBoostClassifier if self.is_cls else CatBoostRegressor

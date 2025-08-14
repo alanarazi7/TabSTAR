@@ -13,6 +13,7 @@ from tabstar.preprocessing.sparse import densify_objects
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.metrics import calculate_metric, Metrics
+from tabstar_paper.baselines.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
 from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
 from tabstar_paper.constants import CPU
@@ -25,6 +26,7 @@ class TabularModel:
     SHORT_NAME: str
     USE_VAL_SPLIT: bool
     USE_MEDIAN_FILLING: bool
+    USE_CATEGORICAL_ENCODING: bool
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False, **kwargs):
         assert problem_type in {SupervisedTask.REGRESSION, SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
@@ -67,6 +69,8 @@ class TabularModel:
         x_train, y_train = self.do_model_agnostic_preprocessing(x=x_train, y=y_train)
         if self.USE_MEDIAN_FILLING:
             self.numerical_medians = fit_numerical_median(x=x_train, numerical_features=self.numerical_features)
+        if self.USE_CATEGORICAL_ENCODING:
+            self.categorical_encoders = fit_categorical_encoders(x=x_train, categorical_features=self.categorical_features)
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
@@ -78,6 +82,8 @@ class TabularModel:
             y = transform_preprocess_y(y=y, scaler=self.target_transformer)
         if self.USE_MEDIAN_FILLING:
             x = transform_numerical_features(x=x, numerical_medians=self.numerical_medians)
+        if self.USE_CATEGORICAL_ENCODING:
+            x = transform_categorical_features(x=x, categorical_encoders=self.categorical_encoders)
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
