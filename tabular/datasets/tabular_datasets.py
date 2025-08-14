@@ -1,5 +1,4 @@
 from enum import Enum, StrEnum
-from typing import Union
 
 
 class OpenMLDatasetID(Enum):
