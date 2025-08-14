@@ -76,6 +76,7 @@ class XGBoostOpt(TunedTabularModel):
         return score
 
     def get_trial_config(self, trial: Trial) -> Dict[str, Any]:
+        # Hyperparam search as suggested by TabPFN-v2 paper: https://www.nature.com/articles/s41586-024-08328-6.pdf
         n_estimators = trial.suggest_int("n_estimators", 100, 4000)
         learning_rate = trial.suggest_float("learning_rate", 1e-7, 1.0, log=True)
         max_depth = trial.suggest_int("max_depth", 1, 10)
