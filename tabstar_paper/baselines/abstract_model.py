@@ -16,6 +16,7 @@ from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.baselines.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
 from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
+from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.constants import CPU
 from tabstar_paper.datasets.objects import SupervisedTask
 
@@ -27,6 +28,7 @@ class TabularModel:
     USE_VAL_SPLIT: bool
     USE_MEDIAN_FILLING: bool
     USE_CATEGORICAL_ENCODING: bool
+    USE_TEXT_EMBEDDINGS: bool
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False, **kwargs):
         assert problem_type in {SupervisedTask.REGRESSION, SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
@@ -71,7 +73,10 @@ class TabularModel:
             self.numerical_medians = fit_numerical_median(x=x_train, numerical_features=self.numerical_features)
         if self.USE_CATEGORICAL_ENCODING:
             self.categorical_encoders = fit_categorical_encoders(x=x_train, categorical_features=self.categorical_features)
-        return self.fit_internal_preprocessor(x=x_train, y=y_train)
+        if self.USE_TEXT_EMBEDDINGS:
+            self.text_transformers = fit_text_encoders(x=x_train, text_features=self.text_features, device=self.device)
+            self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
+        self.fit_internal_preprocessor(x=x_train, y=y_train)
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
         x, y = densify_objects(x=x, y=y)
@@ -84,13 +89,15 @@ class TabularModel:
             x = transform_numerical_features(x=x, numerical_medians=self.numerical_medians)
         if self.USE_CATEGORICAL_ENCODING:
             x = transform_categorical_features(x=x, categorical_encoders=self.categorical_encoders)
+        if self.USE_TEXT_EMBEDDINGS:
+            x = transform_text_features(x=x, text_encoders=self.text_transformers)
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        raise NotImplementedError("Fit internal preprocessor method not implemented yet")
+        pass
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
-        raise NotImplementedError("Transform internal preprocessor method not implemented yet")
+        return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: Optional[DataFrame], y_val: Optional[Series]):
         raise NotImplementedError("Fit model method not implemented yet")

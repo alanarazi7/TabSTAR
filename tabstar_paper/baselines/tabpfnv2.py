@@ -17,6 +17,7 @@ class TabPFNv2(TabularModel):
     USE_VAL_SPLIT = False
     USE_MEDIAN_FILLING = False
     USE_CATEGORICAL_ENCODING = False
+    USE_TEXT_EMBEDDINGS = False
 
     def initialize_model(self) -> TabPFNClassifier | TabPFNRegressor:
         # TODO: Move away from closed-source client version, as this isn't reproducible, they improve the model

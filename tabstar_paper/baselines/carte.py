@@ -22,6 +22,7 @@ class CARTE(TabularModel):
     USE_VAL_SPLIT = False
     USE_MEDIAN_FILLING = False
     USE_CATEGORICAL_ENCODING = False
+    USE_TEXT_EMBEDDINGS = False
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False):
         self.carte_lr_idx = carte_lr_idx

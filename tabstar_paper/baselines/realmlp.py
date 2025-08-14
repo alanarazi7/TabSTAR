@@ -1,11 +1,8 @@
-from typing import Tuple
-
 from pandas import DataFrame, Series
 from pytabkit import RealMLP_TD_Classifier, RealMLP_TD_Regressor
 
 from tabstar.training.devices import CPU_CORES
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabstar_paper.baselines.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.datasets.objects import SupervisedTask
 
 
@@ -15,6 +12,7 @@ class RealMLP(TabularModel):
     USE_VAL_SPLIT = True
     USE_MEDIAN_FILLING = True
     USE_CATEGORICAL_ENCODING = True
+    USE_TEXT_EMBEDDINGS = True
 
     def initialize_model(self) -> RealMLP_TD_Classifier | RealMLP_TD_Regressor:
         task2metric = {SupervisedTask.BINARY: 'cross_entropy',
@@ -25,14 +23,6 @@ class RealMLP(TabularModel):
         params = {'device': str(self.device), 'n_threads': CPU_CORES, 'val_metric_name': val_metric, 'use_ls': False}
         model = model_cls(**params)
         return model
-
-    def fit_internal_preprocessor(self, x: DataFrame, y: Series):
-        self.text_transformers = fit_text_encoders(x=x, text_features=self.text_features, device=self.device)
-        self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
-
-    def transform_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
-        x = transform_text_features(x=x, text_encoders=self.text_transformers)
-        return x, y
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         cat_col_names = list(self.categorical_features)
