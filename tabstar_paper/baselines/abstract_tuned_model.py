@@ -79,6 +79,7 @@ class TunedTabularModel(TabularModel):
             y_dev = y.iloc[val_idx].copy()
             fold_model = self.initialize_tuned_model(params=trial_config)
             fold_score = self.fit_fold_model(model=fold_model, x_train=x_train, y_train=y_train, x_val=x_dev, y_val=y_dev)
+            print(f"Trial num {trial.number}, Fold {f}, score: {fold_score}")
             fold_scores.append(fold_score)
         avg_loss = float(np.mean(fold_scores))
         raise avg_loss
