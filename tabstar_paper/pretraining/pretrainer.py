@@ -152,7 +152,7 @@ class TabSTARPretrainer:
     def do_forward(self, x_txt: np.ndarray, x_num: Tensor, y: Tensor, properties: DatasetProperties) -> Tuple[Tensor, Tensor]:
         x_num = x_num.to(self.device)
         y = y.to(self.device)
-        predictions = self.model(x_txt=x_txt, x_num=x_num, sid=properties.name, d_output=properties.d_output)
+        predictions = self.model(x_txt=x_txt, x_num=x_num, d_output=properties.d_output)
         loss = calculate_loss(predictions=predictions, y=y, d_output=properties.d_output)
         return predictions, loss
 
