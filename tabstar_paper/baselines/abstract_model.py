@@ -14,6 +14,7 @@ from tabstar.preprocessing.splits import split_to_val
 from tabstar.preprocessing.target import fit_preprocess_y, transform_preprocess_y
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.baselines.preprocessing.feat_types import classify_semantic_features
+from tabstar_paper.baselines.preprocessing.numerical import fit_numerical_median, transform_numerical_features
 from tabstar_paper.constants import CPU
 from tabstar_paper.datasets.objects import SupervisedTask
 
@@ -23,6 +24,7 @@ class TabularModel:
     MODEL_NAME: str
     SHORT_NAME: str
     USE_VAL_SPLIT: bool
+    USE_MEDIAN_FILLING: bool
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False, **kwargs):
         assert problem_type in {SupervisedTask.REGRESSION, SupervisedTask.BINARY, SupervisedTask.MULTICLASS}
@@ -44,6 +46,7 @@ class TabularModel:
         self.categorical_encoders: Dict[str, LabelEncoder] = {}
         self.text_features: Set[str] = set()
         self.text_transformers: Dict[str, TextEncoder] = {}
+        self.cached_embeddings: Dict[str, np.ndarray] = {}
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -62,6 +65,8 @@ class TabularModel:
 
     def fit_preprocessor(self, x_train: DataFrame, y_train: Series):
         x_train, y_train = self.do_model_agnostic_preprocessing(x=x_train, y=y_train)
+        if self.USE_MEDIAN_FILLING:
+            self.numerical_medians = fit_numerical_median(x=x_train, numerical_features=self.numerical_features)
         return self.fit_internal_preprocessor(x=x_train, y=y_train)
 
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[DataFrame, Optional[Series]]:
@@ -71,6 +76,8 @@ class TabularModel:
         if y is not None:
             raise_if_null_target(y)
             y = transform_preprocess_y(y=y, scaler=self.target_transformer)
+        if self.USE_MEDIAN_FILLING:
+            x = transform_numerical_features(x=x, numerical_medians=self.numerical_medians)
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:

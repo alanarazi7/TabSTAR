@@ -20,6 +20,7 @@ class CARTE(TabularModel):
     MODEL_NAME = "CARTE 🗺️"
     SHORT_NAME = "carte"
     USE_VAL_SPLIT = False
+    USE_MEDIAN_FILLING = False
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, carte_lr_idx: int, verbose: bool = False):
         self.carte_lr_idx = carte_lr_idx

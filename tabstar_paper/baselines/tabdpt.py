@@ -14,6 +14,7 @@ class TabDPT(TabularModel):
     MODEL_NAME = "TabDPT 6️⃣"
     SHORT_NAME = "dpt"
     USE_VAL_SPLIT = False
+    USE_MEDIAN_FILLING = False
 
     def initialize_model(self) -> TabDPTClassifier | TabDPTRegressor:
         model_cls = TabDPTClassifier if self.is_cls else TabDPTRegressor

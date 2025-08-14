@@ -15,6 +15,7 @@ class LightGBM(TabularModel):
     MODEL_NAME = "LightGBM 💡"
     SHORT_NAME = "light"
     USE_VAL_SPLIT = True
+    USE_MEDIAN_FILLING = False
 
     def initialize_model(self) -> LGBMRegressor | LGBMClassifier:
         model_cls = LGBMClassifier if self.is_cls else LGBMRegressor

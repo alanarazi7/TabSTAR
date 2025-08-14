@@ -15,6 +15,7 @@ class TabPFNv2(TabularModel):
     MODEL_NAME = "TabPFN-v2 🤯"
     SHORT_NAME = "pfn"
     USE_VAL_SPLIT = False
+    USE_MEDIAN_FILLING = False
 
     def initialize_model(self) -> TabPFNClassifier | TabPFNRegressor:
         # TODO: Move away from closed-source client version, as this isn't reproducible, they improve the model
