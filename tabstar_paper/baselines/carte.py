@@ -34,6 +34,8 @@ class CARTE(TabularModel):
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series):
         y = y.copy()
+        if not self.is_cls:
+            y = y.to_numpy().reshape(-1, 1)
         y = self.target_transformer.transform(y)
         self.carte_preprocessor.fit(x, y=y)
 
