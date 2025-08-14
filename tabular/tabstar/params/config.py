@@ -8,7 +8,6 @@ from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UN
     PRETRAIN_GLOBAL_BATCH_SIZE
 from tabular.trainers.finetune_args import FinetuneArgs
 from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.utils.utils import verbose_print
 
 
 # TODO: move this config to the paper section. Also, much of this is not really the ARCH config.
@@ -40,7 +39,7 @@ class TabStarConfig(PretrainedConfig):
     def accumulation_steps(self) -> int:
         accumulation_steps = self.macro_batch_size // self.batch_size
         assert accumulation_steps * self.batch_size == self.macro_batch_size
-        verbose_print(f"👣 Using accumulation steps of {accumulation_steps}")
+        print(f"👣 Using accumulation steps of {accumulation_steps}")
         return accumulation_steps
 
 

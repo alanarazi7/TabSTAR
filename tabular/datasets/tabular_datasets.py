@@ -1,4 +1,4 @@
-from enum import Enum, StrEnum
+from enum import Enum
 
 
 class OpenMLDatasetID(Enum):
@@ -365,67 +365,3 @@ class OpenMLDatasetID(Enum):
     REG_TRANSPORTATION_US_AIRPORT_PASSENGERS = 43479
     REG_TRANSPORTATION_US_BIKE_SHARING_DEMAND = 42712
     REG_TRANSPORTATION_ZURICH_PUBLIC_TRANSPORT_DELAY = 40753
-
-class KaggleDatasetID(StrEnum):
-    BIN_SOCIAL_HUMAN_CHOICE_PREDICTION_LM_GAMES = "eilamshapira/human-choice-prediction-in-language-based-games/OPE_train.csv"
-    MUL_FOOD_MICHELIN_GUIDE_RESTAURANTS = "ngshiheng/michelin-guide-restaurants-2021/michelin_my_maps.csv"
-    MUL_FOOD_YELP_REVIEWS = "omkarsabnis/yelp-reviews-dataset/yelp.csv"
-    MUL_SOCIAL_GOT_SCRIPTS = 'albenft/game-of-thrones-script-all-seasons/Game_of_Thrones_Script.csv'
-    MUL_SOCIAL_US_ELECTIONS_SPEECHES = "imuhammad/us-2020-presidential-election-speeches/us_2020_election_speeches.csv"
-    MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23 = "sobhanmoosavi/us-accidents/US_Accidents_March23.csv"
-    REG_CONSUMER_CAR_PRICE_CARDEKHO = "sukritchatterjee/used-cars-dataset-cardekho/cars_details_merges.csv"
-    REG_FOOD_ALCOHOL_WIKILIQ_PRICES = "limtis/wikiliq-dataset/spirits_data.csv"
-    REG_FOOD_BEER_RATINGS = "ruthgn/beer-profile-and-ratings-data-set/beer_profile_and_ratings.csv"
-    REG_FOOD_CHOCOLATE_BAR_RATINGS = "rtatman/chocolate-bar-ratings/flavors_of_cacao.csv"
-    REG_FOOD_COFFEE_REVIEW = "hanifalirsyad/coffee-scrap-coffeereview/coffee_clean.csv"
-    REG_FOOD_RAMEN_RATINGS_2022 = "ankanhore545/top-ramen-ratings-2022/Top Ramen Ratings .csv"
-    REG_FOOD_WHISKY_SCOTCH_REVIEWS = "neilcosgrove/scotch-whiskey-reviews-update-2020/scotch_review2020.csv"
-    REG_FOOD_WINE_POLISH_MARKET_PRICES = "skamlo/wine-price-on-polish-market/wine.csv"
-    REG_FOOD_WINE_VIVINO_SPAIN = 'joshuakalobbowles/vivino-wine-data/vivino.csv'
-    REG_FOOD_ZOMATO_RESTAURANTS = "himanshupoddar/zomato-bangalore-restaurants/zomato.csv"
-    REG_PROFESSIONAL_COMPANY_EMPLOYEES_SIZE = "peopledatalabssf/free-7-million-company-dataset/companies_sorted.csv"
-    REG_SOCIAL_ANIME_PLANET_RATING = 'hernan4444/animeplanet-recommendation-database-2020/anime.csv'
-    REG_SOCIAL_BOOK_READABILITY_CLEAR = "verracodeguacas/clear-corpus/CLEAR.csv"
-    REG_SOCIAL_FILMTV_MOVIE_RATING_ITALY = "stefanoleone992/filmtv-movies-dataset/filmtv_movies.csv"
-    REG_SOCIAL_KOREAN_DRAMA = "noorrizki/top-korean-drama-list-1500/kdrama_list.csv"
-    REG_SOCIAL_MOVIES_DATASET_REVENUE = "rounakbanik/the-movies-dataset/movies_metadata.csv"
-    REG_SOCIAL_MUSEUMS_US_REVENUES = "markusschmitz/museums/museums_prep.csv"
-    REG_SOCIAL_SPOTIFY_POPULARITY = "maharshipandya/-spotify-tracks-dataset/dataset.csv"
-    REG_SOCIAL_VIDEO_GAMES_SALES = "gregorut/videogamesales/vgsales.csv"
-    REG_SPORTS_FOOTBALL_MANAGER_IMPORTANT_MATCHES = "ajinkyablaze/football-manager-data/dataset.csv"
-    REG_SPORTS_NBA_DRAFT_VALUE_OVER_REPLACEMENT = "mattop/nba-draft-basketball-player-data-19892021/nbaplayersdraft.csv"
-    REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY = "bogdansorin/second-hand-mercedes-benz-registered-2000-2023-ita/mercedes-benz.csv"
-    REG_TRANSPORTATION_USED_CAR_PAKISTAN = "mustafaimam/used-car-prices-in-pakistan-2021/Used_car_prices_in_Pakistan_cleaned.csv"
-    REG_TRANSPORTATION_USED_CAR_SAUDI_ARABIA = "turkibintalib/saudi-arabia-used-cars-dataset/UsedCarsSA_Clean_EN.csv"
-
-class UrlDatasetID(StrEnum):
-    REG_CONSUMER_BABIES_R_US_PRICES = "http://pages.cs.wisc.edu/~anhai/data/784_data/baby_products/csv_files/babies_r_us.csv"
-    REG_CONSUMER_BIKE_PRICE_BIKEWALE = "http://pages.cs.wisc.edu/~anhai/data/784_data/bikes/csv_files/bikewale.csv"
-    REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER = "https://opendata.vancouver.ca/api/records/1.0/download/?dataset=employee-remuneration-and-expenses-earning-over-75000&format=csv"
-    REG_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES = "https://ai-jobs.net/salaries/download/salaries.csv"
-    REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT = "https://www.scimagojr.com/journalrank.php?out=xls"
-    REG_SOCIAL_BOOKS_GOODREADS = "http://pages.cs.wisc.edu/~anhai/data/784_data/books2/csv_files/goodreads.csv"
-    REG_SOCIAL_MOVIES_ROTTEN_TOMATOES = "http://pages.cs.wisc.edu/~anhai/data/784_data/movies1/csv_files/rotten_tomatoes.csv"
-
-
-TabularDatasetID = OpenMLDatasetID | KaggleDatasetID | UrlDatasetID
-ALL_DATASETS = list(OpenMLDatasetID) + list(KaggleDatasetID) + list(UrlDatasetID)
-
-
-def get_sid(dataset: TabularDatasetID) -> str:
-    if isinstance(dataset, OpenMLDatasetID):
-        return f"{dataset.value}_{dataset.name}"
-    elif isinstance(dataset, (KaggleDatasetID, UrlDatasetID)):
-        return f"{dataset.name}".replace('/', '__')
-    raise ValueError(f"Invalid dataset type: {dataset}")
-
-
-def get_dataset_from_arg(arg: str | int) -> TabularDatasetID:
-    if isinstance(arg, str) and arg.isdigit():
-        arg = int(arg)
-    if arg is None:
-        raise ValueError("Dataset ID cannot be None.")
-    dataset = [d for d in ALL_DATASETS if d.value == arg]
-    assert len(dataset) == 1, f"Dataset {arg} not found."
-    dataset = dataset[0]
-    return dataset

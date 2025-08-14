@@ -1,5 +1,4 @@
-from tabular.datasets.tabular_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID
-
+from tabstar.datasets.all_datasets import OpenMLDatasetID, KaggleDatasetID, UrlDatasetID
 
 # More than 10,000 examples ('unlimited' datasets)
 TEXTUAL_BIG = [
