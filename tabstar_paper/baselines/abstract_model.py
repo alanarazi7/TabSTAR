@@ -3,8 +3,9 @@ from typing import Tuple, Dict, Optional, Set, List
 import numpy as np
 import torch
 from pandas import DataFrame, Series
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from skrub import DatetimeEncoder, TextEncoder
+from skrub import DatetimeEncoder
 
 from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
 from tabstar.preprocessing.feat_types import detect_numerical_features, transform_feature_types
@@ -49,8 +50,7 @@ class TabularModel:
         self.categorical_indices: List[int] = []
         self.categorical_encoders: Dict[str, LabelEncoder] = {}
         self.text_features: Set[str] = set()
-        self.text_transformers: Dict[str, TextEncoder] = {}
-        self.cached_embeddings: Dict[str, np.ndarray] = {}
+        self.text_transformers: Dict[str, PCA] = {}
 
     def initialize_model(self):
         raise NotImplementedError("Initialize model method not implemented yet")
@@ -90,7 +90,7 @@ class TabularModel:
         if self.USE_CATEGORICAL_ENCODING:
             x = transform_categorical_features(x=x, categorical_encoders=self.categorical_encoders)
         if self.USE_TEXT_EMBEDDINGS:
-            x = transform_text_features(x=x, text_encoders=self.text_transformers)
+            x = transform_text_features(x=x, text_encoders=self.text_transformers, device=self.device)
         return self.transform_internal_preprocessor(x=x, y=y)
 
     def fit_internal_preprocessor(self, x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
