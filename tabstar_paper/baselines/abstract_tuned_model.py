@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from functools import partial
 from typing import Dict, Type, Any
@@ -75,11 +76,15 @@ class TunedTabularModel(TabularModel):
         for f, (train_idx, val_idx) in enumerate(splitter.split(x, y)):
             x_train = x.iloc[train_idx].copy()
             y_train = y.iloc[train_idx].copy()
-            x_dev = x.iloc[val_idx].copy()
-            y_dev = y.iloc[val_idx].copy()
-            fold_model = self.initialize_tuned_model(params=trial_config)
-            fold_score = self.fit_fold_model(model=fold_model, x_train=x_train, y_train=y_train, x_val=x_dev, y_val=y_dev)
+            x_val = x.iloc[val_idx].copy()
+            y_val = y.iloc[val_idx].copy()
+            model_obj = deepcopy(self)
+            fold_model = model_obj.initialize_tuned_model(params=trial_config)
+            model_obj.fit_preprocessor(x_train=x_train, y_train=y_train)
+            x_train, y_train = model_obj.transform_preprocessor(x=x_train, y=y_train)
+            x_val, y_val = model_obj.transform_preprocessor(x=x_val, y=y_val)
+            fold_score = model_obj.fit_fold_model(model=fold_model, x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
             print(f"Trial num {trial.number}, Fold {f}, score: {fold_score}")
             fold_scores.append(fold_score)
         avg_loss = float(np.mean(fold_scores))
-        raise avg_loss
+        return avg_loss
