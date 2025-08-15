@@ -1,5 +1,4 @@
 from copy import deepcopy
-from dataclasses import dataclass
 from functools import partial
 from typing import Dict, Type, Any
 
@@ -22,7 +21,6 @@ CV_INNER_FOLDS = 5
 class TunedTabularModel(TabularModel):
 
     BASE_CLS: Type[TabularModel] = None
-    HYPERPARAM_CLS: dataclass = None
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False, **kwargs):
         super().__init__(problem_type=problem_type, device=device, verbose=verbose, **kwargs)
@@ -55,7 +53,6 @@ class TunedTabularModel(TabularModel):
         best_params = dict(study.best_params)
         print(f"Done studying, did {len(study.trials)} runs 🤓\n Best params: {best_params}")
         self.optuna_dict.update({"optuna_best_params": best_params, "optuna_n_trials": len(study.trials)})
-        best_params = self.HYPERPARAM_CLS()
         assert self.model_ is None
         self.model_ = self.initialize_tuned_model(params=best_params)
         # TODO: We are refitting the model, but we could do bagging and predict over the folds like in TabArena
