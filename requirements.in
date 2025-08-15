@@ -21,7 +21,6 @@ skrub
 tabdpt
 tabicl
 tabpfn >= 2.0.8
-tabpfn-client >= 0.1.7
 tabpfn_extensions
 torch >= 2.6.0
 torchvision
