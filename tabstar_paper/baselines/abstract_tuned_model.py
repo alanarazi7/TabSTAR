@@ -12,6 +12,7 @@ from sklearn.model_selection import StratifiedKFold, KFold
 
 from tabstar.constants import SEED
 from tabstar.training.devices import CPU_CORES
+from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.constants import TIME_BUDGET
 from tabstar_paper.datasets.objects import SupervisedTask
@@ -38,10 +39,10 @@ class TunedTabularModel(TabularModel):
     def initialize_tuned_model(self, params: Dict[str, Any]):
         raise NotImplementedError("This method should be implemented in the subclass to initialize the tuned model.")
 
-    def fit_tuned_model(self, model: Any, x_train: DataFrame, y_train: Series, ):
+    def fit_tuned_model(self, x_train: DataFrame, y_train: Series):
         raise NotImplementedError("This method should be implemented in the subclass to fit the tuned model.")
 
-    def fit_fold_model(self, model: Any, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series) -> float:
+    def fit_fold_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         raise NotImplementedError("This method should be implemented in the subclass to fit the model on a fold.")
 
     def fit(self, x: DataFrame, y: Series):
@@ -61,7 +62,7 @@ class TunedTabularModel(TabularModel):
         x_train, y_train = x.copy(), y.copy()
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
-        self.fit_tuned_model(model=self.model_, x_train=x_train, y_train=y_train)
+        self.fit_tuned_model(x_train=x_train, y_train=y_train)
 
     def get_trial_config(self, trial: Trial) -> Dict[str, Any]:
         raise NotImplementedError("This method should be implemented in the subclass to return trial configuration.")
@@ -78,13 +79,16 @@ class TunedTabularModel(TabularModel):
             y_train = y.iloc[train_idx].copy()
             x_val = x.iloc[val_idx].copy()
             y_val = y.iloc[val_idx].copy()
-            model_obj = deepcopy(self)
-            fold_model = model_obj.initialize_tuned_model(params=trial_config)
-            model_obj.fit_preprocessor(x_train=x_train, y_train=y_train)
-            x_train, y_train = model_obj.transform_preprocessor(x=x_train, y=y_train)
-            x_val, y_val = model_obj.transform_preprocessor(x=x_val, y=y_val)
-            fold_score = model_obj.fit_fold_model(model=fold_model, x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
-            print(f"Trial num {trial.number}, Fold {f}, score: {fold_score}")
-            fold_scores.append(fold_score)
+            fold_model = deepcopy(self)
+            assert self.model_ is None, "Model should be None before initializing tuned model."
+            fold_model.initialize_tuned_model(params=trial_config)
+            fold_model.fit_preprocessor(x_train=x_train, y_train=y_train)
+            x_train, y_train = fold_model.transform_preprocessor(x=x_train, y=y_train)
+            x_val, y_val = fold_model.transform_preprocessor(x=x_val, y=y_val)
+            fold_model.fit_fold_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
+            y_pred = fold_model.predict_from_processed(x_val)
+            metrics = calculate_metric(y_true=y_val, y_pred=y_pred, d_output=fold_model.d_output)
+            print(f"Trial num {trial.number}, Fold {f}, score: {metrics.score}")
+            fold_scores.append(metrics.score)
         avg_loss = float(np.mean(fold_scores))
         return avg_loss

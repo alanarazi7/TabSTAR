@@ -66,18 +66,17 @@ class CatBoostOpt(TunedTabularModel):
     BASE_CLS = CatBoost
 
     def initialize_tuned_model(self, params: Dict[str, Any]):
-        return init_catboost(is_cls=self.is_cls, params=params)
+        assert self.model_ is None, "Model should be None before initializing tuned model."
+        self.model_ = init_catboost(is_cls=self.is_cls, params=params)
 
-    def fit_tuned_model(self, model: Any, x_train: DataFrame, y_train: Series):
+    def fit_tuned_model(self, x_train: DataFrame, y_train: Series):
         cat_features = get_cat_features(x_train=x_train, categorical_features=self.categorical_features)
-        model.fit(x_train, y_train, use_best_model=True, cat_features=cat_features, logging_level="Silent")
+        self.model_.fit(x_train, y_train, use_best_model=True, cat_features=cat_features, logging_level="Silent")
 
-    def fit_fold_model(self, model: Any, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series) -> float:
+    def fit_fold_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         cat_features = get_cat_features(x_train=x_train, categorical_features=self.categorical_features)
-        model.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features,
-                  logging_level="Silent")
-        score = model.score(x_val, y_val)
-        return score
+        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features,
+                        logging_level="Silent")
 
     def get_trial_config(self, trial: Trial) -> Dict[str, Any]:
         # Hyperparam search as suggested by TabPFN-v2 paper: https://www.nature.com/articles/s41586-024-08328-6.pdf

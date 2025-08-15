@@ -50,6 +50,7 @@ E5_CACHED_MODEL = E5EmbeddingModel()
 def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.device) -> Dict[str, PCA]:
     text_encoders = {}
     for col in text_features:
+        # TODO: perhaps we should pre-compute all possible texts before the 'fit' call, for both train and test
         texts = x[col].astype(str).tolist()
         embeddings = E5_CACHED_MODEL.embed(texts=texts, device=device)
         pca_encoder = PCA(n_components=PCA_COMPONENTS, random_state=SEED)

@@ -125,6 +125,9 @@ class TabularModel:
 
     def predict(self, x: DataFrame) -> np.ndarray:
         x, _ = self.transform_preprocessor(x=x, y=None)
+        return self.predict_from_processed(x=x)
+
+    def predict_from_processed(self, x: DataFrame) -> np.ndarray:
         if not self.is_cls:
             return self.model_.predict(x)
         probs = self.model_.predict_proba(x)
