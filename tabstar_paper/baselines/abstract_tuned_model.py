@@ -54,7 +54,7 @@ class TunedTabularModel(TabularModel):
         print(f"Done studying, did {len(study.trials)} runs 🤓\n Best params: {best_params}")
         self.optuna_dict.update({"optuna_best_params": best_params, "optuna_n_trials": len(study.trials)})
         assert self.model_ is None
-        self.model_ = self.initialize_tuned_model(params=best_params)
+        self.initialize_tuned_model(params=best_params)
         # TODO: We are refitting the model, but we could do bagging and predict over the folds like in TabArena
         x_train, y_train = x.copy(), y.copy()
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
