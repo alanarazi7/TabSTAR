@@ -56,7 +56,7 @@ class CatBoostTunedHyperparams:
     bagging_temperature: float
     leaf_estimation_iterations: int
     # Thread count is set to one since it seems is better to parallelize the trials, not the internal runs
-    thread_count = 1
+    thread_count: int = 1
 
 
 class CatBoostOpt(TunedTabularModel):
@@ -65,13 +65,15 @@ class CatBoostOpt(TunedTabularModel):
     SHORT_NAME = "catopt"
     BASE_CLS = CatBoost
 
-    def initialize_tuned_model(self, params: Dict[str, Any]):
+    def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):
         assert self.model_ is None, "Model should be None before initializing tuned model."
+        if is_last_model:
+            params["thread_count"] = CPU_CORES
         self.model_ = init_catboost(is_cls=self.is_cls, params=params)
 
     def fit_tuned_model(self, x_train: DataFrame, y_train: Series):
         cat_features = get_cat_features(x_train=x_train, categorical_features=self.categorical_features)
-        self.model_.fit(x_train, y_train, use_best_model=True, cat_features=cat_features, logging_level="Silent")
+        self.model_.fit(x_train, y_train, cat_features=cat_features, logging_level="Silent")
 
     def fit_fold_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
         cat_features = get_cat_features(x_train=x_train, categorical_features=self.categorical_features)
