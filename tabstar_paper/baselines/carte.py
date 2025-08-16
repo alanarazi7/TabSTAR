@@ -36,7 +36,6 @@ class CARTE(TabularModel):
         y = y.copy()
         if not self.is_cls:
             y = y.to_numpy().reshape(-1, 1)
-        y = self.target_transformer.transform(y)
         self.carte_preprocessor.fit(x, y=y)
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[Any, Series]:
@@ -67,7 +66,7 @@ class CARTE(TabularModel):
         return model
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
-        y_train_array = y_train.to_numpy()
+        y_train_array = y_train.copy().to_numpy()
         self.model_.fit(X=x_train, y=y_train_array)
         self.best_val_loss = self.model_.valid_loss_
 
