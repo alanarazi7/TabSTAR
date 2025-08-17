@@ -9,8 +9,6 @@ from tabstar.training.devices import CPU_CORES
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset
 from tabstar_paper.pretraining.hyperparameters import MAX_EPOCH_EXAMPLES
 
-# TODO: Make NUM_WORKERS configurable
-NUM_WORKERS = CPU_CORES
 
 class MultiDatasetEpochBatches(Dataset):
     def __init__(self, datasets: List[HDF5Dataset], batch_size: int, max_samples_per_dataset: int = MAX_EPOCH_EXAMPLES):
@@ -62,4 +60,4 @@ def tabular_collate_fn(batch):
 def get_pretrain_multi_dataloader(data_dirs: List[str], batch_size: int) -> DataLoader:
     datasets = [HDF5Dataset(data_dir=d, is_train=True) for d in data_dirs]
     multi_dataset = MultiDatasetEpochBatches(datasets=datasets, batch_size=batch_size)
-    return DataLoader(multi_dataset, batch_size=None, num_workers=NUM_WORKERS)
+    return DataLoader(multi_dataset, batch_size=None, num_workers=CPU_CORES, pin_memory=True, persistent_workers=True)
