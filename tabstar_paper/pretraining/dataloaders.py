@@ -12,6 +12,8 @@ from tabstar_paper.pretraining.hyperparameters import MAX_EPOCH_EXAMPLES
 
 # TODO: Make NUM_WORKERS configurable
 NUM_WORKERS = CPU_CORES
+PIN_MEMORY = False
+PERSISTENT_WORKERS = False
 
 class MultiDatasetEpochBatches(Dataset):
     def __init__(self, datasets: List[HDF5Dataset], batch_size: int, max_samples_per_dataset: int = MAX_EPOCH_EXAMPLES):
@@ -46,7 +48,7 @@ class MultiDatasetEpochBatches(Dataset):
 def get_dev_dataloader(data_dir: str, batch_size: int) -> DataLoader:
     dataset = HDF5Dataset(data_dir=data_dir, is_train=False)
     return DataLoader(dataset, shuffle=False, collate_fn=tabular_collate_fn, batch_size=batch_size,
-                      num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+                      num_workers=NUM_WORKERS, pin_memory=PIN_MEMORY, persistent_workers=PERSISTENT_WORKERS)
 
 
 def tabular_collate_fn(batch):
@@ -79,4 +81,5 @@ def tabular_collate_fn(batch):
 def get_pretrain_multi_dataloader(data_dirs: List[str], batch_size: int) -> DataLoader:
     datasets = [HDF5Dataset(data_dir=d, is_train=True) for d in data_dirs]
     multi_dataset = MultiDatasetEpochBatches(datasets=datasets, batch_size=batch_size)
-    return DataLoader(multi_dataset, batch_size=None, num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=True)
+    return DataLoader(multi_dataset, batch_size=None, num_workers=NUM_WORKERS, pin_memory=PIN_MEMORY,
+                      persistent_workers=PERSISTENT_WORKERS)
