@@ -39,7 +39,6 @@ class TabStarConfig(PretrainedConfig):
     def accumulation_steps(self) -> int:
         accumulation_steps = self.macro_batch_size // self.batch_size
         assert accumulation_steps * self.batch_size == self.macro_batch_size
-        print(f"👣 Using accumulation steps of {accumulation_steps}")
         return accumulation_steps
 
 
