@@ -26,7 +26,7 @@ jobs:
 
       - name: Run TabSTAR tests
         run: |
-          pytest 
+          pytest test/package
 
   tabstar-paper-py311:
     name: TabSTAR Paper (Python 3.11)
