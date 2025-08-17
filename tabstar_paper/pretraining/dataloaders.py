@@ -5,11 +5,12 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
 
+from tabstar.training.devices import CPU_CORES
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset
 from tabstar_paper.pretraining.hyperparameters import MAX_EPOCH_EXAMPLES
 
 # TODO: Make NUM_WORKERS configurable
-NUM_WORKERS = 0
+NUM_WORKERS = CPU_CORES
 
 class MultiDatasetEpochBatches(Dataset):
     def __init__(self, datasets: List[HDF5Dataset], batch_size: int, max_samples_per_dataset: int = MAX_EPOCH_EXAMPLES):
