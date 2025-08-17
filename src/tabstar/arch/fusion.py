@@ -24,7 +24,6 @@ class NumericalFusion(nn.Module):
             norm_first=True
         )
 
-
     def forward(self, textual_embeddings: Tensor, x_num: Tensor) -> Tensor:
         batch_size, seq_len, d_model = textual_embeddings.shape
         num_embeddings = self.scalar_embedder(x_num.unsqueeze(-1))

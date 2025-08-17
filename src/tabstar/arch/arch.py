@@ -2,7 +2,7 @@ from typing import Dict
 
 import torch
 from torch import Tensor
-from transformers import AutoTokenizer, AutoModel, PreTrainedModel
+from transformers import AutoModel, PreTrainedModel
 
 from tabstar.arch.config import TabStarConfig, E5_SMALL
 from tabstar.arch.interaction import InteractionEncoder
@@ -17,7 +17,6 @@ class TabStarModel(PreTrainedModel):
     def __init__(self, config: TabStarConfig):
         super().__init__(config)
         self.text_encoder = AutoModel.from_pretrained(E5_SMALL)
-        self.tokenizer = AutoTokenizer.from_pretrained(E5_SMALL)
         self.numerical_fusion = NumericalFusion()
         self.tabular_encoder = InteractionEncoder()
         self.cls_head = PredictionHead()
