@@ -1,6 +1,6 @@
 import os.path
 import time
-from typing import Optional, Tuple, List, Any
+from typing import Optional, Tuple, List, Any, Dict
 
 import numpy as np
 import torch
@@ -24,7 +24,7 @@ from tabstar_paper.pretraining.checkpoint import save_checkpoint, load_checkpoin
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_multi_dataloader, \
     MultiDatasetEpochBatches
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
-from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
+from tabstar_paper.pretraining.hdf5 import HDF5Dataset
 from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
 from tabstar_paper.pretraining.unfreezing import unfreeze_text_encoder
 
@@ -109,10 +109,10 @@ class TabSTARPretrainer:
                 train_loss = 0
                 train_examples = 0
                 with tqdm(total=len(dataloader), desc="Batches", leave=False) as pbar_batches:
-                    for batch_idx, (x_txt, x_num, y, properties) in enumerate(dataloader):
-                        batch_loss = self.train_one_batch(x_cat=x_txt, x_num=x_num, y=y, properties=properties)
-                        train_loss += batch_loss * len(y)
-                        train_examples += len(y)
+                    for batch_idx, data in enumerate(dataloader):
+                        batch_loss = self.train_one_batch(data=data)
+                        train_loss += batch_loss * len(data['y'])
+                        train_examples += len(data['y'])
                         self.steps += 1
                         if (batch_idx + 1) % self.config.accumulation_steps == 0:
                             self.do_update()
@@ -149,17 +149,20 @@ class TabSTARPretrainer:
         wandb.log({'train_epochs': epoch})
         return self.early_stopper.metric
 
-    def do_forward(self, x_txt: np.ndarray, x_num: Tensor, y: Tensor, properties: DatasetProperties) -> Tuple[Tensor, Tensor]:
-        x_num = x_num.to(self.device)
-        y = y.to(self.device)
-        predictions = self.model(x_txt=x_txt, x_num=x_num, d_output=properties.d_output)
-        loss = calculate_loss(predictions=predictions, y=y, d_output=properties.d_output)
+    def do_forward(self, data: Dict) -> Tuple[Tensor, Tensor]:
+        y = data['y'].to(self.device)
+        x_num = data['x_num'].to(self.device)
+        x_txt = data['x_txt'].to(self.device)
+        tokenized = {k: v.to(self.device) for k, v in data['tokenized'].items()}
+        d_output = data['d_output']
+        predictions = self.model(x_txt=x_txt, x_num=x_num, tokenized=tokenized, d_output=d_output)
+        loss = calculate_loss(predictions=predictions, y=y, d_output=d_output)
         return predictions, loss
 
-    def train_one_batch(self, x_cat: np.ndarray, x_num: Tensor, y: Tensor, properties: DatasetProperties) -> float:
+    def train_one_batch(self, data: Dict) -> float:
         self.model.train()
         with autocast(device_type=self.device.type, enabled=self.use_amp):
-            predictions, loss = self.do_forward(x_txt=x_cat, x_num=x_num, y=y, properties=properties)
+            predictions, loss = self.do_forward(data=data)
             # Divide the loss to scale gradients appropriately.
             loss_for_backward = loss / self.config.accumulation_steps
         scaled_loss = self.scaler.scale(loss_for_backward)
@@ -175,14 +178,14 @@ class TabSTARPretrainer:
         y_true = []
         d_output = None
 
-        for x_txt, x_num, y, properties in data_loader:
-            d_output = properties.d_output
-            assert isinstance(properties, DatasetProperties)
+        for data in data_loader:
+            d_output = data['d_output']
+            y = data['y']
             with torch.no_grad(), autocast(device_type=self.device.type, enabled=self.use_amp):
-                predictions, loss = self.do_forward(x_txt=x_txt, x_num=x_num, y=y, properties=properties)
+                predictions, loss = self.do_forward(data=data)
             dev_loss += loss.item() * len(y)
             dev_examples += len(y)
-            batch_predictions = apply_loss_fn(predictions, d_output=properties.d_output)
+            batch_predictions = apply_loss_fn(predictions, d_output=d_output)
             y_pred.append(batch_predictions)
             y_true.append(y)
         y_pred = concat_predictions(y_pred)
