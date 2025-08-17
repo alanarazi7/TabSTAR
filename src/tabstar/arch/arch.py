@@ -25,7 +25,6 @@ class TabStarModel(PreTrainedModel):
 
     def forward(self, x_txt: Tensor, x_num: Tensor, tokenized: Dict[str, Tensor], d_output: int) -> Tensor:
         textual_embeddings = self.get_textual_embedding(x_txt, tokenized=tokenized)
-        x_num = torch.tensor(x_num, dtype=textual_embeddings.dtype, device=textual_embeddings.device)
         embeddings = self.numerical_fusion(textual_embeddings=textual_embeddings, x_num=x_num)
         encoded = self.tabular_encoder(embeddings)
         target_tokens = encoded[:, :d_output]
