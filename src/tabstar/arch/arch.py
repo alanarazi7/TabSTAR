@@ -53,7 +53,7 @@ class TabStarModel(PreTrainedModel):
         num_unique_texts = tokenized['input_ids'].size(0)
         embeddings = []
         for i in range(0, num_unique_texts, text_batch):
-            batch_inputs = {k: v[i:i + text_batch] for k, v in tokenized.items()}
+            batch_inputs = {k: v[i:i + text_batch].to(self.device) for k, v in tokenized.items()}
             outputs = self.text_encoder(**batch_inputs)
             # Take the [CLS] token representation
             embeddings.append(outputs.last_hidden_state[:, 0, :])
