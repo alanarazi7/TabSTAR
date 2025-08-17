@@ -36,11 +36,12 @@ class CARTE(TabularModel):
         y = y.copy()
         if not self.is_cls:
             y = y.to_numpy().reshape(-1, 1)
+        y = self.target_transformer.transform(y)
         self.carte_preprocessor.fit(x, y=y)
 
     def transform_internal_preprocessor(self, x: DataFrame, y: Optional[Series]) -> Tuple[Any, Series]:
-        y_npy = y.copy().to_numpy() if y is not None else None
-        x = self.carte_preprocessor.transform(x, y=y_npy)
+        y_carte = y.copy() if y is not None else None
+        x = self.carte_preprocessor.transform(x, y=y_carte)
         return x, y
 
     def initialize_model(self) -> CARTEClassifier | CARTERegressor:
