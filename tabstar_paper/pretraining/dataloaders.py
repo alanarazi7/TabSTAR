@@ -11,7 +11,7 @@ from tabstar_paper.pretraining.hdf5 import HDF5Dataset
 from tabstar_paper.pretraining.hyperparameters import MAX_EPOCH_EXAMPLES
 
 # TODO: Make NUM_WORKERS configurable
-NUM_WORKERS = CPU_CORES
+NUM_WORKERS = 0
 PIN_MEMORY = False
 PERSISTENT_WORKERS = False
 
