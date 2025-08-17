@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies for TabSTAR package
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r src/tabstar/requirements-python-39.txt
           pip install tabstar
 
       - name: Run TabSTAR tests
