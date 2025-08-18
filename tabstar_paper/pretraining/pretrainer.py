@@ -80,7 +80,7 @@ class TabSTARPretrainer:
     def initialize_model(self):
         self.model = TabStarModel(config=self.config)
         unfreeze_text_encoder(text_encoder=self.model.text_encoder, layers_to_unfreeze=self.config.unfreeze_layers)
-        self.model = self.model.to(self.device)
+        self.model.to(self.device)
         assert isinstance(self.model, Module)
         self.init_optimizer()
 
