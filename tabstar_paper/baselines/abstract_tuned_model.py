@@ -34,7 +34,7 @@ class TunedTabularModel(TabularModel):
         # As opposed to the base class, we will initialize the model after the hyperparameters are tuned.
         return None
 
-    def initialize_tuned_model(self, params: Dict[str, Any]):
+    def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):
         raise NotImplementedError("This method should be implemented in the subclass to initialize the tuned model.")
 
     def fit_tuned_model(self, x_train: DataFrame, y_train: Series):
@@ -54,7 +54,7 @@ class TunedTabularModel(TabularModel):
         print(f"Done studying, did {len(study.trials)} runs 🤓\n Best params: {best_params}")
         self.optuna_dict.update({"optuna_best_params": best_params, "optuna_n_trials": len(study.trials)})
         assert self.model_ is None
-        self.model_ = self.initialize_tuned_model(params=best_params)
+        self.initialize_tuned_model(params=best_params, is_last_model=True)
         # TODO: We are refitting the model, but we could do bagging and predict over the folds like in TabArena
         x_train, y_train = x.copy(), y.copy()
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
@@ -77,7 +77,7 @@ class TunedTabularModel(TabularModel):
             x_val = x.iloc[val_idx].copy()
             y_val = y.iloc[val_idx].copy()
             fold_model = deepcopy(self)
-            assert self.model_ is None, "Model should be None before initializing tuned model."
+            assert fold_model.model_ is None, "Model should be None before initializing tuned model."
             fold_model.initialize_tuned_model(params=trial_config)
             fold_model.fit_preprocessor(x_train=x_train, y_train=y_train)
             x_train, y_train = fold_model.transform_preprocessor(x=x_train, y=y_train)

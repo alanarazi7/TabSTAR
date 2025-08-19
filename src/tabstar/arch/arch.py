@@ -2,7 +2,6 @@ import numpy as np
 import torch
 from torch import Tensor
 from transformers import AutoTokenizer, AutoModel, PreTrainedModel
-
 from tabstar.arch.config import TabStarConfig, E5_SMALL
 from tabstar.arch.interaction import InteractionEncoder
 from tabstar.arch.fusion import NumericalFusion
@@ -25,7 +24,9 @@ class TabStarModel(PreTrainedModel):
 
     def forward(self, x_txt: np.ndarray, x_num: np.ndarray, d_output: int) -> Tensor:
         textual_embeddings = self.get_textual_embedding(x_txt)
-        x_num = torch.tensor(x_num, dtype=textual_embeddings.dtype, device=textual_embeddings.device)
+        if not isinstance(x_num, Tensor):
+            # TODO: this is a bug, it should always be a Tensor
+            x_num = torch.tensor(x_num, dtype=textual_embeddings.dtype, device=textual_embeddings.device)
         embeddings = self.numerical_fusion(textual_embeddings=textual_embeddings, x_num=x_num)
         encoded = self.tabular_encoder(embeddings)
         target_tokens = encoded[:, :d_output]

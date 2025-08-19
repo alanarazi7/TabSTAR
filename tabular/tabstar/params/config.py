@@ -34,13 +34,8 @@ class TabStarConfig(PretrainedConfig):
         self.weight_decay = weight_decay
         self.macro_batch_size = macro_batch_size
         self.batch_size = batch_size
-
-    @property
-    def accumulation_steps(self) -> int:
-        accumulation_steps = self.macro_batch_size // self.batch_size
-        assert accumulation_steps * self.batch_size == self.macro_batch_size
-        print(f"👣 Using accumulation steps of {accumulation_steps}")
-        return accumulation_steps
+        self.accumulation_steps = self.macro_batch_size // self.batch_size
+        assert self.accumulation_steps * self.batch_size == self.macro_batch_size
 
 
     @classmethod

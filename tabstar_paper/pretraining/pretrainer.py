@@ -1,6 +1,6 @@
 import os.path
 import time
-from typing import Optional, Tuple, List, Any
+from typing import Optional, Tuple, List
 
 import numpy as np
 import torch
@@ -55,9 +55,8 @@ class TabSTARPretrainer:
         self.args = pretrain_args
         self.data_dirs: List[str] = []
         self.dev_dataloaders: List[DataLoader] = []
-        self.model: Optional[Any] = None
-        self.config = self.set_config()
         self.model: Optional[Module] = None
+        self.config = self.set_config()
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
         self.use_amp = bool(self.device.type == "cuda")
@@ -81,7 +80,7 @@ class TabSTARPretrainer:
     def initialize_model(self):
         self.model = TabStarModel(config=self.config)
         unfreeze_text_encoder(text_encoder=self.model.text_encoder, layers_to_unfreeze=self.config.unfreeze_layers)
-        self.model = self.model.to(self.device)
+        self.model.to(self.device)
         assert isinstance(self.model, Module)
         self.init_optimizer()
 
