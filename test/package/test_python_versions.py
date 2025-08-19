@@ -1,8 +1,12 @@
-
-def test_python_version_functionality():
+def test_python_version():
     """
-    The "match" syntax was introduced in 3.10. So this should fail in 3.9, and pass in 3.11
+    should raise a syntax error in 3.9
+    should pass in 3.11
+    
     """
-    match x:
-        case 1:
-            pass
+    value_1 = 42
+    value_2 = 42
+    match value_1:
+        case value_2:
+            assert True
+        
