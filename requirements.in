@@ -18,6 +18,7 @@ scikit-learn
 sentence_transformers
 scipy
 skrub
+streamlit
 tabdpt
 tabicl
 tabpfn >= 2.0.8

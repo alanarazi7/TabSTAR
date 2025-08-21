@@ -12,6 +12,8 @@ aiosignal==1.3.2
     # via aiohttp
 alembic==1.15.2
     # via optuna
+altair==5.5.0
+    # via streamlit
 annotated-types==0.7.0
     # via pydantic
 argon2-cffi==23.1.0
@@ -19,11 +21,18 @@ argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 attrs==25.1.0
-    # via aiohttp
+    # via
+    #   aiohttp
+    #   jsonschema
+    #   referencing
 beautifulsoup4==4.13.4
     # via gdown
 blessed==1.20.0
     # via gpustat
+blinker==1.9.0
+    # via streamlit
+cachetools==6.1.0
+    # via streamlit
 carte-ai==0.0.26
     # via -r requirements.in
 catboost==1.2.7
@@ -42,7 +51,9 @@ cffi==1.17.1
 charset-normalizer==3.4.1
     # via requests
 click==8.1.8
-    # via wandb
+    # via
+    #   streamlit
+    #   wandb
 colorlog==6.9.0
     # via optuna
 contourpy==1.3.1
@@ -82,7 +93,9 @@ gdown==5.2.0
 gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
-    # via wandb
+    # via
+    #   streamlit
+    #   wandb
 gpustat==1.1.1
     # via -r requirements.in
 graphviz==0.20.3
@@ -107,6 +120,8 @@ iniconfig==2.0.0
     # via pytest
 jinja2==3.1.5
     # via
+    #   altair
+    #   pydeck
     #   skrub
     #   torch
     #   torch-geometric
@@ -115,6 +130,10 @@ joblib==1.4.2
     #   -r requirements.in
     #   scikit-learn
     #   tabicl
+jsonschema==4.25.1
+    # via altair
+jsonschema-specifications==2025.4.1
+    # via jsonschema
 kagglehub==0.3.12
     # via -r requirements.in
 kiwisolver==1.4.8
@@ -147,7 +166,9 @@ multidict==6.4.3
     #   aiohttp
     #   yarl
 narwhals==1.28.0
-    # via plotly
+    # via
+    #   altair
+    #   plotly
 networkx==3.4.2
     # via torch
 numpy==1.26.4
@@ -168,12 +189,14 @@ numpy==1.26.4
     #   pandas
     #   patsy
     #   peft
+    #   pydeck
     #   pytabkit
     #   scikit-learn
     #   scipy
     #   seaborn
     #   skrub
     #   statsmodels
+    #   streamlit
     #   tabdpt
     #   tabicl
     #   tabpfn-extensions
@@ -191,6 +214,7 @@ optuna==4.3.0
 packaging==24.2
     # via
     #   accelerate
+    #   altair
     #   faiss-cpu
     #   huggingface-hub
     #   kagglehub
@@ -204,6 +228,7 @@ packaging==24.2
     #   pytorch-lightning
     #   skrub
     #   statsmodels
+    #   streamlit
     #   torchmetrics
     #   transformers
 pandas==2.2.3
@@ -217,6 +242,7 @@ pandas==2.2.3
     #   seaborn
     #   skrub
     #   statsmodels
+    #   streamlit
     #   tabpfn
     #   tabpfn-extensions
 patsy==1.0.1
@@ -229,6 +255,7 @@ pillow==11.1.0
     # via
     #   matplotlib
     #   sentence-transformers
+    #   streamlit
     #   torchvision
 platformdirs==4.3.6
     # via wandb
@@ -241,7 +268,9 @@ propcache==0.3.1
     #   aiohttp
     #   yarl
 protobuf==5.29.3
-    # via wandb
+    # via
+    #   streamlit
+    #   wandb
 psutil==7.0.0
     # via
     #   accelerate
@@ -255,6 +284,7 @@ pyarrow==19.0.1
     # via
     #   carte-ai
     #   openml
+    #   streamlit
 pybind11==2.13.6
     # via fasttext
 pycparser==2.22
@@ -265,6 +295,8 @@ pydantic==2.10.6
     # via wandb
 pydantic-core==2.27.2
     # via pydantic
+pydeck==0.9.1
+    # via streamlit
 pyparsing==3.2.1
     # via
     #   matplotlib
@@ -296,6 +328,10 @@ pyyaml==6.0.2
     #   pytorch-lightning
     #   transformers
     #   wandb
+referencing==0.36.2
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 regex==2024.11.6
     # via transformers
 requests==2.32.3
@@ -305,9 +341,14 @@ requests==2.32.3
     #   kagglehub
     #   openml
     #   skrub
+    #   streamlit
     #   torch-geometric
     #   transformers
     #   wandb
+rpds-py==0.27.0
+    # via
+    #   jsonschema
+    #   referencing
 safetensors==0.5.3
     # via
     #   accelerate
@@ -375,6 +416,8 @@ sqlalchemy==2.0.40
     #   optuna
 statsmodels==0.14.4
     # via category-encoders
+streamlit==1.48.1
+    # via -r requirements.in
 sympy==1.13.1
     # via torch
 tabdpt==0.1.0
@@ -387,10 +430,14 @@ tabpfn==2.0.8
     #   carte-ai
 tabpfn-extensions==0.0.4
     # via -r requirements.in
+tenacity==9.1.2
+    # via streamlit
 threadpoolctl==3.5.0
     # via scikit-learn
 tokenizers==0.21.0
     # via transformers
+toml==0.10.2
+    # via streamlit
 torch==2.6.0
     # via
     #   -r requirements.in
@@ -416,6 +463,8 @@ torchmetrics==1.8.0
     #   pytorch-lightning
 torchvision==0.21.0
     # via -r requirements.in
+tornado==6.5.2
+    # via streamlit
 tqdm==4.67.1
     # via
     #   -r requirements.in
@@ -439,6 +488,7 @@ transformers==4.49.0
 typing-extensions==4.12.2
     # via
     #   alembic
+    #   altair
     #   beautifulsoup4
     #   huggingface-hub
     #   lightning-utilities
@@ -446,7 +496,9 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   pytorch-lightning
+    #   referencing
     #   sqlalchemy
+    #   streamlit
     #   tabpfn
     #   torch
     #   torcheval
