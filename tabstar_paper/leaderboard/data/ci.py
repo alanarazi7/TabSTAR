@@ -2,7 +2,7 @@ from dataclasses import dataclass, asdict
 
 from pandas import DataFrame
 
-from tabstar_paper.leaderboard.data import DATASET_SIZE, IS_TUNED, MODEL, BASE_MODEL
+from tabstar_paper.leaderboard.data.keys import DATASET_SIZE, IS_TUNED, MODEL, BASE_MODEL
 
 
 @dataclass

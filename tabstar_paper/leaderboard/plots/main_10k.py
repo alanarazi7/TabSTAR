@@ -4,7 +4,7 @@ from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-from tabstar_paper.leaderboard.data import MODEL, UNLIMIT, BASE_MODEL, IS_TUNED
+from tabstar_paper.leaderboard.data.keys import MODEL, UNLIMIT, BASE_MODEL, IS_TUNED
 from tabstar_paper.leaderboard.plots.plot_theme import PlotTheme
 
 

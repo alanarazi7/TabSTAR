@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import matplotlib as mpl
 
-from tabstar_paper.leaderboard.data import MODEL, UNLIMIT, BASE_MODEL
+from tabstar_paper.leaderboard.data.keys import MODEL, UNLIMIT, BASE_MODEL
 from tabstar_paper.leaderboard.plots.main_10k import PlotTheme, add_errorbar
 
 ## TODO: multiple functions could be merge with the 10K version

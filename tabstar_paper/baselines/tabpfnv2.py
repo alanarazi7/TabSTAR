@@ -10,7 +10,7 @@ MAX_FEATURES = 500
 
 class TabPFNv2(TabularModel):
 
-    MODEL_NAME = "TabPFNv2 🧪"
+    MODEL_NAME = "TabPFN-v2 🤯"
     SHORT_NAME = "tabpfn"
     USE_VAL_SPLIT = False
     USE_MEDIAN_FILLING = False

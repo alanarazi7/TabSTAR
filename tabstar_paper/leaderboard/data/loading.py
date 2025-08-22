@@ -6,19 +6,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# Keys
-MODEL = "model"
-BASE_MODEL = "base_model"
-DATASET = "dataset"
-DATASET_SIZE = "dataset_size"
-FOLD = "fold"
-IS_CLS = "is_cls"
-IS_TUNED = "is_tuned"
-TEST_SCORE = "test_score"
-BEST_VAL_LOSS = "best_val_loss"
-
-# Suffix
-UNLIMIT = "-Unlimit"
+from tabstar_paper.leaderboard.data.keys import IS_TUNED, BASE_MODEL, MODEL, DATASET_SIZE, DATASET, IS_CLS, UNLIMIT, \
+    FOLD, BEST_VAL_LOSS
 
 
 @st.cache_data
@@ -27,7 +16,8 @@ def load_leaderboard_data() -> pd.DataFrame:
 
 
 def get_results_data():
-    result_dir = join(dirname(__file__), 'results')
+    curr_dir = str(dirname(__file__))
+    result_dir = curr_dir.replace('leaderboard/data', 'leaderboard/results')
     paths = [join(result_dir, f) for f in listdir(result_dir)]
     dfs = []
     for f in paths:
