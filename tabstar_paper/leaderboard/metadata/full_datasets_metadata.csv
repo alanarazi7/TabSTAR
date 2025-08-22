@@ -1,0 +1,401 @@
+name,sid,examples,features,task_type,d_output,context,feature_CATEGORICAL,feature_NUMERIC,feature_TEXT,feature_DATE,feature_BOOLEAN,benchmark_AMLB,benchmark_CTR23,benchmark_GRINSZTAJN,benchmark_MULTIMODAL,benchmark_VECTORIZING,benchmark_CARTE,benchmark_TABZILLA
+ada,41156_BIN_ANONYM_ADA,4147,46,⚖️ binary,2,Anonymized Dataset: Ada,0,6,0,0,40,True,False,False,False,False,False,True
+albert,41147_BIN_ANONYM_ALBERT,425240,78,⚖️ binary,2,Anonymized Dataset: Albert,13,65,0,0,0,True,False,True,False,False,False,True
+APSFailure,41138_BIN_ANONYM_APS_FAILURE,76000,169,⚖️ binary,2,APS Failure,0,168,0,0,1,True,False,False,False,False,False,False
+arcene,41157_BIN_ANONYM_ARCENE,100,9920,⚖️ binary,2,Anonym Dataset: Arcene,0,9824,0,0,96,True,False,False,False,False,False,False
+Australian,40981_BIN_ANONYM_AUSTRALIAN_CREDIT_APPROVAL,690,14,⚖️ binary,2,Australian Credit Approval,4,6,0,0,4,True,False,False,False,False,False,True
+autoUniv-au1-1000,1547_BIN_ANONYM_AUTOUNIV_AU1,1000,20,⚖️ binary,2,Anonymized Dataset: AutoUniv-au1-1000 advanced data generator for classifications tasks,0,0,0,0,20,False,False,False,False,False,False,False
+Bioresponse,4134_BIN_ANONYM_BIORESPONSE,3751,1776,⚖️ binary,2,Molecules and their biological response,0,941,0,0,835,True,False,True,False,False,False,True
+christine,41142_BIN_ANONYM_CHRISTINE,5418,1611,⚖️ binary,2,Anonymized Dataset: Christine,0,1599,0,0,12,True,False,False,False,False,False,False
+GAMETES_Heterogeneity_20atts_1600_Het_0.4_0.2_75_EDM-2_001,40650_BIN_ANONYM_GAMETES,1600,20,⚖️ binary,2,Anonymized Gametes dataset,19,0,0,0,1,False,False,False,False,False,False,False
+gina,41158_BIN_ANONYM_GINA,3153,970,⚖️ binary,2,Anonymized Dataset: Gina,0,970,0,0,0,True,False,False,False,False,False,False
+guillermo,41159_BIN_ANONYM_GUILLERMO,20000,4281,⚖️ binary,2,Anonymized Dataset: Guillermo,0,4280,0,0,1,True,False,False,False,False,False,True
+jasmine,41143_BIN_ANONYM_JASMINE,2984,144,⚖️ binary,2,Anonymized Dataset: Jasmine,0,8,0,0,136,True,False,False,False,False,False,True
+KDD98,42343_BIN_ANONYM_KDDCUP_98_DIRECT_MAIL,82318,477,⚖️ binary,2,Anonymized KDD98 Direct Mailing for Donation,83,350,15,0,29,False,False,False,False,False,False,False
+KDDCup09_appetency,1111_BIN_ANONYM_KDDCUP_09_APPETENCY,50000,207,⚖️ binary,2,CRM data from French Telecom company for product propensity prediction,18,166,12,0,11,True,False,False,False,False,False,False
+KDDCup09-Upselling,43072_BIN_ANONYM_KDDCUP_09_UPSELLING,50000,13419,⚖️ binary,2,CRM data from French Telecom company for Upselling,104,7510,13,0,5792,True,False,False,False,False,False,False
+madeline,41144_BIN_ANONYM_MADELINE,3140,259,⚖️ binary,2,Anonymized Dataset: Madeline,0,259,0,0,0,True,False,False,False,False,False,False
+madelon,1485_BIN_ANONYM_MADELONE,2600,500,⚖️ binary,2,MADELON Data points random in hypercube,0,500,0,0,0,False,False,False,False,False,False,False
+mammography,310_BIN_ANONYM_MAMMOGRAPHY,11183,6,⚖️ binary,2,Anonymized: Mammography Results,0,6,0,0,0,False,False,False,False,False,False,False
+monks-problems-2,334_BIN_ANONYM_MONKS_PROBLEM_2,601,6,⚖️ binary,2,Anonymized: MONK's Problems: Problem 2,4,0,0,0,2,False,False,False,False,False,False,True
+numerai28.6,23517_BIN_ANONYM_NUMERAI_28_6,96320,21,⚖️ binary,2,Encrypted Stock Market Training Data from Numer.ai,0,21,0,0,0,True,False,False,False,False,False,False
+oil_spill,311_BIN_ANONYM_OIL_SPILL,937,48,⚖️ binary,2,Anonymized: Oil Spill Dataset,0,47,0,0,1,False,False,False,False,False,False,False
+philippine,41145_BIN_ANONYM_PHILIPPINE,5832,308,⚖️ binary,2,Anonymized Dataset: Philippine,0,308,0,0,0,True,False,False,False,False,False,False
+porto-seguro,42742_BIN_ANONYM_PORTO_SEGURO,595212,57,⚖️ binary,2,Porto Seguros Safe Driver Prediction,7,27,0,0,23,True,False,False,False,False,False,False
+riccardo,41161_BIN_ANONYM_RICARDO,20000,4283,⚖️ binary,2,Anonymized Dataset: Ricardo,0,4283,0,0,0,True,False,False,False,False,False,False
+Satellite,40900_BIN_ANONYM_SATELLITE,5100,36,⚖️ binary,2,Anonymized Dataset: Satellite,0,36,0,0,0,True,False,False,False,False,False,False
+sylvine,41146_BIN_ANONYM_SYLVINE,5124,20,⚖️ binary,2,Anonymized Dataset: Sylvine,0,20,0,0,0,True,False,False,False,False,False,False
+twonorm,1507_BIN_ANONYM_TWONORM,7400,20,⚖️ binary,2,Twonorm experiment: multivariate normal distribution with unit variance,0,20,0,0,0,False,False,False,False,False,False,False
+xd6,40693_BIN_ANONYM_XD6,973,9,⚖️ binary,2,Anonymized: Disjunctive Normal Form - XD6,0,0,0,0,9,False,False,False,False,False,False,False
+tokyo1,40705_BIN_COMPUTERS_CPU_TOKYO1,959,42,⚖️ binary,2,Tokyo SGI Server Performance Data,0,41,0,0,1,False,False,False,False,False,False,False
+Bank-Note-Authentication-UCI,43466_BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,1372,4,⚖️ binary,2,Bank Note Authentication from images,0,4,0,0,0,False,False,False,False,False,False,False
+skin-segmentation,1502_BIN_COMPUTERS_IMAGE_SKIN_SEGMENTATION,245057,3,⚖️ binary,2,Skin Image Segmentation,0,3,0,0,0,False,False,False,False,False,False,False
+mozilla4,1046_BIN_COMPUTERS_MOZILLA,15545,5,⚖️ binary,2,Mozilla Classes,0,4,0,0,1,False,False,False,False,False,False,False
+kc1,1067_BIN_COMPUTERS_KC1_CODE_DEFECTIONS,2109,21,⚖️ binary,2,Source Code Quality Prediction: KC1,0,21,0,0,0,True,False,False,False,False,False,True
+pc4,1049_BIN_COMPUTERS_PC4_CODE_DEFECTIONS,1458,37,⚖️ binary,2,Source Code Quality Prediction for PC4,0,36,0,0,1,True,False,False,False,False,False,False
+Binary-Dataset-of-Phishing-and-Legitimate-URLs,43622_BIN_COMPUTERS_PHISHING_URL_WEBSITES,11000,14,⚖️ binary,2,URL Websites for Phishing Detection,0,12,0,0,2,False,False,False,False,False,False,False
+PhishingWebsites,4534_BIN_COMPUTERS_PHISHING_WEBSITE_HUDDERSFIELD,11055,30,⚖️ binary,2,Phishing Detection Websites,8,0,0,0,22,True,False,False,False,False,False,False
+blastchar,46280_BIN_CONSUMER_BLASTCHAR_TELCOM_CHURN,7043,19,⚖️ binary,2,Telcom Company Customer Behavior for Churn Prediction,10,3,0,0,6,False,False,False,False,False,False,False
+Churn_Telco_Europa,44228_BIN_CONSUMER_CHURN_TELCO_EUROPA,190776,17,⚖️ binary,2,Telco Europa Customers Churn Prediction,0,17,0,0,0,False,False,False,False,False,False,False
+Data_Science_Nigeria_Telecoms_Churn,44230_BIN_CONSUMER_CHURN_TELCO_NIGERIA,1400,14,⚖️ binary,2,Nigerian Telcom Company Customer Churn Prediction,4,10,0,0,0,False,False,False,False,False,False,False
+South_Asian_Churn_dataset,44227_BIN_CONSUMER_CHURN_TELCO_SOUTH_ASIA,2000,13,⚖️ binary,2,South Asian Wireless Telcom Operator Customer Churn Prediction,4,9,0,0,0,False,False,False,False,False,False,False
+churn,40701_BIN_CONSUMER_CHURN_TELEPHONY,5000,20,⚖️ binary,2,Telephone Company Customer Churn Prediction,2,16,0,0,2,True,False,False,False,False,False,False
+Click_prediction_small,42733_BIN_CONSUMER_CLICK_PREDICTION,39948,11,⚖️ binary,2,Consumer Click Prediction,0,11,0,0,0,True,False,False,False,False,False,False
+dresses-sales,23381_BIN_CONSUMER_DRESS_DALES,500,12,⚖️ binary,2,Dress Sales,11,1,0,0,0,False,False,False,False,False,False,False
+electricity,44156_BIN_CONSUMER_ELECTRICITY_PRICE_TREND,38474,8,⚖️ binary,2,Electricity Price Trend,1,7,0,0,0,False,False,True,False,False,False,True
+Hotel-Reviews,43721_BIN_CONSUMER_HOTEL_REVIEW,38932,3,⚖️ binary,2,Leading Traveling Website Hotel Reviews,2,0,1,0,0,False,False,False,False,False,False,False
+Internet-Advertisements,40978_BIN_CONSUMER_INTERNET_ADVERTISEMENTS,3279,1558,⚖️ binary,2,Internet Advertisements,0,3,0,0,1555,True,False,False,False,False,False,False
+mobile_churn,44231_BIN_CONSUMER_MOBILE_CHURN,66469,63,⚖️ binary,2,Mobile Operator Customer Churn Prediction,0,58,0,0,5,False,False,False,False,False,False,False
+NewspaperChurn,44226_BIN_CONSUMER_NEWSPAPER_CHURN,15855,16,⚖️ binary,2,Newspaper Customers Churn Prediction,10,3,1,0,2,False,False,False,False,False,False,False
+online-shoppers-intention,45560_BIN_CONSUMER_ONLINE_SHOPPERS_PURCHASE_INTENTION,12330,17,⚖️ binary,2,Online Shoppers Purchase Intention Prediction,6,10,0,0,1,False,False,False,False,False,False,False
+Tour-and-Travels-Customer-Churn-Prediction,45545_BIN_CONSUMER_TOUR_TRAVEL_CHURN,954,6,⚖️ binary,2,Tour and Travels Customer Churn Prediction,1,2,0,0,3,False,False,False,False,False,False,False
+wholesale-customers,1511_BIN_CONSUMER_WHOLESALE_CUSTOMERS_PORTUGAL,440,7,⚖️ binary,2,Wholesale Customers in Portugal,1,6,0,0,0,False,False,False,False,False,False,False
+Municipal-Debt-Risk-Analysis,43838_BIN_FINANCIAL_ACCOUNT_DEBT_SOUTH_AFRICA,138509,13,⚖️ binary,2,Municipal Debt Risk Analysis for South African Accounts,1,11,0,0,1,False,False,False,False,False,False,False
+adult,1590_BIN_FINANCIAL_ADULT_INCOME,48842,14,⚖️ binary,2,USA Adult Citizens Income Prediction,7,6,0,0,1,True,False,False,False,False,False,False
+audit-data,42931_BIN_FINANCIAL_AUDIT_RISK,1552,35,⚖️ binary,2,Fraudulent Firm Classification,1,32,0,0,2,False,False,False,False,False,False,False
+BAF_base,46646_BIN_FINANCIAL_BANK_ACCOUNT_FRAUD_BAF,1000000,30,⚖️ binary,2,Bank Account Fraud (BAF),4,19,0,0,7,False,False,False,False,False,False,False
+shrutime,45062_BIN_FINANCIAL_BANK_CUSTOMER_CHURN_SHRUTIME,10000,10,⚖️ binary,2,Bank Customers Churn Prediction,3,4,0,0,3,False,False,False,False,False,False,False
+bank-marketing,1461_BIN_FINANCIAL_BANK_MARKETING,45211,16,⚖️ binary,2,Direct Phone Marketing Campaigns of a Portuguese Banking Institution,6,7,0,0,3,True,False,True,False,False,False,False
+Personal-Loan-Modeling,43826_BIN_FINANCIAL_BANK_PERSONAL_LOAN_MODELING,5000,12,⚖️ binary,2,Liability Bank Customers,0,8,0,0,4,False,False,False,False,False,False,False
+qualitative-bankruptcy,1495_BIN_FINANCIAL_BANKRUPTCY_QUALITATIVE,250,6,⚖️ binary,2,Bankruptcy from Qualitative parameters from experts,6,0,0,0,0,False,False,False,False,False,False,False
+Credit_Card_Fraud_,45955_BIN_FINANCIAL_CC_FRAUD,1000000,7,⚖️ binary,2,Credit Card Transactions for Fraud Detection,0,3,0,0,4,False,False,False,False,False,False,False
+Is_fraud,46369_BIN_FINANCIAL_CC_FRAUD_TRANSACTION,5227,19,⚖️ binary,2,Transaction Fraud Detection for US Credit Card Transactions,2,8,6,2,1,False,False,False,False,False,False,False
+Default-of-Credit-Card-Clients-Dataset,43435_BIN_FINANCIAL_CC_TAIWAN_CREDIT_DEFAULT,30000,23,⚖️ binary,2,Taiwan Credit Card Clients during 2005,2,20,0,0,1,False,False,True,False,False,False,False
+FICO-HELOC-cleaned,45554_BIN_FINANCIAL_CREDIT_FICO_HELOC,9871,23,⚖️ binary,2,Financial Credit Risk of Home Equity Line (HELOC),2,21,0,0,0,False,False,True,False,False,False,False
+credit-g,31_BIN_FINANCIAL_CREDIT_GERMAN,1000,20,⚖️ binary,2,Financial credit history of German customers,11,6,0,0,3,True,False,False,False,False,False,True
+Give-Me-Some-Credit,45577_BIN_FINANCIAL_CREDIT_GIVE_ME_SOME,150000,10,⚖️ binary,2,Credit Scoring for Financial Distress Prediction,0,10,0,0,0,False,False,True,False,False,False,False
+Credit-Risk-Dataset,43454_BIN_FINANCIAL_CREDIT_RISK_DEFAULT,32581,11,⚖️ binary,2,Credit Risk Default Prediction,3,7,0,0,1,False,False,False,False,False,False,False
+Fraud-Detection-Updated,46359_BIN_FINANCIAL_FRAUD_DETECTION,4156,27,⚖️ binary,2,Fraud Detection Dataset,1,23,0,0,3,False,False,False,False,False,False,False
+hcdr_main,45567_BIN_FINANCIAL_HOME_CREDIT_DEFAULT_RISK,307511,120,⚖️ binary,2,Home Credit Default Risk Prediction,12,72,0,0,36,False,False,False,False,False,False,False
+HMEQ_Data,43337_BIN_FINANCIAL_HOME_EQUITY_CREDIT,5960,12,⚖️ binary,2,Home Equity Line of Credit Approval Applications,1,10,0,0,1,False,False,False,False,False,False,False
+Loan-Predication,43595_BIN_FINANCIAL_LOAN_STATUS_PREDICTION,614,11,⚖️ binary,2,Customers evaluated for loan eligibility process.,2,4,0,0,5,False,False,False,False,False,False,False
+LT-Vehicle-Loan-Default-Prediction,46430_BIN_FINANCIAL_LT_VEHICLE_LOAN,233154,38,⚖️ binary,2,Vehicle Loan Default Applications for Indian Customers,1,29,0,2,6,False,False,False,False,False,False,False
+TVS_Loan_Default,43743_BIN_FINANCIAL_TVS_CREDIT_LOAN,119528,29,⚖️ binary,2,Personal Load Default LTS,4,22,0,1,2,False,False,False,False,False,False,False
+musk,1116_BIN_GENETICS_MUSK_MOLECULES,6598,167,⚖️ binary,2,Anonymized Dataset Musk about Molecular Structure,0,166,1,0,0,False,False,False,False,False,False,False
+OVA_Breast,1128_BIN_GENETICS_OVA_BREAST,1545,10935,⚖️ binary,2,Genetics expression to identify OVA Breast,0,10935,0,0,0,False,False,False,False,False,False,False
+nomao,1486_BIN_GEOGRAPHY_NOMAO_SEARCH_ENGINE,34465,118,⚖️ binary,2,Nomao Search Engine,27,89,0,0,2,True,False,False,False,False,False,True
+darwin,46606_BIN_HEALTHCARE_ALZHEIMER_HANDWRITE_DARWIN,174,450,⚖️ binary,2,Alzheimer Disease Detection via Handwriting,0,450,0,0,0,False,False,False,False,False,False,False
+blood-transfusion-service-center,1464_BIN_HEALTHCARE_BLOOD_TRANSFUSION,748,4,⚖️ binary,2,Blood Transfusion Service Center in Taiwan,0,4,0,0,0,True,False,False,False,False,False,False
+bone_marrow_transplant_children,46610_BIN_HEALTHCARE_BONE_MARROW_TRANSPLANT_CHILDREN,187,36,⚖️ binary,2,Bone Marrow Transplant Children: Survival Analysis,1,18,0,0,17,False,False,False,False,False,False,False
+Breast-cancer-prediction,43687_BIN_HEALTHCARE_BREAST_CANCER_MAMMOGRAM,39998,11,⚖️ binary,2,Mammograms by woman within the Breast Cancer Surveillance Consortium,8,1,1,0,1,False,False,False,False,False,False,False
+breast-w,15_BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,699,9,⚖️ binary,2,Breast Cancer Wisconsin,0,9,0,0,0,False,False,False,False,False,False,False
+breast-cancer,13_BIN_HEALTHCARE_BREAST_CANCER_YUGOSLAVIA,286,9,⚖️ binary,2,Breast Cancer Yugoslavia,6,0,0,0,3,False,False,False,False,False,False,False
+wdbc,1510_BIN_HEALTHCARE_CELLS_WDBC_WISCONSIN_BREAST_CANCER,569,30,⚖️ binary,2,Wisconsin Cells Dataset for Breast Cancer,0,30,0,0,0,False,False,False,False,False,False,False
+Cardiovascular-Disease-dataset,45547_BIN_HEALTHCARE_CARDIOVASCULAR_DISEASE,70000,11,⚖️ binary,2,Patient Medical Examination Records for Cardiovascular Disease,2,5,0,0,4,False,False,False,False,False,False,False
+cdc_diabetes,46598_BIN_HEALTHCARE_DIABETES_CDC_DEMOGRAPHICS,253680,21,⚖️ binary,2,CDC Diabetes Lifestyle Study,0,7,0,0,14,False,False,False,False,False,False,False
+Early-Stage-Diabetes-Risk-Prediction-Dataset,43643_BIN_HEALTHCARE_DIABETES_EARLY_STAGE,520,16,⚖️ binary,2,Diabetes Early Stage Risk Prediction in Bangladesh,0,1,0,0,15,False,False,False,False,False,False,False
+Diabetes_Dataset,46254_BIN_HEALTHCARE_DIABETES_RISK_FACTORS,768,8,⚖️ binary,2,Diabetes Risk Factors,0,8,0,0,0,False,False,False,False,False,False,False
+glioma_grading_clinical_and_mutation_features,46604_BIN_HEALTHCARE_GLIOMA_BRAIN_TUMOR,839,23,⚖️ binary,2,Glioma Brain Tumor Grading,1,1,0,0,21,False,False,False,False,False,False,False
+Heart-Disease-Dataset-(Comprehensive),43672_BIN_HEALTHCARE_HEART_DISEASE,1190,11,⚖️ binary,2,Heart Disease Patients,0,8,0,0,3,False,False,False,False,False,False,True
+Heart_Failure_Prediction,45950_BIN_HEALTHCARE_HEART_FAILURE,5000,12,⚖️ binary,2,Clinical Records of Patients with Heart Failure,0,7,0,0,5,False,False,False,False,False,False,False
+Insurance,45064_BIN_HEALTHCARE_INSURANCE_LEAD_PREDICTION,23548,10,⚖️ binary,2,Health Insurance Lead Prediction,4,3,0,0,3,False,False,False,False,False,False,False
+chronic-kidney-disease,42972_BIN_HEALTHCARE_KIDNEY_CHRONIC_DISEASE,400,25,⚖️ binary,2,Kidney Chronic Disease,5,12,0,0,8,False,False,False,False,False,False,False
+ilpd,1480_BIN_HEALTHCARE_LIVER_INDIAN_ILPD,583,10,⚖️ binary,2,Indian Liver Patient Dataset,0,9,0,0,1,False,False,False,False,False,False,False
+arsenic-male-lung,951_BIN_HEALTHCARE_LUNG_MALE_ARSENIC,559,4,⚖️ binary,2,Arsenic Male Lung,1,3,0,0,0,False,False,False,False,False,False,False
+mental-health-in-tech-survey,46719_BIN_HEALTHCARE_MENTAL_HEALTH_TECH,1259,26,⚖️ binary,2,Mental Health in Tech Survey,18,1,1,1,5,False,False,False,False,False,False,False
+physionet_sepsis,46677_BIN_HEALTHCARE_SEPSIS_PHYSIONET,1552210,42,⚖️ binary,2,Sepsis Prediction,0,39,0,0,3,False,False,False,False,False,False,False
+differentiated_thyroid_cancer_recurrence,46605_BIN_HEALTHCARE_THYROID_CANCER,383,16,⚖️ binary,2,Thyroid Cancer Recurrence,9,1,0,0,6,False,False,False,False,False,False,False
+cylinder-bands,6332_BIN_INDUSTRIAL_CYLINDER_BANDING_PRINTING,540,34,⚖️ binary,2,Process Delays - Cylinder Banding in Rotogravure Printing,11,17,0,0,6,False,False,False,False,False,False,False
+colic,25_BIN_NATURE_COLIC_HORSES_SURGICAL_LESION,368,26,⚖️ binary,2,Colic Surgery on Horses,14,8,0,0,4,False,False,False,False,False,False,True
+wilt,40983_BIN_NATURE_DISEASED_TREES_WILT,4839,5,⚖️ binary,2,Trees Wilt Disease Detection Images,0,5,0,0,0,True,False,False,False,False,False,False
+ozone-level-8hr,1487_BIN_NATURE_OZONE_LEVEL,2534,72,⚖️ binary,2,Ozone Level Detection,0,72,0,0,0,True,False,False,False,False,False,False
+mushroom,24_BIN_NATURE_MUSHROOM_POISONOUS,8124,21,⚖️ binary,2,Mushroom Physical Characteristics and Poisonous Detection,16,0,0,0,5,False,False,False,False,False,False,False
+phoneme,1489_BIN_NATURE_PHONEME_SOUNDS,5404,5,⚖️ binary,2,Nasal and Oral Sounds Recognition,0,5,0,0,0,True,False,False,False,False,False,True
+college_scorecard,46674_BIN_PROFESSIONAL_ACADEMIC_COLLEGE_SCORECARD,124699,117,⚖️ binary,2,Academic Institution Completion Rate,1,113,0,0,3,False,False,False,False,False,False,False
+Amazon_employee_access,4135_BIN_PROFESSIONAL_AMAZON_EMPLOYEE_ACCESS,32769,9,⚖️ binary,2,Amazon Employee Access,0,9,0,0,0,True,False,False,False,False,False,False
+ibm-employee-attrition,43893_BIN_PROFESSIONAL_EMPLOYEE_IBM_ATTRITION,1470,31,⚖️ binary,2,Employee Attrition at IBM,5,23,0,0,3,False,False,False,False,False,False,False
+Employee-Turnover-at-TECHCO,43551_BIN_PROFESSIONAL_EMPLOYEE_TURNOVER_TECHCO,34452,9,⚖️ binary,2,Employee Turnover at TECHCO - Indian Technology Company,0,8,0,0,1,False,False,False,False,False,False,False
+fake_job_postings2,46655_BIN_PROFESSIONAL_FAKE_JOB_POSTING,12725,5,⚖️ binary,2,Fake Job Posting Detection,2,0,3,0,0,False,False,False,True,False,False,False
+kick_starter_funding,46668_BIN_PROFESSIONAL_KICKSTARTER_FUNDING,86502,9,⚖️ binary,2,Kickstarter Funding Prediction,2,1,3,2,1,False,False,False,True,False,False,False
+LICD,46640_BIN_PROFESSIONAL_LICD_LABOR_RIGHTS,63634,413,⚖️ binary,2,Labor Rights and Corporate Governance - LICD,6,369,2,0,36,False,False,False,False,False,False,False
+AVIDa-hIL6,46648_BIN_SCIENCE_ANTIGEN_AVIDA_HIL6,573891,3,⚖️ binary,2,AVIDa-hIL6 Antigen-antibody binding dataset,2,0,1,0,0,False,False,False,False,False,False,False
+climate-model-simulation-crashes,40994_BIN_SCIENCE_CLIMATE_MODEL_SIMULATION_CRASHES,540,18,⚖️ binary,2,Climate Model Simulation Crashes,0,18,0,0,0,False,False,False,False,False,False,False
+eye_movements,44157_BIN_SCIENCE_EYE_MOVEMENT,7608,23,⚖️ binary,2,Eye Movement Trajectory Classification,0,20,0,0,3,False,False,True,False,False,False,False
+eeg-eye-state,1471_BIN_SCIENCE_EYE_STATE_EEG,14980,14,⚖️ binary,2,Eye State based on EEG Mesurements,0,14,0,0,0,False,False,False,False,False,False,False
+hiva_agnostic,1039_BIN_SCIENCE_HIV_QSAR,4229,1617,⚖️ binary,2,HIV from Sparse Data - QSAR Modeling,0,0,0,0,1617,False,False,False,False,False,False,False
+MagicTelescope,44125_BIN_SCIENCE_MAGIC_TELESCOPE,13376,10,⚖️ binary,2,Magic Telescope: Images of High Energy Gamma Particles,0,10,0,0,0,False,False,True,False,False,False,False
+Higgs,42769_BIN_SCIENCE_PARTICLE_HIGGS,1000000,28,⚖️ binary,2,Particle Higgs Boson Detection,0,28,0,0,0,True,False,True,False,False,False,True
+MiniBooNE,41150_BIN_SCIENCE_PARTICLE_MINIBOONE,130064,50,⚖️ binary,2,Particle Identification from MiniBooNE Experiment,0,50,0,0,0,True,False,True,False,False,False,True
+qsar-biodeg,1494_BIN_SCIENCE_QSAR_BIODEG,1055,41,⚖️ binary,2,Quantitative Structure Activity Relationships (QSAR) Biodegradation,0,38,0,0,3,True,False,False,False,False,False,True
+hill-valley,1479_BIN_SCIENCE_SIMULATION_HILL_VALLEY,1212,100,⚖️ binary,2,Datapoints Simulation Hill Valley,0,100,0,0,0,False,False,False,False,False,False,False
+water-treatment,940_BIN_SCIENCE_WATER_TREATMENT,527,36,⚖️ binary,2,Water Treatment,1,35,0,0,0,False,False,False,False,False,False,False
+compas-two-years,45039_BIN_SOCIAL_COMPASS_TWO_YEARS_OFFEND,4966,11,⚖️ binary,2,Correctional Offender Management Profiling for Alternative Sanctions (COMPASS): Two Years Recidivism,0,3,0,0,8,False,False,True,False,False,False,False
+irish,451_BIN_SOCIAL_EDUCATIONAL_TRANSITIONS_IRISH,500,5,⚖️ binary,2,Educational transitions in Irish schoolchildren aged 11 in 1967,2,2,0,0,1,False,False,False,False,False,False,False
+imdb_genre_prediction,46667_BIN_SOCIAL_IMDB_GENRE_PREDICTION,800,11,⚖️ binary,2,IMDB Movies Genre Prediction,0,7,4,0,0,False,False,False,True,False,False,False
+League-of-Legends-Diamond-Games-(First-15-Minutes),43635_BIN_SOCIAL_GAMING_LEAGUE_OF_LEGENDS_DIAMOND,48651,14,⚖️ binary,2,League of Legends Diamond Games (First 15 Minutes),0,14,0,0,0,False,False,False,False,False,False,False
+Dynamically-Generated-Hate-Speech-Dataset,46683_BIN_SOCIAL_HATE_SPEECH_DATASET_DYNAMICALLY_GENERATED,41144,8,⚖️ binary,2,Dynamically Generated Hate Speech Dataset,4,1,2,0,1,False,False,False,False,False,False,False
+jigsaw_unintended_bias100K,46654_BIN_SOCIAL_JIGSAW_TOXICITY,100000,40,⚖️ binary,2,Online Social Media Comments Toxicity,0,37,1,1,1,False,False,False,True,False,False,False
+sf-police-incidents,42732_BIN_SOCIAL_POLICE_INCIDENTS_SAN_FRANCISCO,2215023,8,⚖️ binary,2,San Francisco Police Incidents,4,3,1,0,0,True,False,False,False,False,False,False
+vote,56_BIN_SOCIAL_POLITICS_US_CONGRESS_VOTES,435,16,⚖️ binary,2,1984 United States Congressional Voting Records,0,0,0,0,16,False,False,False,False,False,False,False
+spambase,44_BIN_SOCIAL_SPAM_EMAILS_SPAMBASE,4601,57,⚖️ binary,2,Spam Email Database,0,57,0,0,0,False,False,False,False,False,False,False
+SpeedDating,40536_BIN_SOCIAL_SPEED_DATING,8378,120,⚖️ binary,2,Speed Dating Matching,57,59,1,0,3,False,False,False,False,False,False,True
+tic-tac-toe,50_BIN_SOCIAL_TIC_TAC_TOE,958,9,⚖️ binary,2,Tic Tac Toe Game between players X and O,9,0,0,0,0,False,False,False,False,False,False,False
+Disaster-Tweets,43395_BIN_SOCIAL_TWITTER_DISASTER,11370,4,⚖️ binary,2,Disaster Tweets,0,1,3,0,0,False,False,False,False,False,False,False
+kr-vs-kp,3_BIN_SPORTS_CHESS_KR_VS_KP,3196,36,⚖️ binary,2,Chess Game King Rook vs King Pawn,1,0,0,0,35,True,False,False,False,False,False,False
+nba-shot-logs,42806_BIN_SPORTS_NBA_SHOTS,128069,15,⚖️ binary,2,NBA 2014-2015 Season Shots Statistics,0,8,4,0,3,False,False,False,False,False,False,False
+profb,470_BIN_SPORTS_PRO_FOOTBALL_BETS_PROFB,672,8,⚖️ binary,2,Pro Football Scores Las Vegas Oddsmakers,3,5,0,0,0,False,False,False,False,False,False,True
+Run_or_walk_information,40922_BIN_SPORTS_RUN_OR_WALK,88588,6,⚖️ binary,2,Sensor Data from Iphone to detect activity,0,6,0,0,0,False,False,False,False,False,False,False
+airlines,1169_BIN_TRANSPORTATION_AIRLINES_DEPARTURE_DELAY,539383,7,⚖️ binary,2,Airlines Departure Delay,2,3,2,0,0,True,False,False,False,False,False,True
+kick,41162_BIN_TRANSPORTATION_CAR_BAD_BUY_KICK,72983,32,⚖️ binary,2,Auto Dealership Kicked Cars Prediction,10,15,3,1,3,True,False,False,False,False,False,False
+The-Estonia-Disaster-Passenger-List,43389_BIN_TRANSPORTATION_ESTONIA_DISASTER_PASSENGERS,989,6,⚖️ binary,2,Estonian Ferry Disaster Passenger List,1,1,2,0,2,False,False,False,False,False,False,False
+road-safety,45038_BIN_TRANSPORTATION_ROAD_SAFETY_GENDER,111762,32,⚖️ binary,2,Road Safety by Driver Gender,0,29,0,0,3,False,False,True,False,False,False,False
+Titanic,40945_BIN_TRANSPORTATION_TITANIC_SURVIVAL,1309,13,⚖️ binary,2,Titanic Survival,2,6,4,0,1,False,False,False,False,False,False,False
+amazon-commerce-reviews,1457_MUL_ANONYM_AMAZON_COMMERCE_REVIEWS,1500,10000,🎨 multiclass,50,Amazon Users Commerce Reviews,0,7822,0,0,2178,True,False,False,False,False,False,False
+cnae-9,1468_MUL_ANONYM_CNAE,1080,856,🎨 multiclass,9,Brazilian Companies,0,97,0,0,759,True,False,False,False,False,False,True
+dilbert,41163_MUL_ANONYM_DILBERT,10000,2000,🎨 multiclass,5,Anonymized Dataset: Dilbert,0,2000,0,0,0,True,False,False,False,False,False,False
+dna,40670_MUL_ANONYM_DNA,3186,180,🎨 multiclass,3,DNA Sequences,0,0,0,0,180,True,False,False,False,False,False,False
+fabert,41164_MUL_ANONYM_FABERT,8237,795,🎨 multiclass,7,Anonymized Dataset: Fabert,0,783,0,0,12,True,False,False,False,False,False,False
+first-order-theorem-proving,1475_MUL_ANONYM_FIRST_ORDER_THEOREM_PROVING,6118,51,🎨 multiclass,6,First Order Theorem Proving,0,51,0,0,0,True,False,False,False,False,False,False
+mfeat-fourier,14_MUL_ANONYM_FOURIER_IMAGE_COEFFICIENT,2000,76,🎨 multiclass,10,Fourier coefficients of the character shapes,0,76,0,0,0,False,False,False,False,False,False,True
+helena,41169_MUL_ANONYM_HELENA,65196,27,🎨 multiclass,100,Anonymized Dataset: Helena,0,27,0,0,0,True,False,False,False,False,False,False
+isolet,300_MUL_ANONYM_ISOLET_LETTER_SPEECH_RECOGNITION,7797,617,🎨 multiclass,26,ISOLET - Isolated Letter Speech Recognition,0,613,0,0,4,False,False,False,False,False,False,False
+jannis,41168_MUL_ANONYM_JANNIS,83733,54,🎨 multiclass,4,Anonymized Dataset: Jannis,0,54,0,0,0,True,False,True,False,False,False,False
+led24,40677_MUL_ANONYM_LED24,3200,24,🎨 multiclass,10,Anonymized: LED24,0,0,0,0,24,False,False,False,False,False,False,False
+mfeat-factors,12_MUL_ANONYM_MFEAT_FACTORS,2000,216,🎨 multiclass,10,Features of handwritten numbers from 0 to 9,0,216,0,0,0,True,False,False,False,False,False,False
+micro-mass,1515_MUL_ANONYM_MICRO_MASS,571,1082,🎨 multiclass,20,Micro Mass Spectrometry Data,0,1042,0,0,40,True,False,False,False,False,False,False
+pendigits,32_MUL_ANONYM_PENDIGITS,10992,16,🎨 multiclass,10,Anonymized Dataset - Pendigits - Handwritten Digits,0,16,0,0,0,False,False,False,False,False,False,False
+pol,201_MUL_ANONYM_POL,15000,26,🎨 multiclass,11,Telecommunication Problem,0,26,0,0,0,True,False,True,False,False,False,False
+one-hundred-plants-texture,1493_MUL_ANONYM_PLANTS_TEXTURE,1599,64,🎨 multiclass,100,Anonymized: Image data of plant leaves with texture features,0,64,0,0,0,False,False,False,False,False,False,True
+robert,41165_MUL_ANONYM_ROBERT,10000,7200,🎨 multiclass,10,Anonymized Dataset: Robert,0,7200,0,0,0,True,False,False,False,False,False,False
+spoken-arabic-digit,1503_MUL_ANONYM_SPOKEN_ARABIC_DIGIT,263256,14,🎨 multiclass,10,Spoken Arabic Digit Recognition relying on MFCCs,0,13,0,0,1,False,False,False,False,False,False,False
+synthetic_control,377_MUL_ANONYM_SYNTHETIC_CONTROL,600,60,🎨 multiclass,6,Synthetic Control Chart Time Series,0,60,0,0,0,False,False,False,False,False,False,False
+volcanoes-e1,1542_MUL_ANONYM_VOLCANOES_VENUS,1183,3,🎨 multiclass,5,Venus Volcanoes from Magellan Spacecraft,0,3,0,0,0,False,False,False,False,False,False,False
+volkert,41166_MUL_ANONYM_VOLKERT,58310,147,🎨 multiclass,10,Anonymized Dataset: Volkert,0,147,0,0,0,True,False,False,False,False,False,False
+mfeat-zernike,22_MUL_ANONYM_ZERNIKE_MFEAT,2000,47,🎨 multiclass,10,Anonymized Dataset: Zernike Moments of Handwritten Numerals,0,47,0,0,0,False,False,False,False,False,False,True
+artificial-characters,1459_MUL_COMPUTERS_IMAGE_ARTIFICIAL_CHARACTERS,10218,7,🎨 multiclass,10,Artificial Characters Image Recognition,0,7,0,0,0,False,False,False,False,False,False,True
+CIFAR_10,40927_MUL_COMPUTERS_IMAGE_CIFAR10,60000,3072,🎨 multiclass,10,CIFAR10 Image Recognition Dataset,0,3072,0,0,0,False,False,False,False,False,False,False
+GesturePhaseSegmentationProcessed,4538_MUL_COMPUTERS_IMAGE_GESTURE_PHASE_SEGMENTATION,9873,32,🎨 multiclass,5,Gesture Phase Segmentation from Videos,0,32,0,0,0,True,False,False,False,False,False,True
+GTSRB-HueHist,41990_MUL_COMPUTERS_IMAGE_GTSRB_GERMAN_TRAFFIC_SIGN,51839,256,🎨 multiclass,43,German Traffic Sign Image Recognition,0,256,0,0,0,False,False,False,False,False,False,False
+Indian_pines,41972_MUL_COMPUTERS_IMAGE_INDIAN_PINES,9144,220,🎨 multiclass,8,Image Indian Pines Classification,0,220,0,0,0,False,False,False,False,False,False,False
+letter,6_MUL_COMPUTERS_IMAGE_LETTER_RECOGNITION,20000,16,🎨 multiclass,26,Letter Image Recognition Data,0,16,0,0,0,False,False,False,False,False,False,False
+mnist_784,554_MUL_COMPUTERS_IMAGE_MNIST_DIGITS,70000,719,🎨 multiclass,10,MNIST Handwritten Digit Recognition,0,700,0,0,19,False,False,False,False,False,False,False
+Fashion-MNIST,40996_MUL_COMPUTERS_IMAGE_MNIST_FASHION,70000,784,🎨 multiclass,10,Image Object Classification - MNIST Fashion,0,784,0,0,0,True,False,False,False,False,False,False
+Kuzushiji-49,41991_MUL_COMPUTERS_IMAGE_MNIST_JAPANESE_KUZUSHIJI_49,270912,784,🎨 multiclass,49,MNIST Image Recognition Japanese Kuzushiji,0,784,0,0,0,False,False,False,False,False,False,False
+optdigits,28_MUL_COMPUTERS_IMAGE_OPT_DIGITS,5620,62,🎨 multiclass,10,Opt Digits Image Recognition,0,59,0,0,3,False,False,False,False,False,False,False
+segment,40984_MUL_COMPUTERS_IMAGE_SEGMENTATION,2310,16,🎨 multiclass,7,Outdoors Image Segmentation,0,16,0,0,0,True,False,False,False,False,False,False
+KDDCup99,42746_MUL_COMPUTERS_INTRUSION_DETECTION_KDD,4898422,40,🎨 multiclass,20,Software for Network Intrusion Detection,4,31,0,0,5,True,False,False,False,False,False,False
+meta_stream_intervals.arff,279_MUL_COMPUTERS_META_STREAM_INTERVALS,45164,74,🎨 multiclass,11,Meta Stream intervals,0,74,0,0,0,False,False,False,False,False,False,False
+page-blocks,30_MUL_COMPUTERS_PAGE_BLOCK_PARSING,5473,10,🎨 multiclass,5,Classification of blocks in a document layout,0,10,0,0,0,False,False,False,False,False,False,False
+wall-robot-navigation,1497_MUL_COMPUTERS_ROBOT_WALL_NAVIGATION,5456,24,🎨 multiclass,4,Wall Robot Navigation,0,24,0,0,0,False,False,False,False,False,False,False
+tamilnadu-electricity,40985_MUL_CONSUMER_ELECTRICITY_TAMILNADU,45781,2,🎨 multiclass,20,Electricity consumption in Tamil Nadu,0,2,0,0,0,False,False,False,False,False,False,False
+internet_usage,372_MUL_CONSUMER_INTERNET_USAGE_PROFESSION,10108,71,🎨 multiclass,46,Ealy 1997 Internet Users Profession,18,2,2,0,49,False,False,False,False,False,False,False
+product_sentiment_machine_hack,46651_MUL_CONSUMER_PRODUCT_SENTIMENT,5091,2,🎨 multiclass,4,Product Sentiment Analysis,0,1,1,0,0,False,False,False,True,False,False,False
+women_clothing_review,46659_MUL_CONSUMER_WOMEN_ECOMMERCE_CLOTHING_REVIEW,18788,10,🎨 multiclass,5,Women Clothing E-Commerce Reviews,3,4,2,0,1,False,False,False,True,False,False,False
+Multiclass_Classification_for_Corporate_Credit_Ratings,46372_MUL_FINANCIAL_CORPORATE_CREDIT_RATING_CAT,5000,7,🎨 multiclass,10,Corporate Credit Risk Rating,0,7,0,0,0,False,False,False,False,False,False,False
+Corporate-Credit-Rating,43344_MUL_FINANCIAL_CORPORATE_CREDIT_RATING_SYMBOL,2026,30,🎨 multiclass,8,Corporate Credit Rating,2,25,2,1,0,False,False,False,False,False,False,False
+credit_risk_china,46444_MUL_FINANCIAL_CREDIT_RISK_CHINA,27522,27,🎨 multiclass,5,Personal Chinese Credit Risk Assessment,6,11,0,0,10,False,False,False,False,False,False,False
+Credit_Score_Classification,46441_MUL_FINANCIAL_CREDIT_SCORE_HZL,100000,26,🎨 multiclass,3,Customer Credit Score Classification,5,16,5,0,0,False,False,False,False,False,False,False
+IBRD_Loans_Classification,46467_MUL_FINANCIAL_LOAN_IBRD,9215,6,🎨 multiclass,10,International Bank for Reconstruction and Development (IBRD) Loans Classification,1,5,0,0,0,False,False,False,False,False,False,False
+Online-P2P-Lending,43502_MUL_FINANCIAL_P2P_LOAN,2875146,16,🎨 multiclass,5,P2P Lending,2,10,0,3,1,False,False,False,False,False,False,False
+wine-quality-white,40498_MUL_FOOD_WINE_QUALITY_CAT,4898,11,🎨 multiclass,7,Wine Quality Estimation for Red and White Wine,0,11,0,0,0,True,False,False,False,False,False,False
+wine_reviews,46653_MUL_FOOD_WINE_REVIEW,84123,5,🎨 multiclass,30,Wine Reviews for Variety Prediction,1,2,2,0,0,False,False,False,True,True,True,False
+splice,46_MUL_GENETICS_SPLICE_DNA,3190,60,🎨 multiclass,3,Genetics primate splice-junction gene sequences (DNA),60,0,0,0,0,False,False,False,False,False,False,True
+acp-breast-cancer,42895_MUL_GENETICS_ACP_BREAST_CANCER,949,1,🎨 multiclass,4,ACP Breast Cancer Gene Expression Dataset,0,0,1,0,0,False,False,False,False,False,False,False
+regensburg_pediatric_appendicitis,46603_MUL_HEALTHCARE_APPENDICITIS_REGENSBURG_PEDIATRIC,780,55,🎨 multiclass,3,Regensburg Pediatric Appendicitis,13,17,0,0,25,False,False,False,False,False,False,False
+audiology,7_MUL_HEALTHCARE_AUDIOLOGY_DIAGNOSTIC,192,57,🎨 multiclass,8,Audiology Hearing Tests and Diagnostic Classification,7,0,0,0,50,False,False,False,False,False,False,True
+rmftsa_sleepdata,679_MUL_HEALTHCARE_BABY_SLEEP_STATE,1024,2,🎨 multiclass,4,Newborn Baby Sleep States,0,2,0,0,0,False,False,False,False,False,False,False
+Cervical_Cancer_Risk_Factors,46592_MUL_HEALTHCARE_CANCER_CERVICAL,858,30,🎨 multiclass,5,Cervical Cancer Risk Factors in Venezuela,0,12,0,0,18,False,False,False,False,False,False,False
+cmc,23_MUL_HEALTHCARE_CMC_CONTRACEPTIVE_WOMEN,1473,9,🎨 multiclass,3,Indonesian Woman Contraceptive Prevalence Survey,4,2,0,0,3,True,False,False,False,False,False,False
+Diabetes130US,4541_MUL_HEALTHCARE_DIABETES_US130,101766,46,🎨 multiclass,3,Diabetes Patients Readmission Prediction in US Hospitals,22,12,3,0,9,True,False,True,False,False,False,False
+EgyptianSkulls,1099_MUL_HEALTHCARE_EGYPTIAN_SKULLS,150,4,🎨 multiclass,5,Egyptian Skulls from different periods,0,4,0,0,0,False,False,False,False,False,False,False
+arrhythmia,5_MUL_HEALTHCARE_HEART_ARRHYTMIA,443,262,🎨 multiclass,10,Heart Arrhythmia Detection from ECG Records,0,195,0,0,67,False,False,False,False,False,False,False
+cardiotocography,1466_MUL_HEALTHCARE_HEART_CARDIOTOCOGRAPHY,2126,23,🎨 multiclass,10,Cardiotocography - Fetal Cardiotocograms,0,22,0,0,1,False,False,False,False,False,False,False
+hepatitis_c_virus_hcv_for_egyptian_patients,46607_MUL_HEALTHCARE_HEPATITIS_C_EGYPT,1385,28,🎨 multiclass,4,Hepatitis C Virus Prediction for Egyptian Patients,0,20,0,0,8,False,False,False,False,False,False,False
+hypothyroid,57_MUL_HEALTHCARE_HYPOTHYROID,3770,27,🎨 multiclass,3,Hypothyroidism Patients,1,6,0,0,20,False,False,False,False,False,False,False
+lymph,10_MUL_HEALTHCARE_LYMPH_YUGOSLAVIA,148,18,🎨 multiclass,3,Lymphography Study in Yugoslavia,6,3,0,0,9,False,False,False,False,False,False,True
+Mental_Health_Dataset,46721_MUL_HEALTHCARE_MENTAL_HEALTH_OCCUPATION,292364,16,🎨 multiclass,5,Mental Health derived from text data and psychological indicators,10,0,0,1,5,False,False,False,False,False,False,False
+Estimation_of_Obesity_Levels,46597_MUL_HEALTHCARE_OBESITY_LEVELS,2111,16,🎨 multiclass,7,Obesity Levels Estimation,3,8,0,0,5,False,False,False,False,False,False,False
+pbcseq,516_MUL_HEALTHCARE_PBCSEQ_BILIARY_CIRRHOSIS,1945,18,🎨 multiclass,3,Clinical data for Primary Biliary Cirrhosis patients,0,13,0,0,5,False,False,False,False,False,False,False
+analcatdata_dmft,469_MUL_HEALTHCARE_TEETH_DMFT_ANALCATDATA,797,4,🎨 multiclass,6,"DMFT Index (Decayed, Missing, and Filled Teeth) before and after different prevention strategies",3,0,0,0,1,False,False,False,False,False,False,False
+WBCAtt,46676_MUL_HEALTHCARE_WHITE_BLOOD_CELLS_WBC,10298,11,🎨 multiclass,5,White Blood Cells Morphological Attributes,4,0,0,0,7,False,False,False,False,False,False,False
+melbourne_airbnb,46665_MUL_HOUSES_MELBOURNE_AIRBNB,18316,89,🎨 multiclass,10,Melbourne AirBnB Listings,11,25,24,3,26,False,False,False,True,False,False,False
+steel-plates-fault,40982_MUL_INDUSTRIAL_STEEL_PLATES_FAULT,1941,27,🎨 multiclass,7,Steel Plates Fault Type Classification,1,24,0,0,2,True,False,False,False,False,False,False
+air-quality-and-pollution-assessment,46762_MUL_NATURE_AIR_QUALITY_POLLUTION,5000,9,🎨 multiclass,4,Air Quality and Pollution Assessment from various regions,0,9,0,0,0,False,False,False,False,False,False,False
+cjs,23380_MUL_NATURE_CJS_MAPLE_TREES,2796,29,🎨 multiclass,6,Effect of Growth Regulators on Maple Trees Growth,2,27,0,0,0,False,False,False,False,False,False,False
+eucalyptus,188_MUL_NATURE_EUCALYPTUS_SEED,736,19,🎨 multiclass,5,Eucalyptus Soil Conservation,5,13,0,0,1,True,False,False,False,False,False,False
+covertype,1596_MUL_NATURE_FOREST_COVERTYPE,581012,54,🎨 multiclass,7,Forest Cover Type Prediction from Cartographic Variables,0,10,0,0,44,True,False,True,False,False,False,False
+solar_flare,44966_MUL_NATURE_SOLAR_FLARES,1058,9,🎨 multiclass,5,Solar Flares,4,1,0,0,4,False,True,False,False,False,False,False
+soybean,42_MUL_NATURE_SOYBEAN_DISEASE,683,35,🎨 multiclass,19,Soybean Disease Diagnosis,19,0,0,0,16,False,False,False,False,False,False,False
+yeast,181_MUL_NATURE_YEAST_PROTEIN,1484,8,🎨 multiclass,10,Yeast Protein Localization,0,7,0,0,1,True,False,False,False,False,False,False
+data_scientist_salary,46664_MUL_PROFESSIONAL_DATA_SCIENTIST_SALARY,15841,6,🎨 multiclass,6,Indian Data Scientist Salary Prediction,1,0,5,0,0,False,False,False,True,False,False,False
+nursery,26_MUL_PROFESSIONAL_NURSERY_APPLICATIONS_SLOVENIA,12958,8,🎨 multiclass,4,Nursery School Applications in Slovenia,7,0,0,0,1,False,False,False,False,False,False,False
+Student_Performance_on_an_Entrance_Examination,46584_MUL_PROFESSIONAL_STUDENT_PERFORMANCE_ENTRANCE_EXAM,666,11,🎨 multiclass,4,Student Performance on an Entrance Examination,10,0,0,0,1,False,False,False,False,False,False,False
+tae,48_MUL_PROFESSIONAL_TEACHER_ASSISTANT_EVALUATION_TAE,151,5,🎨 multiclass,3,Teacher Assistant Evaluation,2,1,0,0,2,False,False,False,False,False,False,False
+anneal,2_MUL_SCIENCE_ANNEAL_CHEMICAL,898,18,🎨 multiclass,5,Anneal Chemical Process,5,6,0,0,7,False,False,False,False,False,False,False
+balance-scale,11_MUL_SCIENCE_BALANCE_SCALE,625,4,🎨 multiclass,3,Balance Scale Psychological Experiment,0,4,0,0,0,False,False,False,False,False,False,True
+BachChoralHarmony,4552_MUL_SCIENCE_BATCH_CHORAL_HARMONY,5586,15,🎨 multiclass,68,Bach Choral Harmony - Chord Recognition,1,2,0,0,12,False,False,False,False,False,False,False
+drug-directory,43044_MUL_SCIENCE_DRUG_DIRECTORY_FDA_UNAPPROVED,120215,16,🎨 multiclass,7,"Product listing submitted to the US FDA for unfinished, unapproved drugs",2,2,11,0,1,False,False,False,False,False,False,False
+MiceProtein,40966_MUL_SCIENCE_MICE_PROTEIN,1080,77,🎨 multiclass,8,Mice Protein Expression Dataset,0,77,0,0,0,False,False,False,False,False,False,False
+mimic_extract_los_3,46678_MUL_SCIENCE_MIMIC_ROUTE,4155270,17,🎨 multiclass,68,MIMIC Route of Drug Administration,2,4,9,2,0,False,False,False,False,False,False,False
+QSAR_Bioconcentration_classification,46585_MUL_SCIENCE_QSAR_BIOCONCENTRATION,779,12,🎨 multiclass,3,QSAR Bioconcentration Classification,0,8,2,0,2,False,False,False,False,False,False,False
+JapaneseVowels,375_MUL_SCIENCE_VOWEL_JAPANESE,9961,14,🎨 multiclass,9,Japanese Vowels,0,14,0,0,0,False,False,False,False,False,False,False
+vowel,307_MUL_SCIENCE_VOWEL_SPEAKER_RECOGNITION,990,12,🎨 multiclass,11,Vowel Speech Recognition,1,10,0,0,1,False,False,False,False,False,False,False
+waveform-5000,60_MUL_SCIENCE_WAVEFORM_500,5000,40,🎨 multiclass,3,Waveform Database Generator,0,40,0,0,0,False,False,False,False,False,False,False
+social_bias_frames,46701_MUL_SOCIAL_BIAS_FRAMES,144649,16,🎨 multiclass,3,Social Bias Frames,10,0,5,0,1,False,False,False,False,False,False,False
+analcatdata_authorship,458_MUL_SOCIAL_BOOKS_AUTHORSHIP_ANALCATDATA,841,70,🎨 multiclass,4,Book Authorship Prediction Based on Word Cnt Usage,1,69,0,0,0,False,False,False,False,False,False,False
+collins,40971_MUL_SOCIAL_BROWN_FROWN_CORPORA_COLLINS,1000,19,🎨 multiclass,30,Brown Frown Corpora Collins,0,19,0,0,0,False,False,False,False,False,False,False
+DBPedia,46686_MUL_SOCIAL_DPBEDIA,342781,3,🎨 multiclass,219,DBPEDIA Classification,0,1,2,0,0,False,False,False,False,False,False,False
+funpedia,46692_MUL_SOCIAL_FUNPEDIA,29819,3,🎨 multiclass,3,Gender Bias Classification - Funpedia,1,0,2,0,0,False,False,False,False,False,False,False
+google_qa_question_type_reason_explanation,46658_MUL_SOCIAL_GOOGLE_QA_TYPE_REASON,4863,39,🎨 multiclass,5,Google QA Question Type Reason Explanation,2,29,8,0,0,False,False,False,True,False,False,False
+Harry-Potter-fanfiction-data,43544_MUL_SOCIAL_HARRY_POTTER_FAN_FICTION,648493,13,🎨 multiclass,4,Harry Potter Fan Fiction Story,1,2,9,1,0,False,False,False,False,False,False,False
+HolisticBias,46684_MUL_SOCIAL_HOLISTIC_BIAS,472991,14,🎨 multiclass,4,Holistic Bias - sentences with demographic identity language,8,0,4,0,2,False,False,False,False,False,False,False
+news_channel,46652_MUL_SOCIAL_NEWS_CHANNEL_CATEGORY,20284,17,🎨 multiclass,6,News Channel Prediction,0,16,1,0,0,False,False,False,True,False,False,False
+okcupid-stem,42734_MUL_SOCIAL_OKCUPID_DATING_JOB_STEM,50789,19,🎨 multiclass,3,OKCupid Dating Profiles for Job Prediction,13,2,3,0,1,True,False,False,False,False,False,False
+SOCC,46709_MUL_SOCIAL_SOCC_OPINION_COMMENTS_CORPUS_TOXICITY,1043,13,🎨 multiclass,4,SOCC Corpus Toxicity Labeling,4,3,3,0,3,False,False,False,False,False,False,False
+StackOverflow-polarity,43160_MUL_SOCIAL_STACKOVERFLOW_POLARITY,4423,1,🎨 multiclass,3,StackOverflow Polarity Detection,0,0,1,0,0,False,False,False,False,False,False,False
+analcatdata_supreme,504_MUL_SOCIAL_SUPREME_COURT_ANALCATDATA,4052,7,🎨 multiclass,10,Supreme Court Cases,0,2,0,0,5,False,False,False,False,False,False,False
+Wikipedia_Talk_Labels,46708_MUL_SOCIAL_WIKIPEDIA_TALK_LABELS_ATTACKS,140379,12,🎨 multiclass,15,Wikipedia Talk - Attacks Labels,4,3,1,0,4,False,False,False,False,False,False,False
+ldpa,1483_MUL_SPORTS_ACTIVITY_LOCALIZED_LDPA,164860,6,🎨 multiclass,11,Activity Identification from Localization Data,2,3,0,1,0,False,False,False,False,False,False,False
+baseball,185_MUL_SPORTS_BASEBALL_HALL_OF_FAME,1340,16,🎨 multiclass,3,Baseball Players and Play Statistics,1,15,0,0,0,False,False,False,False,False,False,False
+jungle_chess_2pcs_raw_endgame_complete,41027_MUL_SPORTS_CHESS_JUNGLE,44819,6,🎨 multiclass,3,Jungle Chess 2pcs Game Endgame,0,6,0,0,0,True,False,False,False,False,False,True
+connect-4,40668_MUL_SPORTS_CONNECT4_GAME,67557,42,🎨 multiclass,3,Connect-4 Game Positions,42,0,0,0,0,True,False,False,False,False,False,False
+poker-hand,1567_MUL_SPORTS_POKER_HAND,1025009,10,🎨 multiclass,10,Poker Hand,5,5,0,0,0,False,False,False,False,False,False,True
+walking-activity,1509_MUL_SPORTS_WALKING_ACTIVITY,149332,4,🎨 multiclass,22,Walking Activity of Users collected from Android Smartphone,0,4,0,0,0,False,False,False,False,False,False,False
+Airlines-Tweets-Sentiments,43397_MUL_TRANSPORTATION_AIRLINES_TWITTER_SENTIMENT,1097,1,🎨 multiclass,3,Airlines Tweets Sentiments,0,0,1,0,0,False,False,False,False,False,False,False
+car,40975_MUL_TRANSPORTATION_CAR_ACCEPTABILITY,1728,6,🎨 multiclass,4,Car Acceptability Evaluation,6,0,0,0,0,True,False,False,False,False,False,False
+cars,455_MUL_TRANSPORTATION_CAR_ORIGIN_COUNTRY,406,7,🎨 multiclass,3,Car Origin Country,1,6,0,0,0,False,False,False,False,False,False,False
+insurance_dataset,43157_MUL_TRANSPORTATION_CAR_STUDENT_INSURANCE_RISK,20000,26,🎨 multiclass,4,Car Insurance Risk Evaluation,18,0,0,0,8,False,False,False,False,False,False,False
+shuttle,40685_MUL_TRANSPORTATION_SHUTTLE_SPACE,58000,9,🎨 multiclass,7,Shuttle Space,0,9,0,0,0,True,False,False,False,False,False,False
+fars,40672_MUL_TRANSPORTATION_TRAFFIC_ACCIDENTS_FARS,100968,29,🎨 multiclass,8,Traffic Accidents,15,14,0,0,0,False,False,False,False,False,False,False
+Traffic_violations,42345_MUL_TRANSPORTATION_TRAFFIC_VIOLATION,70340,20,🎨 multiclass,3,Traffic Violations,8,1,5,0,6,False,False,False,False,False,False,False
+vehicle,54_MUL_TRANSPORTATION_VEHICLE_SILHOUETTE,846,18,🎨 multiclass,4,Vehicle Silhouettes Detection,0,18,0,0,0,True,False,False,False,False,False,True
+Allstate_Claims_Severity,42571_REG_ANONYM_ALLSTATE_CLAIM_SEVERITY,188318,130,📈 regression,1,Allstate Insurance Claims Severity,42,14,2,0,72,True,False,False,False,False,False,False
+bank32nh,558_REG_ANONYM_BANK_32NH,8192,32,📈 regression,1,Bank Customers Rejections Rate due to Full Queues,0,32,0,0,0,False,False,False,False,False,False,False
+Buzzinsocialmedia_Twitter,4549_REG_ANONYM_BUZZ_IN_SOCIAL_MEDIA_TWITTER,583250,77,📈 regression,1,Buzz in Social Media including Twitter,0,70,0,0,7,True,False,False,False,False,False,False
+dionis,41167_REG_ANONYM_DIONIS,416188,54,📈 regression,1,Anonymized Dataset: Dionis,0,54,0,0,0,True,False,False,False,False,False,False
+tecator,505_REG_ANONYM_FAT_MEAT_TECATOR,240,124,📈 regression,1,Fat Content of Meat,0,124,0,0,0,True,False,False,False,False,False,False
+geographical_origin_of_music,44965_REG_ANONYM_GEOGRAPHICAL_ORIGIN_OF_MUSIC,1059,116,📈 regression,1,Geographical Origin of Music,0,116,0,0,0,False,True,False,False,False,False,False
+house_16H,574_REG_ANONYM_HOUSE_16H,22784,16,📈 regression,1,US 1990 Census House Prices,0,16,0,0,0,True,False,True,False,False,False,False
+Mercedes_Benz_Greener_Manufacturing,42570_REG_ANONYM_MERCEDES_BENZ_GREENER_MANUFACTURING,4209,364,📈 regression,1,Mercedes Benz Greener Manufacturing,8,0,0,0,356,True,False,False,False,False,False,False
+Santander_transaction_value,42572_REG_ANONYM_SANTANDER_TRANSACTION_VALUE,4459,4735,📈 regression,1,Bank Santander Transaction Value,0,4490,0,0,245,True,False,False,False,False,False,False
+topo_2_1,422_REG_ANONYM_TOPO,8885,261,📈 regression,1,Topo Molecules,0,258,0,0,3,True,False,False,False,False,False,False
+Yolanda,42705_REG_ANONYM_YOLANDA,400000,100,📈 regression,1,Anonymized Data: Yolanda,0,100,0,0,0,True,False,False,False,False,False,False
+yprop_4_1,416_REG_ANONYM_YPROP,8885,212,📈 regression,1,YProp Molecules,0,192,0,0,20,True,False,True,False,False,False,False
+MIP-2016-regression,43071_REG_COMPUTERS_ALGO_RUNTIME_MIP2016,1090,116,📈 regression,1,Algorithm Runtime Prediction MIP2016,1,107,0,0,8,True,False,False,False,False,False,False
+SAT11-HAND-runtime-regression,41980_REG_COMPUTERS_ALGO_RUNTIME_SAT11,4440,114,📈 regression,1,Algorithm Runtime Prediction SAT11,1,113,0,0,0,True,False,False,False,False,False,False
+cpu_activity,44978_REG_COMPUTERS_CPU_ACTIVITY,8192,21,📈 regression,1,CPU Activity System Performance,0,21,0,0,0,False,True,True,False,False,False,False
+fps_benchmark,44992_REG_COMPUTERS_GAMING_FRAMES_FPS_BENCHMARK,24624,39,📈 regression,1,Gaming Frames Per Second Benchmark,6,25,0,0,8,False,True,False,False,False,False,False
+meta,566_REG_COMPUTERS_META_LEVEL_LEARNING,528,21,📈 regression,1,Meta Level Learning,2,18,0,0,1,False,False,False,False,False,False,False
+pumadyn32nh,44981_REG_COMPUTERS_PUMA_ROBOT_ARM,8192,32,📈 regression,1,Simulation of acceleration of Puma 560 Robot Arm,0,32,0,0,0,False,True,False,False,False,False,False
+kin8nm,44980_REG_COMPUTERS_ROBOT_KIN8NM,8192,8,📈 regression,1,Simulation of Forward Dynamics of an 8 Link Robot Arm,0,8,0,0,0,False,True,False,False,False,False,False
+sarcos,44976_REG_COMPUTERS_ROBOT_SARCOS,48933,21,📈 regression,1,Robotics Sarcos Inverse Dynamics,0,21,0,0,0,False,True,False,False,False,False,False
+video_transcoding,44974_REG_COMPUTERS_YOUTUBE_VIDEO_TRANSCODING,68784,18,📈 regression,1,Youtube Video Transcoding,2,16,0,0,0,False,True,False,False,False,False,False
+ae_price_prediction,46656_REG_CONSUMER_AMERICAN_EAGLE_PRICES,22662,12,📈 regression,1,American Eagle Retailer Price Prediction,4,2,5,0,1,False,False,False,True,False,False,False
+avocado-sales,41210_REG_CONSUMER_AVOCADO_SALES,18249,11,📈 regression,1,Avocado Sales in multiple US markets,2,8,0,0,1,False,False,False,False,False,False,False
+black_friday,41540_REG_CONSUMER_BLACK_FRIDAY,166821,9,📈 regression,1,Customer purchases on Black Friday,3,4,0,0,2,True,False,False,False,False,False,False
+bookprice_prediction,46663_REG_CONSUMER_BOOK_PRICE_PREDICTION,4989,8,📈 regression,1,Book Price Prediction,1,2,5,0,0,False,False,False,True,False,False,False
+515K-Hotel-Reviews-Data-in-Europe,43712_REG_CONSUMER_BOOKING_HOTEL_REVIEW,515738,16,📈 regression,1,Booking.com Hotel Reviews in Europe,0,8,7,1,0,False,False,False,False,False,False,False
+diamonds,42225_REG_CONSUMER_DIAMONDS_PRICES,53940,9,📈 regression,1,Diamond Prices,3,6,0,0,0,True,True,True,False,False,False,False
+jc_penney_products,46661_REG_CONSUMER_JC_PENNEY_PRODUCT_PRICE,10860,5,📈 regression,1,JC Penney Product Prices in Retailer Website,0,2,3,0,0,False,False,False,True,False,False,False
+medical_charges,44146_REG_CONSUMER_MEDICAL_CHARGES,163065,3,📈 regression,1,Medical Charges,0,3,0,0,0,False,False,True,False,False,False,False
+mercari_price_suggestion100K,46660_REG_CONSUMER_MERCARI_ONLINE_MARKETPLACE,100000,9,📈 regression,1,Mercari Online Marketplace Product Prices,1,1,6,0,1,False,False,False,True,False,False,False
+news_popularity2,46662_REG_CONSUMER_ONLINE_NEWS_POPULARITY,24007,4,📈 regression,1,Popularity of Online News,0,3,1,0,0,False,False,False,False,False,False,False
+REASONER,46681_BIN_CONSUMER_REASONER_RECOMMENDATION,58497,34,⚖️ binary,2,REASONER Recommendation Dataset,0,24,8,0,2,False,False,False,False,False,False,False
+Credit-Card-Dataset-for-Clustering,43618_REG_FINANCIAL_CC_USER_SEGMENTATION,8949,16,📈 regression,1,Credit Card User Segmentation,0,16,0,0,0,False,False,False,False,False,False,False
+health_insurance,44993_REG_FINANCIAL_INSURANCE_HEALTH_HOURS_WORKED_WIFE,22272,11,📈 regression,1,Health Insurance and Hours Worked by Wife,3,4,0,0,4,False,True,False,False,False,False,False
+Insurance-Premium-Data,43463_REG_FINANCIAL_INSURANCE_PREMIUM_DATA,1338,6,📈 regression,1,Insurance Premium Data,1,3,0,0,2,False,False,False,False,False,False,False
+stock,223_REG_FINANCIAL_STOCK_AEROSPACE,950,9,📈 regression,1,Stock Prices of Aerospace Companies between 1988-1991,0,9,0,0,0,False,False,False,False,False,False,False
+sensory,546_REG_FOOD_WINE_JUDGEMENT_SENSORY,576,11,📈 regression,1,Wine Quality Sensory Judgement,7,0,0,0,4,True,False,False,False,False,False,False
+bodyfat,560_REG_HEALTHCARE_BODY_FAT,252,14,📈 regression,1,Body Fat Percentage for men,0,14,0,0,0,False,False,False,False,False,False,False
+Diabetes(scikit-learn),44223_REG_HEALTHCARE_DIABETES_SKLEARN,442,10,📈 regression,1,Diabetes Disease Progression Prediction,0,9,0,0,1,False,False,False,False,False,False,False
+rmftsa_ladata,666_REG_HEALTHCARE_POLLUTION_LA_MORTALITY_RMFTSA,508,10,📈 regression,1,Pollution Mortality Study in Los Angeles,0,10,0,0,0,False,False,False,False,False,False,False
+boston,531_REG_HOUSES_BOSTON_HOUSE,506,13,📈 regression,1,Boston House Prices,1,11,0,0,1,True,False,False,False,False,False,False
+house_prices_nominal,42563_REG_HOUSES_BOSTON_PRICE_NOMINAL,1460,79,📈 regression,1,Prices of Boston Houses,39,36,0,0,4,True,False,False,False,False,False,False
+Brazilian_houses,42688_REG_HOUSES_BRAZILIAN_HOUSES,10692,11,📈 regression,1,Prices of Brazilian Houses for rent,2,7,0,0,2,True,True,True,False,False,False,False
+california_housing,44977_REG_HOUSES_CALIFORNIA_HOUSES,20640,8,📈 regression,1,California Housing Prices,0,8,0,0,0,False,True,True,False,False,False,False
+california_house_price,46669_REG_HOUSES_CALIFORNIA_PRICES_2020,37951,39,📈 regression,1,California Houses 2020 Prices,0,18,20,0,1,False,False,False,True,False,False,False
+German-House-Prices,43342_REG_HOUSES_GERMAN_HOUSES,10552,24,📈 regression,1,German House Prices,8,11,4,0,1,False,False,False,False,False,False,False
+Household-monthly-electricity-bill,43588_REG_HOUSES_HOUSEHOLD_MONTHLY_ELECTRICITY,1000,9,📈 regression,1,Household Monthly Electricity Bill,0,5,0,0,4,False,False,False,False,False,False,False
+house_prices,42165_REG_HOUSES_IOWA_HOUSES_PRICES,1460,80,📈 regression,1,"Prices of Houses in Ames, Iowa",39,37,0,0,4,False,False,False,False,False,False,False
+Lisbon-House-Prices,43660_REG_HOUSES_LISBON,246,13,📈 regression,1,Lisbon House Prices,3,9,0,0,1,False,False,False,False,False,False,False
+miami_housing,44983_REG_HOUSES_MIAMI,13932,15,📈 regression,1,Family Houses sold in Miami,0,14,0,0,1,False,True,True,False,False,False,False
+Perth-House-Prices,43822_REG_HOUSES_PERTH,33656,17,📈 regression,1,Perth House Prices,1,13,3,0,0,False,False,False,False,False,False,False
+house_sales,42731_REG_HOUSES_SEATTLE_KINGS_COUNTY,21613,21,📈 regression,1,Seattle House Sales,0,19,0,0,2,True,True,True,False,False,False,False
+abalone,42726_REG_NATURE_ABALONE_FISH_RINGS,4177,8,📈 regression,1,Abalone Age Prediction through Number of Rings,1,7,0,0,0,True,True,True,False,False,False,False
+climate_change_impact_on_agriculture_2024,46726_REG_NATURE_CLIMATE_CHANGE_AGRICULTURE_FINANCIAL,10000,14,📈 regression,1,Climate Change impact on Agriculture,4,10,0,0,0,False,False,False,False,False,False,False
+kdd_el_nino-small,563_REG_NATURE_EL_NINO_KDD,709,8,📈 regression,1,Oceonographic and surface meteorogical readings for ENSO cycles,1,7,0,0,0,False,False,False,False,False,False,False
+QSAR_fish_toxicity,44970_REG_NATURE_FISH_TOXICITY,908,6,📈 regression,1,Fish Toxicity Prediction,0,6,0,0,0,False,True,False,False,False,False,False
+forest_fires,44962_REG_NATURE_FOREST_FIRES,517,12,📈 regression,1,Portugal Forest Fires Burned Area Prediction,2,10,0,0,0,False,True,False,False,False,False,False
+Myanmar-Air-Quality(2019-to-2020-Oct),43748_REG_NATURE_MYANMAR_AIR_QUALITY,5122,10,📈 regression,1,Myanmar Air Quality Assessment,2,6,0,1,1,False,False,False,False,False,False,False
+no2,547_REG_NATURE_NO2_POLLUTION_NORWAY,500,7,📈 regression,1,Norway Roads NO2 Pollution,0,7,0,0,0,False,False,False,False,False,False,False
+pollen,529_REG_NATURE_POLLEN_GRAINS_SYNTH,3848,4,📈 regression,1,Pollen Grains Concentration,0,4,0,0,0,False,False,False,False,False,False,False
+Pollen-Luxembourg-1992-2018,43648_REG_NATURE_POLLEN_LUXEMBOURG,7784,36,📈 regression,1,Pollens in Luxembourg,0,35,0,1,0,False,False,False,False,False,False,False
+quake,550_REG_NATURE_QUAKE_RICHTER,2178,3,📈 regression,1,Earthquake Richter Scale Prediction,0,3,0,0,0,True,False,False,False,False,False,False
+wind,503_REG_NATURE_WIND_SPEED_IRELAND,6574,14,📈 regression,1,Wind speed in Ireland between 1961-1978,0,14,0,0,0,False,False,False,False,False,False,False
+cps88wages,44984_REG_PROFESSIONAL_CPS88_WAGES,28155,6,📈 regression,1,CPS 1998 Wages,1,2,0,0,3,False,True,False,False,False,False,False
+employee_salaries,42125_REG_PROFESSIONAL_EMPLOYEE_SALARY_MONTGOMERY,9228,11,📈 regression,1,"Employee Salary in Montgomery County, MD",3,2,3,1,2,False,False,False,False,True,True,False
+student_performance_por,44967_REG_PROFESSIONAL_STUDENT_PERFORMANCE_PORTUGAL,649,30,📈 regression,1,Portugal Student Performance,14,3,0,0,13,False,True,False,False,False,False,False
+airfoil_self_noise,44957_REG_SCIENCE_AIRFOIL_SELF_NOISE,1503,5,📈 regression,1,NASA Aerodynamic and Acoustic Tests of Airfoil Blade Sections,0,5,0,0,0,False,True,False,False,False,False,False
+auction_verification,44958_REG_SCIENCE_AUCTION_VERIFICATION,2043,7,📈 regression,1,Simultanous Multi-Round Auction Verification,2,3,0,0,2,False,True,False,False,False,False,False
+concrete_compressive_strength,44959_REG_SCIENCE_CONCRETE_COMPRESSIVE_STRENGTH,1030,8,📈 regression,1,Concrete Compressive Strength,0,8,0,0,0,False,True,False,False,False,False,False
+energy_efficiency,44960_REG_SCIENCE_ENERGY_EFFICIENCY,768,8,📈 regression,1,Energy Efficiency of Buildings,0,7,0,0,1,False,True,False,False,False,False,False
+grid_stability,44973_REG_SCIENCE_GRID_STABILITY,10000,12,📈 regression,1,Grid Stability Analysis,0,12,0,0,0,False,True,False,False,False,False,False
+physiochemical_protein,44963_REG_SCIENCE_PHYSIOCHEMICAL_PROTEIN,45730,9,📈 regression,1,Physiochemical Protein for Tertiary Structure,0,9,0,0,0,False,True,False,False,False,False,False
+QSAR-TID-11,3050_REG_SCIENCE_QSAR_TID_11,5742,1024,📈 regression,1,QSAR TID 11 - Molecular Fingerprints,0,0,0,0,1024,True,False,False,False,False,False,False
+QSAR-TID-10980,3277_REG_SCIENCE_QSAR_TID_10980,5766,1024,📈 regression,1,QSAR TID 10980 - Molecular Fingerprints,0,0,0,0,1024,True,False,False,False,False,False,False
+2dplanes,215_REG_SCIENCE_SIMULATION_2D_PLANES,40768,10,📈 regression,1,2d Planes Artificial Data,0,9,0,0,1,False,False,False,False,False,False,False
+fried,564_REG_SCIENCE_SIMULATION_FRIED_FORMULA_PREDICT,40768,10,📈 regression,1,Synthetic Formula Solving,0,10,0,0,0,False,False,False,False,False,False,False
+mv,344_REG_SCIENCE_SIMULATION_MV,40768,10,📈 regression,1,Synthetic Distribution MV,1,7,0,0,2,False,False,False,False,False,False,False
+sulfur,44145_REG_SCIENCE_SULFUR,10081,5,📈 regression,1,Sulfur Recovery Unit (SRU) Process prediction by gas and air flows,0,5,0,0,0,False,False,True,False,False,False,False
+superconductivity,44964_REG_SCIENCE_SUPERCONDUCTIVITY,21263,81,📈 regression,1,Superconductors Critical Temperature Prediction,0,81,0,0,0,False,True,True,False,False,False,False
+wave_energy,44975_REG_SCIENCE_WAVE_ENERGY,72000,32,📈 regression,1,Wave Energy Converters in Southern Coast of Australia,0,32,0,0,0,False,True,False,False,False,False,False
+colleges,42727_REG_SOCIAL_COLLEGES_GRANTS,7063,44,📈 regression,1,US Colleges and their grants,10,32,2,0,0,True,False,False,False,False,False,False
+socmob,541_REG_SOCIAL_OCCUPATION_MOBILITY_SOCMOB,1156,5,📈 regression,1,Social Mobility Occupation between generations,2,1,0,0,2,True,True,False,False,False,False,True
+dating_profile,42164_REG_SOCIAL_OKCUPID_DATING_PROFILE_AGE,59946,30,📈 regression,1,OKCupid Online Dating Profile,13,2,14,0,1,False,False,False,False,False,False,False
+strikes,549_REG_SOCIAL_STRIKES_PER_COUNTRY,625,6,📈 regression,1,Strikes in 18 OECD countries from 1951-1985,0,6,0,0,0,False,False,False,False,False,False,False
+us_crime,42730_REG_SOCIAL_US_CRIME,1994,126,📈 regression,1,US Census Crime Data per County,0,126,0,0,0,True,False,False,False,False,False,False
+space_ga,507_REG_SOCIAL_VOTING_SPACE_GEOGRAPHIC_ANALYSIS,3107,6,📈 regression,1,US County 1980 Elections Voting by County,0,6,0,0,0,True,True,False,False,False,False,False
+baseball-hitter,525_REG_SPORTS_BASEBALL_HITTER_SALARY,263,22,📈 regression,1,Major League Baseball Hitters 1987,3,16,0,0,3,False,False,False,False,False,False,False
+FIFA20-Players-Dataset-with-Stats--Images,43766_REG_SPORTS_FIFA20_PLAYERS_VALUE,14999,72,📈 regression,1,FIFA 2020 Players Stats Value Prediction,4,61,4,2,1,False,False,False,False,False,False,False
+fifa,45012_REG_SPORTS_FIFA22_WAGES,19178,28,📈 regression,1,FIFA 2022 Players Wages,0,27,1,0,0,False,True,False,False,False,True,False
+Football_players_Fifa_stats,42194_REG_SPORTS_FIFA_PLAYERS_STATS,183142,37,📈 regression,1,FIFA Players Stats 2008-2016,2,34,0,0,1,False,False,False,False,False,False,False
+Moneyball,41021_REG_SPORTS_MONEYBALL,1232,14,📈 regression,1,Moneyball Dataset for Baseball Team Performance,4,8,0,0,2,True,True,False,False,False,False,False
+NBA-2k20-player-dataset,43420_REG_SPORTS_NBA_2K20_PLAYERS_RATING,439,14,📈 regression,1,NBA Players in NBA 2k20 Game,7,3,2,1,1,False,False,False,False,False,False,False
+NBA-PLAYERS--2016-2019,43653_REG_SPORTS_NBA_ALL_STAR,1408,43,📈 regression,1,NBA Players All Star Game Performance,4,35,1,0,3,False,False,False,False,False,False,False
+cars,44994_REG_TRANSPORTATION_CAR_GM_PRICE,804,17,📈 regression,1,Car GM Price,0,2,0,0,15,False,True,False,False,False,False,False
+elevators,216_REG_TRANSPORTATION_FLIGHT_SIMULATION_ELEVATORS,16599,18,📈 regression,1,F16 Flight Simulation Elevators,0,18,0,0,0,True,False,True,False,False,False,True
+naval_propulsion_plant,44969_REG_TRANSPORTATION_NAVAL_PROPULSION_PLANT,11934,14,📈 regression,1,Naval Propulsion Plant Gas Turbines,0,14,0,0,0,False,True,False,False,False,False,False
+New-York-Citi-Bike-Trip-Duration-2016,43573_REG_TRANSPORTATION_NYC_BIKE_TRIP_DURATION,4500000,7,📈 regression,1,New York City Bike Trip Duration,0,5,0,2,0,False,False,False,False,False,False,False
+nyc-taxi-green-dec-2016,42729_REG_TRANSPORTATION_NYC_TAXI_TIP,581835,18,📈 regression,1,New York City Taxi Green Tip Amount,4,11,0,0,3,True,False,True,False,False,False,False
+New-York-Taxi-Trip-enriched-by-Mathematica,43584_REG_TRANSPORTATION_NYC_TAXI_TRIP_DURATION,2083778,21,📈 regression,1,New York City Taxi Trip Duration,3,14,0,0,4,False,False,False,False,False,False,False
+seoul_bike_sharing_demand_cat,46328_REG_TRANSPORTATION_SEOUL_BIKE_SHARING_DEMAND,8760,13,📈 regression,1,Seoul Bike Sharing Demand,1,9,0,1,2,False,False,False,False,False,False,False
+USA-Airport-Dataset,43479_REG_TRANSPORTATION_US_AIRPORT_PASSENGERS,3606803,14,📈 regression,1,US Domestic Flights,0,9,4,1,0,False,False,False,False,False,False,False
+Bike_Sharing_Demand,42712_REG_TRANSPORTATION_US_BIKE_SHARING_DEMAND,17379,12,📈 regression,1,US Bike Sharing Demand,2,7,0,0,3,False,False,True,False,False,False,False
+delays_zurich_transport,40753_REG_TRANSPORTATION_ZURICH_PUBLIC_TRANSPORT_DELAY,5465575,14,📈 regression,1,Zurich Public Transport Delay,2,10,0,1,1,False,False,True,False,False,False,False
+human-choice-prediction-in-language-based-games,BIN_SOCIAL_HUMAN_CHOICE_PREDICTION_LM_GAMES,71579,20,⚖️ binary,2,Human Choice Prediction in Language-based Games,0,7,6,0,7,False,False,False,False,False,False,False
+michelin-guide-restaurants-2021,MUL_FOOD_MICHELIN_GUIDE_RESTAURANTS,17735,11,🎨 multiclass,5,Michelin Guide Restaurants Awards,1,3,6,0,1,False,False,False,False,False,True,False
+yelp-reviews-dataset,MUL_FOOD_YELP_REVIEWS,10000,5,🎨 multiclass,5,YELP Dataset Reviews,0,3,1,1,0,False,False,False,False,False,True,False
+game-of-thrones-script-all-seasons,MUL_SOCIAL_GOT_SCRIPTS,16825,5,🎨 multiclass,43,Game of Thrones Scripts All Seasons,3,0,1,1,0,False,False,False,False,False,False,False
+us-2020-presidential-election-speeches,MUL_SOCIAL_US_ELECTIONS_SPEECHES,245,5,🎨 multiclass,7,US 2020 Elections Speeches,2,0,2,1,0,False,False,False,False,False,False,False
+us-accidents,MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23,7728394,42,🎨 multiclass,4,US Accidents between 2016 and 2023,4,12,7,3,16,False,False,False,False,True,True,False
+used-cars-dataset-cardekho,REG_CONSUMER_CAR_PRICE_CARDEKHO,37814,112,📈 regression,1,User cars and listing price in the website Cardekho,28,30,42,0,12,False,False,False,False,False,True,False
+wikiliq-dataset,REG_FOOD_ALCOHOL_WIKILIQ_PRICES,12569,12,📈 regression,1,"WikiliQ - Alcohol dataset (May, 2022)",1,4,6,0,1,False,False,False,False,False,True,False
+beer-profile-and-ratings-data-set,REG_FOOD_BEER_RATINGS,3197,24,📈 regression,1,Tasting profiles and consumer reviews for beers,0,19,5,0,0,False,False,False,False,False,True,False
+chocolate-bar-ratings,REG_FOOD_CHOCOLATE_BAR_RATINGS,1795,8,📈 regression,1,Chocolate Bar expert ratings,2,3,3,0,0,False,False,False,False,False,True,False
+coffee-scrap-coffeereview,REG_FOOD_COFFEE_REVIEW,2440,17,📈 regression,1,Coffee Review Rating,2,6,9,0,0,False,False,False,False,False,True,False
+top-ramen-ratings-2022,REG_FOOD_RAMEN_RATINGS_2022,4105,4,📈 regression,1,Ramen Ratings,2,0,2,0,0,False,False,False,False,True,True,False
+scotch-whiskey-reviews-update-2020,REG_FOOD_WHISKY_SCOTCH_REVIEWS,2247,4,📈 regression,1,Scotch Whiskey Reviews 2020,1,0,3,0,0,False,False,False,False,False,False,False
+wine-price-on-polish-market,REG_FOOD_WINE_POLISH_MARKET_PRICES,2247,18,📈 regression,1,Information about wines on the polish market,7,4,5,0,2,False,False,False,False,False,True,False
+vivino-wine-data,REG_FOOD_WINE_VIVINO_SPAIN,8650,6,📈 regression,1,Vivino Spanish Wine Data,2,2,2,0,0,False,False,False,False,False,True,False
+zomato-bangalore-restaurants,REG_FOOD_ZOMATO_RESTAURANTS,41665,15,📈 regression,1,Zomato Restaurants in Bengaluru,5,1,7,0,2,False,False,False,False,True,True,False
+free-7-million-company-dataset,REG_PROFESSIONAL_COMPANY_EMPLOYEES_SIZE,7173426,7,📈 regression,1,Company size prediction,0,1,6,0,0,False,False,False,False,True,True,False
+animeplanet-recommendation-database-2020,REG_SOCIAL_ANIME_PLANET_RATING,14391,14,📈 regression,1,Anime-Planet Recommendation Database 2020,1,5,7,0,1,False,False,False,False,False,True,False
+clear-corpus,REG_SOCIAL_BOOK_READABILITY_CLEAR,4724,30,📈 regression,1,Readability scores for text passages spanning various genres and time periods,4,19,6,0,1,False,False,False,False,True,True,False
+filmtv-movies-dataset,REG_SOCIAL_FILMTV_MOVIE_RATING_ITALY,41399,17,📈 regression,1,FilmTV movies ataset rating,1,10,6,0,0,False,False,False,False,False,True,False
+top-korean-drama-list-1500,REG_SOCIAL_KOREAN_DRAMA,1647,9,📈 regression,1,Korean Dramas,1,2,6,0,0,False,False,False,False,False,True,False
+the-movies-dataset,REG_SOCIAL_MOVIES_DATASET_REVENUE,45460,20,📈 regression,1,Metadata of movies released until 2017 for box-office revenues,2,4,12,0,2,False,False,False,False,False,True,False
+museums,REG_SOCIAL_MUSEUMS_US_REVENUES,22290,21,📈 regression,1,General information on the US museums,3,9,9,0,0,False,False,False,False,False,True,False
+-spotify-tracks-dataset,REG_SOCIAL_SPOTIFY_POPULARITY,114000,18,📈 regression,1,Spotify Tracks Popularity,0,12,4,0,2,False,False,False,False,True,False,False
+videogamesales,REG_SOCIAL_VIDEO_GAMES_SALES,16598,5,📈 regression,1,Video Games Sales,2,1,2,0,0,False,False,False,False,False,True,False
+football-manager-data,REG_SPORTS_FOOTBALL_MANAGER_IMPORTANT_MATCHES,159541,87,📈 regression,1,Football Manager Stats: Important Matches,0,84,3,0,0,False,False,False,False,False,False,False
+nba-draft-basketball-player-data-19892021,REG_SPORTS_NBA_DRAFT_VALUE_OVER_REPLACEMENT,1669,22,📈 regression,1,NBA Draft Basketball Player Data 1989-2021,1,19,2,0,0,False,False,False,False,False,True,False
+second-hand-mercedes-benz-registered-2000-2023-ita,REG_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY,16392,7,📈 regression,1,Second-hand cars Mercedes Benz price Italy,1,1,2,1,2,False,False,False,False,False,True,False
+used-car-prices-in-pakistan-2021,REG_TRANSPORTATION_USED_CAR_PAKISTAN,72655,9,📈 regression,1,Used car prices in Pakistan 2021,1,3,3,0,2,False,False,False,False,False,True,False
+saudi-arabia-used-cars-dataset,REG_TRANSPORTATION_USED_CAR_SAUDI_ARABIA,8035,12,📈 regression,1,Saudi Arabia Used Cars Price from Syarah Website,6,3,1,0,2,False,False,False,False,False,True,False
+,REG_CONSUMER_BABIES_R_US_PRICES,5085,12,📈 regression,1,Prices Prediction for baby product from Babies R Us website,7,0,4,0,1,False,False,False,False,False,True,False
+,REG_CONSUMER_BIKE_PRICE_BIKEWALE,9003,6,📈 regression,1,Bike and scooters from bikewale website in India,2,2,2,0,0,False,False,False,False,True,True,False
+,REG_PROFESSIONAL_EMPLOYEE_RENUMERATION_VANCOUBER,44574,5,📈 regression,1,Employee Remuneration and Expenses - Vancouver,1,2,2,0,0,False,False,False,False,True,True,False
+,REG_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES,119628,9,📈 regression,1,Salaries of ML/DS Professionals Worldwide,6,2,1,0,0,False,False,False,False,False,True,False
+,REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT,31136,21,📈 regression,1,Academic impact for Scientific Journals,3,8,10,0,0,False,False,False,False,False,True,False
+,REG_SOCIAL_BOOKS_GOODREADS,3967,14,📈 regression,1,Books ratings,2,3,8,1,0,False,False,False,False,True,False,False
+,REG_SOCIAL_MOVIES_ROTTEN_TOMATOES,7158,15,📈 regression,1,Rotten Tomatoes Movie Ratings,0,2,13,0,0,False,False,False,False,False,True,False
