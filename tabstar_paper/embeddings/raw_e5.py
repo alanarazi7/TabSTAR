@@ -18,12 +18,12 @@ data = load_openml_dataset(dataset_id)
 device = get_device()
 is_cls = True
 fold = 0
-train_examples = 10_000
+train_examples = 20_000
 max_epochs = 50
-debug = True
-if debug:
-    train_examples = 1_000
-    max_epochs = 1
+# debug = True
+# if debug:
+#     train_examples = 1_000
+#     max_epochs = 1
 x, y = subsample_dataset(x=data.x, y=data.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
 x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
 model = TabSTARClassifier(pretrain_dataset_or_path=dataset_id, device=device, verbose=False, random_state=SEED,
