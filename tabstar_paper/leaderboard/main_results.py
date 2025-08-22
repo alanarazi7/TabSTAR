@@ -5,6 +5,7 @@ from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.lgbm import LightGBM
 from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.xgboost import XGBoost
+from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_BIG
 from tabstar_paper.leaderboard.ci import df_ci_for_model
 from tabstar_paper.leaderboard.data import load_leaderboard_data, MODEL, DATASET, FOLD, IS_CLS, TEST_SCORE, IS_TUNED, \
     BASE_MODEL, DATASET_SIZE
@@ -20,6 +21,9 @@ def display_main_results():
     condition = st.selectbox("Condition", ["10K", "100K"], index=0)
     if condition == "10K":
         df = df[df['dataset_size'] == 10_000]
+    else:
+        text_names = {d.name for d in TEXTUAL_BIG}
+        df = df[df[DATASET].apply(lambda d: d in text_names)]
     df = df[df[IS_CLS]] if task == 'CLS' else df[~df[IS_CLS]]
     model_options = sorted(set(df[MODEL]))
     if condition == "100K":

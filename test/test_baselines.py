@@ -3,10 +3,10 @@ from typing import Type
 import pytest
 import torch
 
+from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset
-from tabular.datasets.tabular_datasets import OpenMLDatasetID
 
 
 def _test_evaluate(model_cls: Type[TabularModel], fold: int = 0) -> float:
