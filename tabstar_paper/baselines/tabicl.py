@@ -7,7 +7,7 @@ from tabstar_paper.baselines.abstract_model import TabularModel
 
 class TabICL(TabularModel):
 
-    MODEL_NAME = "TabICL 🤖"
+    MODEL_NAME = "TabICL 🗼"
     SHORT_NAME = "icl"
     USE_VAL_SPLIT = False
     USE_MEDIAN_FILLING = False
