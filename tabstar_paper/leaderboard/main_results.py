@@ -4,6 +4,7 @@ from pandas import DataFrame
 
 from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.lgbm import LightGBM
+from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.benchmarks.text_benchmarks import TEXTUAL_BIG
@@ -30,8 +31,8 @@ def display_main_results():
     df = df[df[IS_CLS]] if task == 'CLS' else df[~df[IS_CLS]]
     model_options = sorted(set(df[MODEL]))
     if condition == "100K":
-        irrelevant_models = {CatBoost.MODEL_NAME, XGBoost.MODEL_NAME, LightGBM.MODEL_NAME, RealMLP.MODEL_NAME}
-        model_options = [m for m in model_options if m not in irrelevant_models]
+        default_models = {m.MODEL_NAME for m in [CatBoost, XGBoost, LightGBM, RealMLP, RandomForest]}
+        model_options = [m for m in model_options if m not in default_models]
     models = st.multiselect("Models", model_options, default=model_options)
     df = df[df[MODEL].isin(models)]
     df = df[[MODEL, DATASET, DATASET_SIZE, TEST_SCORE, FOLD, BASE_MODEL, IS_TUNED]]
