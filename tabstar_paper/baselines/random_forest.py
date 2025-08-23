@@ -24,7 +24,7 @@ class RandomForest(TabularModel):
     def initialize_model(self) -> RandomForestRegressor | RandomForestClassifier:
         model_cls = RandomForestClassifier if self.is_cls else RandomForestRegressor
         params = RandomForestDefaultHyperparams()
-        model = model_cls(**asdict(params))
+        model = model_cls(**vars(params))
         return model
 
     def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
