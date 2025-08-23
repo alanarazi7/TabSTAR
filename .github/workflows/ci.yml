@@ -48,10 +48,5 @@ jobs:
 
 
       - name: Run TabSTAR Paper tests
-        env: # TODO the next 4 lines might fix the issue 
-          PYTHONHASHSEED: 42
-          OMP_NUM_THREADS: 1
-          OPENBLAS_NUM_THREADS: 1
-          MKL_NUM_THREADS: 1
         run: |
           pytest
