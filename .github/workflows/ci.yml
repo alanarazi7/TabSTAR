@@ -6,24 +6,47 @@ on:
       - master
 
 jobs:
-  test:
+  tabstar-package-py39:
+    name: TabSTAR (Python 3.9)
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies for TabSTAR package
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          pip install pytest
+
+      - name: Run TabSTAR tests
+        run: |
+          pytest test/package
+
+  tabstar-paper-py311:
+    name: TabSTAR Paper (Python 3.11)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install dependencies for TabSTAR Paper
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install .  # install your package if needed
+          pip install .  # installs Tabstar
 
-      - name: Run tests
+
+      - name: Run TabSTAR Paper tests
         run: |
           pytest
