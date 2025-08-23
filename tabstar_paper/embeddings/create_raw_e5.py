@@ -13,7 +13,7 @@ from tabstar_paper.preprocessing.sampling import subsample_dataset
 from tabstar_paper.preprocessing.text_embeddings import E5_CACHED_MODEL
 from tabstar_paper.utils.io_handlers import dump_json
 
-dataset_id = OpenMLDatasetID.MUL_PROFESSIONAL_DATA_SCIENTIST_SALARY
+dataset_id = OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION
 data = load_openml_dataset(dataset_id)
 device = get_device()
 is_cls = True
@@ -25,6 +25,8 @@ max_epochs = 50
 #     train_examples = 1_000
 #     max_epochs = 1
 x, y = subsample_dataset(x=data.x, y=data.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
+col_name = 'Description'
+x = x[[feat_name]]
 x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
 model = TabSTARClassifier(pretrain_dataset_or_path=dataset_id, device=device, verbose=False, random_state=SEED,
                           max_epochs=max_epochs)
@@ -33,16 +35,15 @@ embedder = TabSTAREmbedder(text_encoder=model.model_.text_encoder, device=device
 embedder.text_encoder.to(device)
 
 
-col_name = 'job_desig'
 data.x = data.x[~data.x[col_name].isnull()]
-descriptions = list(data.x[col_name])
-verbalized = [verbalize_feature(col=str(col_name), value=t) for t in descriptions]
-raw_embeddings = E5_CACHED_MODEL.embed(texts=descriptions, device=device)
+values = list(data.x[col_name])
+verbalized = [verbalize_feature(col=str(col_name), value=t) for t in values]
+raw_embeddings = E5_CACHED_MODEL.embed(texts=values, device=device)
 print(raw_embeddings.shape)
 with torch.no_grad():
     new_embeddings = embedder.embed(x_txt=verbalized).detach().cpu().squeeze().numpy()
 print(new_embeddings.shape)
 
-np.save(f"data_scientist_{col_name}_raw_e5.npy", raw_embeddings)
-np.save(f"data_scientist_{col_name}_tabstar_e5.npy", new_embeddings)
-dump_json({'descriptions': descriptions}, f"data_scientist_{col_name}_descriptions.json")
+np.save(f"{dataset_id.name}_{col_name}_raw_e5.npy", raw_embeddings)
+np.save(f"{dataset_id.name}_{col_name}_tabstar_e5.npy", new_embeddings)
+dump_json({'values': values}, f"{dataset_id.name}_{col_name}_values.json")
