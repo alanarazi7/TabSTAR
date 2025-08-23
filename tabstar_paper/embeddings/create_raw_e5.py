@@ -33,7 +33,7 @@ embedder = TabSTAREmbedder(text_encoder=model.model_.text_encoder, device=device
 embedder.text_encoder.to(device)
 
 
-col_name = 'job_description'
+col_name = 'job_desig'
 data.x = data.x[~data.x[col_name].isnull()]
 descriptions = list(data.x[col_name])
 verbalized = [verbalize_feature(col=str(col_name), value=t) for t in descriptions]
@@ -43,6 +43,6 @@ with torch.no_grad():
     new_embeddings = embedder.embed(x_txt=verbalized).detach().cpu().squeeze().numpy()
 print(new_embeddings.shape)
 
-np.save(f"data_scientist_raw_e5.npy", raw_embeddings)
-np.save(f"data_scientist_tabstar_e5.npy", new_embeddings)
-dump_json({'descriptions': descriptions}, f"data_scientist_descriptions.json")
+np.save(f"data_scientist_{col_name}_raw_e5.npy", raw_embeddings)
+np.save(f"data_scientist_{col_name}_tabstar_e5.npy", new_embeddings)
+dump_json({'descriptions': descriptions}, f"data_scientist_{col_name}_descriptions.json")
