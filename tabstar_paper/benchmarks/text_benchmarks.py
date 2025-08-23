@@ -1,5 +1,5 @@
 from tabstar.datasets.all_datasets import KaggleDatasetID, OpenMLDatasetID, UrlDatasetID
-
+from tabstar_paper.datasets.metadata import DATA2EXAMPLES
 
 # https://github.com/sxjscience/automl_multimodal_benchmark
 AUTOML_MULTIMODAL = [
@@ -76,3 +76,6 @@ CARTE_BENCHMARK = [
 
 TEXTUAL_DATASETS = list({d for ls in [AUTOML_MULTIMODAL, VECTORIZING, CARTE_BENCHMARK] for d in ls})
 TEXTUAL_DATASETS = sorted(TEXTUAL_DATASETS, key=lambda d: d.name)
+
+# More than 10,000 examples ('Unlimited' datasets)
+TEXTUAL_BIG = [d for d in TEXTUAL_DATASETS if DATA2EXAMPLES[d] > 10_000]
