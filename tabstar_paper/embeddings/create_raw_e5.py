@@ -37,7 +37,7 @@ embedder.text_encoder.to(device)
 
 
 data.x = data.x[~data.x[col_name].isnull()]
-values = list(data.x[col_name])
+values = list(x_test[col_name])
 verbalized = [verbalize_feature(col=str(col_name), value=t) for t in values]
 raw_embeddings = E5_CACHED_MODEL.embed(texts=values, device=device)
 print(raw_embeddings.shape)
