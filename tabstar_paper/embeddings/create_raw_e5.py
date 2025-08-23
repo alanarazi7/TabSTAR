@@ -2,21 +2,21 @@ import numpy as np
 import torch
 
 from tabstar.constants import SEED
-from tabstar.datasets.all_datasets import OpenMLDatasetID
+from tabstar.datasets.all_datasets import OpenMLDatasetID, KaggleDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar.preprocessing.verbalize import verbalize_feature
 from tabstar.tabstar_embedder import TabSTAREmbedder
 from tabstar.tabstar_model import TabSTARClassifier
 from tabstar.training.devices import get_device
-from tabstar_paper.datasets.downloading import load_openml_dataset
+from tabstar_paper.datasets.downloading import load_openml_dataset, load_kaggle_dataset
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 from tabstar_paper.preprocessing.text_embeddings import E5_CACHED_MODEL
 from tabstar_paper.utils.io_handlers import dump_json
 
-dataset_id = OpenMLDatasetID.BIN_PROFESSIONAL_FAKE_JOB_POSTING
-col_name = 'description'
+dataset_id = KaggleDatasetID.MUL_FOOD_YELP_REVIEWS
+col_name = 'text'
 
-data = load_openml_dataset(dataset_id)
+data = load_kaggle_dataset(dataset_id)
 device = get_device()
 is_cls = True
 fold = 0
