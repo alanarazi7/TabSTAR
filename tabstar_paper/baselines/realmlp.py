@@ -89,8 +89,9 @@ class RealMlpOpt(TunedTabularModel):
         self.model_.fit(x_train, y_train, x_val, y_val, cat_col_names=cat_col_names)
 
     def add_missing_params(self, study: Any, best_params: Dict[str, Any]):
-        for k in {'val_metric_name', 'add_front_scale', 'p_drop', 'hidden_sizes'}:
-            best_params[k] = study.best_trial.user_attrs[k]
+        for k in {'val_metric_name', 'add_front_scale', 'p_drop', 'hidden_sizes', 'plr_sigma'}:
+            if k not in best_params:
+                best_params[k] = study.best_trial.user_attrs[k]
 
     def get_trial_config(self, trial: Trial) -> Dict[str, Any]:
         val_metric_name = get_val_metric_name(self.problem_type)
@@ -126,7 +127,11 @@ class RealMlpOpt(TunedTabularModel):
             add_front_scale = False
         trial.set_user_attr('add_front_scale', add_front_scale)
 
-        plr_sigma = trial.suggest_float("plr_sigma", 0.05, 0.5, log=True)
+        if self.is_cls:
+            plr_sigma = trial.suggest_float("plr_sigma", 0.05, 0.5, log=True)
+        else:
+            plr_sigma = 0.1
+            trial.set_user_attr("plr_sigma", plr_sigma)
 
         trial_config = RealMLPTunedHyperparams(device=str(self.device),
                                                val_metric_name=val_metric_name,
