@@ -26,7 +26,7 @@ max_epochs = 50
 #     max_epochs = 1
 x, y = subsample_dataset(x=data.x, y=data.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
 col_name = 'Description'
-x = x[[feat_name]]
+x = x[[col_name]]
 x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
 model = TabSTARClassifier(pretrain_dataset_or_path=dataset_id, device=device, verbose=False, random_state=SEED,
                           max_epochs=max_epochs)
