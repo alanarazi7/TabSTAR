@@ -14,7 +14,7 @@ from tabstar_paper.preprocessing.text_embeddings import E5_CACHED_MODEL
 from tabstar_paper.utils.io_handlers import dump_json
 
 dataset_id = OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION
-col_name = 'Title'
+col_name = 'Description'
 
 data = load_openml_dataset(dataset_id)
 device = get_device()
