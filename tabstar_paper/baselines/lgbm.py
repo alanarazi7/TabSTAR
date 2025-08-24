@@ -52,7 +52,7 @@ class LightGBMTunedHyperparams:
 
 class LightGBMOpt(TunedTabularModel):
 
-    MODEL_NAME = f"LightGBM-Opt ⚡"
+    MODEL_NAME = "LightGBM-Opt ⚡"
     SHORT_NAME = "lightopt"
     BASE_CLS = LightGBM
 
