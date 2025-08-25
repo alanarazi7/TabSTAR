@@ -18,7 +18,7 @@ def get_device(device: Optional[Union[str, torch.device]] = None) -> torch.devic
     gpu = os.getenv('CUDA_VISIBLE_DEVICES')
     if gpu is not None:
         if isinstance(gpu, int) or gpu.isdigit():
-            return torch.device(f"cuda:{gpu}")
+            return torch.device("cuda")
         raise ValueError(f"Invalid CUDA_VISIBLE_DEVICES value: {gpu}. It should be an integer for now.")
     if device is None:
         device = _get_device_type()
