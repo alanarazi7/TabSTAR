@@ -166,6 +166,14 @@ class TabSTARPretrainer:
         return loss.item()
 
     def eval_dataset(self, data_loader: DataLoader) -> Tuple[float, float]:
+        try:
+            return self._eval_dataset(data_loader)
+        except ValueError as e:
+            dataset = data_loader.dataset
+            assert isinstance(dataset, HDF5Dataset)
+            raise f"⚠️ Error evaluating dataset {dataset.properties.name}: {e}"
+
+    def _eval_dataset(self, data_loader: DataLoader) -> Tuple[float, float]:
         self.model.eval()
         dev_loss = 0.0
         dev_examples = 0
