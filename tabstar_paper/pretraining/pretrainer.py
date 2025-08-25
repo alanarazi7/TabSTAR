@@ -171,7 +171,8 @@ class TabSTARPretrainer:
         except ValueError as e:
             dataset = data_loader.dataset
             assert isinstance(dataset, HDF5Dataset)
-            raise f"⚠️ Error evaluating dataset {dataset.properties.name}: {e}"
+            print(f"⚠️ Error evaluating dataset {dataset.properties.name}!")
+            raise e
 
     def _eval_dataset(self, data_loader: DataLoader) -> Tuple[float, float]:
         self.model.eval()
