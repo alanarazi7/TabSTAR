@@ -9,16 +9,18 @@ from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
 from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
-from tabstar.training.hyperparams import MAX_EPOCHS
 from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
 from tabstar_paper.constants import DEVICE
-from tabstar_paper.pretraining.hyperparameters import TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, BASE_LR, WEIGHT_DECAY
+from tabstar_paper.pretraining.hyperparameters import (TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, LR, WARMUP,
+                                                       WEIGHT_DECAY, EPOCHS, EPOCH_EXAMPLES, PATIENCE, BATCH_SIZE,
+                                                       GLOBAL_BATCH_SIZE, TrainingArgs)
 from tabstar_paper.pretraining.pretrainer import TabSTARPretrainer
 from tabstar_paper.utils.logging import wandb_run, wandb_finish
-from tabular.trainers.pretrain_args import PretrainArgs
+from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 
 
 def do_pretrain(pretrain_datasets: List[TabularDatasetID],
+                train_args: TrainingArgs,
                 pretrain_args: PretrainArgs):
     if exists(pretrain_args.path):
         print(f"Pretraining model already exists for {pretrain_args.full_exp_name}")
@@ -26,16 +28,16 @@ def do_pretrain(pretrain_datasets: List[TabularDatasetID],
     print(f"🧪 Initializing experiment {pretrain_args.full_exp_name}")
     device = get_device(device=DEVICE)
     wandb_run(exp_name=pretrain_args.raw_exp_name, project="tabstar_pretrain")
-    wandb.config.update(asdict(pretrain_args), allow_val_change=True)
+    d_summary = {**asdict(pretrain_args), **asdict(train_args), 'full_exp_name': pretrain_args.full_exp_name}
+    wandb.config.update(d_summary, allow_val_change=True)
     print(f"Pretraining over {len(pretrain_datasets)} datasets")
     model = TabSTARPretrainer(run_name=pretrain_args.full_exp_name,
                               dataset_ids=pretrain_datasets,
-                              max_epochs=pretrain_args.epochs,
                               device=device,
+                              train_args=train_args,
                               pretrain_args=pretrain_args)
     model.train()
     pretrain_args.to_json()
-    d_summary = {**asdict(pretrain_args), 'full_exp_name': pretrain_args.full_exp_name}
     print(f"🌟 TabSTAR was pretrained. The experiment name is: {pretrain_args.full_exp_name}")
     wandb_finish(d_summary)
 
@@ -66,10 +68,15 @@ if __name__ == "__main__":
     parser.add_argument('--n_datasets', type=int, default=None)
     parser.add_argument('--fold', type=int, default=None)
     parser.add_argument('--only_text_folds', action='store_true', default=False)
-    # Optimizer
-    parser.add_argument('--base_lr', type=float, default=BASE_LR)
+    # Training
+    parser.add_argument('--learning_rate', type=float, default=LR)
+    parser.add_argument('--warmup', type=float, default=WARMUP)
     parser.add_argument('--weight_decay', type=float, default=WEIGHT_DECAY)
-    parser.add_argument('--epochs', type=int, default=MAX_EPOCHS)
+    parser.add_argument('--epochs', type=int, default=EPOCHS)
+    parser.add_argument('--epoch_examples', type=int, default=EPOCH_EXAMPLES)
+    parser.add_argument('--patience', type=int, default=PATIENCE)
+    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE)
+    parser.add_argument('--global_batch_size', type=int, default=GLOBAL_BATCH_SIZE)
 
     args = parser.parse_args()
 
@@ -85,7 +92,7 @@ if __name__ == "__main__":
                          OpenMLDatasetID.REG_SPORTS_MONEYBALL]
         args.epochs = 3
 
-    # TODO: use HfArgumentParser probably
+    train = TrainingArgs.from_args(args)
     pretraining_args = PretrainArgs.from_args(args=args, pretrain_data=pretrain_data)
 
-    do_pretrain(pretrain_datasets=pretrain_data, pretrain_args=pretraining_args)
+    do_pretrain(pretrain_datasets=pretrain_data, train_args=train, pretrain_args=pretraining_args)

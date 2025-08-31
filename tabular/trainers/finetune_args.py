@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from os.path import join
 from typing import Optional, Self
 
-from tabular.trainers.pretrain_args import PretrainArgs
+from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 
 
 # TODO: Kill FinetuneArgs, not really needed.

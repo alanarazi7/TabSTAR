@@ -12,12 +12,11 @@ from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, FOLDS
 from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.preprocessing.sampling import subsample_dataset
+from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 from tabstar_paper.utils.logging import wandb_run
 
 # TODO: remove tabular imports
-from tabular.constants import VERBOSE
 from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.trainers.pretrain_args import PretrainArgs
 from tabular.utils.paths import get_model_path
 
 
@@ -25,7 +24,8 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                      dataset_id: TabularDatasetID,
                      fold: int,
                      train_examples: int,
-                     device: torch.device):
+                     device: torch.device,
+                     verbose: bool = False):
     wandb_run(exp_name=finetune_args.full_exp_name, project="tabstar_finetune")
     if dataset_id.value in finetune_args.pretrain_args.datasets:
         raise RuntimeError(f"😱 Dataset {dataset_id} is already in pretrain datasets, beware!")
@@ -45,7 +45,7 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
                         max_epochs=finetune_args.epochs,
                         lora_batch=finetune_args.lora_batch,
                         patience=finetune_args.patience,
-                        verbose=VERBOSE,
+                        verbose=verbose,
                         device=device)
     model.fit(x_train, y_train)
     metrics = model.score_all_metrics(X=x_test, y=y_test)
@@ -65,7 +65,6 @@ def finetune_tabstar(finetune_args: FinetuneArgs,
 
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--pretrain_exp', type=str, required=True)
@@ -74,6 +73,7 @@ if __name__ == "__main__":
     parser.add_argument('--exp', type=str, default="default_finetune_exp")
     parser.add_argument('--downstream_examples', type=int, default=DOWNSTREAM_EXAMPLES)
     parser.add_argument('--downstream_keep_model', action='store_true', default=False)
+    parser.add_argument('--verbose', action='store_true', default=False)
     # Training
     parser.add_argument('--epochs', type=int, default=MAX_EPOCHS)
     parser.add_argument('--patience', type=int, default=FINETUNE_PATIENCE)
@@ -89,5 +89,5 @@ if __name__ == "__main__":
     pretrain_args = PretrainArgs.from_json(pretrain_exp=args.pretrain_exp)
     run_args = FinetuneArgs.from_args(args=args, pretrain_args=pretrain_args, exp_name=args.exp)
     my_device = get_device(device=DEVICE)
-    finetune_tabstar(finetune_args=run_args, dataset_id=data,
-                     fold=args.fold, train_examples=args.downstream_examples, device=my_device)
+    finetune_tabstar(finetune_args=run_args, dataset_id=data, fold=args.fold, train_examples=args.downstream_examples,
+                     device=my_device, verbose=args.verbose)
