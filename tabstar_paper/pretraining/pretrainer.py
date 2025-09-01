@@ -202,7 +202,7 @@ class TabSTARPretrainer:
         self.optimizer.zero_grad()
 
     def save_checkpoint(self):
-        if self.epoch != self.max_epochs_:
+        if self.epoch != self.train_args.epochs:
             save_path = get_checkpoint(self.run_name, epoch=self.epoch)
             save_checkpoint(save_path=save_path,
                             model=self.model,
