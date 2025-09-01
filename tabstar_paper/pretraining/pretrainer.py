@@ -27,12 +27,11 @@ from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretra
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
 from tabstar_paper.pretraining.hyperparameters import TrainingArgs
+from tabstar_paper.pretraining.logging import summarize_model, log_epoch_start
 from tabstar_paper.pretraining.optimizer import get_optimizer
 from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 from tabstar_paper.pretraining.unfreezing import unfreeze_text_encoder
 
-from tabular.trainers.nn_logger import log_general
-from tabular.utils.deep import print_model_summary
 from tabular.utils.paths import get_model_path, get_checkpoint
 
 torch.set_num_threads(CPU_CORES)
@@ -89,7 +88,7 @@ class TabSTARPretrainer:
 
     def train(self):
         t0 = time.time()
-        print_model_summary(self.model)
+        summarize_model(self.model)
         print(f"💪 Pretraining for {self.run_name} over {len(self.data_dirs)} datasets on device {self.device}.")
         if self.args.checkpoint:
             self.load_checkpoint()
@@ -98,7 +97,7 @@ class TabSTARPretrainer:
         with tqdm(total=self.train_args.epochs, desc="Epochs", leave=False) as pbar_epochs:
             for epoch in range(self.epoch + 1, self.train_args.epochs + 1):
                 self.epoch = epoch
-                log_general(scheduler=self.scheduler, steps=self.steps, epoch=self.epoch)
+                log_epoch_start(scheduler=self.scheduler, steps=self.steps, epoch=self.epoch)
                 dataloader.dataset.make_batches()
                 train_loss = 0
                 train_examples = 0
