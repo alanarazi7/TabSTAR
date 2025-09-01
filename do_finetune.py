@@ -12,12 +12,12 @@ from tabstar_paper.benchmarks.evaluate import DOWNSTREAM_EXAMPLES, FOLDS
 from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar_paper.preprocessing.sampling import subsample_dataset
+from tabstar_paper.pretraining.paths import get_model_path
 from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 from tabstar_paper.utils.logging import wandb_run
 
 # TODO: remove tabular imports
 from tabular.trainers.finetune_args import FinetuneArgs
-from tabular.utils.paths import get_model_path
 
 
 def finetune_tabstar(finetune_args: FinetuneArgs,

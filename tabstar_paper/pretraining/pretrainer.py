@@ -29,10 +29,10 @@ from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
 from tabstar_paper.pretraining.hyperparameters import TrainingArgs
 from tabstar_paper.pretraining.logging import summarize_model, log_epoch_start
 from tabstar_paper.pretraining.optimizer import get_optimizer
+from tabstar_paper.pretraining.paths import get_model_path, get_checkpoint
 from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 from tabstar_paper.pretraining.unfreezing import unfreeze_text_encoder
 
-from tabular.utils.paths import get_model_path, get_checkpoint
 
 torch.set_num_threads(CPU_CORES)
 if hasattr(torch, 'set_float32_matmul_precision'):
