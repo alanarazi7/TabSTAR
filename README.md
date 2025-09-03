@@ -158,4 +158,8 @@ If you use TabSTAR in your research, please cite:
 
 ### License
 
-MIT © Alan Arazi et al.
+MIT
+
+## ❤️ Contributors
+
+[![langflow contributors](https://contrib.rocks/image?repo=alanarazi7/TabSTAR)](https://github.com/alanarazi7/TabSTAR/graphs/contributors)
