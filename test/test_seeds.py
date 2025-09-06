@@ -1,3 +1,5 @@
+import numpy as np
+
 from tabstar.training.utils import fix_seed
 from tabstar_paper.pretraining.seeds import py_state_to_json, py_state_from_json, np_state_to_json, np_state_from_json, \
     torch_state_to_json, torch_state_from_json
@@ -28,3 +30,10 @@ def test_torch_seeds():
     torch_state = torch_state_to_json()
     torch_state = torch_state_from_json(torch_state)
     assert torch_state.tolist()[:3] == [26, 5, 0]
+
+
+def test_numpy_random_numbers():
+    fix_seed(42)
+    numbers = [np.random.random() for _ in range(3)]
+    expected = [0.3745401188473625, 0.9507143064099162, 0.7319939418114051]
+    assert numbers == expected
