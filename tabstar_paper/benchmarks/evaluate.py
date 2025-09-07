@@ -27,6 +27,14 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
                         train_examples: int = DOWNSTREAM_EXAMPLES,
                         verbose: bool = False,
                         carte_lr_idx: Optional[int] = None) -> Dict:
+    # import os
+    # from tabstar.training.utils import fix_seed
+    # # Ensure seeds are fixed before any operations for complete determinism
+    # # Set additional environment variables for cross-platform determinism
+    # os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+    # os.environ['PYTHONHASHSEED'] = str(SEED)
+    # fix_seed(SEED)
+    
     start_time = time.time()
     is_tabstar = issubclass(model_cls, BaseTabSTAR)
     name = "TabSTAR ⭐" if is_tabstar else model_cls.MODEL_NAME

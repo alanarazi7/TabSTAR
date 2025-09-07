@@ -27,6 +27,14 @@ class CatBoostDefaultHyperparams:
     od_pval: float = 0.001
     random_state: int = SEED
     thread_count = 1  # Force single thread for deterministic results across environments
+    # Additional parameters for complete determinism across environments
+    # # bootstrap_type: str = "Bayesian"  # More deterministic than default
+    # bagging_temperature: float = 1.0  # Default value for consistency
+    # random_strength: float = 1.0  # Fixed random strength for determinism
+    # # Force deterministic behavior across Python versions and platforms
+    # task_type: str = "CPU"  # Ensure CPU computation for consistency
+    # allow_const_label: bool = False  # Disable optimizations that may vary
+    # used_ram_limit: str = "1gb"  # Limit RAM usage for consistency
 
 class CatBoost(TabularModel):
 

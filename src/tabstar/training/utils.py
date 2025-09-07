@@ -23,6 +23,15 @@ def fix_seed(seed: int = SEED):
         # When running on the CuDNN backend, two further options must be set
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+    
+    # # Additional determinism for cross-platform consistency
+    # try:
+    #     torch.use_deterministic_algorithms(True)
+    # except:
+    #     pass  # Not available in all torch versions
+    
+    # # Set threading to ensure determinism
+    # torch.set_num_threads(1)
 
 
 def concat_predictions(y_pred: List[Tensor]) -> np.ndarray:

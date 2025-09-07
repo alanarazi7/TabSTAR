@@ -54,6 +54,12 @@ def _split_with_rare_classes(x: DataFrame, y: Series, test_size: int, random_sta
     x_train = pd.concat([x_train, x_single])
     y_train = pd.concat([y_train, y_single])
     shuffled = x_train.sample(frac=1, random_state=random_state).index
+    # # Use more deterministic shuffling approach
+    # import numpy as np
+    # np.random.seed(random_state)
+    # indices = np.array(x_train.index)
+    # np.random.shuffle(indices)
+    # shuffled = pd.Index(indices)
 
     x_train = x_train.loc[shuffled]
     y_train = y_train.loc[shuffled]
