@@ -128,7 +128,7 @@ The `--dataset_id` argument should be selected as the value of datasets appearin
 To pretrain TabSTAR on a specified number of datasets:
 
 ```bash
-python do_pretrain.py --n_datasets=256
+python tabstar_paper/do_pretrain.py --n_datasets=256
 ```
 
 `--n_datasets` determines how many datasets to use for pretraining. You can reduce this number for quick debugging, but note this will harm downstream performance.
@@ -158,4 +158,8 @@ If you use TabSTAR in your research, please cite:
 
 ### License
 
-MIT © Alan Arazi et al.
+MIT
+
+## ❤️ Contributors
+
+[![langflow contributors](https://contrib.rocks/image?repo=alanarazi7/TabSTAR)](https://github.com/alanarazi7/TabSTAR/graphs/contributors)

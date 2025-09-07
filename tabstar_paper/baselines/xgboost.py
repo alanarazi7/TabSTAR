@@ -7,6 +7,7 @@ from xgboost import XGBRegressor, XGBClassifier
 from pandas import DataFrame, Series
 
 from tabstar.constants import SEED
+from tabstar.training.devices import CPU_CORES
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.abstract_tuned_model import TunedTabularModel
 
@@ -23,6 +24,7 @@ class XGBoostDefaultHyperparams:
     early_stopping_rounds: int = 50
     booster: str = "gbtree"
     random_state: int = SEED
+    nthread: int = CPU_CORES
 
 
 class XGBoost(TabularModel):
@@ -64,16 +66,16 @@ class XGBoostOpt(TunedTabularModel):
     SHORT_NAME = "xgbopt"
     BASE_CLS = XGBoost
 
-    def initialize_tuned_model(self, params: Dict[str, Any]):
+    def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):
+        if is_last_model:
+            params["n_thread"] = CPU_CORES
         return init_xgboost(is_cls=self.is_cls, params=params)
 
-    def fit_tuned_model(self, model: Any, x_train: DataFrame, y_train: Series):
-        model.fit(x_train, y_train, verbose=self.verbose)
+    def fit_tuned_model(self, x_train: DataFrame, y_train: Series):
+        self.model_.fit(x_train, y_train, verbose=self.verbose)
 
-    def fit_fold_model(self, model: Any, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series) -> float:
-        model.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=self.verbose)
-        score = model.score(x_val, y_val)
-        return score
+    def fit_fold_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+        self.model_.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=self.verbose)
 
     def get_trial_config(self, trial: Trial) -> Dict[str, Any]:
         # Hyperparam search as suggested by TabPFN-v2 paper: https://www.nature.com/articles/s41586-024-08328-6.pdf

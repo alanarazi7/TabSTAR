@@ -51,6 +51,7 @@ class TunedTabularModel(TabularModel):
         objective_with_data = partial(self.objective, x=x, y=y)
         study.optimize(objective_with_data, n_jobs=CPU_CORES, timeout=TIME_BUDGET)
         best_params = dict(study.best_params)
+        self.add_missing_params(study=study, best_params=best_params)
         print(f"Done studying, did {len(study.trials)} runs 🤓\n Best params: {best_params}")
         self.optuna_dict.update({"optuna_best_params": best_params, "optuna_n_trials": len(study.trials)})
         assert self.model_ is None
@@ -60,6 +61,9 @@ class TunedTabularModel(TabularModel):
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
         self.fit_tuned_model(x_train=x_train, y_train=y_train)
+
+    def add_missing_params(self, study: Any, best_params: Dict[str, Any]):
+        pass
 
     def get_trial_config(self, trial: Trial) -> Dict[str, Any]:
         raise NotImplementedError("This method should be implemented in the subclass to return trial configuration.")

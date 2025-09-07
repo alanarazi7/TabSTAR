@@ -8,7 +8,7 @@ import wandb
 from torch import Tensor
 from torch.amp import autocast, GradScaler
 from torch.nn import Module
-from torch.optim import Optimizer, AdamW
+from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -21,20 +21,18 @@ from tabstar.training.metrics import apply_loss_fn, calculate_metric, calculate_
 from tabstar.training.optimizer import get_scheduler
 from tabstar.training.utils import fix_seed, concat_predictions
 from tabstar_paper.pretraining.checkpoint import save_checkpoint, load_checkpoint
+from tabstar_paper.pretraining.config import TabStarConfig
 from tabstar_paper.pretraining.dataloaders import get_dev_dataloader, get_pretrain_multi_dataloader, \
     MultiDatasetEpochBatches
 from tabstar_paper.pretraining.datasets import create_pretrain_dataset
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset, DatasetProperties
-from tabstar_paper.pretraining.hyperparameters import PRETRAIN_PATIENCE
+from tabstar_paper.pretraining.hyperparameters import TrainingArgs
+from tabstar_paper.pretraining.logging import summarize_model, log_epoch_start
+from tabstar_paper.pretraining.optimizer import get_optimizer
+from tabstar_paper.pretraining.paths import get_model_path, get_checkpoint
+from tabstar_paper.pretraining.pretrain_args import PretrainArgs
 from tabstar_paper.pretraining.unfreezing import unfreeze_text_encoder
 
-## TODO: Stop importing from tabular repo
-from tabular.tabstar.params.config import TabStarConfig
-from tabular.trainers.pretrain_args import PretrainArgs
-from tabular.trainers.nn_logger import log_general
-from tabular.utils.deep import print_model_summary
-from tabular.utils.optimizer import get_groups_for_optimizer
-from tabular.utils.paths import get_model_path, get_checkpoint
 
 torch.set_num_threads(CPU_CORES)
 if hasattr(torch, 'set_float32_matmul_precision'):
@@ -46,9 +44,10 @@ class TabSTARPretrainer:
     def __init__(self,
                  run_name: str,
                  dataset_ids: List[TabularDatasetID],
-                 max_epochs: int,
                  device: torch.device,
+                 train_args: TrainingArgs,
                  pretrain_args: PretrainArgs):
+        self.train_args = train_args
         self.run_name = run_name
         self.dataset_ids = dataset_ids
         self.device = device
@@ -56,54 +55,49 @@ class TabSTARPretrainer:
         self.data_dirs: List[str] = []
         self.dev_dataloaders: List[DataLoader] = []
         self.model: Optional[Module] = None
-        self.config = self.set_config()
         self.optimizer: Optional[Optimizer] = None
         self.scheduler: Optional[LRScheduler] = None
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.max_epochs = max_epochs
-        self.patience = PRETRAIN_PATIENCE
         fix_seed()
         self.initialize_model()
         self.initialize_data_dirs()
         self.steps: int = 0
         self.epoch: int = 0
-        self.early_stopper = EarlyStopping(patience=self.patience)
+        self.early_stopper = EarlyStopping(patience=train_args.patience)
 
     def initialize_data_dirs(self):
         for d in tqdm(self.dataset_ids, desc="Initializing data dirs", leave=False):
             data_dir = create_pretrain_dataset(dataset_id=d)
             self.data_dirs.append(data_dir)
-            dev_dataloader = get_dev_dataloader(data_dir=data_dir, batch_size=self.config.batch_size)
+            dev_dataloader = get_dev_dataloader(data_dir=data_dir, batch_size=self.train_args.batch_size)
             self.dev_dataloaders.append(dev_dataloader)
 
     def initialize_model(self):
-        self.model = TabStarModel(config=self.config)
-        unfreeze_text_encoder(text_encoder=self.model.text_encoder, layers_to_unfreeze=self.config.unfreeze_layers)
+        config = TabStarConfig(num_layers=self.args.tabular_layers, unfreeze_layers=self.args.unfreeze_layers)
+        self.model = TabStarModel(config=config)
+        unfreeze_text_encoder(text_encoder=self.model.text_encoder, layers_to_unfreeze=config.unfreeze_layers)
         self.model.to(self.device)
         assert isinstance(self.model, Module)
         self.init_optimizer()
 
-    def set_config(self) -> TabStarConfig:
-        return TabStarConfig.create(self.args)
-
     def init_optimizer(self):
-        params = get_groups_for_optimizer(model=self.model, config=self.config)
-        self.optimizer = AdamW(params)
-        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.config.lr, epochs=self.max_epochs)
+        self.optimizer = get_optimizer(model=self.model, args=self.train_args)
+        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.train_args.learning_rate,
+                                       epochs=self.train_args.epochs)
 
     def train(self):
         t0 = time.time()
-        print_model_summary(self.model)
+        summarize_model(self.model)
         print(f"💪 Pretraining for {self.run_name} over {len(self.data_dirs)} datasets on device {self.device}.")
         if self.args.checkpoint:
             self.load_checkpoint()
-        dataloader = get_pretrain_multi_dataloader(data_dirs=self.data_dirs, batch_size=self.config.batch_size)
+        dataloader = get_pretrain_multi_dataloader(data_dirs=self.data_dirs, args=self.train_args)
         assert isinstance(dataloader.dataset, MultiDatasetEpochBatches)
-        with tqdm(total=self.max_epochs, desc="Epochs", leave=False) as pbar_epochs:
-            for epoch in range(self.epoch + 1, self.max_epochs + 1):
+        with tqdm(total=self.train_args.epochs, desc="Epochs", leave=False) as pbar_epochs:
+            for epoch in range(self.epoch + 1, self.train_args.epochs + 1):
                 self.epoch = epoch
-                log_general(scheduler=self.scheduler, steps=self.steps, epoch=self.epoch)
+                log_epoch_start(scheduler=self.scheduler, steps=self.steps, epoch=self.epoch)
                 dataloader.dataset.make_batches()
                 train_loss = 0
                 train_examples = 0
@@ -113,10 +107,10 @@ class TabSTARPretrainer:
                         train_loss += batch_loss * len(y)
                         train_examples += len(y)
                         self.steps += 1
-                        if (batch_idx + 1) % self.config.accumulation_steps == 0:
+                        if (batch_idx + 1) % self.train_args.accumulation_steps == 0:
                             self.do_update()
                         pbar_batches.update(1)
-                    if (batch_idx + 1) % self.config.accumulation_steps != 0:
+                    if (batch_idx + 1) % self.train_args.accumulation_steps != 0:
                         self.do_update()
                 train_loss = train_loss / train_examples
                 dev_loss = 0
@@ -160,12 +154,21 @@ class TabSTARPretrainer:
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             predictions, loss = self.do_forward(x_txt=x_cat, x_num=x_num, y=y, properties=properties)
             # Divide the loss to scale gradients appropriately.
-            loss_for_backward = loss / self.config.accumulation_steps
+            loss_for_backward = loss / self.train_args.accumulation_steps
         scaled_loss = self.scaler.scale(loss_for_backward)
         scaled_loss.backward()
         return loss.item()
 
     def eval_dataset(self, data_loader: DataLoader) -> Tuple[float, float]:
+        try:
+            return self._eval_dataset(data_loader)
+        except ValueError as e:
+            dataset = data_loader.dataset
+            assert isinstance(dataset, HDF5Dataset)
+            print(f"⚠️ Error evaluating dataset {dataset.properties.name}!")
+            raise e
+
+    def _eval_dataset(self, data_loader: DataLoader) -> Tuple[float, float]:
         self.model.eval()
         dev_loss = 0.0
         dev_examples = 0
@@ -198,7 +201,7 @@ class TabSTARPretrainer:
         self.optimizer.zero_grad()
 
     def save_checkpoint(self):
-        if self.epoch != self.max_epochs:
+        if self.epoch != self.train_args.epochs:
             save_path = get_checkpoint(self.run_name, epoch=self.epoch)
             save_checkpoint(save_path=save_path,
                             model=self.model,

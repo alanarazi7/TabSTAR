@@ -6,13 +6,13 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 
 from tabstar_paper.pretraining.hdf5 import HDF5Dataset
-from tabstar_paper.pretraining.hyperparameters import MAX_EPOCH_EXAMPLES
+from tabstar_paper.pretraining.hyperparameters import TrainingArgs
 
 # TODO: Make NUM_WORKERS configurable
 NUM_WORKERS = 0
 
 class MultiDatasetEpochBatches(Dataset):
-    def __init__(self, datasets: List[HDF5Dataset], batch_size: int, max_samples_per_dataset: int = MAX_EPOCH_EXAMPLES):
+    def __init__(self, datasets: List[HDF5Dataset], batch_size: int, max_samples_per_dataset: int):
         self.datasets = datasets
         self.batch_size = batch_size
         self.max_samples_per_dataset = max_samples_per_dataset
@@ -58,7 +58,8 @@ def tabular_collate_fn(batch):
     return x_txt, x_num, y, properties
 
 
-def get_pretrain_multi_dataloader(data_dirs: List[str], batch_size: int) -> DataLoader:
+def get_pretrain_multi_dataloader(data_dirs: List[str], args: TrainingArgs) -> DataLoader:
     datasets = [HDF5Dataset(data_dir=d, is_train=True) for d in data_dirs]
-    multi_dataset = MultiDatasetEpochBatches(datasets=datasets, batch_size=batch_size)
+    multi_dataset = MultiDatasetEpochBatches(datasets=datasets, batch_size=args.batch_size,
+                                             max_samples_per_dataset=args.epoch_examples)
     return DataLoader(multi_dataset, batch_size=None, num_workers=NUM_WORKERS)

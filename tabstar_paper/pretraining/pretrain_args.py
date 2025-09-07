@@ -1,5 +1,5 @@
 import argparse
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, fields
 from typing import List, Optional, Self, Any
 
 from tabstar.datasets.all_datasets import TabularDatasetID
@@ -8,16 +8,13 @@ from tabstar_paper.utils.io_handlers import load_json, dump_json, create_dir
 from tabstar_paper.utils.timing import get_now
 
 
-# TODO: use HfArgumentParser
+# TODO: slowly deprecate this?
 @dataclass
 class PretrainArgs:
     raw_exp_name: str
     tabular_layers: int
-    base_lr: float
-    weight_decay: float
     unfreeze_layers: int
     datasets: List[Any]
-    epochs: int
     timestamp: str
     num_datasets: int
     fold: Optional[int] = None
@@ -28,11 +25,8 @@ class PretrainArgs:
         num_datasets = len(pretrain_data)
         return PretrainArgs(raw_exp_name=args.exp,
                             tabular_layers=args.tabular_layers,
-                            base_lr=args.base_lr,
                             unfreeze_layers=args.e5_unfreeze_layers,
-                            weight_decay=args.weight_decay,
                             datasets=[d.value for d in pretrain_data],
-                            epochs=args.epochs,
                             fold=args.fold,
                             timestamp=get_now(),
                             num_datasets=num_datasets,
@@ -42,6 +36,8 @@ class PretrainArgs:
     def from_json(cls, pretrain_exp: str):
         path = pretrain_args_path(pretrain_exp)
         data = load_json(path)
+        allowed_fields = {f.name for f in fields(PretrainArgs)}
+        data = {k: v for k, v in data.items() if k in allowed_fields}
         args = PretrainArgs(**data)
         if len(args.datasets) == 0:
             assert args.num_datasets == 0, "num_datasets should be 0 if datasets is empty"
