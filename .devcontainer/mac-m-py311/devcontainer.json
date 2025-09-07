@@ -1,0 +1,51 @@
+{
+  "name": "TabSTAR Mac M Python 3.11",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11-bullseye",
+    
+  // ADD THIS ONE LINE to force ARM64 architecture like Mac M
+  "runArgs": ["--platform=linux/arm64"],
+  
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "postCreateCommand": "pip install -e . && pip install pytest && python -m pytest test/test_baselines.py -v",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylint",
+        "ms-python.black-formatter",
+        "ms-toolsai.jupyter",
+        "anthropic.claude-code"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  },
+
+  "forwardPorts": [8888, 8080],
+  "remoteUser": "vscode",
+
+  // Environment variables to match Mac M PyTorch behavior
+  "remoteEnv": {
+    "PYTHONHASHSEED": "0",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1", 
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "TORCH_CUDNN_V8_API_DISABLED": "1",
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "PYTORCH_ENABLE_MPS_FALLBACK": "1",
+    "PYTORCH_MPS_HIGH_WATERMARK_RATIO": "0.0"
+  }
+}
