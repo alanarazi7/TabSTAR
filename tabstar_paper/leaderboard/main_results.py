@@ -20,7 +20,7 @@ def display_main_results(df: DataFrame):
     df = df.copy()
     df, task = filter_by_task(df)
     df, condition = filter_condition(df, key="main")
-    df = filter_models(df, condition=condition)
+    df = filter_models(df, condition=condition, key="main")
     df = df[[MODEL, DATASET, DATASET_SIZE, TEST_SCORE, FOLD, BASE_MODEL, IS_TUNED]]
     assert len(df) == len(df[[MODEL, DATASET, DATASET_SIZE, FOLD]].drop_duplicates()), "Duplicate runs found!"
     df = add_norm_score(df)

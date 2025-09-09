@@ -5,6 +5,7 @@ from pandas import DataFrame, Series
 from tabstar_paper.leaderboard.data.ci import get_var_ci
 from tabstar_paper.leaderboard.data.keys import MODEL, DATASET, TEST_SCORE, FOLD, TASK
 from tabstar_paper.leaderboard.filters.condition import filter_condition
+from tabstar_paper.leaderboard.filters.models import filter_models
 from tabstar_paper.leaderboard.filters.tasks import add_task_col, TabularTask
 
 REF_SCORE = "ref_score"
@@ -15,10 +16,12 @@ def do_win_rate_analysis(df: DataFrame):
     df = df.copy()
     df = add_task_col(df)
     df, condition = filter_condition(df, key="win")
+    df = filter_models(df, condition=condition, key="win")
     available_models = sorted(set(df[MODEL]))
     # TODO: make this not hardcoded
     sota_model = "TabSTAR-Unlimit 🌟" if "TabSTAR-Unlimit 🌟" in available_models else "TabSTAR 🌟"
-    reference = st.selectbox("Select reference model", available_models, index=available_models.index(sota_model))
+    index = available_models.index(sota_model) if sota_model in available_models else 0
+    reference = st.selectbox("Select reference model", available_models, index=index)
     df = df[[DATASET, TEST_SCORE, FOLD, MODEL, TASK]]
     ref_df = df[df[MODEL] == reference]
     ref_df = ref_df.rename(columns={TEST_SCORE: REF_SCORE}).drop(columns=[MODEL])
@@ -35,9 +38,9 @@ def do_win_rate_analysis(df: DataFrame):
             ci = get_var_ci(compare_df, score_key=WIN)
             avg = ci.avg * 100
             half = ci.half * 100
-            ci_str = f"{avg:.1f}±{half:.1f}"
-            if ci_str == "100.0±0.0":
-                ci_str = "100±0.0"
+            ci_str = f"{avg:.1f} ± {half:.1f}"
+            if ci_str == "100.0 ± 0.0":
+                ci_str = "100 ± 0.0"
             rows.append({MODEL: model, TASK: task, 'ci_str': ci_str})
     df = pd.DataFrame(rows)
     pivot_df = df.pivot(index=MODEL, columns=TASK, values='ci_str').reset_index()

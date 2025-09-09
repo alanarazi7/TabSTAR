@@ -14,10 +14,11 @@ DEFAULT_MODELS = {m.MODEL_NAME for m in [CatBoost, XGBoost, LightGBM, RealMLP, R
 
 
 
-def filter_models(df: DataFrame, condition: Condition) -> DataFrame:
+def filter_models(df: DataFrame, condition: Condition, key: str) -> DataFrame:
     model_options = sorted(set(df[MODEL]))
     if condition == Condition.UNLIMITED:
         model_options = [m for m in model_options if m not in DEFAULT_MODELS]
-    models = st.multiselect("Models", model_options, default=model_options)
+    models = st.multiselect("Models", model_options, default=model_options,
+                            key=f"model_filter_{key}")
     df = df[df[MODEL].isin(models)]
     return df
