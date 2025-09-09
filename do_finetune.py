@@ -1,7 +1,7 @@
 import argparse
 from dataclasses import dataclass
 from os.path import join
-from typing import Optional
+from typing import Optional, Self
 
 import torch
 import wandb
