@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from tabstar_paper.leaderboard.data.keys import IS_TUNED, BASE_MODEL, MODEL, DATASET_SIZE, DATASET, IS_CLS, UNLIMIT, \
+from tabstar_paper.leaderboard.data.keys import IS_TUNED, BASE_MODEL, MODEL, DATASET_SIZE, DATASET, UNLIMIT, \
     FOLD, BEST_VAL_LOSS
 
 
@@ -28,7 +28,6 @@ def get_results_data():
         df[BASE_MODEL] = df[MODEL].apply(_get_base_model)
         if set(df[DATASET_SIZE]) == {100000}:
             df[MODEL] = df[MODEL].apply(_add_unlimit_suffix)
-        df[IS_CLS] = df[DATASET].apply(lambda x: not x.startswith('REG_'))
         dfs.append(df)
     df = pd.concat(dfs)
     return df

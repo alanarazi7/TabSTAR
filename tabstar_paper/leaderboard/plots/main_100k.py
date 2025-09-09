@@ -6,6 +6,7 @@ import matplotlib.ticker as ticker
 import matplotlib as mpl
 
 from tabstar_paper.leaderboard.data.keys import MODEL, UNLIMIT, BASE_MODEL
+from tabstar_paper.leaderboard.filters.tasks import TabularTask, TASK2PRETTY
 from tabstar_paper.leaderboard.plots.main_10k import PlotTheme, add_errorbar
 
 ## TODO: multiple functions could be merge with the 10K version
@@ -39,7 +40,7 @@ def pack_rows_by_limit(data: pd.DataFrame, mean_col: str) -> list[tuple[str, pd.
     return rows
 
 
-def plot_grouped_by_limit(df: pd.DataFrame, task_types: str, num_datasets: int):
+def plot_grouped_by_limit(df: pd.DataFrame, num_datasets: int, task: TabularTask):
     assert any(UNLIMIT in m for m in set(df[MODEL])), "This plot is for 100K"
     pt = PlotTheme(baseline_dark_col="thistle", baseline_light_col="lavender")
     data = df.copy()
@@ -108,9 +109,7 @@ def plot_grouped_by_limit(df: pd.DataFrame, task_types: str, num_datasets: int):
     ax.set_axisbelow(True)
     ax.set_xlim(0, 1)
 
-    pretty_task = {"CLS": "Classification", "REG": "Regression"}
-    task_types_pretty = pretty_task.get(task_types, task_types)
-    ax.set_title(f"{task_types_pretty} - Above 10K examples ({num_datasets} datasets)")
+    ax.set_title(f"{TASK2PRETTY[task]} - Above 10K examples ({num_datasets} datasets)")
     ax.set_xlabel("Normalized Score", fontsize=base_fs + 2)
 
     legend_handles = build_legend_handles(pt=pt)
