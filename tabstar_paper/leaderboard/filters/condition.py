@@ -14,8 +14,9 @@ class Condition(StrEnum):
 
 
 
-def filter_condition(df: DataFrame) -> Tuple[DataFrame, Condition]:
-    condition = st.selectbox("Condition", [Condition.TEN_K, Condition.UNLIMITED], index=0)
+def filter_condition(df: DataFrame, key: str) -> Tuple[DataFrame, Condition]:
+    condition = st.selectbox("Condition", [Condition.TEN_K, Condition.UNLIMITED], index=0,
+                             key=f"condition_filter_{key}")
     if condition == Condition.TEN_K:
         df = df[df['dataset_size'] == 10_000]
     else:

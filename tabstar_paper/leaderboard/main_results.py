@@ -6,7 +6,6 @@ from tabstar_paper.leaderboard.data.ci import df_ci_for_model
 from tabstar_paper.leaderboard.data.highlighting import st_dataframe_highlight_extremes
 from tabstar_paper.leaderboard.data.keys import (MODEL, DATASET, FOLD, TEST_SCORE, IS_TUNED,
                                                  BASE_MODEL, DATASET_SIZE, NORM_SCORE)
-from tabstar_paper.leaderboard.data.loading import load_leaderboard_data
 from tabstar_paper.leaderboard.data.normalizing import add_norm_score
 from tabstar_paper.leaderboard.filters.condition import filter_condition, Condition
 from tabstar_paper.leaderboard.filters.models import filter_models
@@ -17,10 +16,10 @@ from tabstar_paper.leaderboard.plots.main_10k import plot_grouped_models
 from tabstar_paper.leaderboard.plots.utils import download_st_fig
 
 
-def display_main_results():
-    df = load_leaderboard_data()
+def display_main_results(df: DataFrame):
+    df = df.copy()
     df, task = filter_by_task(df)
-    df, condition = filter_condition(df)
+    df, condition = filter_condition(df, key="main")
     df = filter_models(df, condition=condition)
     df = df[[MODEL, DATASET, DATASET_SIZE, TEST_SCORE, FOLD, BASE_MODEL, IS_TUNED]]
     assert len(df) == len(df[[MODEL, DATASET, DATASET_SIZE, FOLD]].drop_duplicates()), "Duplicate runs found!"

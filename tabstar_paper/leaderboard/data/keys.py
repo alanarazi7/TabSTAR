@@ -2,6 +2,7 @@
 MODEL = "model"
 BASE_MODEL = "base_model"
 DATASET = "dataset"
+TASK = "task"
 DATASET_SIZE = "dataset_size"
 FOLD = "fold"
 IS_TUNED = "is_tuned"
