@@ -34,7 +34,7 @@ def do_split(x: DataFrame, y: Series, test_size: int, is_cls: bool, fold: int) -
         return train_test_split(x, y, test_size=test_size, random_state=random_state)
     num_classes = y.nunique()
     if num_classes == 2:
-        return _split_for_binary_classification(x, y, test_size=test_size, random_state=random_state) # this function caused the issue
+        return _split_for_binary_classification(x, y, test_size=test_size, random_state=random_state)
     has_rare_class = y.value_counts().min() <= 1
     if has_rare_class:
         return _split_with_rare_classes(x, y, test_size=test_size, random_state=random_state)
