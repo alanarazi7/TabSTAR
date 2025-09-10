@@ -20,9 +20,9 @@ def _test_evaluate(model_cls: Type[TabularModel], fold: int = 0) -> float:
 def test_catboost():
     f0 = _test_evaluate(model_cls=CatBoost, fold=0)
     f1 = _test_evaluate(model_cls=CatBoost, fold=0)
-    expected_score = 0.7314
+    expected_score = 0.6595
     assert f0 == f1 == pytest.approx(expected_score, abs=1e-4)
     f0 = _test_evaluate(model_cls=CatBoost, fold=1)
     f1 = _test_evaluate(model_cls=CatBoost, fold=1)
-    expected_score = 0.6062
+    expected_score = 0.6852
     assert f0 == f1 == pytest.approx(expected_score, abs=1e-4)

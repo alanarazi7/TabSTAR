@@ -62,9 +62,10 @@ def _split_for_binary_classification(x: DataFrame, y: Series, test_size: int, ra
     test_indices = []
     y_values = sorted(set(y))
     assert len(y_values) == 2, f"Expected 2 classes, got {y_values}"
+    random_number_generator = np.random.RandomState(random_state)
     for v in y_values:
         v_indices = y[y == v].index.tolist()
-        v_idx = random.choice(v_indices)
+        v_idx = random_number_generator.choice(v_indices)
         test_indices.append(v_idx)
     x_single_test = x.loc[test_indices]
     y_single_test = y.loc[test_indices]
