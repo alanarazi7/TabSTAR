@@ -9,6 +9,7 @@ IS_TUNED = "is_tuned"
 TEST_SCORE = "test_score"
 NORM_SCORE = "norm_score"
 BEST_VAL_LOSS = "best_val_loss"
+OPTUNA_TRIALS = "optuna_n_trials"
 
 # Suffix
 UNLIMIT = "-Unlimit"

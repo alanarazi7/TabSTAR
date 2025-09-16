@@ -26,10 +26,14 @@ def get_results_data():
             df = aggregate_carte_data(df)
         df[IS_TUNED] = df[MODEL].apply(lambda x: 'Tuned' in x)
         df[BASE_MODEL] = df[MODEL].apply(_get_base_model)
-        if set(df[DATASET_SIZE]) == {100000}:
-            df[MODEL] = df[MODEL].apply(_add_unlimit_suffix)
+        add_suffix_if_unlimited(df)
         dfs.append(df)
     df = pd.concat(dfs)
+    return df
+
+def add_suffix_if_unlimited(df: pd.DataFrame) -> pd.DataFrame:
+    if set(df[DATASET_SIZE]) == {100000}:
+        df[MODEL] = df[MODEL].apply(_add_unlimit_suffix)
     return df
 
 def _add_unlimit_suffix(s: str) -> str:
