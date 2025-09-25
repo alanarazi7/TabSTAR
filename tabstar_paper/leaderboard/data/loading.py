@@ -25,7 +25,7 @@ def get_results_data():
         if 'carte' in f:
             df = aggregate_carte_data(df)
         df[IS_TUNED] = df[MODEL].apply(lambda x: 'Tuned' in x)
-        df[BASE_MODEL] = df[MODEL].apply(_get_base_model)
+        df[BASE_MODEL] = df[MODEL].apply(get_base_model)
         add_suffix_if_unlimited(df)
         dfs.append(df)
     df = pd.concat(dfs)
@@ -40,7 +40,9 @@ def _add_unlimit_suffix(s: str) -> str:
     model_name, emoji = s.split()
     return f"{model_name}{UNLIMIT} {emoji}"
 
-def _get_base_model(s: str) -> str:
+def get_base_model(s: str) -> str:
+    if len(s.split()) == 1:
+        return s
     model_name, emoji = s.split()
     return model_name.replace("-Tuned", "")
 

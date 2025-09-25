@@ -18,7 +18,7 @@ from tabstar_paper.leaderboard.plots.utils import download_st_fig
 
 def display_main_results(df: DataFrame):
     df = df.copy()
-    df, task = filter_by_task(df)
+    df, task = filter_by_task(df, key="main")
     df, condition = filter_condition(df, key="main")
     df = filter_models(df, condition=condition, key="main")
     df = df[[MODEL, DATASET, DATASET_SIZE, TEST_SCORE, FOLD, BASE_MODEL, IS_TUNED]]

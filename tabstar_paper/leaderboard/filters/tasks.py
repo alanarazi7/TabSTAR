@@ -17,9 +17,10 @@ TASK2PRETTY = {
     TabularTask.REG: "Regression"
 }
 
-def filter_by_task(df: DataFrame) -> Tuple[DataFrame, TabularTask]:
+def filter_by_task(df: DataFrame, key: str) -> Tuple[DataFrame, TabularTask]:
     df = add_task_col(df)
-    task = st.selectbox("Task", [TabularTask.CLS, TabularTask.REG], index=0)
+    task = st.selectbox("Task", [TabularTask.CLS, TabularTask.REG], index=0,
+                        key=f"task_filter_{key}")
     df = df[df[TASK] == str(task)]
     return df, task
 

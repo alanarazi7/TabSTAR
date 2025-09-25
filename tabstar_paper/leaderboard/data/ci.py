@@ -26,7 +26,7 @@ def get_var_ci(df: DataFrame, score_key: str) -> CI:
 
 
 def df_ci_for_model(df: DataFrame, score_key: str) -> DataFrame:
-    group_cols = [MODEL, DATASET_SIZE, BASE_MODEL, IS_TUNED]
+    group_cols = [c for c in [MODEL, DATASET_SIZE, BASE_MODEL, IS_TUNED] if c in df.columns]
     final_scores = []
     for keys, model_df in df.groupby(group_cols):
         ci = get_var_ci(model_df, score_key=score_key)

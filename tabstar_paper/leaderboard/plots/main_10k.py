@@ -11,17 +11,18 @@ from tabstar_paper.leaderboard.plots.plot_theme import PlotTheme
 
 ## TODO: this code is very legacy and AI assisted, could be cleaned up a lot
 
-def plot_grouped_models(df: pd.DataFrame, num_datasets: int, task: TabularTask):
+def plot_grouped_models(df: pd.DataFrame, num_datasets: int, task: TabularTask,
+                        base_model_key: str = BASE_MODEL) -> plt.Figure:
     assert not any(UNLIMIT in m for m in set(df[MODEL])), "This plot is for 10K only, no UNLIMIT models allowed!"
     data = df.copy()
     pt = PlotTheme()
 
     # Order rows by the best available mean across the pair
-    order = data.groupby(BASE_MODEL)[pt.avg].max().sort_values(ascending=False).index.tolist()
+    order = data.groupby(base_model_key)[pt.avg].max().sort_values(ascending=False).index.tolist()
     # Pack default/tuned rows per base
     packed = []
     for b in order:
-        block = data[data[BASE_MODEL] == b]
+        block = data[data[base_model_key] == b]
         default = block[~block[IS_TUNED]].head(1)  # may be empty
         tuned   = block[ block[IS_TUNED]].head(1)  # may be empty
         default = default.iloc[0] if len(default) else None
@@ -39,7 +40,8 @@ def plot_grouped_models(df: pd.DataFrame, num_datasets: int, task: TabularTask):
 
     for i, (base, default_row, tuned_row) in enumerate(packed):
         y = y_centers[i]
-        is_tabstar = base.startswith('TabSTAR')
+        # TODO: hacky, but colours TabSTAR experiments as well
+        is_tabstar = base.startswith(('TabSTAR', 'Scale', 'Unfreeze', 'Numerical'))
 
         # choose colors (TabSTAR stays orange for both; baselines use two blues)
         tuned_color   = pt.tabstar_color if is_tabstar else pt.baseline_dark_col
