@@ -1,5 +1,6 @@
 import streamlit as st
 
+from tabstar_paper.leaderboard.analysis.cost import display_cost_info
 from tabstar_paper.leaderboard.analysis.experiments import display_experiments_info
 from tabstar_paper.leaderboard.analysis.win_rate import do_win_rate_analysis
 from tabstar_paper.leaderboard.data.loading import load_leaderboard_data
@@ -9,8 +10,9 @@ from tabstar_paper.leaderboard.metadata_info import display_metadata_info
 
 def display_leaderboard():
     st.title("TabSTAR Leaderboard 🌟")
-    # Add experiments emoji
-    results, data, win, meta, exp = st.tabs(["🏆 Results", "🗂️ Data", "⚔️ Win Rate", "ℹ️️ Metadata",  "🧪 Experiments"])
+
+    tabs = ["🏆 Results", "🗂️ Data", "⚔️ Win Rate", "ℹ️️ Metadata", "🧪 Experiments", "💰 Costs"]
+    results, data, win, meta, exp, cost = st.tabs(tabs)
     df = load_leaderboard_data()
     with results:
         display_main_results(df=df)
@@ -23,6 +25,8 @@ def display_leaderboard():
         display_metadata_info()
     with exp:
         display_experiments_info(leaderboard_df=df)
+    with cost:
+        display_cost_info()
 
 
 
