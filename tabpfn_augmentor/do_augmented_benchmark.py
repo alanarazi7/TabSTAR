@@ -5,16 +5,13 @@ from tabpfn_augmentor.evaluator import evaluate_on_augmented_dataset
 from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar.training.devices import get_device
 from tabstar_paper.baselines.abstract_model import TabularModel
-from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
 from tabstar_paper.baselines.xgboost import XGBoost
 
 augment_benchmark = [
-    OpenMLDatasetID.BIN_SOCIAL_IMDB_GENRE_PREDICTION,
     OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN,
     OpenMLDatasetID.REG_SPORTS_MONEYBALL,
-    OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
     OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
 ]
 
