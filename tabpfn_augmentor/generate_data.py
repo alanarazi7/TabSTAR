@@ -8,11 +8,11 @@ from tabpfn_extensions.unsupervised.experiments import GenerateSyntheticDataExpe
 
 
 # adapted from: https://github.com/PriorLabs/tabpfn-extensions/blob/main/examples/unsupervised/generate_data.py
-def generate_with_tabpfn(x_train: DataFrame,
-                         y_train: Series,
-                         is_cls: bool,
-                         augmenting_factor: int = 3,
-                         temperature: float = 1.0) -> GenerateSyntheticDataExperiment:
+def augment_with_tabpfn(x_train: DataFrame,
+                        y_train: Series,
+                        is_cls: bool,
+                        augmenting_factor: int = 3,
+                        temperature: float = 1.0) -> GenerateSyntheticDataExperiment:
     clf = TabPFNClassifier(n_estimators=3)
     reg = TabPFNRegressor(n_estimators=3)
     model_unsupervised = TabPFNUnsupervisedModel(tabpfn_clf=clf, tabpfn_reg=reg,)
