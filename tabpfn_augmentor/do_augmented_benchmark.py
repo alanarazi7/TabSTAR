@@ -10,8 +10,10 @@ from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
 from tabstar_paper.baselines.xgboost import XGBoost
 
 augment_benchmark = [
-    OpenMLDatasetID.BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,
     # TODO: the code runs into a lot of edge-case errors when using other datasets...
+    OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
+    OpenMLDatasetID.BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,
+
     '''
      File "/Users/alanarazi/tabstar_code/TabSTAR/.TabSTAR-env/lib/python3.11/site-packages/tabpfn_extensions/unsupervised/unsupervised.py", line 172, in impute_
     pred = torch.stack([d for d in densities]).mean(dim=0)
@@ -27,6 +29,9 @@ models = [XGBoost, RealMLP, TabPFNv2]
 num_folds = 5
 
 augmentations = [True, False]
+
+max_examples = 500
+max_features = 3
 
 @dataclass
 class TabularTask:
@@ -48,7 +53,8 @@ def eval_augmented_benchmark():
     device = get_device()
     for t in tabular_tasks:
         res = evaluate_on_augmented_dataset(model_cls=t.model, dataset_id=t.dataset,
-                                            do_augment=t.do_augment, fold=t.fold, device=device)
+                                            do_augment=t.do_augment, fold=t.fold, device=device,
+                                            train_examples=max_examples, max_features=max_features)
         results.append(res)
 
 
