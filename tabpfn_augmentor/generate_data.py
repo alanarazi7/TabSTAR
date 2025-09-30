@@ -17,9 +17,9 @@ def augment_with_tabpfn(x_train: DataFrame,
     reg = TabPFNRegressor(n_estimators=3)
     model_unsupervised = TabPFNUnsupervisedModel(tabpfn_clf=clf, tabpfn_reg=reg,)
     attribute_names = x_train.columns.tolist()
-    x_tensor = torch.tensor(x_train.values, dtype=torch.float32)
+    x_tensor = torch.tensor(x_train.to_numpy(), dtype=torch.float32)
     y_dtype = torch.long if is_cls else torch.float32
-    y_tensor = torch.tensor(y_train.values, dtype=y_dtype)
+    y_tensor = torch.tensor(y_train.to_numpy(), dtype=y_dtype)
     current_n_samples = x_train.shape[0]
     exp_synthetic = GenerateSyntheticDataExperiment(task_type="unsupervised")
     exp_synthetic.run(

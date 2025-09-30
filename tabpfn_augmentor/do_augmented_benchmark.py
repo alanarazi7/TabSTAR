@@ -18,7 +18,7 @@ augment_benchmark = [
     OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
 ]
 
-models = [XGBoost, RealMLP, CatBoost, TabPFNv2]
+models = [XGBoost, RealMLP, TabPFNv2]
 
 @dataclass
 class TabularTask:
