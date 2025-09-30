@@ -15,6 +15,17 @@ def remove_semantics(x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
     return x, y
 
 
+def fill_nulls(x: DataFrame, y: Series) -> Tuple[DataFrame, Series]:
+    # Fill nulls with mean for numerical columns, and with a new category for categorical columns
+    for col in x.columns:
+        if is_numeric_dtype(x[col]):
+            mean_val = x[col].mean()
+            x[col] = x[col].fillna(mean_val)
+    if is_numeric_dtype(y):
+        mean_val = y.mean()
+        y = y.fillna(mean_val)
+    return x, y
+
 
 def transform_to_categorical(s: Series):
     val2idx = {}

@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 
 from tabpfn_augmentor.generate_data import augment_with_tabpfn
-from tabpfn_augmentor.numericalization import remove_semantics
+from tabpfn_augmentor.data_cleaning import remove_semantics, fill_nulls
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.preprocessing.splits import split_to_test
 from tabstar_paper.baselines.abstract_model import TabularModel
@@ -29,6 +29,7 @@ def evaluate_on_augmented_dataset(model_cls: Type[TabularModel],
     is_cls = dataset.is_cls
     x, y = subsample_dataset(x=dataset.x, y=dataset.y, is_cls=is_cls, train_examples=train_examples, fold=fold)
     x, y = remove_semantics(x, y)
+    x, y = fill_nulls(x, y)
     x = x.iloc[:, :max_features]
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
     if do_augment:

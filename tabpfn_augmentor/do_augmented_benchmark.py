@@ -10,11 +10,12 @@ from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
 from tabstar_paper.baselines.xgboost import XGBoost
 
 augment_benchmark = [
-    OpenMLDatasetID.REG_ANONYM_HOUSE_16H,
-    OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
-    OpenMLDatasetID.MUL_NATURE_YEAST_PROTEIN,
-    OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
-    OpenMLDatasetID.BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,
+    OpenMLDatasetID.BIN_ANONYM_ALBERT,
+    # OpenMLDatasetID.REG_ANONYM_HOUSE_16H,
+    # OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
+    # OpenMLDatasetID.MUL_NATURE_YEAST_PROTEIN,
+    # OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
+    # OpenMLDatasetID.BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,
 ]
 
 models = [XGBoost, ]#RealMLP, TabPFNv2]
@@ -23,8 +24,8 @@ num_folds = 1
 
 augmentations = [True, False]
 
-max_examples = 1000
-max_features = 10
+max_examples = 500
+max_features = 5
 
 @dataclass
 class TabularTask:
