@@ -12,6 +12,7 @@ from tabstar.preprocessing.splits import split_to_test
 from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.datasets.downloading import download_dataset
 from tabstar_paper.datasets.objects import SupervisedTask
+from tabstar_paper.leaderboard.data.keys import MODEL, DATASET, FOLD, TEST_SCORE
 from tabstar_paper.preprocessing.sampling import subsample_dataset
 
 
@@ -44,16 +45,18 @@ def evaluate_on_augmented_dataset(model_cls: Type[TabularModel],
     metrics = model.score_all_metrics(X=x_test, y=y_test)
     runtime = time.time() - start_time
     d_summary = {
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-        "model": name,
-        "dataset": dataset_id.name,
-        "fold": fold,
-        "train_examples": train_examples,
-        "test_score": metrics.score,
-        "metrics_dict": asdict(metrics),
-        "runtime": runtime,
-        "max_features": max_features,
+        MODEL: name,
+        DATASET: dataset_id.name,
+        FOLD: fold,
+        TEST_SCORE: metrics.score,
+        "augment": do_augment,
+        # "base_model": model_cls.MODEL_NAME,
+        # "train_examples": train_examples,
+        # "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        # "metrics_dict": asdict(metrics),
+        # "runtime": runtime,
+        # "max_features": max_features,
+        # "do_augment": do_augment,
            }
-    print(f"Scored {metrics.score:.4f} on dataset {dataset_id.name}, fold {fold} in {int(runtime)} seconds,"
-          f"augment: {do_augment}, train_samples {train_examples}, max features {max_features}.")
+    print(d_summary)
     return d_summary

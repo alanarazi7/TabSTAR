@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from typing import Type
 
+import pandas as pd
+from pandas import DataFrame
+
 from tabpfn_augmentor.evaluator import evaluate_on_augmented_dataset
 from tabstar.datasets.all_datasets import OpenMLDatasetID
 from tabstar.training.devices import get_device
@@ -8,6 +11,7 @@ from tabstar_paper.baselines.abstract_model import TabularModel
 from tabstar_paper.baselines.realmlp import RealMLP
 from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
 from tabstar_paper.baselines.xgboost import XGBoost
+from tabstar_paper.leaderboard.data.keys import DATASET, MODEL, TEST_SCORE
 
 augment_benchmark = [
     OpenMLDatasetID.BIN_ANONYM_ALBERT,
@@ -18,14 +22,14 @@ augment_benchmark = [
     # OpenMLDatasetID.BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,
 ]
 
-models = [XGBoost, ]#RealMLP, TabPFNv2]
+models = [XGBoost, TabPFNv2] #RealMLP, TabPFNv2]
 
-num_folds = 1
+num_folds = 3
 
 augmentations = [True, False]
 
-max_examples = 500
-max_features = 5
+max_examples = 300
+max_features = 3
 
 @dataclass
 class TabularTask:
@@ -50,6 +54,13 @@ def eval_augmented_benchmark():
                                             do_augment=t.do_augment, fold=t.fold, device=device,
                                             train_examples=max_examples, max_features=max_features)
         results.append(res)
+    df = DataFrame(results)
+    pivot_df = df.pivot_table(index=[DATASET], columns=[MODEL, "augment"], values=[TEST_SCORE])
+    pd.set_option("display.max_rows", None)
+    pd.set_option("display.max_columns", None)
+    pd.set_option("display.max_colwidth", None)
+    pd.set_option("display.expand_frame_repr", False)
+    print(pivot_df)
 
 
 if __name__ == "__main__":

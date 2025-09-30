@@ -30,7 +30,7 @@ def download_dataset(dataset_id: TabularDatasetID) -> TabularDataset:
 def load_openml_dataset(dataset_id: OpenMLDatasetID) -> TabularDataset:
     for i in range(10):
         try:
-            print(f"💾 Downloading OpenML dataset {dataset_id.name}")
+            # print(f"💾 Downloading OpenML dataset {dataset_id.name}")
             openml_dataset = openml.datasets.get_dataset(dataset_id.value, download_data=True, download_features_meta_data=True)
             x, y, _, _ = openml_dataset.get_data(target=openml_dataset.default_target_attribute)
             dataset = curate_dataset(x=x, y=y, dataset_id=dataset_id)
