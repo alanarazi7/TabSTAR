@@ -1,0 +1,12 @@
+{'model': 'XGBoost 🌲', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 0, 'test_score': 0.22662419770397013, 'augment': True}
+{'model': 'XGBoost 🌲', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 0, 'test_score': 0.17724055908374337, 'augment': False}
+{'model': 'XGBoost 🌲', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 1, 'test_score': 0.21254281804930353, 'augment': True}
+{'model': 'XGBoost 🌲', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 1, 'test_score': 0.176386309194558, 'augment': False}
+{'model': 'XGBoost 🌲', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 2, 'test_score': 0.17393078792660654, 'augment': True}
+{'model': 'XGBoost 🌲', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 2, 'test_score': 0.14422083875681124, 'augment': False}
+{'model': 'TabPFN-v2 🤯', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 0, 'test_score': 0.2537203166806117, 'augment': True}
+{'model': 'TabPFN-v2 🤯', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 0, 'test_score': 0.2854013017190109, 'augment': False}
+{'model': 'TabPFN-v2 🤯', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 1, 'test_score': 0.24415936393949667, 'augment': True}
+{'model': 'TabPFN-v2 🤯', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 1, 'test_score': 0.2809928733115148, 'augment': False}
+{'model': 'TabPFN-v2 🤯', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 2, 'test_score': 0.2586043359699549, 'augment': True}
+{'model': 'TabPFN-v2 🤯', 'dataset': 'REG_HOUSES_CALIFORNIA_PRICES_2020', 'fold': 2, 'test_score': 0.2823109716259733, 'augment': False}
