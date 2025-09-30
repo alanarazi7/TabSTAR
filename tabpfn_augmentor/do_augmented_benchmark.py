@@ -29,7 +29,7 @@ num_folds = 3
 augmentations = [True, False]
 
 max_examples = 500
-max_features = 10
+max_features = 8
 
 @dataclass
 class TabularTask:
