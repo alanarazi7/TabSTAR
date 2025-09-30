@@ -20,6 +20,6 @@ def transform_to_categorical(s: Series):
     val2idx = {}
     for v in s.unique():
         if v not in val2idx:
-            val2idx[v] = len(val2idx)
+            val2idx[v] = float(len(val2idx))
     s_cat = s.map(val2idx)
     return s_cat
