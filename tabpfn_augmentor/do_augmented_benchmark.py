@@ -14,6 +14,10 @@ from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.leaderboard.data.keys import DATASET, MODEL, TEST_SCORE
 
 augment_benchmark = [
+    OpenMLDatasetID.BIN_ANONYM_CHRISTINE,
+    OpenMLDatasetID.BIN_ANONYM_GINA,
+    OpenMLDatasetID.BIN_ANONYM_MADELINE,
+    OpenMLDatasetID.BIN_ANONYM_MADELONE,
     OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
     OpenMLDatasetID.MUL_NATURE_YEAST_PROTEIN,
     OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
