@@ -15,7 +15,7 @@ from tabstar_paper.leaderboard.data.keys import DATASET, MODEL, TEST_SCORE
 
 augment_benchmark = [
     OpenMLDatasetID.BIN_ANONYM_ALBERT,
-    # OpenMLDatasetID.REG_ANONYM_HOUSE_16H,
+    OpenMLDatasetID.REG_ANONYM_HOUSE_16H,
     # OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
     # OpenMLDatasetID.MUL_NATURE_YEAST_PROTEIN,
     # OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
@@ -28,7 +28,7 @@ num_folds = 3
 
 augmentations = [True, False]
 
-max_examples = 500
+max_examples = 1000
 max_features = 8
 
 @dataclass
