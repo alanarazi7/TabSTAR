@@ -14,6 +14,7 @@ from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.leaderboard.data.keys import DATASET, MODEL, TEST_SCORE
 
 augment_benchmark = [
+    OpenMLDatasetID.REG_SPORTS_MONEYBALL,
     OpenMLDatasetID.BIN_ANONYM_ALBERT,
     OpenMLDatasetID.REG_ANONYM_HOUSE_16H,
     # OpenMLDatasetID.REG_HOUSES_CALIFORNIA_PRICES_2020,
