@@ -2,6 +2,7 @@ import time
 from dataclasses import asdict
 from typing import Type, Dict
 
+import pandas as pd
 import torch
 
 from tabpfn_augmentor.generate_data import augment_with_tabpfn
@@ -31,8 +32,9 @@ def evaluate_on_augmented_dataset(model_cls: Type[TabularModel],
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
     if do_augment:
          # TODO: for efficiency and fairness, the augmentation should happen only once per dataset/fold for all methods
-         exp_synthetic = augment_with_tabpfn(x_train, y_train, is_cls=is_cls)
-         raise NotImplementedError("Augmentation not implemented yet.")
+         synth_x, synth_y = augment_with_tabpfn(x_train, y_train, is_cls=is_cls)
+         x_train = pd.concat([x_train, synth_x], ignore_index=True)
+         y_train = pd.concat([y_train, synth_y], ignore_index=True)
     prefix2task = {"REG": SupervisedTask.REGRESSION, "BIN": SupervisedTask.BINARY, "MUL": SupervisedTask.MULTICLASS}
     problem_type = prefix2task[dataset_id.name[:3]]
     model = model_cls(problem_type=problem_type, device=device)

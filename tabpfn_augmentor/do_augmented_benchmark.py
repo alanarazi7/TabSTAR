@@ -10,10 +10,16 @@ from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
 from tabstar_paper.baselines.xgboost import XGBoost
 
 augment_benchmark = [
-    OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
-    OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN,
-    OpenMLDatasetID.REG_SPORTS_MONEYBALL,
-    OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
+    OpenMLDatasetID.BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION,
+    # TODO: the code runs into a lot of edge-case errors when using other datasets...
+    '''
+     File "/Users/alanarazi/tabstar_code/TabSTAR/.TabSTAR-env/lib/python3.11/site-packages/tabpfn_extensions/unsupervised/unsupervised.py", line 172, in impute_
+    pred = torch.stack([d for d in densities]).mean(dim=0)
+    '''
+    # OpenMLDatasetID.BIN_HEALTHCARE_BREAST_CANCER_WISCONSIN,
+    # OpenMLDatasetID.BIN_FINANCIAL_CREDIT_GERMAN,
+    # OpenMLDatasetID.REG_SPORTS_MONEYBALL,
+    # OpenMLDatasetID.MUL_NATURE_EUCALYPTUS_SEED,
 ]
 
 models = [XGBoost, RealMLP, TabPFNv2]

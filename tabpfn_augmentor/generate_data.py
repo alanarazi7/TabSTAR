@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 from pandas import DataFrame, Series
 from tabpfn import TabPFNRegressor
@@ -12,7 +14,7 @@ def augment_with_tabpfn(x_train: DataFrame,
                         y_train: Series,
                         is_cls: bool,
                         augmenting_factor: int = 3,
-                        temperature: float = 1.0) -> GenerateSyntheticDataExperiment:
+                        temperature: float = 1.0) -> Tuple[DataFrame, Series]:
     clf = TabPFNClassifier(n_estimators=3)
     reg = TabPFNRegressor(n_estimators=3)
     model_unsupervised = TabPFNUnsupervisedModel(tabpfn_clf=clf, tabpfn_reg=reg,)
@@ -30,4 +32,24 @@ def augment_with_tabpfn(x_train: DataFrame,
         temp=temperature,
         n_samples=current_n_samples * augmenting_factor,
     )
-    return exp_synthetic
+    synth_y = predict_y_with_tabpfn(exp=exp_synthetic, is_cls=is_cls)
+    synth_x = DataFrame(data=exp_synthetic.synthetic_X, columns=attribute_names)
+    synth_y = Series(data=synth_y, name=y_train.name)
+    return synth_x, synth_y
+
+
+
+def predict_y_with_tabpfn(exp: GenerateSyntheticDataExperiment, is_cls: bool):
+    synth_x = exp.synthetic_X
+    x = exp.X
+    y = exp.y
+    if is_cls:
+        clf = TabPFNClassifier()
+        clf.fit(x, y)
+        synth_y = clf.predict(synth_x)
+    else:
+        reg = TabPFNRegressor()
+        reg.fit(x, y)
+        synth_y = reg.predict(synth_x)
+    return synth_y
+
