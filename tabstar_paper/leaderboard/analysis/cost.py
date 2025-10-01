@@ -4,7 +4,7 @@ from os.path import join, dirname
 import streamlit as st
 from pandas import DataFrame, read_csv, concat
 
-from tabstar_paper.leaderboard.data.keys import MODEL
+from tabstar_paper.leaderboard.data.keys import MODEL, DATASET, FOLD
 
 TRAIN_TIME = "Train Time"
 TRAIN_GPU = "Train GPU"
@@ -50,3 +50,9 @@ def display_cost_info():
                                     }).reset_index()
     agg_df = agg_df.round(2)
     st.dataframe(agg_df)
+    st.divider()
+    st.markdown("## Run Time ⏱️")
+    df = df[[MODEL, DATASET, TRAIN_TIME, FOLD]]
+    df = df[df[MODEL].apply(lambda m: 'cpu' not in m.lower())]
+    pivot_df = df.pivot_table(index=[DATASET], columns=[MODEL], values=TRAIN_TIME, aggfunc='median').reset_index()
+    st.dataframe(pivot_df)
