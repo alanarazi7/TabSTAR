@@ -58,6 +58,14 @@ def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.devic
         text_encoders[str(col)] = pca_encoder
     return text_encoders
 
+def fit_text_encoders_from_saved_embeddings(x: DataFrame, text_features: Set[str], device: torch.device) -> Dict[str, PCA]:
+    text_encoders = {}
+    for col in text_features:
+        embeddings = pd.read_parquet('embeddings/embeddings_' + str(col) + '.parquet').set_index('text').to_numpy()
+        pca_encoder = PCA(n_components=PCA_COMPONENTS, random_state=SEED)
+        pca_encoder.fit(embeddings)
+        text_encoders[str(col)] = pca_encoder
+    return text_encoders
 
 def transform_text_features(x: DataFrame, text_encoders: Dict[str, PCA], device: torch.device) -> DataFrame:
     for text_col, text_pca_encoder in text_encoders.items():
