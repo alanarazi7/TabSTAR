@@ -1,5 +1,4 @@
 from typing import Tuple, Dict, Optional, Set, List
-import sys
 
 import numpy as np
 import torch
@@ -151,14 +150,3 @@ class TabularModel:
     def vprint(self, s: str):
         if self.verbose:
             print(s)
-
-    @staticmethod
-    def get_dataset_id_from_args():
-        """Extract dataset_id from command line arguments (sys.argv)."""
-        try:
-            idx = sys.argv.index('--dataset_id')
-            if idx + 1 < len(sys.argv):
-                return sys.argv[idx + 1]
-        except (ValueError, IndexError):
-            pass
-        return None
