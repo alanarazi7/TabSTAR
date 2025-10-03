@@ -55,7 +55,6 @@ E5_CACHED_MODEL = E5EmbeddingModel()
 
 def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.device) -> Dict[str, PCA]:
     
-
     # Get dataset info from command line args
     idx = sys.argv.index('--dataset_id')
     dataset_id_arg = sys.argv[idx + 1]
