@@ -1,4 +1,5 @@
 from typing import Tuple, Dict, Optional, Set, List
+import sys
 
 import numpy as np
 import torch
@@ -17,7 +18,7 @@ from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar_paper.preprocessing.categorical import fit_categorical_encoders, transform_categorical_features
 from tabstar_paper.preprocessing.feat_types import classify_semantic_features
 from tabstar_paper.preprocessing.numerical import fit_numerical_median, transform_numerical_features
-from tabstar_paper.preprocessing.text_embeddings import fit_text_encoders, fit_text_encoders_from_saved_embeddings, transform_text_features
+from tabstar_paper.preprocessing.text_embeddings import fit_text_encoders, transform_text_features
 from tabstar_paper.constants import CPU
 from tabstar_paper.datasets.objects import SupervisedTask
 
@@ -74,8 +75,7 @@ class TabularModel:
         if self.USE_CATEGORICAL_ENCODING:
             self.categorical_encoders = fit_categorical_encoders(x=x_train, categorical_features=self.categorical_features)
         if self.USE_TEXT_EMBEDDINGS:
-            # self.text_transformers = fit_text_encoders(x=x_train, text_features=self.text_features, device=self.device) # TODO revise once discussed
-            self.text_transformers = fit_text_encoders_from_saved_embeddings(x=x_train, text_features=self.text_features, device=self.device)
+            self.text_transformers = fit_text_encoders(x=x_train, text_features=self.text_features, device=self.device)
             self.vprint(f"📝 Detected {len(self.text_transformers)} text features: {sorted(self.text_transformers)}")
         self.fit_internal_preprocessor(x=x_train, y=y_train)
 
@@ -151,3 +151,14 @@ class TabularModel:
     def vprint(self, s: str):
         if self.verbose:
             print(s)
+
+    @staticmethod
+    def get_dataset_id_from_args():
+        """Extract dataset_id from command line arguments (sys.argv)."""
+        try:
+            idx = sys.argv.index('--dataset_id')
+            if idx + 1 < len(sys.argv):
+                return sys.argv[idx + 1]
+        except (ValueError, IndexError):
+            pass
+        return None
