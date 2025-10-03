@@ -20,6 +20,7 @@ from pandas import DataFrame
 import torch
 
 from tabstar.arch.config import E5_SMALL, D_MODEL
+from config import REPO_ID, E5_EMBEDDING_MODEL
 
 PCA_COMPONENTS = 30
 
@@ -53,9 +54,7 @@ E5_CACHED_MODEL = E5EmbeddingModel()
 
 
 def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.device) -> Dict[str, PCA]:
-    text_encoders = {}
-    REPO_ID = "prettyspeeches/embeddings-catalog"
-    EMBEDDING_MODEL_NAME = "intfloat-e5-small-v2"
+    
 
     # Get dataset info from command line args
     idx = sys.argv.index('--dataset_id')
@@ -64,10 +63,11 @@ def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.devic
     dataset_id = dataset_enum.name
     data_source = dataset_enum.__class__.__name__  # e.g., "OpenMLDatasetID"
     
+    text_encoders = {}
     for col in text_features:
         try:
             # Try to download embeddings from HuggingFace if we have dataset info
-            path_in_hf_repo = f"{EMBEDDING_MODEL_NAME}/{data_source}/{dataset_id}/{col}"
+            path_in_hf_repo = f"{E5_EMBEDDING_MODEL}/{data_source}/{dataset_id}/{col}"
             temp_file_path = hf_hub_download(
                 repo_id=REPO_ID,
                 filename=path_in_hf_repo,

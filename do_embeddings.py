@@ -10,7 +10,7 @@ from tabstar.preprocessing.feat_types import detect_numerical_features, transfor
 from tabstar_paper.datasets.downloading import download_dataset, get_dataset_from_arg
 from tabstar.preprocessing.dates import fit_date_encoders, transform_date_features
 from tabstar.preprocessing.sparse import densify_objects
-
+from config import REPO_ID, E5_EMBEDDING_MODEL
 
 def main():
     parser = argparse.ArgumentParser(description="Generate embeddings for text features in a dataset")
@@ -48,10 +48,6 @@ def main():
         print("No text features detected in the dataset!")
         return
     
-    # setup Huggingface repo
-    REPO_ID = "prettyspeeches/embeddings-catalog"
-    EMBEDDING_MODEL = "intfloat-e5-small-v2"
-
     # Create the repo if it doesn't exist
     create_repo(REPO_ID, repo_type="dataset", private=True, exist_ok=True)
     api = HfApi()
@@ -72,7 +68,7 @@ def main():
         
         data_source = dataset.dataset_id.__objclass__.__name__ 
         dataset_name = dataset.dataset_id._name_ 
-        path_in_repo = f"{EMBEDDING_MODEL}/{data_source}/{dataset_name}/{col}"
+        path_in_repo = f"{E5_EMBEDDING_MODEL}/{data_source}/{dataset_name}/{col}"
         api.upload_file(
             path_or_fileobj=buffer,
             path_in_repo=path_in_repo,
