@@ -68,7 +68,7 @@ class RealMLPTunedHyperparams:
     random_state: int = SEED
 
 
-class RealMlpOpt(TunedTabularModel):
+class RealMLPOpt(TunedTabularModel):
 
     MODEL_NAME = "RealMLP-Opt 🌐"
     SHORT_NAME = "realopt"

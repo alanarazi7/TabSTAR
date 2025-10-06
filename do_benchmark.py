@@ -4,11 +4,12 @@ from tabstar.tabstar_model import BaseTabSTAR
 from tabstar.training.devices import get_device
 from tabstar_paper.baselines.carte import CARTE
 from tabstar_paper.baselines.catboost import CatBoost, CatBoostOpt
-from tabstar_paper.baselines.lgbm import LightGBM
+from tabstar_paper.baselines.lgbm import LightGBM, LightGBMOpt
 from tabstar_paper.baselines.random_forest import RandomForest
-from tabstar_paper.baselines.realmlp import RealMLP
+from tabstar_paper.baselines.realmlp import RealMLP, RealMLPOpt
 from tabstar_paper.baselines.tabdpt import TabDPT
 from tabstar_paper.baselines.tabicl import TabICL
+from tabstar_paper.baselines.tabm import TabM, TabMOpt
 from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
 from tabstar_paper.baselines.xgboost import XGBoost, XGBoostOpt
 from tabstar_paper.benchmarks.evaluate import evaluate_on_dataset, DOWNSTREAM_EXAMPLES
@@ -16,8 +17,8 @@ from tabstar_paper.constants import DEVICE
 from tabstar_paper.datasets.downloading import get_dataset_from_arg
 from tabstar_paper.utils.logging import wandb_run, wandb_finish
 
-BASELINES = [CatBoost, CatBoostOpt, XGBoost, XGBoostOpt, LightGBM, RandomForest,
-             RealMLP,
+BASELINES = [CatBoost, CatBoostOpt, XGBoost, XGBoostOpt, LightGBM, LightGBMOpt, RandomForest,
+             RealMLP, RealMLPOpt, TabM, TabMOpt,
              CARTE,
              TabICL, TabDPT, TabPFNv2]
 
