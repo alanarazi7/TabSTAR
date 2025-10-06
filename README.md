@@ -138,7 +138,7 @@ python tabstar_paper/do_pretrain.py --n_datasets=256
 Once pretraining finishes, note the printed `<PRETRAINED_EXP>` identifier. Then run:
 
 ```bash
-python do_finetune.py --pretrain_exp=<PRETRAINED_EXP> --dataset_id=46655
+python tabstar_paper/do_finetune.py --pretrain_exp=<PRETRAINED_EXP> --dataset_id=46655
 ```
 
 `--dataset_id` is an ID for the downstream task you want to evaluate yourself on. Only the 400 datasets in the paper are supported.  
