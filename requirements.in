@@ -19,7 +19,7 @@ sentence_transformers
 scipy
 skrub
 streamlit
-tabdpt
+tabdpt          # TODO: try to upgrade to >= 1.1.5 once scikit-learn conflicts are resolved
 tabicl
 tabpfn >= 2.0.8
 tabpfn_extensions

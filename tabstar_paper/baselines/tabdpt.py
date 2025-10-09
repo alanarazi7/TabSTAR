@@ -1,3 +1,5 @@
+from importlib.metadata import version
+
 from pandas import DataFrame, Series
 from tabdpt import TabDPTRegressor, TabDPTClassifier
 
@@ -14,6 +16,8 @@ class TabDPT(TabularModel):
     USE_TEXT_EMBEDDINGS = True
 
     def initialize_model(self) -> TabDPTClassifier | TabDPTRegressor:
+        if version("tabdpt") == '0.1.0':
+            print("🚨🚨🚨 You are using tabdpt version 0.1.0, which performs badly, try to upgrade to tabdpt>=1.1.5")
         model_cls = TabDPTClassifier if self.is_cls else TabDPTRegressor
         model = model_cls(device=str(self.device), use_flash=False)
         return model
