@@ -12,6 +12,9 @@ from tabstar_paper.baselines.abstract_tuned_model import TunedTabularModel
 
 
 def init_tabm(is_cls: bool, params: dict) -> TabM_D_Regressor | TabM_D_Classifier:
+    for k in ['use_dropout', 'use_weight_decay']:
+        if k in params:
+            params.pop(k)
     model_cls = TabM_D_Classifier if is_cls else TabM_D_Regressor
     return model_cls(**params)
 
