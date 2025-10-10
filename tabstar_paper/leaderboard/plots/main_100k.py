@@ -120,8 +120,8 @@ def plot_grouped_by_limit(df: pd.DataFrame, num_datasets: int, task: TabularTask
 
 
 def build_legend_handles(pt):
-    handles = [Patch(color=pt.baseline_light_col, label="10K"),
-               Patch(color=pt.baseline_dark_col, label="Unlimit"),
-               Patch(color=pt.tabstar_light_color, label="10K"),
-               Patch(color=pt.tabstar_color, label="Unlimit")]
+    handles = [Patch(color=pt.tabstar_light_color, label="10K"),
+               Patch(color=pt.tabstar_color, label="Unlimit"),
+               Patch(color=pt.baseline_light_col, label="10K"),
+               Patch(color=pt.baseline_dark_col, label="Unlimit"),]
     return handles
