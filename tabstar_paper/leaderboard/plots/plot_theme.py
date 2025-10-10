@@ -5,7 +5,7 @@ from typing import Tuple
 class PlotTheme:
     tabstar_color: str = '#FFBE7D'
     tabstar_light_color: str = '#FDEBD0'
-    baseline_light_col: str = 'powderblue'
+    baseline_light_col: str = 'paleturquoise'
     baseline_dark_col:   str = '#A9CCE3'
     half_h: float = 0.35                    # height of each split segment
     outside_threshold: float = 0.3

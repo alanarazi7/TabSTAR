@@ -7,6 +7,7 @@ import matplotlib.ticker as ticker
 from tabstar_paper.leaderboard.data.keys import MODEL, UNLIMIT, BASE_MODEL, IS_TUNED
 from tabstar_paper.leaderboard.filters.tasks import TabularTask, TASK2PRETTY
 from tabstar_paper.leaderboard.plots.plot_theme import PlotTheme
+from tabstar_paper.leaderboard.plots.utils import add_errorbar, draw_segment
 
 
 ## TODO: this code is very legacy and AI assisted, could be cleaned up a lot
@@ -52,8 +53,8 @@ def plot_grouped_models(df: pd.DataFrame, num_datasets: int, task: TabularTask,
         uperrs_for_label = []
 
         if default_row is not None and tuned_row is not None:
-            m0, hi0 = draw_segment(ax, default_row, y - pt.split_dy, default_color)
-            m1, hi1 = draw_segment(ax, tuned_row,   y + pt.split_dy, tuned_color)
+            m0, hi0 = draw_segment(ax, default_row, y - pt.split_dy, color=default_color)
+            m1, hi1 = draw_segment(ax, tuned_row,   y + pt.split_dy, color=tuned_color)
             widths_for_label.extend([m0, m1])
             uperrs_for_label.extend([hi0, hi1])
         else:
@@ -102,22 +103,6 @@ def plot_grouped_models(df: pd.DataFrame, num_datasets: int, task: TabularTask,
     fig.tight_layout()
     return fig
 
-
-
-def add_errorbar(ax: plt.Axes, x: float, y: float, lower: float, upper: float):
-    ax.errorbar(x=x, y=y, xerr=[[lower], [upper]], fmt='none', ecolor='black', capsize=3, linewidth=0.7)
-
-
-def draw_segment(ax, row, y, color):
-    pt = PlotTheme()
-    m = float(row[pt.avg])
-    lo = float(m - row[pt.low])
-    hi = float(row[pt.high] - m)
-
-    ax.barh(y=y, width=m, height=pt.half_h, color=color, linewidth=0.7)
-    add_errorbar(ax, x=m, y=y, lower=lo, upper=hi)
-
-    return m, hi  # for label placement logic
 
 def build_legend_handles():
     pt = PlotTheme()
