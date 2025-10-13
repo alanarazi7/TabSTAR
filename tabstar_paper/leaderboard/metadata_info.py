@@ -6,18 +6,11 @@ import streamlit as st
 
 from tabstar_paper.leaderboard.data.keys import MODEL, DATASET, OPTUNA_TRIALS
 from tabstar_paper.leaderboard.data.loading import add_suffix_if_unlimited
-from tabstar_paper.leaderboard.filters.condition import filter_condition
-from tabstar_paper.leaderboard.filters.models import filter_models
-
-
-@st.cache_data
-def get_trial_data() -> DataFrame:
-    return load_trial_data()
 
 
 def load_trial_data() -> DataFrame:
     curr_dir = str(dirname(__file__))
-    tuned_dir = join(curr_dir, 'tuned')
+    tuned_dir = join(curr_dir, 'results_tuned')
     paths = [join(tuned_dir, f) for f in listdir(tuned_dir)]
     dfs = []
     for f in paths:

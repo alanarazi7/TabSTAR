@@ -70,7 +70,7 @@ class XGBoostOpt(TunedTabularModel):
     def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):
         if is_last_model:
             params["n_thread"] = CPU_CORES
-        return init_xgboost(is_cls=self.is_cls, params=params)
+        self.model_ = init_xgboost(is_cls=self.is_cls, params=params)
 
     def fit_tuned_model(self, x_train: DataFrame, y_train: Series):
         self.model_.fit(x_train, y_train, verbose=self.verbose)

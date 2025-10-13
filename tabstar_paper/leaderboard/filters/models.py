@@ -5,12 +5,13 @@ from tabstar_paper.baselines.catboost import CatBoost
 from tabstar_paper.baselines.lgbm import LightGBM
 from tabstar_paper.baselines.random_forest import RandomForest
 from tabstar_paper.baselines.realmlp import RealMLP
+from tabstar_paper.baselines.tabm import TabM
 from tabstar_paper.baselines.xgboost import XGBoost
 from tabstar_paper.leaderboard.data.keys import MODEL
 from tabstar_paper.leaderboard.filters.condition import Condition
 
 
-DEFAULT_MODELS = {m.MODEL_NAME for m in [CatBoost, XGBoost, LightGBM, RealMLP, RandomForest]}
+DEFAULT_MODELS = {m.MODEL_NAME for m in [CatBoost, XGBoost, LightGBM, RealMLP, RandomForest, TabM]}
 
 
 
