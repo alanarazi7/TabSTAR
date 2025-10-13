@@ -13,7 +13,7 @@ Description: Predict whether online social media comments are toxic based on the
     (https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification)
     in which the 1st place solution utilized dataset-specific tricks such as a Bucket Sequencing Collator,
     auxiliary domain-specific prediction tasks for models, and a custom mimic loss function for training.
-  
+
  Dataset found from the paper: Benchmarking multimodal automl for tabular data with text fields. arXiv preprint arXiv:2111.02705.
 ====
 Target Variable: target (nominal, 2 distinct): ['0', '1']
@@ -68,5 +68,13 @@ toxicity_annotator_count (numeric, 139 distinct): ['4', '10', '6', '5', '70', '8
 
 CONTEXT = "Online Social Media Comments Toxicity"
 TARGET = CuratedTarget(raw_name="target", new_name="Is Toxic", task_type=SupervisedTask.BINARY)
-COLS_TO_DROP = ["id", "severe_toxicity", "toxicity_annotator_count", "identity_annotator_count"]
+COLS_TO_DROP = ["id", "severe_toxicity",
+                "toxicity_annotator_count", "identity_annotator_count",
+                "publication_id", "parent_id", "article_id", "rating",
+                # https://www.kaggle.com/competitions/jigsaw-unintended-bias-in-toxicity-classification/data
+                # The following should be excluded: "The data also has several additional toxicity subtype attributes.
+                # Models do not need to predict these attributes for the competition, they are included as an
+                # additional avenue for research. Subtype attributes are:"
+                "insult", "obscene", "threat", "insult", "identity_attack", "sexual_explicit"
+                ]
 FEATURES = [CuratedFeature(raw_name="created_date", feat_type=FeatureType.DATE)]
