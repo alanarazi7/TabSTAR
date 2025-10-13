@@ -54,6 +54,7 @@ class LightGBMOpt(TunedTabularModel):
 
     MODEL_NAME = "LightGBM-Opt ⚡"
     SHORT_NAME = "lightopt"
+    REFIT_REQUIRES_VAL = False
     BASE_CLS = LightGBM
 
     def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):

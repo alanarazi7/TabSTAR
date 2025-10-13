@@ -60,6 +60,7 @@ class TabMOpt(TunedTabularModel):
 
     MODEL_NAME = "TabM-Opt 〽️"
     SHORT_NAME = "tabmopt"
+    REFIT_REQUIRES_VAL = True
     BASE_CLS = TabM
 
     def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):

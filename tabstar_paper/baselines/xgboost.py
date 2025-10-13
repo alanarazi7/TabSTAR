@@ -64,6 +64,7 @@ class XGBoostOpt(TunedTabularModel):
 
     MODEL_NAME = f"XGBoost-Opt 🍃"
     SHORT_NAME = "xgbopt"
+    REFIT_REQUIRES_VAL = False
     BASE_CLS = XGBoost
 
     def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):

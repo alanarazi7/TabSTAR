@@ -72,6 +72,7 @@ class RealMLPOpt(TunedTabularModel):
 
     MODEL_NAME = "RealMLP-Opt 🌐"
     SHORT_NAME = "realopt"
+    REFIT_REQUIRES_VAL = True
     BASE_CLS = RealMLP
 
     def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):

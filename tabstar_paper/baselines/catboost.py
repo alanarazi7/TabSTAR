@@ -63,6 +63,7 @@ class CatBoostOpt(TunedTabularModel):
 
     MODEL_NAME = f"CatBoost-Opt 😼"
     SHORT_NAME = "catopt"
+    REFIT_REQUIRES_VAL = False
     BASE_CLS = CatBoost
 
     def initialize_tuned_model(self, params: Dict[str, Any], is_last_model: bool = False):

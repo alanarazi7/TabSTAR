@@ -10,6 +10,7 @@ from pandas import DataFrame, Series
 from sklearn.model_selection import StratifiedKFold, KFold
 
 from tabstar.constants import SEED
+from tabstar.preprocessing.splits import split_to_val
 from tabstar.training.devices import CPU_CORES
 from tabstar.training.metrics import calculate_metric
 from tabstar_paper.baselines.abstract_model import TabularModel
@@ -20,6 +21,7 @@ CV_INNER_FOLDS = 5
 
 class TunedTabularModel(TabularModel):
 
+    REFIT_REQUIRES_VAL: bool
     BASE_CLS: Type[TabularModel] = None
 
     def __init__(self, problem_type: SupervisedTask, device: torch.device, verbose: bool = False, **kwargs):
@@ -58,9 +60,16 @@ class TunedTabularModel(TabularModel):
         self.initialize_tuned_model(params=best_params, is_last_model=True)
         # TODO: We are refitting the model, but we could do bagging and predict over the folds like in TabArena
         x_train, y_train = x.copy(), y.copy()
+        if self.REFIT_REQUIRES_VAL:
+            x_train, x_val, y_train, y_val = split_to_val(x=x, y=y, is_cls=self.is_cls)
         self.fit_preprocessor(x_train=x_train, y_train=y_train)
         x_train, y_train = self.transform_preprocessor(x=x_train, y=y_train)
-        self.fit_tuned_model(x_train=x_train, y_train=y_train)
+        if self.REFIT_REQUIRES_VAL:
+            x_val, y_val = self.transform_preprocessor(x=x_val, y=y_val)
+        if self.REFIT_REQUIRES_VAL:
+            self.fit_fold_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
+        else:
+            self.fit_tuned_model(x_train=x_train, y_train=y_train)
 
     def add_missing_params(self, study: Any, best_params: Dict[str, Any]):
         pass
