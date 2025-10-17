@@ -6,6 +6,7 @@ import torch
 from pandas import Series, DataFrame
 from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
+from torch import softmax
 
 from tabstar.datasets.all_datasets import TabularDatasetID
 from tabstar.datasets.benchmark_folds import get_tabstar_version
@@ -15,7 +16,7 @@ from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH, GLOBAL_BATCH
-from tabstar.training.metrics import apply_loss_fn, calculate_metric, Metrics
+from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions, fix_seed
 
@@ -109,7 +110,8 @@ class BaseTabSTAR:
         for data in dataloader:
             with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
                 batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-                batch_predictions = apply_loss_fn(prediction=batch_predictions, d_output=data.d_output)
+                if self.is_cls:
+                    batch_predictions = softmax(batch_predictions.to(torch.float32), dim=1)
                 predictions.append(batch_predictions)
         predictions = concat_predictions(predictions)
         return predictions
