@@ -25,6 +25,7 @@ def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_ou
     if d_output == 1:
         return _calculate_metrics_for_regression(y_true=y_true, y_pred=y_pred, is_pretrain=is_pretrain)
     elif d_output == 2:
+        breakpoint()
         return _calculate_metrics_for_binary(y_true=y_true, y_pred=y_pred)
     elif d_output > 2:
         return _calculate_metrics_for_multiclass(y_true=y_true, y_pred=y_pred)
