@@ -1,9 +1,14 @@
 import os
+import sys
+from huggingface_hub import hf_hub_download
+import pandas as pd
 
+from requests import HTTPError
 from sentence_transformers import SentenceTransformer
 from sklearn.decomposition import PCA
 
 from tabstar.constants import SEED
+from tabstar_paper.datasets.downloading import get_dataset_from_arg
 
 # TODO: understand whether this flag can make pre-training code slower
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Suppresses warning, avoids deadlock
@@ -15,6 +20,7 @@ from pandas import DataFrame
 import torch
 
 from tabstar.arch.config import E5_SMALL, D_MODEL
+from config import REPO_ID, E5_EMBEDDING_MODEL
 
 PCA_COMPONENTS = 30
 
@@ -48,11 +54,37 @@ E5_CACHED_MODEL = E5EmbeddingModel()
 
 
 def fit_text_encoders(x: DataFrame, text_features: Set[str], device: torch.device) -> Dict[str, PCA]:
+    
+    # Get dataset info from command line args
+    idx = sys.argv.index('--dataset_id')
+    dataset_id_arg = sys.argv[idx + 1]
+    dataset_enum = get_dataset_from_arg(dataset_id_arg)
+    dataset_id = dataset_enum.name
+    data_source = dataset_enum.__class__.__name__  # e.g., "OpenMLDatasetID"
+    
     text_encoders = {}
     for col in text_features:
-        # TODO: perhaps we should pre-compute all possible texts before the 'fit' call, for both train and test
-        texts = x[col].astype(str).tolist()
-        embeddings = E5_CACHED_MODEL.embed(texts=texts, device=device)
+        try:
+            # Try to download embeddings from HuggingFace if we have dataset info
+            path_in_hf_repo = f"{E5_EMBEDDING_MODEL}/{data_source}/{dataset_id}/{col}"
+            temp_file_path = hf_hub_download(
+                repo_id=REPO_ID,
+                filename=path_in_hf_repo,
+                repo_type="dataset"
+            )
+            df = pd.read_parquet(temp_file_path)
+            # Extract embeddings (excluding 'text' column)
+            embedding_cols = [col for col in df.columns if col.startswith('dim_')]
+            embeddings = df[embedding_cols].values
+            print(f"📥 Downloaded embeddings for {col} from HF: {embeddings.shape}")
+
+        except HTTPError as e:
+            # If download fails, generate embeddings locally
+            print(e)
+            print(f"Failed to download {col} from HF ({e}), generating locally...")
+            texts = x[col].astype(str).tolist()
+            embeddings = E5_CACHED_MODEL.embed(texts=texts, device=device)
+
         pca_encoder = PCA(n_components=PCA_COMPONENTS, random_state=SEED)
         pca_encoder.fit(embeddings)
         text_encoders[str(col)] = pca_encoder
