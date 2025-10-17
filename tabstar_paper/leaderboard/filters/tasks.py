@@ -26,6 +26,8 @@ def filter_by_task(df: DataFrame, key: str) -> Tuple[DataFrame, TabularTask]:
 
 
 def add_task_col(df: DataFrame) -> DataFrame:
+    if TASK in df.columns:
+        return df
     df = df.copy()
     df[TASK] = df[DATASET].apply(lambda x: str(TabularTask.REG if x.startswith("REG") else TabularTask.CLS))
     return df

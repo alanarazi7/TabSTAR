@@ -6,6 +6,9 @@ from typing import Tuple
 import streamlit as st
 from pandas import DataFrame, read_csv, concat
 
+from tabstar_paper.baselines.carte import CARTE
+from tabstar_paper.baselines.tabpfnv2 import TabPFNv2
+from tabstar_paper.leaderboard.analysis.scaling import do_scaling_laws_plot
 from tabstar_paper.leaderboard.data.ci import df_ci_for_model
 from tabstar_paper.leaderboard.data.keys import DATASET_SIZE, MODEL, DATASET, TEST_SCORE, FOLD, NORM_SCORE, IS_TUNED, \
     BASE_MODEL
@@ -66,11 +69,14 @@ def display_experiments_info(leaderboard_df: DataFrame):
     leaderboard_df = leaderboard_df[leaderboard_df[DATASET_SIZE] == 10000]
     experiment_df = load_experiments_data()
     df = concat([leaderboard_df, experiment_df], axis=0)
+    df, experiment = filter_by_experiment(df)
+    df = df[df[MODEL].apply(lambda m: m not in {CARTE.MODEL_NAME, TabPFNv2.MODEL_NAME})]
+    if experiment == Experiment.SCALING:
+        do_scaling_laws_plot(df)
     df, task = filter_by_task(df, key="analysis")
     df = filter_models(df, condition=Condition.TEN_K, key="analysis")
     df[MODEL] = df[MODEL].apply(lambda x: x.split()[0])
     assert len(df) == len(df[[MODEL, DATASET, DATASET_SIZE, FOLD, IS_TUNED]].drop_duplicates()), "Duplicate runs found!"
-    df, experiment = filter_by_experiment(df)
     df = df[[MODEL, DATASET, TEST_SCORE, FOLD, DATASET_SIZE, IS_TUNED, BASE_MODEL, EXPERIMENT_KEY]]
     df = add_norm_score(df)
     df = do_shared_filtering(df)
