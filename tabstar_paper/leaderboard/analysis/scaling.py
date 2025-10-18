@@ -13,7 +13,7 @@ def do_scaling_laws_plot(df: DataFrame):
     st.divider()
     fig = plot_df(df)
     st.pyplot(fig)
-    download_st_fig(fig, fig_name="section_6_analysis_scaling_laws", is_two=False)
+    download_st_fig(fig, fig_name="section_6_analysis_scaling_laws", is_two=True)
     st.divider()
 
 
@@ -55,7 +55,7 @@ def plot_df(df) -> plt.Figure:
     axes[0].set_xticks([1, 16, 64, 256])
     axes[0].set_xticklabels(x_labels)
     axes[0].set_title("Classification")
-    axes[0].set_ylabel("AUC")
+    axes[0].set_ylabel("AUROC")
     axes[0].set_ylim(0.8, 0.9)
     axes[0].grid(True, linestyle="--", alpha=0.6)
 
