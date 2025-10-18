@@ -11,8 +11,8 @@ class PlotTheme:
     outside_threshold: float = 0.3
     nbins: int = 10
     figsize: Tuple[int, int] = (6, 4)
-    base_fs: int = 10
-    big_fs: int = 12
+    base_fs: int = 13
+    big_fs: int = 15
     pad: float = 0.01                       # padding for text labels
     avg: str = 'avg'
     low: str = 'low'

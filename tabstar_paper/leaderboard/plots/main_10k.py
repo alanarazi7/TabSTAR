@@ -95,7 +95,7 @@ def plot_grouped_models(df: pd.DataFrame, num_datasets: int, task: TabularTask,
     ax.set_axisbelow(True)
     ax.set_xlim(0, 1)
 
-    ax.set_title(f"{TASK2PRETTY[task]} - Up to 10K examples ({num_datasets} datasets)")
+    ax.set_title(f"{TASK2PRETTY[task]} - Up to 10K examples ({num_datasets} datasets)", fontsize=pt.big_fs)
     ax.set_xlabel("Normalized Score", fontsize=pt.big_fs)
     legend_handles = build_legend_handles()
     ax.legend(handles=list(legend_handles), loc='lower right', frameon=False, fontsize=pt.base_fs)

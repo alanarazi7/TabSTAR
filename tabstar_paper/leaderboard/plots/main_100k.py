@@ -55,11 +55,6 @@ def plot_grouped_by_limit(df: pd.DataFrame, num_datasets: int, task: TabularTask
     # y positions (best on top)
     y_centers = np.arange(n_rows)[::-1]
 
-    # fonts
-    base_fs = mpl.rcParams['font.size']
-    tick_fs = base_fs + 2
-    label_fs = base_fs + 2
-
     def draw_seg(row, y, color):
         m  = float(row[pt.avg])
         lo = float(m - row[pt.low])
@@ -99,23 +94,23 @@ def plot_grouped_by_limit(df: pd.DataFrame, num_datasets: int, task: TabularTask
             tx = width_max + upper_max + pad
         else:
             tx = pad
-        ax.text(tx, y, base, va='center', ha='left', color='black', fontsize=label_fs)
+        ax.text(tx, y, base, va='center', ha='left', color='black', fontsize=pt.big_fs)
 
     # axes cosmetics
     ax.set_yticks([])
     ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=pt.nbins))
-    ax.tick_params(axis='x', labelsize=tick_fs)
+    ax.tick_params(axis='x', labelsize=pt.big_fs)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.xaxis.grid(True, color='0.9', linestyle='--', linewidth=0.7)
     ax.set_axisbelow(True)
     ax.set_xlim(0, 1)
 
-    ax.set_title(f"{TASK2PRETTY[task]} - Above 10K examples ({num_datasets} datasets)")
-    ax.set_xlabel("Normalized Score", fontsize=base_fs + 2)
+    ax.set_title(f"{TASK2PRETTY[task]} - Above 10K examples ({num_datasets} datasets)", fontsize=pt.big_fs)
+    ax.set_xlabel("Normalized Score", fontsize=pt.big_fs)
 
     legend_handles = build_legend_handles(pt=pt)
-    ax.legend(handles=list(legend_handles), loc='lower right', frameon=False, fontsize=base_fs)
+    ax.legend(handles=list(legend_handles), loc='lower right', frameon=False, fontsize=pt.base_fs)
 
     fig.tight_layout()
     return fig
