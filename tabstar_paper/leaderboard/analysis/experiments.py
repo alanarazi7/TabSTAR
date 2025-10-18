@@ -72,7 +72,9 @@ def display_experiments_info(leaderboard_df: DataFrame):
     df, experiment = filter_by_experiment(df)
     df = df[df[MODEL].apply(lambda m: m not in {CARTE.MODEL_NAME, TabPFNv2.MODEL_NAME})]
     if experiment == Experiment.SCALING:
-        do_scaling_laws_plot(df)
+        if st.checkbox("Show Scaling Laws Analysis", value=False):
+            # TODO: for some annoying reason, this breaks the other existing charts
+            do_scaling_laws_plot(df)
     df, task = filter_by_task(df, key="analysis")
     df = filter_models(df, condition=Condition.TEN_K, key="analysis")
     df[MODEL] = df[MODEL].apply(lambda x: x.split()[0])

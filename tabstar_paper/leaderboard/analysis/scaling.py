@@ -56,6 +56,7 @@ def plot_df(df) -> plt.Figure:
     axes[0].set_xticklabels(x_labels)
     axes[0].set_title("Classification")
     axes[0].set_ylabel("AUROC")
+    axes[0].set_xlabel("# Pretraining datasets")
     axes[0].set_ylim(0.8, 0.9)
     axes[0].grid(True, linestyle="--", alpha=0.6)
 
@@ -66,11 +67,9 @@ def plot_df(df) -> plt.Figure:
     axes[1].set_xticklabels(x_labels)
     axes[1].set_title("Regression")
     axes[1].set_ylabel("R²")
+    axes[1].set_xlabel("# Pretraining datasets")
     axes[1].set_ylim(0.7, 0.8)
     axes[1].grid(True, linestyle="--", alpha=0.6)
-
-    # --- Shared X label ---
-    fig.text(0.5, 0.02, "Pretraining datasets", ha="center", fontsize=18)
 
     plt.tight_layout(rect=[0, 0.03, 1, 1])
     plt.show()
