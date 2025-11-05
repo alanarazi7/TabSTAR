@@ -1,4 +1,4 @@
-from tabstar.datasets.all_datasets import KaggleDatasetID, UrlDatasetID, OpenMLDatasetID, TabularDatasetID
+from tabstar.datasets.all_datasets import KaggleDatasetID, UrlDatasetID, OpenMLDatasetID
 
 PRETRAIN2FOLD = {
 OpenMLDatasetID.MUL_ANONYM_FABERT: 0,

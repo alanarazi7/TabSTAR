@@ -8,7 +8,7 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import softmax
 
-from tabstar.datasets.benchmark_folds import get_tabstar_version
+from tabstar.datasets.tabstar_version import get_tabstar_version
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData

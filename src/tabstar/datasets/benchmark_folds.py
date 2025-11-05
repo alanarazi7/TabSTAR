@@ -1,8 +1,3 @@
-from typing import Optional, Union
-
-from tabstar.datasets.all_datasets import TabularDatasetID
-from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
-
 TEXT2FOLD = {
 "REG_SOCIAL_ANIME_PLANET_RATING": 0,
 "REG_CONSUMER_JC_PENNEY_PRODUCT_PRICE": 0,
@@ -55,27 +50,3 @@ TEXT2FOLD = {
 "BIN_PROFESSIONAL_FAKE_JOB_POSTING": 4,
 "REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT": 4,
 }
-
-
-def get_tabstar_version(pretrain_dataset_or_path: Optional[str] = None) -> str:
-    if pretrain_dataset_or_path is None:
-        return "alana89/TabSTAR"
-    if pretrain_dataset_or_path.startswith(("BIN_", "REG_", "MUL_")):
-        tabstar_version = get_tabstar_version_from_dataset(pretrain_dataset=pretrain_dataset_or_path)
-        return f"alana89/{tabstar_version}"
-    if isinstance(pretrain_dataset_or_path, str):
-        return pretrain_dataset_or_path
-    raise ValueError(f"Unknown pretrain_dataset_or_path: {pretrain_dataset_or_path}")
-
-
-def get_tabstar_version_from_dataset(pretrain_dataset: str) -> str:
-    text_fold = TEXT2FOLD.get(pretrain_dataset)
-    if text_fold is not None:
-        return f"TabSTAR-paper-version-fold-k{text_fold}"
-
-    all_data_folds = {d.name: k for d, k in PRETRAIN2FOLD.items()}
-    pretrain_fold = all_data_folds.get(pretrain_dataset.name)
-    if pretrain_fold is not None:
-        return f"TabSTAR-eval-320-version-fold-k{pretrain_fold}"
-
-    raise ValueError(f"Unknown dataset: {pretrain_dataset}")
