@@ -6,7 +6,6 @@ from typing import List
 import wandb
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
-from tabstar.datasets.benchmark_folds import TEXT2FOLD
 from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
 from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
@@ -48,7 +47,7 @@ def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID
         return ANALYSIS_DOWNSTREAM
     if arg.fold is None:
         return []
-    fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
+    fold_dict = PRETRAIN2FOLD
     datasets = [d for d, f in fold_dict.items() if f == arg.fold]
     return datasets
 
@@ -67,7 +66,6 @@ if __name__ == "__main__":
     # Data
     parser.add_argument('--n_datasets', type=int, default=None)
     parser.add_argument('--fold', type=int, default=None)
-    parser.add_argument('--only_text_folds', action='store_true', default=False)
     # Training
     parser.add_argument('--learning_rate', type=float, default=LR)
     parser.add_argument('--warmup', type=float, default=WARMUP)
