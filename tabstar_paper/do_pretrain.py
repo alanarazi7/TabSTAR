@@ -6,7 +6,7 @@ from typing import List
 import wandb
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
-from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
+from tabstar_paper.benchmarks.folds_pretrain import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
 from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
 from tabstar_paper.constants import DEVICE
@@ -45,11 +45,7 @@ def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID
     if arg.analysis:
         args.n_datasets = 256
         return ANALYSIS_DOWNSTREAM
-    if arg.fold is None:
-        return []
-    fold_dict = PRETRAIN2FOLD
-    datasets = [d for d, f in fold_dict.items() if f == arg.fold]
-    return datasets
+    return []
 
 
 if __name__ == "__main__":
@@ -65,7 +61,6 @@ if __name__ == "__main__":
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
     # Data
     parser.add_argument('--n_datasets', type=int, default=None)
-    parser.add_argument('--fold', type=int, default=None)
     # Training
     parser.add_argument('--learning_rate', type=float, default=LR)
     parser.add_argument('--warmup', type=float, default=WARMUP)
