@@ -20,8 +20,7 @@ def get_tabstar_version_from_dataset(pretrain_dataset: str) -> str:
     if text_fold is not None:
         return f"TabSTAR-paper-version-fold-k{text_fold}"
 
-    all_data_folds = {d.name: k for d, k in PRETRAIN2FOLD.items()}
-    pretrain_fold = all_data_folds.get(pretrain_dataset.name)
+    pretrain_fold = PRETRAIN2FOLD.get(pretrain_dataset)
     if pretrain_fold is not None:
         return f"TabSTAR-eval-320-version-fold-k{pretrain_fold}"
 
