@@ -6,9 +6,10 @@ from typing import List
 import wandb
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
-from tabstar_paper.benchmarks.folds_pretrain import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
 from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
+from tabstar_paper.benchmarks.folds_benchmark import TEXT2FOLD
+from tabstar_paper.benchmarks.folds_pretrain import PRETRAIN2FOLD
 from tabstar_paper.constants import DEVICE
 from tabstar_paper.pretraining.hyperparameters import (TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, LR, WARMUP,
                                                        WEIGHT_DECAY, EPOCHS, EPOCH_EXAMPLES, PATIENCE, BATCH_SIZE,
@@ -45,7 +46,11 @@ def define_downstream_datasets(arg: argparse.Namespace) -> List[TabularDatasetID
     if arg.analysis:
         args.n_datasets = 256
         return ANALYSIS_DOWNSTREAM
-    return []
+    if arg.fold is None:
+        return []
+    fold_dict = TEXT2FOLD if args.only_text_folds else PRETRAIN2FOLD
+    datasets = [d for d, f in fold_dict.items() if f == arg.fold]
+    return datasets
 
 
 if __name__ == "__main__":
@@ -61,6 +66,8 @@ if __name__ == "__main__":
     parser.add_argument('--e5_unfreeze_layers', type=int, default=TEXTUAL_UNFREEZE_LAYERS)
     # Data
     parser.add_argument('--n_datasets', type=int, default=None)
+    parser.add_argument('--fold', type=int, default=None)
+    parser.add_argument('--only_text_folds', action='store_true', default=False)
     # Training
     parser.add_argument('--learning_rate', type=float, default=LR)
     parser.add_argument('--warmup', type=float, default=WARMUP)
