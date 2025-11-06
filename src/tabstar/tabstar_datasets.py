@@ -1,3 +1,5 @@
+from typing import Optional
+
 TEXT2FOLD = {
 "REG_SOCIAL_ANIME_PLANET_RATING": 0,
 "REG_CONSUMER_JC_PENNEY_PRODUCT_PRICE": 0,
@@ -404,3 +406,24 @@ PRETRAIN2FOLD = {
 "BIN_COMPUTERS_IMAGE_BANK_NOTE_AUTHENTICATION": 4,
 "REG_SPORTS_NBA_ALL_STAR": 4,
 }
+
+
+def get_tabstar_version(pretrain_dataset_or_path: Optional[str] = None) -> str:
+    if pretrain_dataset_or_path is None:
+        return "alana89/TabSTAR"
+    if pretrain_dataset_or_path.startswith(("BIN_", "REG_", "MUL_")):
+        tabstar_version = _get_tabstar_version_from_dataset(pretrain_dataset=pretrain_dataset_or_path)
+        return f"alana89/{tabstar_version}"
+    if isinstance(pretrain_dataset_or_path, str):
+        return pretrain_dataset_or_path
+    raise ValueError(f"Unknown pretrain_dataset_or_path: {pretrain_dataset_or_path}")
+
+
+def _get_tabstar_version_from_dataset(pretrain_dataset: str) -> str:
+    text_fold = TEXT2FOLD.get(pretrain_dataset)
+    if text_fold is not None:
+        return f"TabSTAR-paper-version-fold-k{text_fold}"
+    pretrain_fold = PRETRAIN2FOLD.get(pretrain_dataset)
+    if pretrain_fold is not None:
+        return f"TabSTAR-eval-320-version-fold-k{pretrain_fold}"
+    raise ValueError(f"Unknown dataset: {pretrain_dataset}")
