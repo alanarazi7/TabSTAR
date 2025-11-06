@@ -1,7 +1,4 @@
-from typing import Optional, Union
-
-from tabstar.datasets.all_datasets import KaggleDatasetID, UrlDatasetID, OpenMLDatasetID, TabularDatasetID
-from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
+from tabstar.datasets.all_datasets import KaggleDatasetID, UrlDatasetID, OpenMLDatasetID
 
 TEXT2FOLD = {KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING: 0,
              KaggleDatasetID.REG_FOOD_RAMEN_RATINGS_2022: 1,
@@ -53,27 +50,3 @@ TEXT2FOLD = {KaggleDatasetID.REG_SOCIAL_ANIME_PLANET_RATING: 0,
              KaggleDatasetID.REG_FOOD_BEER_RATINGS: 2,
              KaggleDatasetID.MUL_TRANSPORTATION_US_ACCIDENTS_MARCH23: 3,
              UrlDatasetID.REG_PROFESSIONAL_SCIMAGOJR_ACADEMIC_IMPACT: 4}
-
-
-def get_tabstar_version(pretrain_dataset_or_path: Optional[Union[str, TabularDatasetID]] = None) -> str:
-    if isinstance(pretrain_dataset_or_path, str):
-        return pretrain_dataset_or_path
-    tabstar_version = get_tabstar_version_from_dataset(pretrain_dataset=pretrain_dataset_or_path)
-    return f"alana89/{tabstar_version}"
-
-
-def get_tabstar_version_from_dataset(pretrain_dataset: Optional[TabularDatasetID] = None) -> str:
-    if pretrain_dataset is None:
-        return "TabSTAR"
-
-    text_data_folds = {d.name: k for d, k in TEXT2FOLD.items()}
-    text_fold = text_data_folds.get(pretrain_dataset.name)
-    if text_fold is not None:
-        return f"TabSTAR-paper-version-fold-k{text_fold}"
-
-    all_data_folds = {d.name: k for d, k in PRETRAIN2FOLD.items()}
-    pretrain_fold = all_data_folds.get(pretrain_dataset.name)
-    if pretrain_fold is not None:
-        return f"TabSTAR-eval-320-version-fold-k{pretrain_fold}"
-
-    raise ValueError(f"Unknown dataset: {pretrain_dataset}")

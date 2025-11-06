@@ -37,7 +37,7 @@ def evaluate_on_dataset(model_cls: Type[TabularModel],
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=is_cls, fold=fold, train_examples=train_examples)
     if is_tabstar:
         tabstar_cls = TabSTARClassifier if is_cls else TabSTARRegressor
-        model = tabstar_cls(pretrain_dataset_or_path=dataset_id, device=device, verbose=verbose, random_state=SEED)
+        model = tabstar_cls(pretrain_dataset_or_path=dataset_id.name, device=device, verbose=verbose, random_state=SEED)
     else:
         prefix2task = {"REG": SupervisedTask.REGRESSION, "BIN": SupervisedTask.BINARY, "MUL": SupervisedTask.MULTICLASS}
         problem_type = prefix2task[dataset_id.name[:3]]

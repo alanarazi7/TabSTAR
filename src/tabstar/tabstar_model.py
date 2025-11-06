@@ -8,10 +8,9 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import softmax
 
-from tabstar.datasets.all_datasets import TabularDatasetID
-from tabstar.datasets.benchmark_folds import get_tabstar_version
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
+from tabstar.tabstar_datasets import get_tabstar_version
 from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
@@ -32,7 +31,7 @@ class BaseTabSTAR:
                  verbose: bool = False,
                  device: Optional[Union[str,  torch.device]] = None,
                  random_state: Optional[int] = None,
-                 pretrain_dataset_or_path: Optional[Union[str, TabularDatasetID]] = None,
+                 pretrain_dataset_or_path: Optional[str] = None,
                  debug: bool = False):
         self.lora_lr = lora_lr
         self.lora_r = lora_r

@@ -6,10 +6,10 @@ from typing import List
 import wandb
 
 from tabstar.datasets.all_datasets import OpenMLDatasetID, TabularDatasetID
-from tabstar.datasets.benchmark_folds import TEXT2FOLD
-from tabstar.datasets.pretrain_folds import PRETRAIN2FOLD
 from tabstar.training.devices import get_device
 from tabstar_paper.benchmarks.experiments import ANALYSIS_DOWNSTREAM
+from tabstar_paper.benchmarks.folds_benchmark import TEXT2FOLD
+from tabstar_paper.benchmarks.folds_pretrain import PRETRAIN2FOLD
 from tabstar_paper.constants import DEVICE
 from tabstar_paper.pretraining.hyperparameters import (TABULAR_LAYERS, TEXTUAL_UNFREEZE_LAYERS, LR, WARMUP,
                                                        WEIGHT_DECAY, EPOCHS, EPOCH_EXAMPLES, PATIENCE, BATCH_SIZE,
