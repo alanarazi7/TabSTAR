@@ -431,4 +431,5 @@ def _get_tabstar_version_from_dataset(pretrain_dataset: str) -> str:
     pretrain_fold = PRETRAIN2FOLD.get(pretrain_dataset)
     if pretrain_fold is not None:
         return f"TabSTAR-eval-320-version-fold-k{pretrain_fold}"
-    raise ValueError(f"Unknown dataset: {pretrain_dataset}")
+    print(f"🤷‍♂️ Unknown dataset: {pretrain_dataset}, falling back to TabSTAR")
+    return "TabSTAR"
