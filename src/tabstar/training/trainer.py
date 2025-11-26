@@ -13,7 +13,6 @@ from tqdm import tqdm
 
 from tabstar.tabstar_verbalizer import TabSTARData
 from tabstar.training.dataloader import get_dataloader
-from tabstar.training.devices import CPU_CORES
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.hyperparams import set_accumulation_steps
 from tabstar.training.lora import load_pretrained, load_finetuned
@@ -21,22 +20,18 @@ from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_
 from tabstar.training.optimizer import get_optimizer, get_scheduler
 from tabstar.training.utils import concat_predictions
 
-torch.set_num_threads(CPU_CORES)
-if hasattr(torch, 'set_float32_matmul_precision'):
-    torch.set_float32_matmul_precision('high')
-
 
 class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, debug: bool = False):
+                 global_batch: int, device: torch.device, model_version: str, cp_average: bool):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
         self.accumulation_steps = set_accumulation_steps(global_batch=global_batch, batch_size=lora_batch)
         self.max_epochs = max_epochs
         self.device = device
-        self.debug = debug
+        self.cp_average = cp_average
         self.model_version = model_version
         self.model = load_pretrained(model_version=model_version, lora_r=lora_r)
         self.model.to(self.device)
@@ -66,8 +61,6 @@ class TabStarTrainer:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
-            if self.debug:
-                break
         return self.early_stopper.metric
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
@@ -81,8 +74,6 @@ class TabStarTrainer:
             self.steps += 1
             if self.steps % self.accumulation_steps == 0:
                 self._do_update()
-                if self.debug:
-                    break
         if self.steps % self.accumulation_steps != 0:
             self._do_update()
         epoch_loss = total_loss / total_samples

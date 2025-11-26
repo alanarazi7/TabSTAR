@@ -22,6 +22,7 @@ from tabstar.training.utils import concat_predictions, fix_seed
 
 class BaseTabSTAR:
     def __init__(self,
+                 is_paper_version: bool = False,
                  lora_lr: float = LORA_LR,
                  lora_r: int = LORA_R,
                  lora_batch: int = LORA_BATCH,
@@ -31,8 +32,8 @@ class BaseTabSTAR:
                  verbose: bool = False,
                  device: Optional[Union[str,  torch.device]] = None,
                  random_state: Optional[int] = None,
-                 pretrain_dataset_or_path: Optional[str] = None,
-                 debug: bool = False):
+                 pretrain_dataset_or_path: Optional[str] = None):
+        self.cp_average = not bool(is_paper_version)
         self.lora_lr = lora_lr
         self.lora_r = lora_r
         self.lora_batch = lora_batch
@@ -40,7 +41,6 @@ class BaseTabSTAR:
         self.max_epochs = max_epochs
         self.patience = patience
         self.verbose = verbose
-        self.debug = debug
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
         self.random_state = random_state
@@ -66,7 +66,7 @@ class BaseTabSTAR:
                                  patience=self.patience,
                                  device=self.device,
                                  model_version=self.model_version,
-                                 debug=self.debug)
+                                 cp_average=self.cp_average)
         trainer.train(train_data, val_data)
         self.model_ = trainer.load_model()
 
