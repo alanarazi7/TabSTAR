@@ -1,4 +1,4 @@
-# TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations
+# TabSTAR: A Tabular Foundation Model for Tabular Data with Text Fields
 
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
@@ -7,18 +7,16 @@
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/tabstar?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/tabstar)
 [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![arXiv](https://img.shields.io/badge/arXiv-2505.18125-blue.svg)](https://arxiv.org/pdf/2505.18125)
-
+[![NeurIPS](https://img.shields.io/badge/NeurIPS_2025-OpenReview-blue)](https://openreview.net/forum?id=FrXHdcTEzE)
 
 **Welcome to the TabSTAR repository! 👋**  
 You can either use TabSTAR as a package for your own tabular data tasks, or explore the full repository for research purposes, including customized pretraining and replication of paper results.
-
-🚧 The repository is under construction: Any bugs or feature request? Please open an issue! 🚧
 
 ---
 
 ### 📚 Resources
 
-* **Paper**: [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
+* **Paper**: [TabSTAR: A Tabular Foundation Model for Tabular Data with Text Fields](https://arxiv.org/abs/2505.18125)
 * **Project Website**: [TabSTAR](https://eilamshapira.com/TabSTAR/)
 
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_arch.png" alt="TabSTAR Logo" width="200%">
@@ -148,11 +146,13 @@ python tabstar_paper/do_finetune.py --pretrain_exp=<PRETRAINED_EXP> --dataset_id
 If you use TabSTAR in your research, please cite:
 
 ```bibtex
-@article{arazi2025tabstarf,
-  title   = {TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations},
-  author  = {Alan Arazi and Eilam Shapira and Roi Reichart},
-  journal = {arXiv preprint arXiv:2505.18125},
-  year    = {2025},
+@inproceedings{
+arazi2025tabstar,
+title={Tab{STAR}: A Tabular Foundation Model for Tabular Data with Text Fields},
+author={Alan Arazi and Eilam Shapira and Roi Reichart},
+booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems},
+year={2025},
+url={https://openreview.net/forum?id=FrXHdcTEzE}
 }
 ```
 
