@@ -16,7 +16,7 @@ class CheckpointManager:
         makedirs(self.save_dir, exist_ok=True)
         self.avg_dir = join(self.save_dir, "averaged_model")
         self.best_dir = join(self.save_dir, "best_model")
-        self.to_load_dir = self.avg_dir if do_average else self.best_dir
+        self.to_load_dir = self.best_dir
         self.cp_paths: List[str] = []
         self.val_losses: List[float] = []
         self.do_average = do_average
@@ -47,7 +47,7 @@ class CheckpointManager:
         if len(cps_to_avg) < 1:
             print(f"⚠️ No checkpoints selected for averaging, skipping")
             return
-
+        self.to_load_dir = self.avg_dir
         print(f"📊 Averaging {len(cps_to_avg)} checkpoints:")
         for cp_path in cps_to_avg:
             cp_idx = self.cp_paths.index(cp_path)
