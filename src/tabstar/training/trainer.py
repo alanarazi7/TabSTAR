@@ -1,6 +1,4 @@
-import datetime
 import gc
-import os
 from typing import Tuple
 
 import numpy as np
@@ -12,6 +10,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from tabstar.tabstar_verbalizer import TabSTARData
+from tabstar.training.checkpoint_averaging import CheckpointManager
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.hyperparams import set_accumulation_steps
@@ -40,8 +39,8 @@ class TabStarTrainer:
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping(patience=patience)
+        self.cp_manager = CheckpointManager(do_average=self.cp_average)
         self.steps: int = 0
-        self.save_dir: str = os.path.join(".tabstar_checkpoint/", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
@@ -49,18 +48,15 @@ class TabStarTrainer:
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
-            if val_metric > self.early_stopper.metric:
-                emoji = "🥇"
-            else:
-                emoji = f"😓 [{self.early_stopper.failed + 1}/{self.early_stopper.patience} worse]"
+            emoji = self.early_stopper.update_loss(loss=val_loss)
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
-            self.early_stopper.update(val_metric)
             if self.early_stopper.is_best:
-                self.model.save_pretrained(self.save_dir)
+                self.model.save_pretrained(self.cp_manager.best_dir)
             elif self.early_stopper.should_stop:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
+        self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
         return self.early_stopper.metric
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
@@ -133,7 +129,7 @@ class TabStarTrainer:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         gc.collect()
-        self.model = load_finetuned(self.save_dir, tabstar_version=self.model_version)
+        self.model = load_finetuned(self.cp_manager.to_load_dir, tabstar_version=self.model_version)
         self.model.to(self.device)
         self.model.eval()
         return self.model
