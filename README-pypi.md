@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
-📚 [TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations](https://arxiv.org/abs/2505.18125)
+📚 [TabSTAR: A Tabular Foundation Model for Tabular Data with Text Fields](https://arxiv.org/abs/2505.18125)
 
 ---
 
@@ -48,11 +48,13 @@ For paper replication, TabSTAR evaluation on benchmarks, custom pretraining or r
 If you use TabSTAR in your work, please cite:
 
 ```bibtex
-@article{arazi2025tabstarf,
-  title   = {TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations},
-  author  = {Alan Arazi and Eilam Shapira and Roi Reichart},
-  journal = {arXiv preprint arXiv:2505.18125},
-  year    = {2025},
+@inproceedings{
+arazi2025tabstar,
+title={Tab{STAR}: A Tabular Foundation Model for Tabular Data with Text Fields},
+author={Alan Arazi and Eilam Shapira and Roi Reichart},
+booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems},
+year={2025},
+url={https://openreview.net/forum?id=FrXHdcTEzE}
 }
 ```
 
