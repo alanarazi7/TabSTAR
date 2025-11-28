@@ -16,7 +16,7 @@ class CheckpointManager:
         makedirs(self.save_dir, exist_ok=True)
         self.avg_dir = join(self.save_dir, "averaged_model")
         self.best_dir = join(self.save_dir, "best_model")
-        self.to_load_dir = join(self.save_dir, "to_load_model")
+        self.to_load_dir = self.avg_dir if do_average else self.best_dir
         self.cp_paths: List[str] = []
         self.val_losses: List[float] = []
         self.do_average = do_average
