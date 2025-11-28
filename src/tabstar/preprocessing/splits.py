@@ -29,6 +29,8 @@ def split_to_val(x: DataFrame, y: Series, is_cls: bool, fold: int = -1, val_rati
 
 
 def do_split(x: DataFrame, y: Series, test_size: int, is_cls: bool, fold: int) -> Tuple[DataFrame, DataFrame, Series, Series]:
+    if not x.index.equals(y.index):
+        raise ValueError("X and y must share identical indices. Construct y as: y = pd.Series(y, index=X.index)")
     random_state = SEED + fold
     if not is_cls:
         return train_test_split(x, y, test_size=test_size, random_state=random_state)
