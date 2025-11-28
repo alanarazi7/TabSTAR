@@ -56,6 +56,7 @@ class TabStarTrainer:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
+            self.cp_manager.save_checkpoint(model=self.model, epoch=epoch, val_loss=val_loss)
         self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
         return self.early_stopper.metric
 

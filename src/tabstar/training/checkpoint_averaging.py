@@ -30,6 +30,7 @@ class CheckpointManager:
         torch.save(checkpoint, checkpoint_path)
         self.cp_paths.append(checkpoint_path)
         self.val_losses.append(val_loss)
+        assert len(self.cp_paths) == len(self.val_losses) == epoch
 
     def average_checkpoints(self, model: nn.Module, evaluator: Callable, val_loader: DataLoader):
         if not self.do_average:
