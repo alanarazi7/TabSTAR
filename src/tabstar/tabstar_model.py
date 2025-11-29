@@ -127,6 +127,7 @@ class BaseTabSTAR:
         x = X.copy()
         y = y.copy()
         y_pred = self._infer(x)
+        # TODO: this is wrong for regression: the metric should be calculated in the original input space
         y_true = self.preprocessor_.transform_target(y)
         return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
 
