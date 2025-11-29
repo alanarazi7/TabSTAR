@@ -1,6 +1,4 @@
-import datetime
 import gc
-import os
 from typing import Tuple
 
 import numpy as np
@@ -12,8 +10,8 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from tabstar.tabstar_verbalizer import TabSTARData
+from tabstar.training.checkpoint_averaging import CheckpointManager
 from tabstar.training.dataloader import get_dataloader
-from tabstar.training.devices import CPU_CORES
 from tabstar.training.early_stopping import EarlyStopping
 from tabstar.training.hyperparams import set_accumulation_steps
 from tabstar.training.lora import load_pretrained, load_finetuned
@@ -21,22 +19,18 @@ from tabstar.training.metrics import calculate_metric, apply_loss_fn, calculate_
 from tabstar.training.optimizer import get_optimizer, get_scheduler
 from tabstar.training.utils import concat_predictions
 
-torch.set_num_threads(CPU_CORES)
-if hasattr(torch, 'set_float32_matmul_precision'):
-    torch.set_float32_matmul_precision('high')
-
 
 class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, debug: bool = False):
+                 global_batch: int, device: torch.device, model_version: str, cp_average: bool):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
         self.accumulation_steps = set_accumulation_steps(global_batch=global_batch, batch_size=lora_batch)
         self.max_epochs = max_epochs
         self.device = device
-        self.debug = debug
+        self.cp_average = cp_average
         self.model_version = model_version
         self.model = load_pretrained(model_version=model_version, lora_r=lora_r)
         self.model.to(self.device)
@@ -45,8 +39,8 @@ class TabStarTrainer:
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping(patience=patience)
+        self.cp_manager = CheckpointManager(do_average=self.cp_average)
         self.steps: int = 0
-        self.save_dir: str = os.path.join(".tabstar_checkpoint/", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
@@ -54,20 +48,16 @@ class TabStarTrainer:
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
-            if val_metric > self.early_stopper.metric:
-                emoji = "🥇"
-            else:
-                emoji = f"😓 [{self.early_stopper.failed + 1}/{self.early_stopper.patience} worse]"
+            emoji = self.early_stopper.update_loss(loss=val_loss)
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
-            self.early_stopper.update(val_metric)
             if self.early_stopper.is_best:
-                self.model.save_pretrained(self.save_dir)
+                self.model.save_pretrained(self.cp_manager.best_dir)
             elif self.early_stopper.should_stop:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
-            if self.debug:
-                break
+            self.cp_manager.save_checkpoint(model=self.model, epoch=epoch, val_loss=val_loss)
+        self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
         return self.early_stopper.metric
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
@@ -81,8 +71,6 @@ class TabStarTrainer:
             self.steps += 1
             if self.steps % self.accumulation_steps == 0:
                 self._do_update()
-                if self.debug:
-                    break
         if self.steps % self.accumulation_steps != 0:
             self._do_update()
         epoch_loss = total_loss / total_samples
@@ -142,7 +130,7 @@ class TabStarTrainer:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         gc.collect()
-        self.model = load_finetuned(self.save_dir, tabstar_version=self.model_version)
+        self.model = load_finetuned(self.cp_manager.to_load_dir, tabstar_version=self.model_version)
         self.model.to(self.device)
         self.model.eval()
         return self.model
