@@ -22,4 +22,5 @@ def transform_clipped_z_scores(s: Series, scaler: StandardScaler, allow_null: bo
     if invalid:
         s_val[sorted(invalid)] = 0
     s = Series(s_val, index=s.index, name=s.name)
+    print(f"Min: {s.min()}, max: {s.max()}, mean: {s.mean()}")
     return s

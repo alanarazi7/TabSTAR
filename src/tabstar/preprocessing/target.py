@@ -33,4 +33,5 @@ def fit_cls_y(y: Series) -> LabelEncoder:
     return label_encoder
 
 def fit_reg_y(y: Series) -> StandardScaler:
+    print(f"Min: {y.min()}, max: {y.max()}, mean: {y.mean()}")
     return fit_standard_scaler(s=y)
