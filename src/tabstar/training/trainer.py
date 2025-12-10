@@ -1,4 +1,5 @@
 import gc
+import shutil
 from typing import Tuple
 
 import numpy as np
@@ -134,3 +135,6 @@ class TabStarTrainer:
         self.model.to(self.device)
         self.model.eval()
         return self.model
+
+    def delete_model(self):
+        shutil.rmtree(self.cp_manager.to_load_dir)

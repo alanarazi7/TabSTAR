@@ -32,7 +32,8 @@ class BaseTabSTAR:
                  verbose: bool = False,
                  device: Optional[Union[str,  torch.device]] = None,
                  random_state: Optional[int] = None,
-                 pretrain_dataset_or_path: Optional[str] = None):
+                 pretrain_dataset_or_path: Optional[str] = None,
+                 keep_model: bool = True):
         self.cp_average = not bool(is_paper_version)
         self.lora_lr = lora_lr
         self.lora_r = lora_r
@@ -44,6 +45,7 @@ class BaseTabSTAR:
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
         self.random_state = random_state
+        self.keep_model = keep_model
         fix_seed(seed=self.random_state)
         self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")
@@ -69,6 +71,8 @@ class BaseTabSTAR:
                                  cp_average=self.cp_average)
         trainer.train(train_data, val_data)
         self.model_ = trainer.load_model()
+        if not self.keep_model:
+            trainer.delete_model()
 
     def predict(self, X):
         raise NotImplementedError("Must be implemented in subclass")
@@ -128,7 +132,8 @@ class BaseTabSTAR:
         y = y.copy()
         y_pred = self._infer(x)
         y_true = self.preprocessor_.transform_target(y)
-        return calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=self.preprocessor_.d_output)
+        return metrics
 
 
 
