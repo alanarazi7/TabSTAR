@@ -1,5 +1,6 @@
 import gc
 import shutil
+import time
 from typing import Tuple
 
 import numpy as np
@@ -24,7 +25,7 @@ from tabstar.training.utils import concat_predictions
 class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, cp_average: bool):
+                 global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
@@ -42,10 +43,12 @@ class TabStarTrainer:
         self.early_stopper = EarlyStopping(patience=patience)
         self.cp_manager = CheckpointManager(do_average=self.cp_average)
         self.steps: int = 0
+        self.time_limit = time_limit or 60 * 60 * 10
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
         val_loader = get_dataloader(val_data, is_train=False)
+        start_time = time.time()
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
@@ -57,6 +60,11 @@ class TabStarTrainer:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
+            # TODO: track the time per iteration of the loop and stop if the next iteration would go over time limit
+            elapsed = time.time() - start_time
+            if elapsed > self.time_limit:
+                print(f"⏱️ Time limit reached ({elapsed:.1f}s). Stopping training at epoch {epoch}")
+                break
             self.cp_manager.save_checkpoint(model=self.model, epoch=epoch, val_loss=val_loss)
         self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
         return self.early_stopper.metric
