@@ -53,7 +53,7 @@ class BaseTabSTAR:
         self.use_amp = bool(self.device.type == "cuda")
         self.model_version = get_tabstar_version(pretrain_dataset_or_path=pretrain_dataset_or_path)
 
-    def fit(self, X, y, x_val: Optional[DataFrame] = None, y_val: Optional[DataFrame] = None):
+    def fit(self, X: DataFrame, y: Series, x_val: Optional[DataFrame] = None, y_val: Optional[DataFrame] = None):
         if self.model_ is not None:
             raise ValueError("Model is already trained. Call fit() only once.")
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
