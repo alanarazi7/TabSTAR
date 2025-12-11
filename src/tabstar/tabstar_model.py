@@ -33,6 +33,7 @@ class BaseTabSTAR:
                  verbose: bool = False,
                  device: Optional[Union[str,  torch.device]] = None,
                  random_state: Optional[int] = None,
+                 time_limit: Optional[int] = None,
                  pretrain_dataset_or_path: Optional[str] = None,
                  keep_model: bool = True):
         self.cp_average = not bool(is_paper_version)
@@ -46,6 +47,7 @@ class BaseTabSTAR:
         self.preprocessor_: Optional[TabSTARVerbalizer] = None
         self.model_: Optional[PeftModel] = None
         self.random_state = random_state
+        self.time_limit = time_limit
         self.keep_model = keep_model
         fix_seed(seed=self.random_state)
         self.device = get_device(device=device)
@@ -67,7 +69,8 @@ class BaseTabSTAR:
                                  patience=self.patience,
                                  device=self.device,
                                  model_version=self.model_version,
-                                 cp_average=self.cp_average)
+                                 cp_average=self.cp_average,
+                                 time_limit=self.time_limit)
         trainer.train(train_data, val_data)
         self.model_ = trainer.load_model()
         if not self.keep_model:
