@@ -43,7 +43,7 @@ class TabStarTrainer:
         self.early_stopper = EarlyStopping(patience=patience)
         self.cp_manager = CheckpointManager(do_average=self.cp_average)
         self.steps: int = 0
-        self.time_limit = time_limit
+        self.time_limit = time_limit or 999999999
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
