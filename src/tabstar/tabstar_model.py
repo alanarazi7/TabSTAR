@@ -8,6 +8,7 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import softmax
 
+from tabstar.arch.arch import TabStarModel
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_datasets import get_tabstar_version
@@ -73,6 +74,11 @@ class BaseTabSTAR:
         self.model_ = trainer.load_model()
         if not self.keep_model:
             trainer.delete_model()
+
+    @staticmethod
+    def download_base_model():
+        TabStarModel.from_pretrained("alana89/TabSTAR")
+        print(f"Downloaded base mode!")
 
     def predict(self, X):
         raise NotImplementedError("Must be implemented in subclass")
