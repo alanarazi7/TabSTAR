@@ -53,13 +53,11 @@ class BaseTabSTAR:
         self.use_amp = bool(self.device.type == "cuda")
         self.model_version = get_tabstar_version(pretrain_dataset_or_path=pretrain_dataset_or_path)
 
-    def fit(self, X, y):
+    def fit(self, X, y, x_val: Optional[DataFrame] = None, y_val: Optional[DataFrame] = None):
         if self.model_ is not None:
             raise ValueError("Model is already trained. Call fit() only once.")
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
-        x = X.copy()
-        y = y.copy()
-        train_data, val_data = self._prepare_for_train(x, y)
+        train_data, val_data = self._prepare_for_train(X, y, x_val, y_val)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
         trainer = TabStarTrainer(lora_lr=self.lora_lr,
                                  lora_r=self.lora_r,
@@ -94,15 +92,20 @@ class BaseTabSTAR:
     def load(cls, path: str) -> 'BaseTabSTAR':
         return joblib.load(path)
 
-    def _prepare_for_train(self, X, y) -> Tuple[TabSTARData, TabSTARData]:
+    def _prepare_for_train(self, X, y, x_val: Optional[DataFrame], y_val: Optional[Series]) -> Tuple[TabSTARData, TabSTARData]:
         if not isinstance(X, DataFrame):
             raise ValueError("X must be a pandas DataFrame.")
         if not isinstance(y, Series):
             raise ValueError("y must be a pandas Series.")
         raise_if_null_target(y)
         self.vprint(f"Preparing data for training. X shape: {X.shape}, y shape: {y.shape}")
-        x_train, x_val, y_train, y_val = split_to_val(x=X, y=y, is_cls=self.is_cls)
-        self.vprint(f"Split to validation set. Train has {len(x_train)} samples, validation has {len(x_val)} samples.")
+        if x_val is None and y_val is None:
+            x_train, x_val, y_train, y_val = split_to_val(x=X, y=y, is_cls=self.is_cls)
+            self.vprint(f"Split to validation set. Train has {len(x_train)} samples, validation has {len(x_val)} samples.")
+        else:
+            x_train = X.copy()
+            y_train = y.copy()
+            raise_if_null_target(y_val)
         if self.preprocessor_ is None:
             self.preprocessor_ = TabSTARVerbalizer(is_cls=self.is_cls, verbose=self.verbose)
             self.preprocessor_.fit(x_train, y_train)
