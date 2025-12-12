@@ -54,7 +54,7 @@ def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred:
         score = rmse
     else:
         if (metric_name is not None) and metric_name not in [RMSE, R2]:
-            print(f"Unsupported metric_name for regression! {metric_name}. We want: {RMSE} or {R2}.")
+            print(f"⚠️ Unsupported metric_name for regression! {metric_name}. We want: {RMSE} or {R2}.")
         score = r2_score
     return Metrics(score=score, metrics=metrics)
 
@@ -93,7 +93,7 @@ def _calculate_metrics_for_multiclass(y_true: Union[np.ndarray, Series], y_pred:
         score = logloss
     else:
         if metric_name is not None and metric_name not in [ROC_AUC_OVR, LOGLOSS]:
-            print(f"Unsupported metric_name: {metric_name}. We want: {LOGLOSS} or {ROC_AUC_OVR}.")
+            print(f"⚠️ Unsupported metric_name: {metric_name}. We want: {LOGLOSS} or {ROC_AUC_OVR}.")
         score = auc
     return Metrics(score=score, metrics=metrics)
 
