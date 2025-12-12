@@ -21,6 +21,7 @@ class CheckpointManager:
         self.cp_paths: List[str] = []
         self.val_losses: List[float] = []
         self.do_average = do_average
+        self.avg_metric: Optional[float] = None
 
     def save_checkpoint(self, model: nn.Module, epoch: int, val_loss: float):
         """Save a checkpoint for later averaging (only model weights needed)"""
@@ -33,7 +34,7 @@ class CheckpointManager:
         self.val_losses.append(val_loss)
         assert len(self.cp_paths) == len(self.val_losses) == epoch
 
-    def average_checkpoints(self, model: nn.Module, evaluator: Callable, val_loader: DataLoader):
+    def average_checkpoints(self, model: nn.Module, evaluator: Callable, val_loader: DataLoader) -> Optional[float]:
         if not self.do_average:
             return
         if len(self.cp_paths) < 2:
@@ -68,6 +69,7 @@ class CheckpointManager:
         print(f"✅ Saved averaged model to {averaged_model_dir}")
         avg_val_loss, avg_val_metric = evaluator(val_loader)
         print(f"📈 Averaged checkpoint || Val Loss: {avg_val_loss:.4f} || Val Metric: {avg_val_metric:.4f}")
+        self.avg_metric = avg_val_metric
 
     @classmethod
     def adam_smooth_minmax(cls, x):

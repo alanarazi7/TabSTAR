@@ -9,12 +9,15 @@ class EarlyStopping:
         self.failed: int = 0
         self.patience = patience
 
-    def update(self, metric: float):
+    def update_metric(self, metric: float) -> str:
+        # TODO: depending on metric name, we might change direction here
         if metric > self.metric:
             self.metric = metric
             self.failed = 0
+            return " 🥇"
         else:
             self.failed += 1
+            return f" 😓 [{self.failed} / {self.patience}]"
 
     def update_loss(self, loss: float) -> str:
         if loss < self.loss:

@@ -37,6 +37,7 @@ class BaseTabSTAR:
                  pretrain_dataset_or_path: Optional[str] = None,
                  keep_model: bool = True,
                  output_dir: Optional[str] = None,
+                 metric_name: Optional[str] = None,
                  ):
         self.cp_average = not bool(is_paper_version)
         self.lora_lr = lora_lr
@@ -52,6 +53,7 @@ class BaseTabSTAR:
         self.time_limit = time_limit
         self.keep_model = keep_model
         self.output_dir = output_dir
+        self.metric_name = metric_name
         fix_seed(seed=self.random_state)
         self.device = get_device(device=device)
         print(f"🖥️ Using device: {self.device}")

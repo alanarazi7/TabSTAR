@@ -53,7 +53,7 @@ class TabStarTrainer:
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
-            emoji = self.early_stopper.update_loss(loss=val_loss)
+            emoji = self.early_stopper.update_metric(metric=val_metric)
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
             if self.early_stopper.is_best:
                 self.model.save_pretrained(self.cp_manager.best_dir)
@@ -65,7 +65,8 @@ class TabStarTrainer:
             if self.will_next_epoch_exceed_budget(epoch=epoch, start_time=start_time):
                 break
         self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
-        return self.early_stopper.metric
+        best_metric = self.cp_manager.avg_metric or self.early_stopper.metric
+        return best_metric
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
         self.model.train()
