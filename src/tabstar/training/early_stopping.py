@@ -1,20 +1,31 @@
-from typing import Dict
+from typing import Dict, Optional
+
+from tabstar.training.metrics import METRICS_TO_MINIMIZE
 
 
 class EarlyStopping:
 
-    def __init__(self, patience: int):
+    def __init__(self, patience: int, metric_name: Optional[str]):
         self.metric: float = float('-inf')
         self.loss: float = float('inf')
         self.failed: int = 0
         self.patience = patience
+        self.maximize_metric = True
+        if metric_name in METRICS_TO_MINIMIZE:
+            self.maximize_metric = False
 
-    def update(self, metric: float):
-        if metric > self.metric:
+    def update_metric(self, metric: float) -> str:
+        if self.maximize_metric:
+            is_improve = bool(metric > self.metric)
+        else:
+            is_improve = bool(metric < self.metric)
+        if is_improve:
             self.metric = metric
             self.failed = 0
+            return " 🥇"
         else:
             self.failed += 1
+            return f" 😓 [{self.failed} / {self.patience}]"
 
     def update_loss(self, loss: float) -> str:
         if loss < self.loss:

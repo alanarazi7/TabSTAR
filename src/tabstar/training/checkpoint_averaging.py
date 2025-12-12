@@ -1,7 +1,7 @@
 import datetime
 from os import makedirs
 from os.path import join, basename
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Optional
 
 import numpy as np
 import torch
@@ -11,8 +11,9 @@ from torch.utils.data import DataLoader
 
 class CheckpointManager:
 
-    def __init__(self, do_average: bool):
-        self.save_dir = join(".tabstar_checkpoint/", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
+    def __init__(self, do_average: bool, output_dir: Optional[str]):
+        output_dir = output_dir or ".tabstar_checkpoint/"
+        self.save_dir = join(output_dir, datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
         makedirs(self.save_dir, exist_ok=True)
         self.avg_dir = join(self.save_dir, "averaged_model")
         self.best_dir = join(self.save_dir, "best_model")
@@ -20,6 +21,7 @@ class CheckpointManager:
         self.cp_paths: List[str] = []
         self.val_losses: List[float] = []
         self.do_average = do_average
+        self.avg_metric: Optional[float] = None
 
     def save_checkpoint(self, model: nn.Module, epoch: int, val_loss: float):
         """Save a checkpoint for later averaging (only model weights needed)"""
@@ -67,6 +69,7 @@ class CheckpointManager:
         print(f"✅ Saved averaged model to {averaged_model_dir}")
         avg_val_loss, avg_val_metric = evaluator(val_loader)
         print(f"📈 Averaged checkpoint || Val Loss: {avg_val_loss:.4f} || Val Metric: {avg_val_metric:.4f}")
+        self.avg_metric = avg_val_metric
 
     @classmethod
     def adam_smooth_minmax(cls, x):

@@ -1,7 +1,7 @@
 import gc
 import shutil
 import time
-from typing import Tuple
+from typing import Tuple, Optional
 
 import numpy as np
 import torch
@@ -25,7 +25,8 @@ from tabstar.training.utils import concat_predictions
 class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int):
+                 global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int,
+                 output_dir: Optional[str], metric_name: Optional[str]):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
@@ -34,14 +35,15 @@ class TabStarTrainer:
         self.device = device
         self.cp_average = cp_average
         self.model_version = model_version
+        self.metric_name = metric_name
         self.model = load_pretrained(model_version=model_version, lora_r=lora_r)
         self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model, lr=self.lora_lr)
         self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.lora_lr, epochs=self.max_epochs)
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.early_stopper = EarlyStopping(patience=patience)
-        self.cp_manager = CheckpointManager(do_average=self.cp_average)
+        self.early_stopper = EarlyStopping(patience=patience, metric_name=metric_name)
+        self.cp_manager = CheckpointManager(do_average=self.cp_average, output_dir=output_dir)
         self.steps: int = 0
         self.time_limit = time_limit or 60 * 60 * 10
 
@@ -52,7 +54,7 @@ class TabStarTrainer:
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
-            emoji = self.early_stopper.update_loss(loss=val_loss)
+            emoji = self.early_stopper.update_metric(metric=val_metric)
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
             if self.early_stopper.is_best:
                 self.model.save_pretrained(self.cp_manager.best_dir)
@@ -60,14 +62,12 @@ class TabStarTrainer:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
-            # TODO: track the time per iteration of the loop and stop if the next iteration would go over time limit
-            elapsed = time.time() - start_time
-            if elapsed > self.time_limit:
-                print(f"⏱️ Time limit reached ({elapsed:.1f}s). Stopping training at epoch {epoch}")
-                break
             self.cp_manager.save_checkpoint(model=self.model, epoch=epoch, val_loss=val_loss)
+            if self.will_next_epoch_exceed_budget(epoch=epoch, start_time=start_time):
+                break
         self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
-        return self.early_stopper.metric
+        best_metric = self.cp_manager.avg_metric or self.early_stopper.metric
+        return best_metric
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
         self.model.train()
@@ -129,7 +129,7 @@ class TabStarTrainer:
                 y_true.append(data.y)
         y_pred = concat_predictions(y_pred)
         y_true = np.concatenate(y_true)
-        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output, metric_name=self.metric_name)
         loss = total_loss / total_samples
         loss = loss.item()
         return loss, metrics.score
@@ -146,3 +146,12 @@ class TabStarTrainer:
 
     def delete_model(self):
         shutil.rmtree(self.cp_manager.to_load_dir)
+
+    def will_next_epoch_exceed_budget(self, epoch: int, start_time) -> bool:
+        elapsed = round(time.time() - start_time, 1)
+        avg_epoch_time = round(elapsed / epoch, 1)
+        next_epoch_estimate = round(elapsed + avg_epoch_time, 1)
+        if next_epoch_estimate > self.time_limit:
+            print(f"⏱️ Limit exceeds next epoch: {elapsed=}, {avg_epoch_time=}, {self.time_limit=}. Stopping!")
+            return True
+        return False
