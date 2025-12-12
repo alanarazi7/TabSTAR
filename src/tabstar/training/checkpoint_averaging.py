@@ -34,7 +34,7 @@ class CheckpointManager:
         self.val_losses.append(val_loss)
         assert len(self.cp_paths) == len(self.val_losses) == epoch
 
-    def average_checkpoints(self, model: nn.Module, evaluator: Callable, val_loader: DataLoader) -> Optional[float]:
+    def average_checkpoints(self, model: nn.Module, evaluator: Callable, val_loader: DataLoader):
         if not self.do_average:
             return
         if len(self.cp_paths) < 2:
