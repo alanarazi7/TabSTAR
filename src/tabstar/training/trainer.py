@@ -1,7 +1,7 @@
 import gc
 import shutil
 import time
-from typing import Tuple
+from typing import Tuple, Optional
 
 import numpy as np
 import torch
@@ -25,7 +25,8 @@ from tabstar.training.utils import concat_predictions
 class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int):
+                 global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int,
+                 output_dir: Optional[str]):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
@@ -41,7 +42,7 @@ class TabStarTrainer:
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping(patience=patience)
-        self.cp_manager = CheckpointManager(do_average=self.cp_average)
+        self.cp_manager = CheckpointManager(do_average=self.cp_average, output_dir=output_dir)
         self.steps: int = 0
         self.time_limit = time_limit or 60 * 60 * 10
 
