@@ -152,6 +152,6 @@ class TabStarTrainer:
         avg_epoch_time = elapsed / epoch
         next_epoch_estimate = elapsed + avg_epoch_time
         if next_epoch_estimate > self.time_limit:
-            print(f"⏱️ Time limit exceed next epoch: {elapsed=}, {avg_epoch_time=}, {self.time_limit=}. Stopping!")
+            print(f"⏱️ Limit exceeds next epoch: {elapsed:.1f=}, {avg_epoch_time:.1f=}, {self.time_limit=}. Stopping!")
             return True
         return False
