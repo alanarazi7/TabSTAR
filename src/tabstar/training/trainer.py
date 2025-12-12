@@ -60,12 +60,11 @@ class TabStarTrainer:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
             self.scheduler.step()
-            # TODO: track the time per iteration of the loop and stop if the next iteration would go over time limit
-            elapsed = time.time() - start_time
-            if elapsed > self.time_limit:
-                print(f"⏱️ Time limit reached ({elapsed:.1f}s). Stopping training at epoch {epoch}")
+            if self.has_exceeded_budget(epoch=epoch, start_time=start_time):
                 break
             self.cp_manager.save_checkpoint(model=self.model, epoch=epoch, val_loss=val_loss)
+            if self.will_next_epoch_exceed_budget(epoch=epoch, start_time=start_time):
+                break
         self.cp_manager.average_checkpoints(model=self.model, evaluator=self._evaluate_epoch, val_loader=val_loader)
         return self.early_stopper.metric
 
@@ -146,3 +145,19 @@ class TabStarTrainer:
 
     def delete_model(self):
         shutil.rmtree(self.cp_manager.to_load_dir)
+
+    def has_exceeded_budget(self, epoch: int, start_time) -> bool:
+        elapsed = time.time() - start_time
+        if elapsed > self.time_limit:
+            print(f"⏱️ Time limit reached ({elapsed:.1f}s). Stopping training at epoch {epoch}, not saving this one!")
+            return True
+        return False
+
+    def will_next_epoch_exceed_budget(self, epoch: int, start_time) -> bool:
+        elapsed = time.time() - start_time
+        avg_epoch_time = elapsed / epoch
+        next_epoch_estimate = elapsed + avg_epoch_time
+        if next_epoch_estimate > self.time_limit:
+            print(f"⏱️ Time limit will likely exceed next epoch. Stopped training!")
+            return True
+        return False
