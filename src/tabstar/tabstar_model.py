@@ -35,7 +35,8 @@ class BaseTabSTAR:
                  random_state: Optional[int] = None,
                  time_limit: Optional[int] = None,
                  pretrain_dataset_or_path: Optional[str] = None,
-                 keep_model: bool = True):
+                 keep_model: bool = True,
+                 ):
         self.cp_average = not bool(is_paper_version)
         self.lora_lr = lora_lr
         self.lora_r = lora_r
