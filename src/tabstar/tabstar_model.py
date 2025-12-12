@@ -76,7 +76,8 @@ class BaseTabSTAR:
                                  model_version=self.model_version,
                                  cp_average=self.cp_average,
                                  time_limit=self.time_limit,
-                                 output_dir=self.output_dir)
+                                 output_dir=self.output_dir,
+                                 metric_name=self.metric_name)
         trainer.train(train_data, val_data)
         self.model_ = trainer.load_model()
         if not self.keep_model:

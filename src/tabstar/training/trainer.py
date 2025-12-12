@@ -26,7 +26,7 @@ class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
                  global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int,
-                 output_dir: Optional[str]):
+                 output_dir: Optional[str], metric_name: Optional[str]):
         self.lora_lr = lora_lr
         self.lora_batch = lora_batch
         self.global_batch = global_batch
@@ -35,13 +35,14 @@ class TabStarTrainer:
         self.device = device
         self.cp_average = cp_average
         self.model_version = model_version
+        self.metric_name = metric_name
         self.model = load_pretrained(model_version=model_version, lora_r=lora_r)
         self.model.to(self.device)
         self.optimizer = get_optimizer(model=self.model, lr=self.lora_lr)
         self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.lora_lr, epochs=self.max_epochs)
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.early_stopper = EarlyStopping(patience=patience)
+        self.early_stopper = EarlyStopping(patience=patience, metric_name=metric_name)
         self.cp_manager = CheckpointManager(do_average=self.cp_average, output_dir=output_dir)
         self.steps: int = 0
         self.time_limit = time_limit or 60 * 60 * 10
@@ -128,7 +129,7 @@ class TabStarTrainer:
                 y_true.append(data.y)
         y_pred = concat_predictions(y_pred)
         y_true = np.concatenate(y_true)
-        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output, metric_name=self.metric_name)
         loss = total_loss / total_samples
         loss = loss.item()
         return loss, metrics.score
