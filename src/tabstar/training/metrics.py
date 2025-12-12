@@ -67,7 +67,7 @@ def _calculate_metrics_for_binary(y_true: Union[np.ndarray, Series], y_pred: np.
     recall = recall_score(y_true, y_pred_label)
     metrics = {ROC_AUC: auc, LOGLOSS: logloss, 'accuracy': acc, 'f1': f1, 'recall': recall}
     if metric_name is not None and metric_name != ROC_AUC:
-        print(f"Unsupported metric name: {metric_name}. We want: {ROC_AUC}")
+        print(f"⚠️ Unsupported metric name: {metric_name}. We want: {ROC_AUC}")
     return Metrics(score=auc, metrics=metrics)
 
 def _calculate_metrics_for_multiclass(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, metric_name: Optional[str]) -> Metrics:
