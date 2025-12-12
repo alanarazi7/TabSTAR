@@ -148,10 +148,10 @@ class TabStarTrainer:
         shutil.rmtree(self.cp_manager.to_load_dir)
 
     def will_next_epoch_exceed_budget(self, epoch: int, start_time) -> bool:
-        elapsed = time.time() - start_time
-        avg_epoch_time = elapsed / epoch
-        next_epoch_estimate = elapsed + avg_epoch_time
+        elapsed = round(time.time() - start_time, 1)
+        avg_epoch_time = round(elapsed / epoch, 1)
+        next_epoch_estimate = round(elapsed + avg_epoch_time, 1)
         if next_epoch_estimate > self.time_limit:
-            print(f"⏱️ Limit exceeds next epoch: {elapsed=:.1f}, {avg_epoch_time=:.1f}, {self.time_limit=}. Stopping!")
+            print(f"⏱️ Limit exceeds next epoch: {elapsed=}, {avg_epoch_time=}, {self.time_limit=}. Stopping!")
             return True
         return False
