@@ -13,6 +13,7 @@ class EarlyStopping:
         self.maximize_metric = True
         if metric_name in METRICS_TO_MINIMIZE:
             self.maximize_metric = False
+            self.metric = float('inf')
 
     def update_metric(self, metric: float) -> str:
         if self.maximize_metric:
