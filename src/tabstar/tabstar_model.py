@@ -163,8 +163,11 @@ class TabSTARClassifier(BaseTabSTAR, BaseEstimator, ClassifierMixin):
             raise ValueError("Model is not trained yet. Call fit() before predict().")
         predictions = self._infer(X)
         if predictions.ndim == 1:
-            return np.round(predictions)
-        return np.argmax(predictions, axis=1)
+            predictions = np.round(predictions)
+        else:
+            predictions = np.argmax(predictions, axis=1)
+        label = self.preprocessor_.target_transformer.inverse_transform(predictions)
+        return label
 
     def predict_proba(self, X):
         return self._infer(X)
@@ -187,7 +190,7 @@ class TabSTARRegressor(BaseTabSTAR, BaseEstimator, RegressorMixin):
             raise ValueError("Model is not trained yet. Call fit() before predict().")
         z_scores = self._infer(X)
         y_pred = self.preprocessor_.inverse_transform_target(z_scores)
-        return y_pred
+        return y_pred.flatten()
 
     @property
     def is_cls(self) -> bool:
