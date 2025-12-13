@@ -132,9 +132,10 @@ class BaseTabSTAR:
         for data in dataloader:
             with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
                 batch_predictions = self.model_(x_txt=data.x_txt, x_num=data.x_num, d_output=data.d_output)
-                if self.is_cls:
-                    batch_predictions = softmax(batch_predictions.to(torch.float32), dim=1)
-                predictions.append(batch_predictions)
+            batch_predictions = batch_predictions.to(torch.float32)
+            if self.is_cls:
+                batch_predictions = softmax(batch_predictions, dim=1)
+            predictions.append(batch_predictions)
         predictions = concat_predictions(predictions)
         return predictions
 

@@ -116,7 +116,7 @@ def _per_class_auc(y_true, y_pred) -> float:
 
 def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
     if d_output == 1:
-        return prediction
+        return prediction.to(torch.float32)
     prediction = prediction.to(torch.float32)
     prediction = softmax(prediction, dim=1)
     if d_output == 2:
