@@ -190,7 +190,7 @@ class TabSTARRegressor(BaseTabSTAR, BaseEstimator, RegressorMixin):
             raise ValueError("Model is not trained yet. Call fit() before predict().")
         z_scores = self._infer(X)
         y_pred = self.preprocessor_.inverse_transform_target(z_scores)
-        return y_pred
+        return y_pred.flatten()
 
     @property
     def is_cls(self) -> bool:
