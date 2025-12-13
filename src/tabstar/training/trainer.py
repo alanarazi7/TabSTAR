@@ -88,7 +88,7 @@ class TabStarTrainer:
     def _train_batch(self, data: TabSTARData) -> float:
         with autocast(device_type=self.device.type, enabled=self.use_amp):
             loss, predictions = self._do_forward(data=data)
-            print(f"Predictions type: {predictions.dtype}")
+            print(f"Predictions type: {predictions.dtype}. The first predictions are: {predictions[:5]}")
             loss_for_backward = loss / self.accumulation_steps
         if self.use_amp:
             scaled_loss = self.scaler.scale(loss_for_backward)

@@ -30,6 +30,7 @@ class TabStarModel(PreTrainedModel):
         embeddings = self.numerical_fusion(textual_embeddings=textual_embeddings, x_num=x_num)
         encoded = self.tabular_encoder(embeddings)
         target_tokens = encoded[:, :d_output]
+        print(f"What is going ot here...?")
         if d_output == 1:
             target_scores = self.reg_head(target_tokens)
             print(f"Target_scores. dtype {target_scores.dtype}, the first few: {list(target_scores[:3])}")
