@@ -55,7 +55,7 @@ def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred:
     else:
         if (metric_name is not None) and metric_name not in [RMSE, R2]:
             print(f"⚠️ Unsupported metric_name for regression! {metric_name}. We want: {RMSE} or {R2}.")
-        score = r2_score
+        score = rsq
     return Metrics(score=score, metrics=metrics)
 
 def _calculate_metrics_for_binary(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, metric_name: Optional[str]) -> Metrics:
