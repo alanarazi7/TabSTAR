@@ -4,9 +4,14 @@ from typing import List
 
 import numpy as np
 import torch
+from huggingface_hub import snapshot_download
+from huggingface_hub.errors import LocalEntryNotFoundError
 from torch import Tensor
 
 from tabstar.constants import SEED
+
+
+TABSTAR_REPO_ID = "alana89/TabSTAR"
 
 
 def fix_seed(seed: int = SEED):
@@ -27,3 +32,10 @@ def fix_seed(seed: int = SEED):
 
 def concat_predictions(y_pred: List[Tensor]) -> np.ndarray:
     return np.concatenate([p.cpu().detach().numpy() for p in y_pred])
+
+
+def download_tabstar():
+    try:
+        snapshot_download(repo_id=TABSTAR_REPO_ID, local_files_only=True)
+    except LocalEntryNotFoundError:
+        snapshot_download(repo_id=TABSTAR_REPO_ID)
