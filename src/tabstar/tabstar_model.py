@@ -8,7 +8,6 @@ from peft import PeftModel
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from torch import softmax
 
-from tabstar.arch.arch import TabStarModel
 from tabstar.preprocessing.nulls import raise_if_null_target
 from tabstar.preprocessing.splits import split_to_val
 from tabstar.tabstar_datasets import get_tabstar_version
@@ -19,7 +18,7 @@ from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_P
     VAL_BATCH, LORA_WD, LORA_DROPOUT, LORA_ALPHA
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
-from tabstar.training.utils import concat_predictions, fix_seed
+from tabstar.training.utils import concat_predictions, fix_seed, download_tabstar
 
 
 class BaseTabSTAR:
@@ -72,6 +71,7 @@ class BaseTabSTAR:
     def fit(self, X: DataFrame, y: Series, x_val: Optional[DataFrame] = None, y_val: Optional[DataFrame] = None):
         if self.model_ is not None:
             raise ValueError("Model is already trained. Call fit() only once.")
+        self.download_base_model()
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
         train_data, val_data = self._prepare_for_train(X, y, x_val, y_val)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
@@ -98,8 +98,7 @@ class BaseTabSTAR:
 
     @staticmethod
     def download_base_model():
-        TabStarModel.from_pretrained("alana89/TabSTAR")
-        print(f"Downloaded base mode!")
+        download_tabstar()
 
     def predict(self, X):
         raise NotImplementedError("Must be implemented in subclass")
