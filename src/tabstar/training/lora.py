@@ -29,6 +29,6 @@ def load_pretrained(model_version: str, lora_r: int, lora_alpha: int, dropout: f
 def load_finetuned(save_dir: str, tabstar_version: str) -> PeftModel:
     if not exists(save_dir):
         raise FileNotFoundError(f"Checkpoint path {save_dir} does not exist.")
-    base_model = TabStarModel.from_pretrained(tabstar_version)
+    base_model = TabStarModel.from_pretrained(tabstar_version, local_files_only=True)
     model = PeftModel.from_pretrained(base_model, save_dir, device_map='cpu')
     return model
