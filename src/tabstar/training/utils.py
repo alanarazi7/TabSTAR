@@ -36,6 +36,6 @@ def concat_predictions(y_pred: List[Tensor]) -> np.ndarray:
 
 def download_tabstar():
     try:
-        snapshot_download(repo_id=TABSTAR_REPO_ID, local_files_only=True,)
+        snapshot_download(repo_id=TABSTAR_REPO_ID, local_files_only=True)
     except LocalEntryNotFoundError:
         snapshot_download(repo_id=TABSTAR_REPO_ID)
