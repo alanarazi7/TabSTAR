@@ -4,6 +4,7 @@ LORA_LR = 0.001
 LORA_R = 32
 LORA_BATCH = 64
 GLOBAL_BATCH = 128
+VAL_BATCH = 128
 
 
 def set_accumulation_steps(batch_size: int, global_batch: int):
