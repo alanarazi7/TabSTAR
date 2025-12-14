@@ -5,7 +5,7 @@ from peft import LoraConfig, get_peft_model, PeftModel
 from tabstar.arch.arch import TabStarModel
 
 
-def load_pretrained(model_version: str, lora_r: int) -> PeftModel:
+def load_pretrained(model_version: str, lora_r: int, lora_alpha: int, dropout: float) -> PeftModel:
     print(f"🤩 Loading pretrained model version: {model_version}")
     model = TabStarModel.from_pretrained(model_version)
     # TODO: probably best if this is written more generic and not so hard-coded
@@ -16,10 +16,10 @@ def load_pretrained(model_version: str, lora_r: int) -> PeftModel:
     to_exclude = [name for name, _ in model.named_modules() if name.startswith(prefixes)]
     lora_config = LoraConfig(
         r=lora_r,
-        lora_alpha=lora_r * 2,
+        lora_alpha=lora_r * lora_alpha,
         target_modules=lora_modules,
         exclude_modules=to_exclude,
-        lora_dropout=0.1,
+        lora_dropout=dropout,
         bias="none",
     )
     model = get_peft_model(model, lora_config)

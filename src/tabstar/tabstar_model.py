@@ -16,7 +16,7 @@ from tabstar.tabstar_verbalizer import TabSTARVerbalizer, TabSTARData
 from tabstar.training.dataloader import get_dataloader
 from tabstar.training.devices import get_device
 from tabstar.training.hyperparams import LORA_LR, LORA_R, MAX_EPOCHS, FINETUNE_PATIENCE, LORA_BATCH, GLOBAL_BATCH, \
-    VAL_BATCH
+    VAL_BATCH, LORA_WD, LORA_DROPOUT, LORA_ALPHA
 from tabstar.training.metrics import calculate_metric, Metrics
 from tabstar.training.trainer import TabStarTrainer
 from tabstar.training.utils import concat_predictions, fix_seed
@@ -26,7 +26,10 @@ class BaseTabSTAR:
     def __init__(self,
                  is_paper_version: bool = False,
                  lora_lr: float = LORA_LR,
+                 lora_wd: float = LORA_WD,
                  lora_r: int = LORA_R,
+                 lora_alpha: int = LORA_ALPHA,
+                 lora_dropout: float = LORA_DROPOUT,
                  lora_batch: int = LORA_BATCH,
                  global_batch: int = GLOBAL_BATCH,
                  max_epochs: int = MAX_EPOCHS,
@@ -43,7 +46,10 @@ class BaseTabSTAR:
                  ):
         self.cp_average = not bool(is_paper_version)
         self.lora_lr = lora_lr
+        self.lora_wd = lora_wd
         self.lora_r = lora_r
+        self.lora_alpha = lora_alpha
+        self.lora_dropout = lora_dropout
         self.lora_batch = lora_batch
         self.global_batch = global_batch
         self.val_batch_size = val_batch_size
@@ -70,7 +76,10 @@ class BaseTabSTAR:
         train_data, val_data = self._prepare_for_train(X, y, x_val, y_val)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")
         trainer = TabStarTrainer(lora_lr=self.lora_lr,
+                                 lora_wd=self.lora_wd,
                                  lora_r=self.lora_r,
+                                 lora_alpha=self.lora_alpha,
+                                 lora_dropout=self.lora_dropout,
                                  lora_batch=self.lora_batch,
                                  global_batch=self.global_batch,
                                  max_epochs=self.max_epochs,
