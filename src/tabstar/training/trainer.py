@@ -24,22 +24,24 @@ from tabstar.training.utils import concat_predictions
 
 class TabStarTrainer:
 
-    def __init__(self, max_epochs: int, lora_lr: float, lora_r: int, lora_batch: int, patience: int,
-                 global_batch: int, device: torch.device, model_version: str, cp_average: bool, time_limit: int,
-                 output_dir: Optional[str], metric_name: Optional[str]):
-        self.lora_lr = lora_lr
+    def __init__(self, max_epochs: int, lora_lr: float, lora_wd: float, lora_r: int, lora_alpha: float,
+                 lora_dropout: float, lora_batch: int, patience: int, global_batch: int, device: torch.device,
+                 model_version: str, cp_average: bool, time_limit: int, output_dir: Optional[str],
+                 metric_name: Optional[str], val_batch_size: int):
         self.lora_batch = lora_batch
         self.global_batch = global_batch
+        self.val_batch_size = val_batch_size
         self.accumulation_steps = set_accumulation_steps(global_batch=global_batch, batch_size=lora_batch)
         self.max_epochs = max_epochs
         self.device = device
         self.cp_average = cp_average
         self.model_version = model_version
         self.metric_name = metric_name
-        self.model = load_pretrained(model_version=model_version, lora_r=lora_r)
+        self.model = load_pretrained(model_version=model_version, lora_r=lora_r, lora_alpha=lora_alpha,
+                                     dropout=lora_dropout)
         self.model.to(self.device)
-        self.optimizer = get_optimizer(model=self.model, lr=self.lora_lr)
-        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=self.lora_lr, epochs=self.max_epochs)
+        self.optimizer = get_optimizer(model=self.model, lr=lora_lr, wd=lora_wd)
+        self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=lora_lr, epochs=self.max_epochs)
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
         self.early_stopper = EarlyStopping(patience=patience, metric_name=metric_name)
@@ -49,7 +51,7 @@ class TabStarTrainer:
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
-        val_loader = get_dataloader(val_data, is_train=False)
+        val_loader = get_dataloader(val_data, is_train=False, batch_size=self.val_batch_size)
         start_time = time.time()
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
