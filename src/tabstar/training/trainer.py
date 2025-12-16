@@ -26,8 +26,7 @@ class TabStarTrainer:
 
     def __init__(self, max_epochs: int, lora_lr: float, lora_wd: float, lora_r: int, lora_alpha: float,
                  lora_dropout: float, lora_batch: int, patience: int, global_batch: int, device: torch.device,
-                 model_version: str, cp_average: bool, time_limit: int, output_dir: Optional[str],
-                 metric_name: Optional[str], val_batch_size: int):
+                 model_version: str, cp_average: bool, time_limit: int, output_dir: Optional[str], val_batch_size: int):
         self.lora_batch = lora_batch
         self.global_batch = global_batch
         self.val_batch_size = val_batch_size
@@ -36,7 +35,6 @@ class TabStarTrainer:
         self.device = device
         self.cp_average = cp_average
         self.model_version = model_version
-        self.metric_name = metric_name
         self.model = load_pretrained(model_version=model_version, lora_r=lora_r, lora_alpha=lora_alpha,
                                      dropout=lora_dropout)
         self.model.to(self.device)
@@ -44,7 +42,7 @@ class TabStarTrainer:
         self.scheduler = get_scheduler(optimizer=self.optimizer, max_lr=lora_lr, epochs=self.max_epochs)
         self.use_amp = bool(self.device.type == "cuda")
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.early_stopper = EarlyStopping(patience=patience, metric_name=metric_name)
+        self.early_stopper = EarlyStopping(patience=patience)
         self.cp_manager = CheckpointManager(do_average=self.cp_average, output_dir=output_dir)
         self.steps: int = 0
         self.time_limit = time_limit or 60 * 60 * 10
@@ -56,7 +54,7 @@ class TabStarTrainer:
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
-            emoji = self.early_stopper.update_metric(metric=val_metric)
+            emoji = self.early_stopper.update(metric=val_metric)
             print(f"Epoch {epoch} || Train {train_loss:.4f} || Val {val_loss:.4f} || Metric {val_metric:.4f} {emoji}")
             if self.early_stopper.is_best:
                 self.model.save_pretrained(self.cp_manager.best_dir)
@@ -131,7 +129,7 @@ class TabStarTrainer:
                 y_true.append(data.y)
         y_pred = concat_predictions(y_pred)
         y_true = np.concatenate(y_true)
-        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output, metric_name=self.metric_name)
+        metrics = calculate_metric(y_true=y_true, y_pred=y_pred, d_output=d_output)
         loss = total_loss / total_samples
         loss = loss.item()
         return loss, metrics.score

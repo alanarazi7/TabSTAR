@@ -5,17 +5,9 @@ from torch.optim.lr_scheduler import OneCycleLR, LRScheduler
 WARMUP_PROPORTION = 0.1
 
 
-def get_optimizer(model: nn.Module, lr: float, wd: float) -> AdamW:
-    assert isinstance(model, nn.Module)
-    biases, weights = [], []
-    for name, p in model.named_parameters():
-        if "bias" in name:
-            biases.append(p)
-        else:
-            weights.append(p)
-    param_groups = [{"params": weights, "weight_decay": wd, "lr": lr, "name": "weights"},
-                    {"params": biases, "weight_decay": 0.0, "lr": lr, "name": "biases"}]
-    optimizer = AdamW(param_groups)
+def get_optimizer(model: nn.Module, lr: float) -> AdamW:
+    params = [{"params": model.parameters(), "lr": lr, "name": "lora_lr"}]
+    optimizer = AdamW(params)
     return optimizer
 
 def get_scheduler(optimizer: AdamW, max_lr: float, epochs: int) -> LRScheduler:
