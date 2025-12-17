@@ -130,7 +130,7 @@ class TabSTARPretrainer:
                 emoji = " 🥇" if dev_metric > self.early_stopper.metric else f" 😓 [{self.early_stopper.failed}]"
                 elapsed = time.time() - t0
                 print(f"Epoch {epoch} || Time {elapsed:.2f} || Train {train_loss:.5f} || Val {dev_loss:.5f} || Metric {dev_metric:.5f} {emoji}")
-                self.early_stopper.update_metric(dev_metric)
+                self.early_stopper.update(dev_metric)
                 if self.early_stopper.is_best:
                     self.model.save_pretrained(get_model_path(self.run_name))
                 elif self.early_stopper.should_stop:
