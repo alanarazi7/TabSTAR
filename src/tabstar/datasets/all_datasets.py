@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Union
 
 
 class OpenMLDatasetID(Enum):
@@ -409,4 +408,4 @@ class UrlDatasetID(Enum):
     REG_SOCIAL_MOVIES_ROTTEN_TOMATOES = "http://pages.cs.wisc.edu/~anhai/data/784_data/movies1/csv_files/rotten_tomatoes.csv"
 
 
-TabularDatasetID = Union[OpenMLDatasetID, KaggleDatasetID, UrlDatasetID]
+TabularDatasetID = OpenMLDatasetID | KaggleDatasetID | UrlDatasetID

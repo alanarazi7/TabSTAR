@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import joblib
 import numpy as np
@@ -34,7 +34,7 @@ class BaseTabSTAR:
                  max_epochs: int = MAX_EPOCHS,
                  patience: int = FINETUNE_PATIENCE,
                  verbose: bool = False,
-                 device: Optional[Union[str,  torch.device]] = None,
+                 device: Optional[str | torch.device] = None,
                  random_state: Optional[int] = None,
                  time_limit: Optional[int] = None,
                  pretrain_dataset_or_path: Optional[str] = None,
