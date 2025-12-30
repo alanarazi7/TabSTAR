@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tabstar"
-version = "1.1.12"
+version = "1.1.13"
 description = "TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations"
 readme = "README-pypi.md"
 authors = [
@@ -22,7 +22,7 @@ dependencies = [
   "tqdm",
   "transformers>=4.49.0"
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
 where = ["src"]

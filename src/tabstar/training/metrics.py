@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Union, Dict, Optional
+from typing import Dict
 
 import numpy as np
 import torch
@@ -20,7 +20,7 @@ class Metrics:
         self.metrics = {k: float(v) for k, v in self.metrics.items()}
 
 
-def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_output: int, is_pretrain: bool = False) -> Metrics:
+def calculate_metric(y_true: np.ndarray | Series, y_pred: np.ndarray, d_output: int, is_pretrain: bool = False) -> Metrics:
     if d_output == 1:
         return _calculate_metrics_for_regression(y_true=y_true, y_pred=y_pred, is_pretrain=is_pretrain)
     elif d_output == 2:
@@ -31,7 +31,7 @@ def calculate_metric(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, d_ou
         return _calculate_metrics_for_multiclass(y_true=y_true, y_pred=y_pred)
     raise ValueError(f"Unsupported d_output: {d_output}. Expected 1 (regression), 2 (binary), or >2 (multiclass).")
 
-def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred: np.ndarray, is_pretrain: bool) -> Metrics:
+def _calculate_metrics_for_regression(y_true: np.ndarray | Series, y_pred: np.ndarray, is_pretrain: bool) -> Metrics:
     rsq = r2_score(y_true=y_true, y_pred=y_pred)
     mse = mean_squared_error(y_true=y_true, y_pred=y_pred)
     one_minus_mse = 1 - mse
@@ -42,11 +42,11 @@ def _calculate_metrics_for_regression(y_true: Union[np.ndarray, Series], y_pred:
         score = rsq
     return Metrics(score=score, metrics=metrics)
 
-def _calculate_metrics_for_binary(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
+def _calculate_metrics_for_binary(y_true: np.ndarray | Series, y_pred: np.ndarray) -> Metrics:
     auc = roc_auc_score(y_true, y_pred)
     return Metrics(score=auc, metrics={"roc_auc": auc})
 
-def _calculate_metrics_for_multiclass(y_true: Union[np.ndarray, Series], y_pred: np.ndarray) -> Metrics:
+def _calculate_metrics_for_multiclass(y_true: np.ndarray | Series, y_pred: np.ndarray) -> Metrics:
     try:
         auc = roc_auc_score(y_true=y_true, y_score=y_pred, multi_class='ovr', average='macro')
     except (ValueError, AxisError):
@@ -82,7 +82,7 @@ def apply_loss_fn(prediction: Tensor, d_output: int) -> Tensor:
     return prediction
 
 
-def calculate_loss(predictions: Tensor, y: Union[Series, np.ndarray], d_output: int) -> Tensor:
+def calculate_loss(predictions: Tensor, y: Series | np.ndarray, d_output: int) -> Tensor:
     is_reg = bool(d_output == 1)
     if is_reg:
         loss_fn = MSELoss()

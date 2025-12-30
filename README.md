@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/alanarazi7/TabSTAR/main/figures/tabstar_logo.png" alt="TabSTAR Logo" width="50%">
 
 [![PyPI version](https://badge.fury.io/py/tabstar.svg)](https://badge.fury.io/py/tabstar)
-[![Python Versions](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://pypi.org/project/tabstar/)
+[![Python Versions](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://pypi.org/project/tabstar/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/tabstar?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/tabstar)
 [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![arXiv](https://img.shields.io/badge/arXiv-2505.18125-blue.svg)](https://arxiv.org/pdf/2505.18125)
