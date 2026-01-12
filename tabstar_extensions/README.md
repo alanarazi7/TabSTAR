@@ -169,14 +169,6 @@ global_imp = explainer.explain_global(X_test)
 # constant_col will have importance = 0.0
 ```
 
-### Debugging
-
-If you encounter issues with model unwrapping:
-
-```python
-from tabstar_extensions.explainability import diagnose_model
-
-
 ### Limitations
 
 - Attention-based explanations show correlation, not causation
@@ -187,5 +179,6 @@ from tabstar_extensions.explainability import diagnose_model
 
 ### Related Files
 
+- `../src/tabstar/tabstar_model.py`: TabSTAR model class
 - `../src/tabstar/arch/interaction.py`: Original InteractionEncoder
 - `../src/tabstar/arch/fusion.py`: Numerical fusion module
