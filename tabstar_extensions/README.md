@@ -73,7 +73,9 @@ explainer.plot_feature_importance(global_imp, top_k=10)
 explainer.plot_attention_heatmap(X_test, sample_idx=0, layer_idx=-1)
 explainer.plot_importance_distribution(local_imp, top_k=10)
 ```
+example ranked feature importance for the IMDB dataset. A TabSTAR classifier is trained to predict (Genre_is_Drama) from following features: 
 ![IMDB dataset Global Importance](./global_imp.png)
+
 ```python
 # Comparing Aggregation Methods
 for agg in ['mean', 'last', 'rollout', 'weighted']:
