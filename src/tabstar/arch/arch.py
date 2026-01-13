@@ -6,6 +6,7 @@ from tabstar.arch.config import TabStarConfig, E5_SMALL
 from tabstar.arch.interaction import InteractionEncoder
 from tabstar.arch.fusion import NumericalFusion
 from tabstar.arch.prediction import PredictionHead
+from tabstar.constants import E5_SMALL_LOCAL_PATH
 from tabstar.training.devices import clear_cuda_cache
 
 
@@ -14,8 +15,9 @@ class TabStarModel(PreTrainedModel):
 
     def __init__(self, config: TabStarConfig):
         super().__init__(config)
-        self.text_encoder = AutoModel.from_pretrained(E5_SMALL)
-        self.tokenizer = AutoTokenizer.from_pretrained(E5_SMALL)
+        e5_path = E5_SMALL_LOCAL_PATH or E5_SMALL
+        self.text_encoder = AutoModel.from_pretrained(e5_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(e5_path)
         self.numerical_fusion = NumericalFusion()
         self.tabular_encoder = InteractionEncoder()
         self.cls_head = PredictionHead()
