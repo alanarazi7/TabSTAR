@@ -1,6 +1,6 @@
 import datetime
-from os import makedirs
-from os.path import join, basename
+from os import makedirs, remove
+from os.path import exists, join, basename
 from typing import List, Dict, Callable, Optional
 
 import numpy as np
@@ -9,7 +9,6 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 
-# TODO: we are currently saving the whole model rather than just the LoRA weights... this is super wasteful.
 class CheckpointManager:
 
     def __init__(self, do_average: bool, output_dir: Optional[str]):
@@ -29,17 +28,24 @@ class CheckpointManager:
         if not self.do_average:
             return
         checkpoint_path = join(self.save_dir, f"checkpoint_epoch_{epoch}.pt")
-        checkpoint = {'model_dict': model.state_dict()}
+        lora_weights = {k: v for k, v in model.state_dict().items() if 'lora_A' in k or 'lora_B' in k}
+        checkpoint = {'model_dict': lora_weights}
         torch.save(checkpoint, checkpoint_path)
         self.cp_paths.append(checkpoint_path)
         self.val_losses.append(val_loss)
         assert len(self.cp_paths) == len(self.val_losses) == epoch
+
+    def _delete_checkpoints(self):
+        for cp_path in self.cp_paths:
+            if exists(cp_path):
+                remove(cp_path)
 
     def average_checkpoints(self, model: nn.Module, evaluator: Callable, val_loader: DataLoader):
         if not self.do_average:
             return
         if len(self.cp_paths) < 2:
             print(f"⚠️ Only {len(self.cp_paths)} checkpoint(s) available, skipping averaging")
+            self._delete_checkpoints()
             return
         best_loss = min(self.val_losses)
         best_idx = int(np.argmin(self.val_losses))
@@ -50,6 +56,7 @@ class CheckpointManager:
         cps_to_avg = [path for loss, path in zip(self.val_losses, self.cp_paths) if loss <= threshold]
         if len(cps_to_avg) < 1:
             print(f"⚠️ No checkpoints selected for averaging, skipping")
+            self._delete_checkpoints()
             return
         self.to_load_dir = self.avg_dir
         print(f"📊 Averaging {len(cps_to_avg)} checkpoints:")
@@ -68,6 +75,8 @@ class CheckpointManager:
         averaged_model_dir = join(self.save_dir, "averaged_model")
         model.save_pretrained(averaged_model_dir)
         print(f"✅ Saved averaged model to {averaged_model_dir}")
+        self._delete_checkpoints()
+        remove(averaged_checkpoint_path)
         avg_val_loss, avg_val_metric = evaluator(val_loader)
         print(f"📈 Averaged checkpoint || Val Loss: {avg_val_loss:.4f} || Val Metric: {avg_val_metric:.4f}")
         self.avg_metric = avg_val_metric
