@@ -76,7 +76,6 @@ class CheckpointManager:
         model.save_pretrained(averaged_model_dir)
         print(f"✅ Saved averaged model to {averaged_model_dir}")
         self._delete_checkpoints()
-        remove(averaged_checkpoint_path)
         avg_val_loss, avg_val_metric = evaluator(val_loader)
         print(f"📈 Averaged checkpoint || Val Loss: {avg_val_loss:.4f} || Val Metric: {avg_val_metric:.4f}")
         self.avg_metric = avg_val_metric
