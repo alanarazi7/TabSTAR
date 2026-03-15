@@ -26,6 +26,8 @@ def get_valid_values(ls: Series) -> List:
 def _get_non_null_value(x: Any) -> Optional[Any]:
     if isinstance(x, str):
         return x
+    if isinstance(x, (list, np.ndarray)):
+        return x if len(x) > 0 else None
     if pd.isna(x):
         return None
     if not np.isfinite(x):
