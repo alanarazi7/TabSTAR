@@ -8,7 +8,9 @@ from tabstar.preprocessing.scaler import fit_standard_scaler, transform_clipped_
 def transform_preprocess_y(y: Series | np.ndarray, scaler: LabelEncoder | StandardScaler) -> Series:
     y = y.copy()
     if isinstance(scaler, StandardScaler):
-        return transform_clipped_z_scores(s=y, scaler=scaler)
+        # Regression targets: z-score but don't clip, unlike numerical feature columns.
+        # Clipping the target itself destroys the tail signal the model needs to learn from.
+        return transform_clipped_z_scores(s=y, scaler=scaler, clip=False)
     elif isinstance(scaler, LabelEncoder):
         return transform_cls_y(y=y, encoder=scaler)
     raise TypeError(f"What is this scaler {scaler} from type {type(scaler)}?")
