@@ -166,23 +166,28 @@ class TabSTARModel(AbstractModel):
 def build_checkpoint_generators(overlap: OverlapDataset) -> list[ConfigGenerator]:
     """The three `ConfigGenerator`s (base/correct/wrong) for one overlapping dataset.
 
-    Each generator's `name` overrides `TabSTARModel.ag_name`, so the three runs show up as
-    distinguishable methods (`TabSTAR_base_c1_BAG_L1`, etc.) in the TabArena leaderboard.
+    TabArena's bagged-experiment naming keys off `model_cls.ag_name`/`ag_key` (not
+    `ConfigGenerator(name=...)`, which the naming path ignores), so each variant gets its own
+    `TabSTARModel` subclass with a distinct `ag_key`/`ag_name` — otherwise all three would collide
+    on the shared `TabSTARModel.ag_name` ("TabSTAR") and `context.build_and_run_jobs` would raise
+    on the duplicate experiment name.
     """
     checkpoints = {
         "TabSTAR_base": None,
         "TabSTAR_correct": overlap.tabstar_key,
         "TabSTAR_wrong": PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=wrong_fold(overlap.tabstar_key)),
     }
-    return [
-        ConfigGenerator(
-            model_cls=TabSTARModel,
-            name=name,
-            manual_configs=[{TabSTARModel.pretrain_param_name: checkpoint}],
-            search_space={},
+    generators = []
+    for name, checkpoint in checkpoints.items():
+        variant_cls = type(name, (TabSTARModel,), {"ag_key": name, "ag_name": name})
+        generators.append(
+            ConfigGenerator(
+                model_cls=variant_cls,
+                manual_configs=[{TabSTARModel.pretrain_param_name: checkpoint}],
+                search_space={},
+            )
         )
-        for name, checkpoint in checkpoints.items()
-    ]
+    return generators
 
 
 def parse_args() -> argparse.Namespace:
