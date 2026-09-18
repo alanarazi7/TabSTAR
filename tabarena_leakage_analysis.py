@@ -9,7 +9,7 @@ this repo's (v1) pretraining corpus: only 32 of the 51 were actually part of it,
 keys in `tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD` (verified by exact key match
 against the TabSTAR-v2 name list, and cross-checked against OpenML/Kaggle instance+feature
 counts wherever a name alone was ambiguous — see OVERLAP_DATASETS below). The other 19 were
-never pretrained on under v1 and are excluded here; TabSTAR-v2 separately excludes all 51 from
+never pretrained on under v1 (NON_OVERLAP_DATASETS); TabSTAR-v2 separately excludes all 51 from
 its own pretraining pool. Scoring the base checkpoint on one of the 32 risks leakage. This
 script quantifies that risk by running each overlapping dataset three ways through TabArena-Lite:
 
@@ -19,6 +19,10 @@ script quantifies that risk by running each overlapping dataset three ways throu
                 if (a) beats (c) similarly to how it beats (b), the gap is not about leakage).
 
 If leakage matters, (a) should score above (b), and (c) should track (a) rather than (b).
+
+The 19 non-overlapping datasets run (a) and (b) only, with a fixed fold checkpoint standing in as
+(b): every fold excludes them, so any fold is leakage-free there and no "wrong" fold exists. That
+gives the base and the leakage-free arm full 51-dataset coverage on the leaderboard.
 
 Requires the `tabarena` package with its `plot` extra (`pip install "tabarena[plot]"`), which is
 not a declared dependency of this repo. The bare package is enough for `build_and_run_jobs()`, but
@@ -31,7 +35,7 @@ Results land under this file's directory: raw per-run TabArena job artifacts in
 `eval/tabarena_leakage_analysis/`.
 
 Usage:
-    python tabarena_leakage_analysis.py                    # all overlapping datasets
+    python tabarena_leakage_analysis.py                    # all 51 TabArena datasets
     python tabarena_leakage_analysis.py --tabarena_name diabetes   # a single dataset
 
     # Cluster array job: one dataset per worker, no `[plot]` extra needed on workers.
@@ -87,6 +91,10 @@ def wrong_fold(tabstar_key: str) -> int:
     return (correct_fold(tabstar_key) + 2) % 5
 
 
+NON_OVERLAP_FOLD = 0
+"""Fold checkpoint used as the leakage-free arm on datasets outside the v1 corpus (any fold qualifies)."""
+
+
 # Verified against `tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD`: exact name match to
 # the dataset's real OpenML name, or (where names diverged) an exact match on OpenML/Kaggle
 # instance+feature counts against TabArena's `curated_tabarena_dataset_metadata.csv` row. The
@@ -125,6 +133,34 @@ OVERLAP_DATASETS = [
     OverlapDataset(tabarena_name="healthcare_insurance_expenses", tabstar_key="REG_FINANCIAL_INSURANCE_PREMIUM_DATA"),
     OverlapDataset(tabarena_name="houses", tabstar_key="REG_HOUSES_CALIFORNIA_HOUSES"),
 ]
+
+# The remaining 19 TabArena datasets: no key in PRETRAIN2FOLD / TEXT2FOLD, i.e. never in the v1 corpus.
+NON_OVERLAP_DATASETS = [
+    "Another-Dataset-on-used-Fiat-500",
+    "coil2000_insurance_policies",
+    "customer_satisfaction_in_airline",
+    "E-CommereShippingData",
+    "Fitness_Club",
+    "Food_Delivery_Time",
+    "hazelnut-spread-contaminant-detection",
+    "HR_Analytics_Job_Change_of_Data_Scientists",
+    "in_vehicle_coupon_recommendation",
+    "Is-this-a-good-customer",
+    "Marketing_Campaign",
+    "maternal_health_risk",
+    "MIC",
+    "NATICUSdroid",
+    "polish_companies_bankruptcy",
+    "SDSS17",
+    "seismic-bumps",
+    "students_dropout_and_academic_success",
+    "taiwanese_bankruptcy_prediction",
+]
+
+
+def all_dataset_names() -> list[str]:
+    """Every TabArena dataset this script runs, overlapping ones first."""
+    return [overlap.tabarena_name for overlap in OVERLAP_DATASETS] + NON_OVERLAP_DATASETS
 
 
 class TabSTARModel(AbstractModel):
@@ -219,6 +255,19 @@ def build_checkpoint_generators(overlap: OverlapDataset) -> list[ConfigGenerator
         TabSTARCorrectModel: overlap.tabstar_key,
         TabSTARWrongModel: PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=wrong_fold(overlap.tabstar_key)),
     }
+    return _generators(variants)
+
+
+def build_non_overlap_generators() -> list[ConfigGenerator]:
+    """Base plus the fixed fold checkpoint for a dataset outside the v1 corpus (no "wrong" arm)."""
+    variants = {
+        TabSTARBaseModel: None,
+        TabSTARCorrectModel: PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=NON_OVERLAP_FOLD),
+    }
+    return _generators(variants)
+
+
+def _generators(variants: dict[type[TabSTARModel], str | None]) -> list[ConfigGenerator]:
     return [
         ConfigGenerator(
             model_cls=model_cls,
@@ -234,7 +283,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--tabarena_name",
         default=None,
-        help="Restrict to a single OVERLAP_DATASETS entry by its tabarena_name (default: run all).",
+        help="Restrict to a single TabArena dataset by its name (default: run all 51).",
     )
     parser.add_argument(
         "--skip_compare",
@@ -258,11 +307,12 @@ def parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
-    datasets = OVERLAP_DATASETS
+    dataset_names = all_dataset_names()
     if args.tabarena_name is not None:
-        datasets = [d for d in OVERLAP_DATASETS if d.tabarena_name == args.tabarena_name]
-        if not datasets:
-            raise ValueError(f"{args.tabarena_name!r} not found in OVERLAP_DATASETS")
+        if args.tabarena_name not in dataset_names:
+            raise ValueError(f"{args.tabarena_name!r} not found in OVERLAP_DATASETS or NON_OVERLAP_DATASETS")
+        dataset_names = [args.tabarena_name]
+    overlap_by_name = {overlap.tabarena_name: overlap for overlap in OVERLAP_DATASETS}
 
     here = Path(__file__).parent
     run_name = "tabarena_leakage_analysis"
@@ -272,16 +322,21 @@ if __name__ == "__main__":
 
     context = TabArenaContext()
     if not args.compare_only:
-        for overlap in datasets:
-            print(f"\n=== Running TabSTAR base/correct/wrong on {overlap.tabarena_name} ===")
+        for name in dataset_names:
+            overlap = overlap_by_name.get(name)
+            if overlap is not None:
+                arms, generators = "base/correct/wrong", build_checkpoint_generators(overlap)
+            else:
+                arms, generators = f"base/correct(fold k{NON_OVERLAP_FOLD})", build_non_overlap_generators()
+            print(f"\n=== Running TabSTAR {arms} on {name} ===")
             experiments = TabArenaV0pt1ExperimentBundle(
-                models=[(gen, 0) for gen in build_checkpoint_generators(overlap)],
+                models=[(gen, 0) for gen in generators],
             ).build_experiments()
             context.build_and_run_jobs(
                 experiments,
                 expname=results_dir,
                 subset="lite",
-                build_kwargs={"dataset_names": [overlap.tabarena_name]},
+                build_kwargs={"dataset_names": [name]},
                 new_result_prefix=new_result_prefix,
                 debug_mode=True,
             )
