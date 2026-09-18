@@ -23,11 +23,17 @@ If leakage matters, (a) should score above (b), and (c) should track (a) rather 
 Requires the `tabarena` package (`pip install tabarena`), which is not a declared dependency of
 this repo.
 
+Results land under this file's directory: raw per-run TabArena job artifacts in
+`experiments/tabarena_leakage_analysis/`, the compared leaderboard and figures in
+`eval/tabarena_leakage_analysis/`.
+
 Usage:
-    python tabarena_leakage_analysis.py
+    python tabarena_leakage_analysis.py                    # all overlapping datasets
+    python tabarena_leakage_analysis.py --tabarena_name diabetes   # a single dataset
 """
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -179,14 +185,31 @@ def build_checkpoint_generators(overlap: OverlapDataset) -> list[ConfigGenerator
     ]
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--tabarena_name",
+        default=None,
+        help="Restrict to a single OVERLAP_DATASETS entry by its tabarena_name (default: run all).",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_args()
+    datasets = OVERLAP_DATASETS
+    if args.tabarena_name is not None:
+        datasets = [d for d in OVERLAP_DATASETS if d.tabarena_name == args.tabarena_name]
+        if not datasets:
+            raise ValueError(f"{args.tabarena_name!r} not found in OVERLAP_DATASETS")
+
     here = Path(__file__).parent
     run_name = "tabarena_leakage_analysis"
     results_dir = str(here / "experiments" / run_name)
     eval_dir = here / "eval" / run_name
 
     context = TabArenaContext()
-    for overlap in OVERLAP_DATASETS:
+    for overlap in datasets:
         print(f"\n=== Running TabSTAR base/correct/wrong on {overlap.tabarena_name} ===")
         experiments = TabArenaV0pt1ExperimentBundle(
             models=[(gen, 0) for gen in build_checkpoint_generators(overlap)],
