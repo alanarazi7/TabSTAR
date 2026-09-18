@@ -266,6 +266,7 @@ if __name__ == "__main__":
 
     here = Path(__file__).parent
     run_name = "tabarena_leakage_analysis"
+    new_result_prefix = "[Leakage] "
     results_dir = str(here / "experiments" / run_name)
     eval_dir = here / "eval" / run_name
 
@@ -281,13 +282,23 @@ if __name__ == "__main__":
                 expname=results_dir,
                 subset="lite",
                 build_kwargs={"dataset_names": [overlap.tabarena_name]},
-                new_result_prefix="[Leakage] ",
+                new_result_prefix=new_result_prefix,
                 debug_mode=True,
             )
 
     if args.skip_compare:
         print(f"\nSkipping compare(); results persisted under {results_dir}")
     else:
+        if args.compare_only:
+            # compare() only sees methods that build_and_run_jobs() registered in this process,
+            # so a fresh process has to re-ingest the persisted raw results first.
+            from tabarena.end_to_end import EndToEnd
+
+            end_to_end = EndToEnd.from_path_raw(path_raw=results_dir, cache=False, backend="native")
+            context = TabArenaContext(
+                extra_methods=end_to_end.to_method_metadata_lst(new_result_prefix=new_result_prefix),
+                only_valid_tasks=True,
+            )
         leaderboard = context.compare(output_dir=eval_dir)
         leaderboard_website = context.leaderboard_to_website_format(leaderboard=leaderboard)
         print("\n=== TabArena leaderboard (website format) ===")
