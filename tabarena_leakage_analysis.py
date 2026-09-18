@@ -163,6 +163,21 @@ def all_dataset_names() -> list[str]:
     return [overlap.tabarena_name for overlap in OVERLAP_DATASETS] + NON_OVERLAP_DATASETS
 
 
+MAX_FUSION_SEQUENCES = 65535
+"""TabSTAR's NumericalFusion attends over batch_size * n_tokens sequences of length 2 at once. In
+training under autocast the CUDA attention kernel fails with "CUDA error: invalid argument" above
+65535 of them (65535 passes, 65536 fails on an A100), which the widest TabArena datasets (over 1000
+features) hit at the default batch sizes."""
+
+
+def fusion_safe_batch(batch_size: int, n_tokens: int) -> int:
+    """Halve `batch_size` until batch_size * n_tokens fits the fusion kernel (gradients accumulate to
+    the same global batch either way, so the optimisation is unchanged)."""
+    while batch_size > 1 and batch_size * n_tokens > MAX_FUSION_SEQUENCES:
+        batch_size //= 2
+    return batch_size
+
+
 class TabSTARModel(AbstractModel):
     """TabArena wrapper around TabSTAR, exposing checkpoint selection as a config hyperparameter.
 
@@ -190,17 +205,25 @@ class TabSTARModel(AbstractModel):
         **kwargs,
     ) -> None:
         from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
+        from tabstar.training.hyperparams import LORA_BATCH, VAL_BATCH
 
         X = self.preprocess(X, y=y, is_train=True)
         hps = dict(self._get_model_params())
         pretrain_dataset_or_path = hps.pop(self.pretrain_param_name, None)
         device = "cuda" if num_gpus > 0 else "cpu"
-        model_cls = TabSTARClassifier if self.problem_type in ("binary", "multiclass") else TabSTARRegressor
+        is_classification = self.problem_type in ("binary", "multiclass")
+        model_cls = TabSTARClassifier if is_classification else TabSTARRegressor
+        n_tokens = X.shape[1] + (y.nunique() if is_classification else 1)
         # Forward AutoGluon's per-fold budget (TabArena's own TabSTAR wrapper does the same). Without
         # it a fit never self-limits, and AutoGluon aborts the whole 8-fold bag with TimeLimitExceeded
         # as soon as the folds so far project past the bag's 1 h budget (after fold 1: any fit > 450 s).
         self.model = model_cls(
-            pretrain_dataset_or_path=pretrain_dataset_or_path, device=device, time_limit=time_limit, **hps
+            pretrain_dataset_or_path=pretrain_dataset_or_path,
+            device=device,
+            time_limit=time_limit,
+            lora_batch=fusion_safe_batch(LORA_BATCH, n_tokens=n_tokens),
+            val_batch_size=fusion_safe_batch(VAL_BATCH, n_tokens=n_tokens),
+            **hps,
         )
         self.model.fit(X, y)
 
