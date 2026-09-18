@@ -2,9 +2,11 @@
 
 TabSTAR is pretrained on a large corpus of tabular datasets, five leave-one-fold-out
 checkpoints (`TabSTAR-eval-320-version-fold-k{0..4}`), each excluding a different ~1/5 slice
-of the corpus. A handful of TabArena datasets overlap with that pretraining corpus, so scoring
-the base checkpoint on them risks leakage. This script quantifies that risk by running each
-overlapping dataset three ways through TabArena-Lite:
+of the corpus. Of TabArena's 51 datasets, 32 overlap that pretraining corpus (verified against
+`tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD` by name, and against OpenML/Kaggle
+instance+feature counts wherever the name alone was ambiguous — see OVERLAP_DATASETS below).
+Scoring the base checkpoint on any of them risks leakage. This script quantifies that risk by
+running each overlapping dataset three ways through TabArena-Lite:
 
   (a) base    — the public base checkpoint (`alana89/TabSTAR`), pretrained on everything.
   (b) correct — the fold checkpoint that EXCLUDED this dataset from pretraining (leakage-free).
@@ -12,10 +14,6 @@ overlapping dataset three ways through TabArena-Lite:
                 if (a) beats (c) similarly to how it beats (b), the gap is not about leakage).
 
 If leakage matters, (a) should score above (b), and (c) should track (a) rather than (b).
-
-The dataset -> checkpoint-fold mapping reuses TabSTAR's own name matching (PR #23,
-`tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD`), which maps a TabArena dataset name to
-the pretraining-corpus key that was excluded, and from there to a fold index.
 
 Requires the `tabarena` package (`pip install tabarena`), which is not a declared dependency of
 this repo.
@@ -35,6 +33,7 @@ from autogluon.core.models import AbstractModel
 from tabarena.benchmark.experiment import TabArenaV0pt1ExperimentBundle
 from tabarena.contexts import TabArenaContext
 from tabarena.utils.config_utils import ConfigGenerator
+from tabstar.tabstar_datasets import PRETRAIN2FOLD, TEXT2FOLD
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -50,39 +49,62 @@ class OverlapDataset:
     """Dataset name as registered in TabArena (`build_kwargs={"dataset_names": [...]}`)."""
     tabstar_key: str
     """The pretraining-corpus key this dataset maps to (`tabstar.tabstar_datasets.PRETRAIN2FOLD`)."""
-    correct_fold: int
-    """Fold whose checkpoint excluded `tabstar_key` from pretraining — the leakage-free choice."""
-    wrong_fold: int
-    """A different fold whose checkpoint still included `tabstar_key` — the sanity control."""
 
 
-# Fold assignments confirmed against `tabstar.tabstar_datasets.PRETRAIN2FOLD` (PR #23 aliases).
-# `wrong_fold = (correct_fold + 2) % 5` — deterministic, never collides with `correct_fold`.
+def correct_fold(tabstar_key: str) -> int:
+    """The fold whose checkpoint excluded `tabstar_key` from pretraining (leakage-free choice).
+
+    Mirrors `tabstar.tabstar_datasets._get_tabstar_version_from_dataset`'s lookup order:
+    TEXT2FOLD first, then PRETRAIN2FOLD.
+    """
+    fold = TEXT2FOLD.get(tabstar_key, PRETRAIN2FOLD.get(tabstar_key))
+    if fold is None:
+        raise ValueError(f"{tabstar_key} not found in TEXT2FOLD or PRETRAIN2FOLD")
+    return fold
+
+
+def wrong_fold(tabstar_key: str) -> int:
+    """A different fold whose checkpoint still included `tabstar_key` (sanity control)."""
+    return (correct_fold(tabstar_key) + 2) % 5
+
+
+# Verified against `tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD`: exact name match to
+# the dataset's real OpenML name, or (where names diverged) an exact match on OpenML/Kaggle
+# instance+feature counts against TabArena's `curated_tabarena_dataset_metadata.csv` row. The
+# other 19 of TabArena's 51 datasets were checked the same way and have no corpus overlap.
 OVERLAP_DATASETS = [
-    OverlapDataset(
-        tabarena_name="jm1",
-        tabstar_key="BIN_COMPUTERS_JM1_CODE_DEFECTIONS",
-        correct_fold=0,
-        wrong_fold=2,
-    ),
-    OverlapDataset(
-        tabarena_name="hiva_agnostic",
-        tabstar_key="MUL_SCIENCE_HIV_QSAR",
-        correct_fold=1,
-        wrong_fold=3,
-    ),
-    OverlapDataset(
-        tabarena_name="wine_quality",
-        tabstar_key="REG_FOOD_WINE_QUALITY",
-        correct_fold=1,
-        wrong_fold=3,
-    ),
-    OverlapDataset(
-        tabarena_name="Diabetes130US",
-        tabstar_key="BIN_HEALTHCARE_DIABETES_US130",
-        correct_fold=3,
-        wrong_fold=0,
-    ),
+    OverlapDataset(tabarena_name="jm1", tabstar_key="BIN_COMPUTERS_JM1_CODE_DEFECTIONS"),
+    OverlapDataset(tabarena_name="hiva_agnostic", tabstar_key="MUL_SCIENCE_HIV_QSAR"),
+    OverlapDataset(tabarena_name="wine_quality", tabstar_key="REG_FOOD_WINE_QUALITY"),
+    OverlapDataset(tabarena_name="Diabetes130US", tabstar_key="BIN_HEALTHCARE_DIABETES_US130"),
+    OverlapDataset(tabarena_name="airfoil_self_noise", tabstar_key="REG_SCIENCE_AIRFOIL_SELF_NOISE"),
+    OverlapDataset(tabarena_name="Amazon_employee_access", tabstar_key="BIN_PROFESSIONAL_AMAZON_EMPLOYEE_ACCESS"),
+    OverlapDataset(tabarena_name="anneal", tabstar_key="MUL_SCIENCE_ANNEAL_CHEMICAL"),
+    OverlapDataset(tabarena_name="APSFailure", tabstar_key="BIN_ANONYM_APS_FAILURE"),
+    OverlapDataset(tabarena_name="bank-marketing", tabstar_key="BIN_FINANCIAL_BANK_MARKETING"),
+    OverlapDataset(tabarena_name="Bioresponse", tabstar_key="BIN_ANONYM_BIORESPONSE"),
+    OverlapDataset(tabarena_name="blood-transfusion-service-center", tabstar_key="BIN_HEALTHCARE_BLOOD_TRANSFUSION"),
+    OverlapDataset(tabarena_name="churn", tabstar_key="BIN_CONSUMER_CHURN_TELEPHONY"),
+    OverlapDataset(tabarena_name="concrete_compressive_strength", tabstar_key="REG_SCIENCE_CONCRETE_COMPRESSIVE_STRENGTH"),
+    OverlapDataset(tabarena_name="credit-g", tabstar_key="BIN_FINANCIAL_CREDIT_GERMAN"),
+    OverlapDataset(tabarena_name="diamonds", tabstar_key="REG_CONSUMER_DIAMONDS_PRICES"),
+    OverlapDataset(tabarena_name="GiveMeSomeCredit", tabstar_key="BIN_FINANCIAL_CREDIT_GIVE_ME_SOME"),
+    OverlapDataset(tabarena_name="kddcup09_appetency", tabstar_key="BIN_ANONYM_KDDCUP_09_APPETENCY"),
+    OverlapDataset(tabarena_name="miami_housing", tabstar_key="REG_HOUSES_MIAMI"),
+    OverlapDataset(tabarena_name="online_shoppers_intention", tabstar_key="BIN_CONSUMER_ONLINE_SHOPPERS_PURCHASE_INTENTION"),
+    OverlapDataset(tabarena_name="physiochemical_protein", tabstar_key="REG_SCIENCE_PHYSIOCHEMICAL_PROTEIN"),
+    OverlapDataset(tabarena_name="qsar-biodeg", tabstar_key="BIN_SCIENCE_QSAR_BIODEG"),
+    OverlapDataset(tabarena_name="QSAR-TID-11", tabstar_key="REG_SCIENCE_QSAR_TID_11"),
+    OverlapDataset(tabarena_name="QSAR_fish_toxicity", tabstar_key="REG_NATURE_FISH_TOXICITY"),
+    OverlapDataset(tabarena_name="splice", tabstar_key="MUL_GENETICS_SPLICE_DNA"),
+    OverlapDataset(tabarena_name="superconductivity", tabstar_key="REG_SCIENCE_SUPERCONDUCTIVITY"),
+    OverlapDataset(tabarena_name="website_phishing", tabstar_key="MUL_COMPUTERS_PHISHING_WEBSITE_HUDDERSFIELD"),
+    OverlapDataset(tabarena_name="heloc", tabstar_key="BIN_FINANCIAL_CREDIT_FICO_HELOC"),
+    OverlapDataset(tabarena_name="Bank_Customer_Churn", tabstar_key="BIN_FINANCIAL_BANK_CUSTOMER_CHURN_SHRUTIME"),
+    OverlapDataset(tabarena_name="credit_card_clients_default", tabstar_key="BIN_FINANCIAL_CC_TAIWAN_CREDIT_DEFAULT"),
+    OverlapDataset(tabarena_name="diabetes", tabstar_key="BIN_HEALTHCARE_DIABETES_RISK_FACTORS"),
+    OverlapDataset(tabarena_name="healthcare_insurance_expenses", tabstar_key="REG_FINANCIAL_INSURANCE_PREMIUM_DATA"),
+    OverlapDataset(tabarena_name="houses", tabstar_key="REG_HOUSES_CALIFORNIA_HOUSES"),
 ]
 
 
@@ -136,11 +158,10 @@ def build_checkpoint_generators(overlap: OverlapDataset) -> list[ConfigGenerator
     Each generator's `name` overrides `TabSTARModel.ag_name`, so the three runs show up as
     distinguishable methods (`TabSTAR_base_c1_BAG_L1`, etc.) in the TabArena leaderboard.
     """
-    wrong_checkpoint = PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=overlap.wrong_fold)
     checkpoints = {
         "TabSTAR_base": None,
         "TabSTAR_correct": overlap.tabstar_key,
-        "TabSTAR_wrong": wrong_checkpoint,
+        "TabSTAR_wrong": PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=wrong_fold(overlap.tabstar_key)),
     }
     return [
         ConfigGenerator(
