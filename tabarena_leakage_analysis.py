@@ -163,31 +163,49 @@ class TabSTARModel(AbstractModel):
         return {"num_cpus": 1, "num_gpus": 1 if is_gpu_available else 0}
 
 
+class TabSTARBaseModel(TabSTARModel):
+    """The base checkpoint variant, pretrained on everything."""
+
+    ag_key = "TabSTAR_base"
+    ag_name = "TabSTAR_base"
+
+
+class TabSTARCorrectModel(TabSTARModel):
+    """The fold checkpoint that EXCLUDED this dataset from pretraining (leakage-free)."""
+
+    ag_key = "TabSTAR_correct"
+    ag_name = "TabSTAR_correct"
+
+
+class TabSTARWrongModel(TabSTARModel):
+    """A different fold checkpoint that still INCLUDED this dataset (sanity control)."""
+
+    ag_key = "TabSTAR_wrong"
+    ag_name = "TabSTAR_wrong"
+
+
 def build_checkpoint_generators(overlap: OverlapDataset) -> list[ConfigGenerator]:
     """The three `ConfigGenerator`s (base/correct/wrong) for one overlapping dataset.
 
     TabArena's bagged-experiment naming keys off `model_cls.ag_name`/`ag_key` (not
-    `ConfigGenerator(name=...)`, which the naming path ignores), so each variant gets its own
-    `TabSTARModel` subclass with a distinct `ag_key`/`ag_name` — otherwise all three would collide
-    on the shared `TabSTARModel.ag_name` ("TabSTAR") and `context.build_and_run_jobs` would raise
-    on the duplicate experiment name.
+    `ConfigGenerator(name=...)`, which the naming path ignores), so each variant is its own named
+    `TabSTARModel` subclass — a `type()`-generated class isn't picklable (AutoGluon persists the
+    predictor to disk mid-fit), so these must be real module-level classes, not built dynamically
+    per dataset. The checkpoint itself still varies per dataset, passed as a hyperparameter.
     """
-    checkpoints = {
-        "TabSTAR_base": None,
-        "TabSTAR_correct": overlap.tabstar_key,
-        "TabSTAR_wrong": PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=wrong_fold(overlap.tabstar_key)),
+    variants = {
+        TabSTARBaseModel: None,
+        TabSTARCorrectModel: overlap.tabstar_key,
+        TabSTARWrongModel: PRETRAIN_FOLD_REPO_TEMPLATE.format(fold=wrong_fold(overlap.tabstar_key)),
     }
-    generators = []
-    for name, checkpoint in checkpoints.items():
-        variant_cls = type(name, (TabSTARModel,), {"ag_key": name, "ag_name": name})
-        generators.append(
-            ConfigGenerator(
-                model_cls=variant_cls,
-                manual_configs=[{TabSTARModel.pretrain_param_name: checkpoint}],
-                search_space={},
-            )
+    return [
+        ConfigGenerator(
+            model_cls=model_cls,
+            manual_configs=[{TabSTARModel.pretrain_param_name: checkpoint}],
+            search_space={},
         )
-    return generators
+        for model_cls, checkpoint in variants.items()
+    ]
 
 
 def parse_args() -> argparse.Namespace:
