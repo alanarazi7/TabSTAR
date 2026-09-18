@@ -69,7 +69,9 @@ class BaseTabSTAR:
     def fit(self, X: DataFrame, y: Series, x_val: Optional[DataFrame] = None, y_val: Optional[DataFrame] = None):
         if self.model_ is not None:
             raise ValueError("Model is already trained. Call fit() only once.")
-        self.download_base_model()
+        # The trainer loads the selected checkpoint with local_files_only=True, so fetch that one,
+        # not just the base model: fold checkpoints (pretrain_dataset_or_path) were never downloaded.
+        download_tabstar(repo_id=self.model_version)
         self.vprint(f"Fitting model on data with shapes: X={X.shape}, y={y.shape}")
         train_data, val_data = self._prepare_for_train(X, y, x_val, y_val)
         self.vprint(f"We have: {len(train_data)} training and {len(val_data)} validation samples.")

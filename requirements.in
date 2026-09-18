@@ -26,6 +26,6 @@ tabpfn_extensions
 torch >= 2.6.0
 torchvision
 tqdm
-transformers >= 4.49.0
+transformers >= 4.49.0, < 5
 xgboost
 wandb
