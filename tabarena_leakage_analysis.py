@@ -2,11 +2,16 @@
 
 TabSTAR is pretrained on a large corpus of tabular datasets, five leave-one-fold-out
 checkpoints (`TabSTAR-eval-320-version-fold-k{0..4}`), each excluding a different ~1/5 slice
-of the corpus. Of TabArena's 51 datasets, 32 overlap that pretraining corpus (verified against
-`tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD` by name, and against OpenML/Kaggle
-instance+feature counts wherever the name alone was ambiguous — see OVERLAP_DATASETS below).
-Scoring the base checkpoint on any of them risks leakage. This script quantifies that risk by
-running each overlapping dataset three ways through TabArena-Lite:
+of the corpus. All 51 of TabArena's datasets are known/curated in TabSTAR's shared dataset
+registry (`tabstar2.benchmarks.tabarena.TABARENA` in the TabSTAR-v2 repo maps every one of them
+to a `tabstar_paper.datasets.all_datasets.OpenMLDatasetID`), but that registry is broader than
+this repo's (v1) pretraining corpus: only 32 of the 51 were actually part of it, i.e. exist as
+keys in `tabstar.tabstar_datasets.PRETRAIN2FOLD` / `TEXT2FOLD` (verified by exact key match
+against the TabSTAR-v2 name list, and cross-checked against OpenML/Kaggle instance+feature
+counts wherever a name alone was ambiguous — see OVERLAP_DATASETS below). The other 19 were
+never pretrained on under v1 and are excluded here; TabSTAR-v2 separately excludes all 51 from
+its own pretraining pool. Scoring the base checkpoint on one of the 32 risks leakage. This
+script quantifies that risk by running each overlapping dataset three ways through TabArena-Lite:
 
   (a) base    — the public base checkpoint (`alana89/TabSTAR`), pretrained on everything.
   (b) correct — the fold checkpoint that EXCLUDED this dataset from pretraining (leakage-free).
