@@ -144,7 +144,15 @@ class TabSTARModel(AbstractModel):
     checkpoint. Any other string -> used verbatim as the HF repo id (for the "wrong" checkpoint).
     """
 
-    def _fit(self, X: pd.DataFrame, y: pd.Series, num_cpus: int = 1, num_gpus: int = 0, **kwargs) -> None:
+    def _fit(
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        num_cpus: int = 1,
+        num_gpus: int = 0,
+        time_limit: float | None = None,
+        **kwargs,
+    ) -> None:
         from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
 
         X = self.preprocess(X, y=y, is_train=True)
@@ -152,7 +160,12 @@ class TabSTARModel(AbstractModel):
         pretrain_dataset_or_path = hps.pop(self.pretrain_param_name, None)
         device = "cuda" if num_gpus > 0 else "cpu"
         model_cls = TabSTARClassifier if self.problem_type in ("binary", "multiclass") else TabSTARRegressor
-        self.model = model_cls(pretrain_dataset_or_path=pretrain_dataset_or_path, device=device, **hps)
+        # Forward AutoGluon's per-fold budget (TabArena's own TabSTAR wrapper does the same). Without
+        # it a fit never self-limits, and AutoGluon aborts the whole 8-fold bag with TimeLimitExceeded
+        # as soon as the folds so far project past the bag's 1 h budget (after fold 1: any fit > 450 s).
+        self.model = model_cls(
+            pretrain_dataset_or_path=pretrain_dataset_or_path, device=device, time_limit=time_limit, **hps
+        )
         self.model.fit(X, y)
 
     def _set_default_params(self) -> None:
