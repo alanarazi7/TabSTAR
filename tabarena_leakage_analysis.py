@@ -20,8 +20,11 @@ script quantifies that risk by running each overlapping dataset three ways throu
 
 If leakage matters, (a) should score above (b), and (c) should track (a) rather than (b).
 
-Requires the `tabarena` package (`pip install tabarena`), which is not a declared dependency of
-this repo.
+Requires the `tabarena` package with its `plot` extra (`pip install "tabarena[plot]"`), which is
+not a declared dependency of this repo. The bare package is enough for `build_and_run_jobs()`, but
+`context.compare()` at the end lazily imports `tueplots`/`matplotlib`/`seaborn`/`autorank`/
+`adjusttext` to build the leaderboard and figures, so a bare `pip install tabarena` fails there
+only after every dataset has already finished training.
 
 Results land under this file's directory: raw per-run TabArena job artifacts in
 `experiments/tabarena_leakage_analysis/`, the compared leaderboard and figures in
@@ -30,6 +33,11 @@ Results land under this file's directory: raw per-run TabArena job artifacts in
 Usage:
     python tabarena_leakage_analysis.py                    # all overlapping datasets
     python tabarena_leakage_analysis.py --tabarena_name diabetes   # a single dataset
+
+    # Cluster array job: one dataset per worker, no `[plot]` extra needed on workers.
+    python tabarena_leakage_analysis.py --tabarena_name <name> --skip_compare
+    # Once every worker has finished, aggregate on any machine with `tabarena[plot]` installed:
+    python tabarena_leakage_analysis.py --compare_only
 """
 from __future__ import annotations
 
@@ -215,7 +223,24 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Restrict to a single OVERLAP_DATASETS entry by its tabarena_name (default: run all).",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--skip_compare",
+        action="store_true",
+        help="Skip context.compare() after training (for per-dataset cluster jobs; requires "
+        "only the bare tabarena package, not its [plot] extra). Aggregate later with --compare_only.",
+    )
+    parser.add_argument(
+        "--compare_only",
+        action="store_true",
+        help="Skip training and only run context.compare() over already-persisted results "
+        "(requires `pip install \"tabarena[plot]\"`). Mutually exclusive with --tabarena_name.",
+    )
+    args = parser.parse_args()
+    if args.compare_only and args.tabarena_name is not None:
+        parser.error("--compare_only runs over all overlapping datasets; drop --tabarena_name.")
+    if args.compare_only and args.skip_compare:
+        parser.error("--compare_only and --skip_compare are mutually exclusive.")
+    return args
 
 
 if __name__ == "__main__":
@@ -232,22 +257,26 @@ if __name__ == "__main__":
     eval_dir = here / "eval" / run_name
 
     context = TabArenaContext()
-    for overlap in datasets:
-        print(f"\n=== Running TabSTAR base/correct/wrong on {overlap.tabarena_name} ===")
-        experiments = TabArenaV0pt1ExperimentBundle(
-            models=[(gen, 0) for gen in build_checkpoint_generators(overlap)],
-        ).build_experiments()
-        context.build_and_run_jobs(
-            experiments,
-            expname=results_dir,
-            subset="lite",
-            build_kwargs={"dataset_names": [overlap.tabarena_name]},
-            new_result_prefix="[Leakage] ",
-            debug_mode=True,
-        )
+    if not args.compare_only:
+        for overlap in datasets:
+            print(f"\n=== Running TabSTAR base/correct/wrong on {overlap.tabarena_name} ===")
+            experiments = TabArenaV0pt1ExperimentBundle(
+                models=[(gen, 0) for gen in build_checkpoint_generators(overlap)],
+            ).build_experiments()
+            context.build_and_run_jobs(
+                experiments,
+                expname=results_dir,
+                subset="lite",
+                build_kwargs={"dataset_names": [overlap.tabarena_name]},
+                new_result_prefix="[Leakage] ",
+                debug_mode=True,
+            )
 
-    leaderboard = context.compare(output_dir=eval_dir)
-    leaderboard_website = context.leaderboard_to_website_format(leaderboard=leaderboard)
-    print("\n=== TabArena leaderboard (website format) ===")
-    print(leaderboard_website.to_markdown(index=False))
-    print(f"\nView saved figures in {eval_dir}")
+    if args.skip_compare:
+        print(f"\nSkipping compare(); results persisted under {results_dir}")
+    else:
+        leaderboard = context.compare(output_dir=eval_dir)
+        leaderboard_website = context.leaderboard_to_website_format(leaderboard=leaderboard)
+        print("\n=== TabArena leaderboard (website format) ===")
+        print(leaderboard_website.to_markdown(index=False))
+        print(f"\nView saved figures in {eval_dir}")
