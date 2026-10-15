@@ -83,7 +83,7 @@ user who knows one estimator can drive the other. Each row below is a decision, 
 | | v1 (today, public) | v1.1 (research repo) | what the port does |
 |---|---|---|---|
 | `fit` signature | `fit(X, y, x_val=None, y_val=None)` | `fit(X, y)`, splits its own validation | accept `x_val`/`y_val` |
-| `fit` return | `self` | best validation loss | return `self` (sklearn convention); the loss stays reachable as a fitted attribute |
+| `fit` return | `None` | best validation loss | return `self` (sklearn convention); the loss stays reachable as `best_val_loss_` |
 | classifier `predict` | original labels, inverse-transformed | integer class indices | original labels |
 | `score` | `score(X, y)` | `score(X, y, is_cls)` | `score(X, y)`; the task is already known from the class |
 | `save` / `load` | joblib round trip | absent | ported from v1 |
@@ -92,7 +92,7 @@ user who knows one estimator can drive the other. Each row below is a decision, 
 | checkpoint selection | one default repo | two, keyed on task | see below |
 | `time_limit` | honoured, AutoGluon passes it | absent | **must** be ported, or v1.1 cannot be benchmarked under AutoGluon |
 | `keep_model`, `output_dir`, `val_batch_size` | present | absent | port, same meaning |
-| `lora_alpha` | constructor argument | hardcoded to `2 * r` | keep hardcoded; expose only if a reason appears |
+| `lora_alpha` | constructor argument, a multiplier on `r` | hardcoded to `2 * r` | expose it, with the same default of `2`, so the default behaviour is unchanged |
 | `is_paper_version` | selects the paper checkpoint and disables checkpoint averaging | no equivalent concept | not ported; v1.1 has no paper variant |
 | `global_batch` | that name | `lora_global_batch` | use v1's name |
 
