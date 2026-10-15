@@ -1,4 +1,6 @@
 import gc
+import shutil
+import time
 from math import ceil
 from os.path import join
 from typing import Optional, Tuple
@@ -16,6 +18,7 @@ from tabstar.tabstarv1p1.training.hyperparams import set_accumulation_steps
 from tabstar.tabstarv1p1.training.optimizer import get_step_scheduler
 
 from tabstar.tabstarv1p1.finetune.checkpoint import make_run_dir
+from tabstar.tabstarv1p1.finetune.hyperparams import VAL_BATCH
 from tabstar.tabstarv1p1.finetune.lora import load_pretrained_base, load_finetuned, wrap_with_lora
 from tabstar.tabstarv1p1.arch.model import TabSTARModel
 from tabstar.tabstarv1p1.finetune.optimizer import get_lora_optimizer
@@ -34,21 +37,27 @@ class TabSTARv1p1Trainer:
                  lora_lr: float,
                  lora_wd: float,
                  lora_r: int,
+                 lora_alpha: int,
                  lora_batch: int,
                  lora_dropout: float,
-                 lora_global_batch: int,
+                 global_batch: int,
                  patience: int,
                  device: torch.device,
                  model_version: str,
                  is_cls: bool,
+                 val_batch_size: int = VAL_BATCH,
+                 time_limit: Optional[int] = None,
+                 output_dir: Optional[str] = None,
                  preloaded_base_model: Optional[TabSTARModel] = None,
                  to_unfreeze: int = 6,
                  random_state: Optional[int] = None):
         self.lora_lr = lora_lr
         self.lora_wd = lora_wd
         self.lora_batch = lora_batch
-        self.accumulation_steps = set_accumulation_steps(global_batch=lora_global_batch, batch_size=lora_batch)
-        print(f"👣 Using {self.accumulation_steps} steps, with batch size {lora_batch}, global of {lora_global_batch}")
+        self.val_batch_size = val_batch_size
+        self.time_limit = time_limit or 60 * 60 * 10
+        self.accumulation_steps = set_accumulation_steps(global_batch=global_batch, batch_size=lora_batch)
+        print(f"👣 Using {self.accumulation_steps} steps, with batch size {lora_batch}, global of {global_batch}")
         self.max_epochs = max_epochs
         self.device = device
         self.model_version = model_version
@@ -57,11 +66,11 @@ class TabSTARv1p1Trainer:
             # on many datasets from the same checkpoint in one process. Skip the disk load;
             # wrap_with_lora leaves the base's own weights untouched (LoRA freezes them), so the
             # caller can `.unload()` the returned PeftModel and reuse the same base again.
-            self.model = wrap_with_lora(preloaded_base_model, lora_r=lora_r, dropout=lora_dropout,
-                                       to_unfreeze=to_unfreeze, is_cls=is_cls)
+            self.model = wrap_with_lora(preloaded_base_model, lora_r=lora_r, lora_alpha=lora_alpha,
+                                       dropout=lora_dropout, to_unfreeze=to_unfreeze, is_cls=is_cls)
         else:
-            self.model = wrap_with_lora(load_pretrained_base(model_version), lora_r=lora_r, dropout=lora_dropout,
-                                       to_unfreeze=to_unfreeze, is_cls=is_cls)
+            self.model = wrap_with_lora(load_pretrained_base(model_version), lora_r=lora_r, lora_alpha=lora_alpha,
+                                       dropout=lora_dropout, to_unfreeze=to_unfreeze, is_cls=is_cls)
         self.model.to(self.device)
         self.precision_manager = PrecisionManager(device=self.device)
         fix_seed(seed=random_state)
@@ -69,7 +78,7 @@ class TabSTARv1p1Trainer:
         # Built in train(), where the number of optimizer updates per epoch is known.
         self.scheduler: Optional[LRScheduler] = None
         self.early_stopper = EarlyStopping(patience=patience)
-        self.save_dir = make_run_dir()
+        self.save_dir = make_run_dir(output_dir=output_dir)
         self.best_dir = join(self.save_dir, "best_model")
         self.steps: int = 0
 
@@ -79,10 +88,11 @@ class TabSTARv1p1Trainer:
 
     def train(self, train_data: TabSTARData, val_data: TabSTARData) -> float:
         train_loader = get_dataloader(train_data, is_train=True, batch_size=self.lora_batch)
-        val_loader = get_dataloader(val_data, is_train=False)
+        val_loader = get_dataloader(val_data, is_train=False, batch_size=self.val_batch_size)
         steps_per_epoch = ceil(len(train_loader) / self.accumulation_steps)
         self.scheduler = get_step_scheduler(optimizer=self.optimizer, max_lr=self.lora_lr,
                                             steps_per_epoch=steps_per_epoch, epochs=self.max_epochs)
+        start_time = time.time()
         for epoch in tqdm(range(1, self.max_epochs + 1), desc="Epochs", leave=False):
             train_loss = self._train_epoch(train_loader)
             val_loss, val_metric = self._evaluate_epoch(val_loader)
@@ -93,7 +103,18 @@ class TabSTARv1p1Trainer:
             elif self.early_stopper.should_stop:
                 print(f"🛑 Early stopping at epoch {epoch}")
                 break
+            if self.will_next_epoch_exceed_budget(epoch=epoch, start_time=start_time):
+                break
         return self.early_stopper.loss
+
+    def will_next_epoch_exceed_budget(self, epoch: int, start_time: float) -> bool:
+        elapsed = round(time.time() - start_time, 1)
+        avg_epoch_time = round(elapsed / epoch, 1)
+        next_epoch_estimate = round(elapsed + avg_epoch_time, 1)
+        if next_epoch_estimate > self.time_limit:
+            print(f"⏱️ Limit exceeds next epoch: {elapsed=}, {avg_epoch_time=}, {self.time_limit=}. Stopping!")
+            return True
+        return False
 
     def _train_epoch(self, dataloader: DataLoader) -> float:
         self.model.train()
@@ -202,3 +223,6 @@ class TabSTARv1p1Trainer:
         self.model.to(self.device)
         self.model.eval()
         return self.model
+
+    def delete_model(self):
+        shutil.rmtree(self.save_dir)
