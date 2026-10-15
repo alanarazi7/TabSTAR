@@ -59,10 +59,10 @@ from tabstar.tabstarv1p1_model import TabSTARv1p1Classifier, TabSTARv1p1Regresso
 tabstar = TabSTARv1p1Classifier()
 tabstar.fit(x_train, y_train)
 y_pred = tabstar.predict(x_test)
-metric = tabstar.score(X=x_test, y=y_test, is_cls=True)
+metric = tabstar.score(X=x_test, y=y_test)
 ```
 
-`fit`, `predict`, `predict_proba`, `save` and `load` behave as they do for the original models. The one difference today is `score`, which still takes `is_cls`; it will match the original signature by the time v1.1 is released.
+`fit`, `predict`, `predict_proba`, `score`, `save` and `load` behave as they do for the original models.
 
 For paper replication, TabSTAR evaluation on benchmarks, custom pretraining or research purposes, see:
 
