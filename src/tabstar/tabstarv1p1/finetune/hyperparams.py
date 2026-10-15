@@ -4,5 +4,8 @@ LORA_LR = 0.001
 LORA_WD = 0.0
 LORA_DROPOUT = 0.1
 LORA_R = 32
+# Multiplier, not the alpha itself: the LoRA config gets lora_r * LORA_ALPHA.
+LORA_ALPHA = 2
 LORA_BATCH = 128
-LORA_GLOBAL_BATCH = 128
+GLOBAL_BATCH = 128
+VAL_BATCH = 256
