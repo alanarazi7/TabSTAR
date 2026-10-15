@@ -6,7 +6,12 @@
 
 ## 🚀 TabSTAR v1.1 is on its way
 
-We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models: existing code keeps working unchanged.
+We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models, in its own module, so existing code keeps working unchanged:
+
+| | import | estimators |
+|---|---|---|
+| TabSTAR | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
+| TabSTAR v1.1 | `tabstar.tabstarv1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
 
 We are releasing the model first. A detailed writeup of what changed, together with the v1.1 pretraining code, will follow.
 
@@ -45,6 +50,19 @@ tabstar.fit(x_train, y_train)
 metric = tabstar.score(X=x_test, y=y_test)
 print(f"AUC: {metric:.4f}")
 ```
+
+To use TabSTAR v1.1 instead, swap the import and the class name:
+
+```python
+from tabstar.tabstarv1p1_model import TabSTARv1p1Classifier, TabSTARv1p1Regressor
+
+tabstar = TabSTARv1p1Classifier()
+tabstar.fit(x_train, y_train)
+y_pred = tabstar.predict(x_test)
+metric = tabstar.score(X=x_test, y=y_test, is_cls=True)
+```
+
+`fit`, `predict`, `predict_proba`, `save` and `load` behave as they do for the original models. The one difference today is `score`, which still takes `is_cls`; it will match the original signature by the time v1.1 is released.
 
 For paper replication, TabSTAR evaluation on benchmarks, custom pretraining or research purposes, see:
 
