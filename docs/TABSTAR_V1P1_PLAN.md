@@ -35,19 +35,15 @@ pure accident. Throughout the code and the docs:
   `2.0.0` would promise a break we are explicitly not making, and would add a third `1.1`-adjacent
   number to the confusion.
 
-**Module names.** The suggestion on the table was `src/tabstar/tabstarv1` for the current code and
-`src/tabstar/tabstar` for the new code. The second half reads badly at the call site
-(`from tabstar.tabstar.tabstar_model import ...`) and leaves the newer generation nameless once a
-third one arrives. Recommendation:
+**Module names.** A model generation's dot is written `p`, since a module name cannot carry one:
 
 | | package | public estimators |
 |---|---|---|
 | v1 | `tabstar.tabstarv1` | `TabSTARClassifier`, `TabSTARRegressor` |
-| v1.1 | `tabstar.tabstarv11` | `TabSTARv11Classifier`, `TabSTARv11Regressor` |
+| v1.1 | `tabstar.tabstarv1p1` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
 
 Symmetric, each name states a model generation, and the top level of `tabstar/` stays free for the
-things that belong to the package rather than to a generation. This is a cheap decision to reverse
-while nothing outside the package depends on it, which is to say any time before phase 3.
+things that belong to the package rather than to a generation.
 
 ## Target layout
 
@@ -60,14 +56,14 @@ src/tabstar/
     tabstarv1/             today's src/tabstar, moved verbatim
         tabstar_model.py tabstar_verbalizer.py tabstar_datasets.py constants.py
         arch/ datasets/ preprocessing/ training/
-    tabstarv11/            copied from the research repo's tabstar2
+    tabstarv1p1/            copied from the research repo's tabstar2
         tabstar_model.py tabstar_checkpoints.py constants.py
         arch/ finetune/ preprocessing/ training/ utils/
 ```
 
 `tabstar_datasets.py` (the `TEXT2FOLD` and `PRETRAIN2FOLD` maps and the paper-fold checkpoint
 resolver) is v1 paper machinery and moves into `tabstarv1` with the rest. v1.1 gets its own, much
-smaller resolver under a name that says what it does, `tabstarv11/tabstar_checkpoints.py`.
+smaller resolver under a name that says what it does, `tabstarv1p1/tabstar_checkpoints.py`.
 
 ## The backwards-compatibility contract
 
@@ -91,7 +87,7 @@ documented as public, but downstream code (including AutoGluon's and TabArena's 
 repo's own `tabstar_extensions/`, and every model anyone has pickled) reaches into them. They keep
 resolving, to the identical objects, via `_compat.py`.
 
-**Tier 3, no promise.** Anything else, including everything under `tabstarv11` until the first
+**Tier 3, no promise.** Anything else, including everything under `tabstarv1p1` until the first
 release that ships it.
 
 ### How the shim works, and why it is not 30 stub files
@@ -178,7 +174,7 @@ v1 resolves a single default repo (`alana89/TabSTAR`). v1.1 has one per task:
 - `alana89/TabSTAR-v1.1-cls-20261011`
 - `alana89/TabSTAR-v1.1-reg-20261009`
 
-so the resolver takes the task type, and `TabSTARv11Classifier` and `TabSTARv11Regressor` each know
+so the resolver takes the task type, and `TabSTARv1p1Classifier` and `TabSTARv1p1Regressor` each know
 their own. `pretrain_dataset_or_path` keeps working as the override, same as v1.
 
 The research repo loads these straight through `from_pretrained` with no explicit prefetch, which is
@@ -228,12 +224,12 @@ anywhere.
 tabstar.tabstar_model import TabSTARClassifier` and a deep import such as `from
 tabstar.preprocessing.nulls import MISSING_VALUE` both still work.
 
-**Phase 2, the copy.** The pruned v1.1 modules land under `tabstar/tabstarv11/`, dependency-clean
+**Phase 2, the copy.** The pruned v1.1 modules land under `tabstar/tabstarv1p1/`, dependency-clean
 and 3.10-clean, with no public estimator yet.
-*Done when*: `import tabstar.tabstarv11.tabstar_model` succeeds in a fresh environment installed
+*Done when*: `import tabstar.tabstarv1p1.tabstar_model` succeeds in a fresh environment installed
 from `pyproject.toml` alone, on 3.10 and 3.11.
 
-**Phase 3, the estimators.** `TabSTARv11Classifier` and `TabSTARv11Regressor`, conformed to the API
+**Phase 3, the estimators.** `TabSTARv1p1Classifier` and `TabSTARv1p1Regressor`, conformed to the API
 table above, with checkpoint resolution and prefetch.
 *Done when*: both fit and predict end to end on the bundled `imdb.csv`, under a package test
 mirroring the v1 one; a round trip through `save`/`load` reproduces predictions.
@@ -245,11 +241,12 @@ mirroring the v1 one; a round trip through `save`/`load` reproduces predictions.
 
 ## Open questions
 
-1. Module naming: `tabstarv11` as recommended above, or the originally suggested `tabstar.tabstar`.
-   Needs a decision before phase 3; free to change until then.
-2. Should `TabSTARClassifier` ever come to mean v1.1? Not in 1.2.0. If it should in a later major,
+1. Should `TabSTARClassifier` ever come to mean v1.1? Not in 1.2.0. If it should in a later major,
    the shim written in phase 1 is the mechanism, and the decision is worth making explicitly rather
    than drifting into.
-3. Whether v1.1's separate per-task checkpoints should be hidden behind a single estimator pair that
-   dispatches on the target, rather than exposed as two classes. Two classes mirror v1 and sklearn,
-   which is why they are the proposal, but it is worth a moment's thought before phase 3.
+2. Whether v1.1 is exposed as a classifier and a regressor, mirroring v1 and sklearn, or as one
+   estimator that infers the task from the target and picks its checkpoint accordingly. Two classes
+   are the proposal.
+3. Whether `tabstar_paper` moves to explicit `tabstar.tabstarv1.*` imports in phase 1 or keeps
+   riding the compatibility shim.
+4. Whether 1.2.0 goes to PyPI as soon as phase 3 is green, or waits for the paper work.
