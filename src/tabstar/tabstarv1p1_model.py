@@ -20,7 +20,7 @@ from tabstar.tabstarv1p1.finetune.dataloader import get_dataloader
 from tabstar.tabstarv1p1.preprocessing.nulls import raise_if_null_target
 from tabstar.tabstarv1p1.preprocessing.splits import split_to_val
 from tabstar.tabstarv1p1.preprocessing.verbalizer import TabSTARData
-from tabstar.tabstarv1p1.training.devices import get_device
+from tabstar.tabstarv1p1.training.devices import get_device, get_precision
 from tabstar.tabstarv1p1.training.utils import fix_seed
 
 
@@ -166,7 +166,7 @@ class BaseTabSTARv1p1:
         for data in dataloader:
             with torch.no_grad(), torch.autocast(device_type=self.device.type, enabled=self.use_amp):
                 assert isinstance(data, TabSTARBatch)
-                data.to_device(self.device, dtype=torch.bfloat16)
+                data.to_device(self.device, dtype=get_precision(device=self.device))
                 batch_predictions = self.model_(data)
                 bin_centers = self.model_.base_model.model.reg_head.bin_centers
                 batch_predictions = process_predictions(prediction=batch_predictions, d_outputs=data.d_outputs,

@@ -11,7 +11,7 @@ class PrecisionManager:
     def __init__(self, device: torch.device):
         self.device = device
         self.use_amp = bool(self.device.type == "cuda")
-        self.dtype = get_precision()
+        self.dtype = get_precision(device=self.device)
         self.use_scaler = self.use_amp and self.dtype == torch.float16
         self.scaler = GradScaler() if self.use_scaler else None
 

@@ -64,7 +64,7 @@ class TabSTARModel(PreTrainedModel):
             batch_input = trim_batch_to_max_size(batch_input)
             batch_input = {k: v.to(self.device, non_blocking=True) for k, v in batch_input.items()}
             batch_embeddings = self.text_encoder(**batch_input)
-            batch_embeddings = batch_embeddings.last_hidden_state[:, 0, :].to(dtype=get_precision())
+            batch_embeddings = batch_embeddings.last_hidden_state[:, 0, :].to(dtype=get_precision(device=self.device))
             embeddings.append(batch_embeddings)
         embeddings = torch.cat(embeddings, dim=0)
         embeddings = embeddings[x_txt]

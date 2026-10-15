@@ -25,7 +25,10 @@ def clear_cuda_cache():
         except RuntimeError:
             pass
 
-def get_precision() -> torch.dtype:
+def get_precision(device: Optional[torch.device] = None) -> torch.dtype:
+    # Autocast only runs on CUDA. Anywhere else a reduced dtype would meet float32 weights.
+    if device is not None and device.type != "cuda":
+        return torch.float32
     if torch.cuda.is_available() and torch.cuda.is_bf16_supported():
         return torch.bfloat16
     return torch.float16
