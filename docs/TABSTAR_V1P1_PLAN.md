@@ -37,29 +37,34 @@ pure accident. Throughout the code and the docs:
 
 **Module names.** A model generation's dot is written `p`, since a module name cannot carry one:
 
-| | package | public estimators |
-|---|---|---|
-| v1 | `tabstar.tabstarv1` | `TabSTARClassifier`, `TabSTARRegressor` |
-| v1.1 | `tabstar.tabstarv1p1` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
+| | implementation package | import path | public estimators |
+|---|---|---|---|
+| v1 | `tabstar.tabstarv1` | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
+| v1.1 | `tabstar.tabstarv1p1` | `tabstar.tabstar_v1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
 
-Symmetric, each name states a model generation, and the top level of `tabstar/` stays free for the
-things that belong to the package rather than to a generation.
+Each generation keeps its own entry module at the top level, and the historical one does not change
+meaning. A user asks for v1.1 by importing a different module, never by getting different behaviour
+out of the same one.
 
 ## Target layout
 
 ```
 src/tabstar/
-    __init__.py            version string, plus the import-compatibility shim (below)
-    tabstar_model.py       re-exports all four estimators; the stable import path
-    resources/imdb.csv     unchanged, still reachable as files("tabstar")/"resources"
-    _compat.py             maps the pre-1.2.0 module paths onto tabstarv1
-    tabstarv1/             today's src/tabstar, moved verbatim
+    __init__.py              version string, plus the import-compatibility shim (below)
+    tabstar_model.py         v1's estimators; the import path that exists today, unchanged
+    tabstar_v1p1_model.py    v1.1's estimators
+    resources/imdb.csv       unchanged, still reachable as files("tabstar")/"resources"
+    _compat.py               maps the pre-1.2.0 module paths onto tabstarv1
+    tabstarv1/               today's src/tabstar, moved verbatim
         tabstar_model.py tabstar_verbalizer.py tabstar_datasets.py constants.py
         arch/ datasets/ preprocessing/ training/
-    tabstarv1p1/            copied from the research repo's tabstar2
+    tabstarv1p1/             copied from the research repo's tabstar2
         tabstar_model.py tabstar_checkpoints.py constants.py
         arch/ finetune/ preprocessing/ training/ utils/
 ```
+
+Both top-level model modules are thin: each re-exports its generation's two estimators and nothing
+else. The work lives in the generation packages.
 
 `tabstar_datasets.py` (the `TEXT2FOLD` and `PRETRAIN2FOLD` maps and the paper-fold checkpoint
 resolver) is v1 paper machinery and moves into `tabstarv1` with the rest. v1.1 gets its own, much
@@ -77,15 +82,18 @@ from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
 
 plus every constructor keyword, `fit`, `predict`, `predict_proba`, `score`,
 `score_all_metrics`, `classes_`, `save`, `load` and `download_base_model`, with today's behaviour.
-`TabSTARClassifier` keeps meaning the v1 model. A user who upgrades and changes nothing notices
-nothing. The package test enforces this.
+`TabSTARClassifier` keeps meaning the v1 model, and is not repointed at a later generation in this
+release or a future one. A user who upgrades and changes nothing notices nothing. The package test
+enforces this.
 
 **Tier 2, shimmed and undocumented.** Deep imports into the old module paths:
 `tabstar.training.*`, `tabstar.preprocessing.*`, `tabstar.arch.*`, `tabstar.datasets.*`,
 `tabstar.tabstar_verbalizer`, `tabstar.constants`, `tabstar.tabstar_datasets`. These were never
 documented as public, but downstream code (including AutoGluon's and TabArena's wrappers, this
-repo's own `tabstar_extensions/`, and every model anyone has pickled) reaches into them. They keep
-resolving, to the identical objects, via `_compat.py`.
+repo's own `tabstar_paper/`, `tabstar_extensions/` and scripts, and every model anyone has pickled)
+reaches into them. They keep resolving, to the identical objects, via `_compat.py`. Since our own
+research code is among the callers, this layer is permanent rather than transitional, and it is
+tested as such.
 
 **Tier 3, no promise.** Anything else, including everything under `tabstarv1p1` until the first
 release that ships it.
@@ -110,7 +118,7 @@ Two things this does not cover, both acceptable and both to be stated in the rel
   same object, but code that compares `cls.__module__` to a hardcoded string will see the new path.
 
 `tabstar.tabstar_model` is a real module, not a shim target: it re-exports v1's two estimators under
-their historical names and v1.1's two under the new names, so one import path offers all four.
+their historical names, which is the one import path that has to stay exactly as it is.
 
 ## What actually differs between the two estimators
 
@@ -184,23 +192,18 @@ message instead of mid-fit. The port adopts v1's prefetch, for both the checkpoi
 tokenizer, and keeps the static `download_base_model()` entry point for users who want to warm the
 cache ahead of time.
 
-## `tabstar_paper`
+## The research half of the repo stays untouched
 
-`tabstar_paper/` reaches into `tabstar.preprocessing.*`, `tabstar.training.*`, `tabstar.arch.*`,
-`tabstar.datasets.all_datasets`, `tabstar.constants` and `tabstar.tabstar_model` across roughly a
-hundred import sites. Two changes, in this order:
+`tabstar_paper/` (pretraining, dataset curation, the baselines and the leaderboard),
+`tabstar_extensions/`, `test/` and the root-level scripts reach into `tabstar.preprocessing.*`,
+`tabstar.training.*`, `tabstar.arch.*`, `tabstar.datasets.all_datasets`, `tabstar.constants` and
+`tabstar.tabstar_model` across roughly a hundred import sites. **None of them are edited.** The
+compatibility shim is what keeps them working, exactly as it does for anyone else's code, and the
+paper results therefore regenerate identically across the move. That is the acceptance criterion
+for phase 1: a diff confined to `src/`.
 
-1. **Rewrite the imports to the explicit `tabstar.tabstarv1.*` paths.** Mechanical, and worth doing
-   even though the shim would keep them working: paper code that reads `tabstarv1` is
-   self-documenting about which generation produced a given number, and it keeps the shim honest as
-   a compatibility layer for *other people's* code rather than something we depend on ourselves.
-   The same rewrite applies to `tabstar_extensions/`, `test/` and the root-level scripts.
-2. **Add v1.1 as a benchmarkable model.** The evaluation and leaderboard code selects a model by
-   name; v1.1 becomes another entry, not a flag on the existing one. Existing result files, dataset
-   lists and the leakage analysis stay pointed at v1 and keep reproducing.
-
-Nothing in `tabstar_paper` changes meaning in phase 1, so the paper results regenerate identically
-across the move. That is the acceptance criterion for the phase.
+Benchmarking v1.1 through the paper harness is a separate, additive piece of work, not part of this
+restructure. Until it happens, the paper code means v1 everywhere, which is what it already means.
 
 ## Packaging, docs and release
 
@@ -218,8 +221,8 @@ across the move. That is the acceptance criterion for the phase.
 Each phase is a reviewable PR that leaves the package installable and CI green.
 
 **Phase 1, the move.** v1 relocates to `tabstar/tabstarv1/`. `_compat.py` lands with it, along with
-the re-exporting `tabstar/tabstar_model.py`. In-repo imports are rewritten. No behaviour changes
-anywhere.
+the re-exporting `tabstar/tabstar_model.py`. Nothing outside `src/` is edited, and no behaviour
+changes anywhere.
 *Done when*: the full test suite passes unchanged; a model pickled by 1.1.16 loads; `from
 tabstar.tabstar_model import TabSTARClassifier` and a deep import such as `from
 tabstar.preprocessing.nulls import MISSING_VALUE` both still work.
@@ -229,24 +232,12 @@ and 3.10-clean, with no public estimator yet.
 *Done when*: `import tabstar.tabstarv1p1.tabstar_model` succeeds in a fresh environment installed
 from `pyproject.toml` alone, on 3.10 and 3.11.
 
-**Phase 3, the estimators.** `TabSTARv1p1Classifier` and `TabSTARv1p1Regressor`, conformed to the API
-table above, with checkpoint resolution and prefetch.
+**Phase 3, the estimators.** `tabstar/tabstar_v1p1_model.py`, exposing `TabSTARv1p1Classifier` and
+`TabSTARv1p1Regressor` conformed to the API table above, with checkpoint resolution and prefetch.
 *Done when*: both fit and predict end to end on the bundled `imdb.csv`, under a package test
 mirroring the v1 one; a round trip through `save`/`load` reproduces predictions.
 
-**Phase 4, the paper.** v1.1 becomes a selectable model in `tabstar_paper`'s evaluation path.
-*Done when*: a v1.1 run produces a leaderboard entry next to v1 on the same dataset list.
+**Phase 4, release.** Docs, model cards, version bump, `1.2.0` to PyPI.
 
-**Phase 5, release.** Docs, model cards, version bump, PyPI.
-
-## Open questions
-
-1. Should `TabSTARClassifier` ever come to mean v1.1? Not in 1.2.0. If it should in a later major,
-   the shim written in phase 1 is the mechanism, and the decision is worth making explicitly rather
-   than drifting into.
-2. Whether v1.1 is exposed as a classifier and a regressor, mirroring v1 and sklearn, or as one
-   estimator that infers the task from the target and picks its checkpoint accordingly. Two classes
-   are the proposal.
-3. Whether `tabstar_paper` moves to explicit `tabstar.tabstarv1.*` imports in phase 1 or keeps
-   riding the compatibility shim.
-4. Whether 1.2.0 goes to PyPI as soon as phase 3 is green, or waits for the paper work.
+Benchmarking v1.1 through `tabstar_paper` is deliberately not a phase here. It is additive work on
+the research half of the repo and does not gate the release.
