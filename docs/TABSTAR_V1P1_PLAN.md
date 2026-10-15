@@ -38,7 +38,7 @@ pure accident. Throughout the code and the docs:
 | | implementation package | import path | public estimators |
 |---|---|---|---|
 | v1 | `tabstar` itself, as today | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
-| v1.1 | `tabstar.tabstarv1p1` | `tabstar.tabstar_v1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
+| v1.1 | `tabstar.tabstarv1p1` | `tabstar.tabstarv1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
 
 Each generation has its own entry module at the top level, and the historical one does not change
 meaning. A user asks for v1.1 by importing a different module, never by getting different behaviour
@@ -60,14 +60,14 @@ src/tabstar/
     arch/ datasets/ preprocessing/ training/   unchanged
     resources/imdb.csv       unchanged
 
-    tabstar_v1p1_model.py    NEW: v1.1's estimators
+    tabstarv1p1_model.py     NEW: v1.1's estimators
     tabstarv1p1/             NEW: copied from the research repo's tabstar2
-        tabstar_model.py tabstar_checkpoints.py constants.py
+        tabstar_checkpoints.py constants.py
         arch/ finetune/ preprocessing/ training/ utils/
 ```
 
-`tabstar_v1p1_model.py` is thin: it re-exports v1.1's two estimators and nothing else. The work
-lives in `tabstarv1p1/`.
+`tabstarv1p1_model.py` holds v1.1's two estimators and nothing else. Everything they are built
+from lives in `tabstarv1p1/`.
 
 Nothing inside `tabstarv1p1/` imports anything outside it, apart from third-party packages. The
 research repo's `tabstar2` already has no import of the public `tabstar` package, so this holds on
@@ -176,12 +176,13 @@ happens, the paper code means v1 everywhere, which is what it already means.
 
 Each phase is a reviewable PR that leaves the package installable and CI green.
 
-**Phase 1, the copy.** The pruned v1.1 modules land under `src/tabstar/tabstarv1p1/`,
-dependency-clean and 3.10-clean, with no public estimator yet. Purely new files.
-*Done when*: `import tabstar.tabstarv1p1.tabstar_model` succeeds in a fresh environment installed
+**Phase 1, the copy.** The pruned v1.1 modules land under `src/tabstar/tabstarv1p1/` and the
+estimator module at `src/tabstar/tabstarv1p1_model.py`, dependency-clean and 3.10-clean, still
+carrying the research repo's surface. Purely new files.
+*Done when*: `import tabstar.tabstarv1p1_model` succeeds in a fresh environment installed
 from `pyproject.toml` alone, on 3.10 and 3.11; `git diff --stat` shows additions only.
 
-**Phase 2, the estimators.** `src/tabstar/tabstar_v1p1_model.py`, exposing `TabSTARv1p1Classifier`
+**Phase 2, the estimators.** `src/tabstar/tabstarv1p1_model.py`, exposing `TabSTARv1p1Classifier`
 and `TabSTARv1p1Regressor` conformed to the API table above, with checkpoint resolution and
 prefetch. Adds a package test mirroring the v1 one, and moves the CI package job to 3.10 so that
 test can run.
