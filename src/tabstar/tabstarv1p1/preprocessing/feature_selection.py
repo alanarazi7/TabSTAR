@@ -115,7 +115,7 @@ class FeatureSelector:
             return
         self.pca = Pipeline([("impute", SimpleImputer(strategy="median", keep_empty_features=True)),
                              ("scale", StandardScaler()),
-                             ("pca", PCA(n_components=n_components, svd_solver="randomized", random_state=SEED))])
+                             ("pca", PCA(n_components=n_components, svd_solver="covariance_eigh"))])
         self.pca.fit(_as_float(_subsample(x)))
         self.compressed_columns = list(x.columns)
         self.component_names = _component_names(n=n_components, taken=taken)
