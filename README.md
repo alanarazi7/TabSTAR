@@ -14,6 +14,14 @@ You can either use TabSTAR as a package for your own tabular data tasks, or expl
 
 ---
 
+### 🚀 TabSTAR v1.1 is on its way
+
+We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models: existing code keeps working unchanged.
+
+We are releasing the model first. A detailed writeup of what changed, together with the v1.1 pretraining code, will follow.
+
+---
+
 ### 📚 Resources
 
 * **Paper**: [TabSTAR: A Tabular Foundation Model for Tabular Data with Text Fields](https://arxiv.org/abs/2505.18125)

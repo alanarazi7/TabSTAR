@@ -4,6 +4,14 @@
 
 ---
 
+## 🚀 TabSTAR v1.1 is on its way
+
+We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models: existing code keeps working unchanged.
+
+We are releasing the model first. A detailed writeup of what changed, together with the v1.1 pretraining code, will follow.
+
+---
+
 ## Install
 
 To fit a pretrained TabSTAR model to your own dataset, install the package using:
