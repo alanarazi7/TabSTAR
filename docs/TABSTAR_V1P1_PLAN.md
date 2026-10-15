@@ -1,7 +1,6 @@
 # Plan: shipping TabSTAR v1.1 as a second model in the `tabstar` package
 
-Status: proposal, nothing implemented yet. This file is the agreed shape of the work before any
-code moves.
+Status: proposal, nothing implemented yet.
 
 ## Goal
 
@@ -12,12 +11,13 @@ to be able to `pip install tabstar` and use either generation.
 
 Three constraints shape everything below:
 
-1. **The two generations share no code.** Duplication is accepted, deliberately. The v1 code stays
-   byte-identical to what it is today so published paper results stay reproducible, and the v1.1
-   code is copied in from the research repo rather than refactored into a shared abstraction. A
-   shared layer would make every future v1.1 change a compatibility question about v1.
-2. **The public API does not break.** Today's calling convention keeps working, unchanged, with no
-   deprecation warnings in the way of normal use.
+1. **Nothing that exists today is edited.** This work only adds files. No module moves, nothing is
+   renamed, no import path changes meaning. Backwards compatibility is therefore not a mechanism we
+   have to build and test; it is a property of the diff.
+2. **The two generations share no code.** Duplication is accepted, deliberately. The v1.1 code is
+   copied in from the research repo rather than refactored into anything shared with v1. A shared
+   layer would make every future v1.1 change a compatibility question about v1, and would mean
+   touching v1, which constraint 1 forbids.
 3. **It lands in stages.** This document is the first commit. The code follows in reviewable
    phases, each one leaving the package installable and the test suite green.
 
@@ -31,100 +31,54 @@ pure accident. Throughout the code and the docs:
 
 - "TabSTAR v1" and "TabSTAR v1.1" always mean the *model generation*, never a package release.
 - A package release is always written with three components (`1.1.16`, `1.2.0`).
-- The restructure itself ships as **`1.2.0`**: no break, new capability, minor bump. Jumping to
-  `2.0.0` would promise a break we are explicitly not making, and would add a third `1.1`-adjacent
-  number to the confusion.
+- This ships as **`1.2.0`**: no break, new capability, minor bump.
 
 **Module names.** A model generation's dot is written `p`, since a module name cannot carry one:
 
 | | implementation package | import path | public estimators |
 |---|---|---|---|
-| v1 | `tabstar.tabstarv1` | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
+| v1 | `tabstar` itself, as today | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
 | v1.1 | `tabstar.tabstarv1p1` | `tabstar.tabstar_v1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
 
-Each generation keeps its own entry module at the top level, and the historical one does not change
+Each generation has its own entry module at the top level, and the historical one does not change
 meaning. A user asks for v1.1 by importing a different module, never by getting different behaviour
-out of the same one.
+out of the same one. `TabSTARClassifier` keeps meaning the v1 model, in this release and in future
+ones.
 
 ## Target layout
 
+Everything already in `src/tabstar/` stays exactly where it is and as it is. Two new entries
+appear next to it:
+
 ```
 src/tabstar/
-    __init__.py              version string, plus the import-compatibility shim (below)
-    tabstar_model.py         v1's estimators; the import path that exists today, unchanged
-    tabstar_v1p1_model.py    v1.1's estimators
-    resources/imdb.csv       unchanged, still reachable as files("tabstar")/"resources"
-    _compat.py               maps the pre-1.2.0 module paths onto tabstarv1
-    tabstarv1/               today's src/tabstar, moved verbatim
-        tabstar_model.py tabstar_verbalizer.py tabstar_datasets.py constants.py
-        arch/ datasets/ preprocessing/ training/
-    tabstarv1p1/             copied from the research repo's tabstar2
+    __init__.py              unchanged
+    tabstar_model.py         unchanged, still v1's estimators
+    tabstar_verbalizer.py    unchanged
+    tabstar_datasets.py      unchanged
+    constants.py             unchanged
+    arch/ datasets/ preprocessing/ training/   unchanged
+    resources/imdb.csv       unchanged
+
+    tabstar_v1p1_model.py    NEW: v1.1's estimators
+    tabstarv1p1/             NEW: copied from the research repo's tabstar2
         tabstar_model.py tabstar_checkpoints.py constants.py
         arch/ finetune/ preprocessing/ training/ utils/
 ```
 
-Both top-level model modules are thin: each re-exports its generation's two estimators and nothing
-else. The work lives in the generation packages.
+`tabstar_v1p1_model.py` is thin: it re-exports v1.1's two estimators and nothing else. The work
+lives in `tabstarv1p1/`.
 
-`tabstar_datasets.py` (the `TEXT2FOLD` and `PRETRAIN2FOLD` maps and the paper-fold checkpoint
-resolver) is v1 paper machinery and moves into `tabstarv1` with the rest. v1.1 gets its own, much
-smaller resolver under a name that says what it does, `tabstarv1p1/tabstar_checkpoints.py`.
-
-## The backwards-compatibility contract
-
-Three tiers, stated explicitly so we know what we are promising.
-
-**Tier 1, guaranteed and tested.** Everything the README and the PyPI page show:
-
-```python
-from tabstar.tabstar_model import TabSTARClassifier, TabSTARRegressor
-```
-
-plus every constructor keyword, `fit`, `predict`, `predict_proba`, `score`,
-`score_all_metrics`, `classes_`, `save`, `load` and `download_base_model`, with today's behaviour.
-`TabSTARClassifier` keeps meaning the v1 model, and is not repointed at a later generation in this
-release or a future one. A user who upgrades and changes nothing notices nothing. The package test
-enforces this.
-
-**Tier 2, shimmed and undocumented.** Deep imports into the old module paths:
-`tabstar.training.*`, `tabstar.preprocessing.*`, `tabstar.arch.*`, `tabstar.datasets.*`,
-`tabstar.tabstar_verbalizer`, `tabstar.constants`, `tabstar.tabstar_datasets`. These were never
-documented as public, but downstream code (including AutoGluon's and TabArena's wrappers, this
-repo's own `tabstar_paper/`, `tabstar_extensions/` and scripts, and every model anyone has pickled)
-reaches into them. They keep resolving, to the identical objects, via `_compat.py`. Since our own
-research code is among the callers, this layer is permanent rather than transitional, and it is
-tested as such.
-
-**Tier 3, no promise.** Anything else, including everything under `tabstarv1p1` until the first
-release that ships it.
-
-### How the shim works, and why it is not 30 stub files
-
-`_compat.py` installs one `importlib.abc.MetaPathFinder` that resolves `tabstar.<old path>` to
-`tabstar.tabstarv1.<old path>` for a fixed list of old paths, and registers the result under both
-names in `sys.modules`. It is imported from `tabstar/__init__.py`, which costs nothing: the finder
-imports no torch, and a submodule is only materialised when something actually asks for it.
-
-This also solves unpickling for free, which the alternatives do not. `joblib.load` on a model saved
-by 1.1.x looks up `tabstar.tabstar_verbalizer`, `tabstar.training.trainer` and friends by their
-recorded module path; the finder makes those lookups succeed and hands back the same class objects,
-so old pickles keep loading.
-
-Two things this does not cover, both acceptable and both to be stated in the release notes:
-
-- A model saved by 1.2.0 records the new `tabstar.tabstarv1.*` paths and will not load on 1.1.x.
-  Forward compatibility was never offered.
-- `isinstance` checks against a class imported through the old path still pass, since it is the
-  same object, but code that compares `cls.__module__` to a hardcoded string will see the new path.
-
-`tabstar.tabstar_model` is a real module, not a shim target: it re-exports v1's two estimators under
-their historical names, which is the one import path that has to stay exactly as it is.
+Nothing inside `tabstarv1p1/` imports anything outside it, apart from third-party packages. The
+research repo's `tabstar2` already has no import of the public `tabstar` package, so this holds on
+arrival and is worth keeping as a rule: the two generations are independent subtrees that happen to
+be shipped in one wheel.
 
 ## What actually differs between the two estimators
 
 The research repo's estimator was written for a benchmark harness, not for end users, and its
-surface drifted. The port conforms it to the v1 contract rather than exposing the drift. Each row
-below is a decision, not a description.
+surface drifted. The port conforms it to the v1 contract rather than exposing the drift, so that a
+user who knows one estimator can drive the other. Each row below is a decision, not a description.
 
 | | v1 (today, public) | v1.1 (research repo) | what the port does |
 |---|---|---|---|
@@ -141,6 +95,8 @@ below is a decision, not a description.
 | `lora_alpha` | constructor argument | hardcoded to `2 * r` | keep hardcoded; expose only if a reason appears |
 | `is_paper_version` | selects the paper checkpoint and disables checkpoint averaging | no equivalent concept | not ported; v1.1 has no paper variant |
 | `global_batch` | that name | `lora_global_batch` | use v1's name |
+
+"Ported from v1" means copied, not imported.
 
 Two v1.1 behaviours that have no v1 counterpart and are kept as they are:
 
@@ -171,9 +127,12 @@ all of it is stripped rather than made optional.
 
 **Make it import on the package's floor Python.** The research repo pins `==3.11.*`; the package
 declares `>=3.10`. One `typing.Self` and one PEP 604 union in a runtime-evaluated annotation are the
-only blockers in the closure, both trivially rewritten. While we are here: CI's package job runs on
-3.9, which contradicts `requires-python` and has only passed because nothing imported has needed
-3.10. That job moves to 3.10.
+only blockers in the closure, both trivially rewritten.
+
+CI's package job runs on 3.9, which already contradicts `requires-python >=3.10` and has only
+passed because nothing imported has needed 3.10. Nothing breaks while no test imports v1.1, so this
+is not urgent; the phase that adds a v1.1 test moves that job to 3.10, and it is the one existing
+file that phase touches.
 
 ## Checkpoints
 
@@ -195,49 +154,45 @@ cache ahead of time.
 ## The research half of the repo stays untouched
 
 `tabstar_paper/` (pretraining, dataset curation, the baselines and the leaderboard),
-`tabstar_extensions/`, `test/` and the root-level scripts reach into `tabstar.preprocessing.*`,
-`tabstar.training.*`, `tabstar.arch.*`, `tabstar.datasets.all_datasets`, `tabstar.constants` and
-`tabstar.tabstar_model` across roughly a hundred import sites. **None of them are edited.** The
-compatibility shim is what keeps them working, exactly as it does for anyone else's code, and the
-paper results therefore regenerate identically across the move. That is the acceptance criterion
-for phase 1: a diff confined to `src/`.
+`tabstar_extensions/`, `test/` and the root-level scripts import from `tabstar.*` across roughly a
+hundred sites. None of them are edited, and none of them need to be: every path they import still
+resolves to the same object, because nothing moved. Paper results regenerate identically, for the
+trivial reason that no code they run has changed.
 
-Benchmarking v1.1 through the paper harness is a separate, additive piece of work, not part of this
-restructure. Until it happens, the paper code means v1 everywhere, which is what it already means.
+Benchmarking v1.1 through the paper harness is separate, additive work, not part of this. Until it
+happens, the paper code means v1 everywhere, which is what it already means.
 
 ## Packaging, docs and release
 
-- `pyproject.toml`'s package discovery already globs `src/`, so the new subpackages are picked up
-  with no change. `package-data` keeps pointing at `tabstar/resources/*.csv`, which does not move,
-  so the quickstart's `files("tabstar").joinpath("resources", "imdb.csv")` is unaffected.
+- `pyproject.toml`'s package discovery already globs `src/`, so `tabstarv1p1` is picked up with no
+  change to the build configuration. The version bump is the only edit to that file.
 - `README.md` and `README-pypi.md` gain a short section on choosing a generation, with the v1
   quickstart left exactly where it is as the default.
 - The two model cards from the research repo's `sota_checkpoints/` ship alongside the code, as the
   honest record of what the checkpoints are and what their published scores were produced with.
-- Release `1.2.0` to PyPI once phase 3 is green, and only then.
+- Release `1.2.0` to PyPI once phase 2 is green, and only then.
 
 ## Phases
 
 Each phase is a reviewable PR that leaves the package installable and CI green.
 
-**Phase 1, the move.** v1 relocates to `tabstar/tabstarv1/`. `_compat.py` lands with it, along with
-the re-exporting `tabstar/tabstar_model.py`. Nothing outside `src/` is edited, and no behaviour
-changes anywhere.
-*Done when*: the full test suite passes unchanged; a model pickled by 1.1.16 loads; `from
-tabstar.tabstar_model import TabSTARClassifier` and a deep import such as `from
-tabstar.preprocessing.nulls import MISSING_VALUE` both still work.
-
-**Phase 2, the copy.** The pruned v1.1 modules land under `tabstar/tabstarv1p1/`, dependency-clean
-and 3.10-clean, with no public estimator yet.
+**Phase 1, the copy.** The pruned v1.1 modules land under `src/tabstar/tabstarv1p1/`,
+dependency-clean and 3.10-clean, with no public estimator yet. Purely new files.
 *Done when*: `import tabstar.tabstarv1p1.tabstar_model` succeeds in a fresh environment installed
-from `pyproject.toml` alone, on 3.10 and 3.11.
+from `pyproject.toml` alone, on 3.10 and 3.11; `git diff --stat` shows additions only.
 
-**Phase 3, the estimators.** `tabstar/tabstar_v1p1_model.py`, exposing `TabSTARv1p1Classifier` and
-`TabSTARv1p1Regressor` conformed to the API table above, with checkpoint resolution and prefetch.
-*Done when*: both fit and predict end to end on the bundled `imdb.csv`, under a package test
-mirroring the v1 one; a round trip through `save`/`load` reproduces predictions.
+**Phase 2, the estimators.** `src/tabstar/tabstar_v1p1_model.py`, exposing `TabSTARv1p1Classifier`
+and `TabSTARv1p1Regressor` conformed to the API table above, with checkpoint resolution and
+prefetch. Adds a package test mirroring the v1 one, and moves the CI package job to 3.10 so that
+test can run.
+*Done when*: both fit and predict end to end on the bundled `imdb.csv`; a round trip through
+`save`/`load` reproduces predictions; the v1 tests still pass untouched.
 
-**Phase 4, release.** Docs, model cards, version bump, `1.2.0` to PyPI.
+**Phase 3, release.** Docs, model cards, version bump, `1.2.0` to PyPI.
 
-Benchmarking v1.1 through `tabstar_paper` is deliberately not a phase here. It is additive work on
-the research half of the repo and does not gate the release.
+## Deferred: splitting v1 into its own subpackage
+
+An earlier draft moved today's `src/tabstar` into `src/tabstar/tabstarv1/` for symmetry, with an
+import shim keeping the old paths alive for downstream code and for unpickling old models. That is
+real work with real risk and it buys tidiness, not capability. It is not part of this plan. If the
+symmetry is ever worth it, it is a standalone change made on its own merits, after v1.1 has shipped.
