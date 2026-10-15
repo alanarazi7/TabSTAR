@@ -5,6 +5,7 @@ from peft import LoraConfig, get_peft_model, PeftModel
 from transformers import AutoTokenizer
 
 from tabstar.tabstarv1p1.constants import TEXT_MODEL as E5_SMALL
+from tabstar.tabstarv1p1.finetune.hyperparams import LORA_ALPHA
 from tabstar.tabstarv1p1.finetune.lora_params import get_all_lora_modules
 from tabstar.tabstarv1p1.arch.model import TabSTARModel
 from tabstar.tabstarv1p1.arch.config import TabStarConfig
@@ -23,12 +24,12 @@ def load_pretrained_base(model_version: str) -> TabSTARModel:
     return model
 
 
-def wrap_with_lora(model: TabSTARModel, lora_r: int, dropout: float, to_unfreeze: int = 6,
-                    is_cls: Optional[bool] = None) -> PeftModel:
+def wrap_with_lora(model: TabSTARModel, lora_r: int, dropout: float, lora_alpha: int = LORA_ALPHA,
+                    to_unfreeze: int = 6, is_cls: Optional[bool] = None) -> PeftModel:
     target_modules = get_all_lora_modules(model=model, to_unfreeze=to_unfreeze, is_cls=is_cls)
     lora_config = LoraConfig(
         r=lora_r,
-        lora_alpha=lora_r * 2,
+        lora_alpha=lora_r * lora_alpha,
         target_modules=target_modules,
         lora_dropout=dropout,
         bias="none",
