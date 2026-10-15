@@ -1,3 +1,4 @@
+import gc
 import os
 from subprocess import Popen, PIPE
 from typing import Optional, Union
@@ -20,6 +21,9 @@ def get_device(device: Optional[Union[str, torch.device]] = None) -> torch.devic
 
 def clear_cuda_cache():
     if torch.cuda.is_available():
+        # An OOM exception's traceback holds a reference cycle to the tensors live at
+        # the point of failure; empty_cache() alone can't reclaim memory still referenced.
+        gc.collect()
         try:
             torch.cuda.empty_cache()
         except RuntimeError:
