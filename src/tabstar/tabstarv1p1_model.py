@@ -159,8 +159,16 @@ class BaseTabSTARv1p1:
         return train_data, val_data
 
     def _infer(self, X) -> np.ndarray:
+        """Mean of the predictions of every adapter the model carries, one per selected epoch."""
         self.model_.eval()
         data = self.preprocessor_.transform(X, y=None)
+        adapter_predictions = []
+        for adapter_name in self.model_.peft_config:
+            self.model_.set_adapter(adapter_name)
+            adapter_predictions.append(self._infer_adapter(data))
+        return np.mean(adapter_predictions, axis=0)
+
+    def _infer_adapter(self, data: TabSTARData) -> np.ndarray:
         dataloader = get_dataloader(data, is_train=False, batch_size=self.val_batch_size)
         predictions = []
         for data in dataloader:

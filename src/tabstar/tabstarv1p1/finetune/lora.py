@@ -1,5 +1,5 @@
-from os.path import exists
-from typing import Optional
+from os.path import basename, exists
+from typing import List, Optional
 
 from peft import LoraConfig, get_peft_model, PeftModel
 from transformers import AutoTokenizer
@@ -41,10 +41,15 @@ def wrap_with_lora(model: TabSTARModel, lora_r: int, dropout: float, lora_alpha:
     return model
 
 
-def load_finetuned(save_dir: str, tabstar_version: str) -> PeftModel:
-    if not exists(save_dir):
-        raise FileNotFoundError(f"Checkpoint path {save_dir} does not exist.")
+def load_finetuned(adapter_dirs: List[str], tabstar_version: str) -> PeftModel:
+    """One base model carrying every adapter, each named after its directory."""
+    for adapter_dir in adapter_dirs:
+        if not exists(adapter_dir):
+            raise FileNotFoundError(f"Checkpoint path {adapter_dir} does not exist.")
     base_model = TabSTARModel.from_pretrained(tabstar_version, device_map="cpu")
     base_model.tokenizer = AutoTokenizer.from_pretrained(E5_SMALL)
-    model = PeftModel.from_pretrained(base_model, save_dir, device_map='cpu')
+    first, *rest = adapter_dirs
+    model = PeftModel.from_pretrained(base_model, first, adapter_name=basename(first), device_map='cpu')
+    for adapter_dir in rest:
+        model.load_adapter(adapter_dir, adapter_name=basename(adapter_dir))
     return model
