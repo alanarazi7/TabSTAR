@@ -32,7 +32,9 @@ def _pad_x_txt(x_txt: Iterable[np.ndarray]) -> np.ndarray:
     max_len = max(len(r) for r in rows)
     to_pad_num = [max_len - len(r) for r in rows]
     padded = [[str(s) for s in r] + [""] * tp for r, tp in zip(rows, to_pad_num)]
-    padded = np.array(padded)
+    # object, not numpy's fixed-width unicode: that sizes every cell to the batch's longest text, so one 1M-char
+    # text made a 128-row batch take tens of GB of RAM.
+    padded = np.array(padded, dtype=object)
     assert padded.shape == (batch_size, max_len), f"Got {padded.shape}, expected ({batch_size}, {max_len})"
     return padded
 
