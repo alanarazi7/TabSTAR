@@ -45,14 +45,17 @@ class TabSTARModel(PreTrainedModel):
         # Local to this call, not persisted on self: an OOM here must not permanently shrink
         # every later call on this model (e.g. a reused base model scoring many datasets).
         text_batch_size = self.text_batch_size
-        while text_batch_size > 1:
+        while True:
             try:
                 return self.get_textual_embeddings_in_batches(x_txt, tokenized=tokenized, text_batch_size=text_batch_size)
             except torch.cuda.OutOfMemoryError:
-                text_batch_size //= 2
-                clear_cuda_cache()
-                print(f"🤯 Reducing batch size to {text_batch_size} due to OOM")
-        raise RuntimeError(f"🤯 OOM even with batch size 1!")
+                # Still an OOM, so the trainer can split the batch's rows, whose text activations it keeps for backward.
+                if text_batch_size == 1:
+                    raise
+            # Retried outside the except block, so the failed attempt's tensors can be freed.
+            text_batch_size //= 2
+            clear_cuda_cache()
+            print(f"🤯 Reducing batch size to {text_batch_size} due to OOM")
 
     def get_textual_embeddings_in_batches(self, x_txt: Tensor, tokenized: BatchEncoding, text_batch_size: int) -> Tensor:
         n_examples, elements = x_txt.shape
