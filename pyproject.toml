@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tabstar"
-version = "1.1.16"
+version = "1.2.0"
 description = "TabSTAR: A Foundation Tabular Model With Semantically Target-Aware Representations"
 readme = "README-pypi.md"
 authors = [
@@ -12,6 +12,7 @@ authors = [
 ]
 license = { text = "MIT" }
 dependencies = [
+  "huggingface_hub>=0.25.0",
   "joblib",
   "numpy",
   "pandas>=2.2.2",
