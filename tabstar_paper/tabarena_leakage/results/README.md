@@ -1,6 +1,6 @@
 # TabArena leakage analysis: results
 
-Outputs of `tabarena_leakage_analysis.py` on all 51 TabArena v0.1 datasets, split r0f0,
+Outputs of `../tabarena_leakage_analysis.py` on all 51 TabArena v0.1 datasets, split r0f0,
 87 methods (TabArena's 84 plus the three arms below). Boards were scored with TabArena's
 own scorer (`bencheval.BenchmarkEvaluator`, Elo calibrated to `RF (default)` = 1000,
 200 bootstrap rounds).

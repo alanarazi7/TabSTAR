@@ -35,13 +35,13 @@ Results land under this file's directory: raw per-run TabArena job artifacts in
 `eval/tabarena_leakage_analysis/`.
 
 Usage:
-    python tabarena_leakage_analysis.py                    # all 51 TabArena datasets
-    python tabarena_leakage_analysis.py --tabarena_name diabetes   # a single dataset
+    python tabstar_paper/tabarena_leakage/tabarena_leakage_analysis.py                          # all 51 TabArena datasets
+    python tabstar_paper/tabarena_leakage/tabarena_leakage_analysis.py --tabarena_name diabetes  # a single dataset
 
     # Cluster array job: one dataset per worker, no `[plot]` extra needed on workers.
-    python tabarena_leakage_analysis.py --tabarena_name <name> --skip_compare
+    python tabstar_paper/tabarena_leakage/tabarena_leakage_analysis.py --tabarena_name <name> --skip_compare
     # Once every worker has finished, aggregate on any machine with `tabarena[plot]` installed:
-    python tabarena_leakage_analysis.py --compare_only
+    python tabstar_paper/tabarena_leakage/tabarena_leakage_analysis.py --compare_only
 """
 from __future__ import annotations
 
