@@ -122,6 +122,8 @@ metric = tabstar.score(X=x_test, y=y_test)
 
 `fit`, `predict`, `predict_proba`, `score`, `save` and `load` behave as they do for the original models.
 
+Model cards: [classification](docs/model_cards/tabstar-v1.1-cls.md), [regression](docs/model_cards/tabstar-v1.1-reg.md).
+
 ---
 
 ## Research Mode
