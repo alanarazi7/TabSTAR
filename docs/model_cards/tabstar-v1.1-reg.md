@@ -26,12 +26,12 @@ The checkpoint is resolved automatically; `pretrain_dataset_or_path` overrides i
 - **Pool**: 200,013 regression tables, decontaminated against the evaluation suites
 - **Dataset sampling**: 50,000 datasets per epoch, resampled from the full pool at the start of every epoch
 - **Learning rate**: 1e-4, **weight decay**: 1e-3, linear warmup over the first 10% of steps
-- **Epochs**: 25 planned, early-stopping patience 5; the run completed all 25
+- **Epochs**: 25
 - **Batch size**: 512 global (micro-batch 32, no gradient accumulation)
-- **Rows per dataset**: up to 1,024 train and 64 validation rows
 - **Text encoder**: `intfloat/e5-small-v2`, top 6 layers unfrozen, text batch size 1024
 - **Tabular backbone**: 6 interaction layers, `d_model` 384
-- **Numeric features**: a 6-dimensional engineered-statistics vector through an MLP
+- **Numeric features**: each numeric cell becomes a 6-dimensional vector (clipped z-score, min-max,
+  uniform quantile, outlier flag, missing flag, numeric indicator) through an MLP
 - **Regression head**: a scalar sub-head plus a distributional sub-head over 200 bins on z-scored
   targets clipped to +/-10
 - **Loss**: 0.5 * MSE (scalar) + 0.5 * distributional loss, itself 0.5 * cross-entropy + 0.5 * CRPS
@@ -57,7 +57,9 @@ dataset:
 - **Global batch 512**: larger and more diverse per step than v1
 - **Selection metric**: downstream finetuning Elo rather than pretraining loss
 - **Fusion**: each column's text and numeric embeddings are layer-normalised and summed, with a
-  learned scalar weight on the text stream, rather than a fixed combination
+  learned scalar weight on the text stream, rather than the transformer fusion block v1 used
+- **Numeric representation**: six channels per numeric cell instead of v1's single scaled scalar,
+  so outliers and missingness reach the model explicitly
 - **Regression head and loss**: a dual scalar plus distributional head (200 bins, z-clip +/-10)
   trained with MSE plus a CE/CRPS blend, instead of a single scalar head
 - **Text encoder and width** are unchanged from v1 (E5-small-v2, `d_model` 384)
