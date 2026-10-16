@@ -4,16 +4,16 @@
 
 ---
 
-## 🚀 TabSTAR v1.1 is on its way
+## 🚀 TabSTAR v1.1 is out
 
-We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models, in its own module, so existing code keeps working unchanged:
+We released **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models, in its own module, so existing code keeps working unchanged:
 
 | | import | estimators |
 |---|---|---|
 | TabSTAR | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
 | TabSTAR v1.1 | `tabstar.tabstarv1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
 
-We are releasing the model first. A detailed writeup of what changed, together with the v1.1 pretraining code, will follow.
+The v1.1 pretraining code lives in [`tabstarv1p1_pretrain/`](https://github.com/alanarazi7/TabSTAR/tree/master/tabstarv1p1_pretrain); a detailed writeup of what changed will follow.
 
 ---
 
