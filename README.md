@@ -14,9 +14,9 @@ You can either use TabSTAR as a package for your own tabular data tasks, or expl
 
 ---
 
-### 🚀 TabSTAR v1.1 is on its way
+### 🚀 TabSTAR v1.1 is out
 
-We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models, in its own module, so existing code keeps working unchanged:
+We released **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models, in its own module, so existing code keeps working unchanged:
 
 | | import | estimators |
 |---|---|---|
