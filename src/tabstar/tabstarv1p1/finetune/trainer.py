@@ -161,16 +161,24 @@ class TabSTARv1p1Trainer:
         the graph, so on that failure the current accumulation window's gradients are wiped via
         zero_grad() before retrying, rather than assuming which parameters got a partial update.
         """
+        loss = self._forward_backward(data, weight)
+        if loss is None:
+            # Split outside the except blocks, so the failed step's graph is freed before the halves run.
+            return self._retry_split(data, weight)
+        return loss
+
+    def _forward_backward(self, data: TabSTARBatch, weight: float) -> Optional[float]:
+        """The batch's loss after its backward pass, or None on OOM."""
         try:
             loss, predictions = self._do_forward(data=data)
         except torch.cuda.OutOfMemoryError:
-            return self._retry_split(data, weight)
+            return None
         loss_for_backward = loss * weight / self.accumulation_steps
         try:
             self.precision_manager.backward_loss(loss_for_backward=loss_for_backward)
         except torch.cuda.OutOfMemoryError:
             self.optimizer.zero_grad(set_to_none=True)
-            return self._retry_split(data, weight)
+            return None
         return loss.item()
 
     def _retry_split(self, data: TabSTARBatch, weight: float) -> float:
