@@ -14,6 +14,19 @@ You can either use TabSTAR as a package for your own tabular data tasks, or expl
 
 ---
 
+### 🚀 TabSTAR v1.1 is on its way
+
+We are releasing **TabSTAR v1.1**, a new generation of pretrained TabSTAR models. It ships alongside the original models, in its own module, so existing code keeps working unchanged:
+
+| | import | estimators |
+|---|---|---|
+| TabSTAR | `tabstar.tabstar_model` | `TabSTARClassifier`, `TabSTARRegressor` |
+| TabSTAR v1.1 | `tabstar.tabstarv1p1_model` | `TabSTARv1p1Classifier`, `TabSTARv1p1Regressor` |
+
+See [TabSTAR v1.1](#tabstar-v11) below for usage. We are releasing the model first; a detailed writeup of what changed, together with the v1.1 pretraining code, will follow.
+
+---
+
 ### 📚 Resources
 
 * **Paper**: [TabSTAR: A Tabular Foundation Model for Tabular Data with Text Fields](https://arxiv.org/abs/2505.18125)
@@ -93,6 +106,21 @@ tabstar.fit(x_train, y_train)
 y_pred = tabstar.predict(x_test)
 # metric = tabstar.score(X=x_test, y=y_test)
 ```
+
+### TabSTAR v1.1
+
+The v1.1 models are a drop-in alternative to the examples above. Swap the import and the class name:
+
+```python
+from tabstar.tabstarv1p1_model import TabSTARv1p1Classifier, TabSTARv1p1Regressor
+
+tabstar = TabSTARv1p1Classifier()
+tabstar.fit(x_train, y_train)
+y_pred = tabstar.predict(x_test)
+metric = tabstar.score(X=x_test, y=y_test)
+```
+
+`fit`, `predict`, `predict_proba`, `score`, `save` and `load` behave as they do for the original models.
 
 ---
 
